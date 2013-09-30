@@ -51,6 +51,11 @@ set(_source_files
   picker.js
 )
 
+if ( NOT DEPLOY_LIB_DIR )
+  set( DEPLOY_LIB_DIR "${CMAKE_CURRENT_BINARY_DIR}/deploy" CACHE PATH "" FORCE  )
+  file(MAKE_DIRECTORY ${DEPLOY_LIB_DIR})
+endif()
+
 set(_min_js_file ${DEPLOY_LIB_DIR}/vgl.min.js)
 
 macro(list_contains var value)
