@@ -112,6 +112,14 @@ add_dependencies(${PROJECT_NAME} vgl_pre_deploy)
 if (BUILD_TESTING)
   include(CTest)
   enable_testing()
+
+  add_custom_command(
+    OUTPUT "${VGL_DEPlOY_DIR}/testing"
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/testing
+            "${VGL_DEPLOY_DIR}/testing"
+  )
+  add_custom_target(vgl_testing ALL DEPENDS "${VGL_DEPlOY_DIR}/testing")
+  add_dependencies(${PROJECT_NAME} vgl_testing)
 endif()
 
 # JSLint tests.
