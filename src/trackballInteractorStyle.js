@@ -189,28 +189,6 @@ vglModule.trackballInteractorStyle = function() {
     return false;
   };
 
-  /////////////////////////////////////////////////////////////////////////////
-  /**
-   * Perform zoom based on the current zoom level
-   *
-   * @param options
-   * @param useCurrent
-   */
-  /////////////////////////////////////////////////////////////////////////////
-  this.zoom = function(options, useCurrent) {
-    var m_renderer, m_camera, distance, currPosition;
-    m_renderer = m_that.viewer().renderWindow().activeRenderer();
-    m_camera = m_renderer.camera();
-    distance = 600 - (600 - (60 * options.zoom)) + 1;
-    if (useCurrent === undefined || useCurrent === false) {
-      m_camera.setPosition(options.center.lng(), options.center.lat(), distance);
-      m_camera.setFocalPoint(options.center.lng(), options.center.lat(), 0.0);
-    } else {
-      currPosition = m_camera.position();
-      m_camera.setPosition(currPosition[0], currPosition[1], distance);
-      m_camera.setFocalPoint(currPosition[0], currPosition[1], 0.0);
-    }
-  };
   return this;
 };
 inherit(vglModule.trackballInteractorStyle, vglModule.interactorStyle);
