@@ -45,6 +45,7 @@ vglModule.trackballInteractorStyle = function() {
       m_dx,
       m_dy,
       m_dz,
+      m_zTrans,
       m_mouseLastPos = {
         x: 0,
         y: 0
@@ -117,7 +118,14 @@ vglModule.trackballInteractorStyle = function() {
       $(m_that).trigger(vglModule.command.leftButtonPressEvent);
     }
     if (m_rightMouseButtonDown) {
-      m_camera.zoom(m_dy);
+      m_zTrans = (m_currentMousePos.y - m_mouseLastPos.y) / m_height;
+
+      // Calculate zoom scale here
+      if (m_zTrans > 0) {
+        m_camera.zoom(1 - Math.abs(m_zTrans));
+      } else {
+        m_camera.zoom(1 + Math.abs(m_zTrans));
+      }
       m_renderer.resetCameraClippingRange();
       $(m_that).trigger(vglModule.command.rightButtonPressEvent);
     }
