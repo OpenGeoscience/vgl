@@ -23,7 +23,7 @@ vglModule.trackballInteractorStyle = function() {
   if (!(this instanceof vglModule.trackballInteractorStyle)) {
     return new vglModule.trackballInteractorStyle();
   }
-  ogs.vgl.interactorStyle.call(this);
+  vglModule.interactorStyle.call(this);
   var m_that = this,
       m_leftMouseButtonDown = false,
       m_rightMouseButtonDown = false,
@@ -45,6 +45,7 @@ vglModule.trackballInteractorStyle = function() {
       m_dx,
       m_dy,
       m_dz,
+      m_zTrans,
       m_mouseLastPos = {
         x: 0,
         y: 0
@@ -113,10 +114,19 @@ vglModule.trackballInteractorStyle = function() {
     if (m_leftMouseButtonDown) {
       m_camera.rotate((m_mouseLastPos.x - m_currentMousePos.x),
       (m_mouseLastPos.y - m_currentMousePos.y));
+      m_renderer.resetCameraClippingRange();
       $(m_that).trigger(vglModule.command.leftButtonPressEvent);
     }
     if (m_rightMouseButtonDown) {
-      m_camera.zoom(m_dy);
+      m_zTrans = (m_currentMousePos.y - m_mouseLastPos.y) / m_height;
+
+      // Calculate zoom scale here
+      if (m_zTrans > 0) {
+        m_camera.zoom(1 - Math.abs(m_zTrans));
+      } else {
+        m_camera.zoom(1 + Math.abs(m_zTrans));
+      }
+      m_renderer.resetCameraClippingRange();
       $(m_that).trigger(vglModule.command.rightButtonPressEvent);
     }
     m_mouseLastPos.x = m_currentMousePos.x;
@@ -187,28 +197,6 @@ vglModule.trackballInteractorStyle = function() {
     return false;
   };
 
-  /////////////////////////////////////////////////////////////////////////////
-  /**
-   * Perform zoom based on the current zoom level
-   *
-   * @param options
-   * @param useCurrent
-   */
-  /////////////////////////////////////////////////////////////////////////////
-  this.zoom = function(options, useCurrent) {
-    var m_renderer, m_camera, distance, currPosition;
-    m_renderer = m_that.viewer().renderWindow().activeRenderer();
-    m_camera = m_renderer.camera();
-    distance = 600 - (600 - (60 * options.zoom)) + 1;
-    if (useCurrent === undefined || useCurrent === false) {
-      m_camera.setPosition(options.center.lng(), options.center.lat(), distance);
-      m_camera.setFocalPoint(options.center.lng(), options.center.lat(), 0.0);
-    } else {
-      currPosition = m_camera.position();
-      m_camera.setPosition(currPosition[0], currPosition[1], distance);
-      m_camera.setFocalPoint(currPosition[0], currPosition[1], 0.0);
-    }
-  };
   return this;
 };
-inherit(vglModule.trackballInteractorStyle, ogs.vgl.interactorStyle);
+inherit(vglModule.trackballInteractorStyle, vglModule.interactorStyle);

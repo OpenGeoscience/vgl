@@ -51,7 +51,29 @@ set(_source_files
   picker.js
 )
 
-set(_min_js_file ${DEPLOY_LIB_DIR}/vgl.min.js)
+# VGL requires a deployment directory
+if (NOT EXISTS VGL_DEPLOY_DIR)
+  set(VGL_DEPLOY_DIR "${CMAKE_CURRENT_BINARY_DIR}/deploy"
+      CACHE PATH "PATH to deployment directory" FORCE)
+  set(VGL_DEPLOY_LIB_DIR "${VGL_DEPLOY_DIR}/web/lib" CACHE PATH
+      "Path to deployment library directory" FORCE)
+endif()
+
+# Create deploy directory if it does not exists
+if(NOT EXISTS "${VGL_DEPLOY_LIB_DIR}")
+  add_custom_command(OUTPUT "${VGL_DEPLOY_LIB_DIR}"
+    COMMAND ${CMAKE_COMMAND} -E make_directory "${VGL_DEPLOY_LIB_DIR}"
+  )
+  add_custom_target(vgl_pre_deploy ALL DEPENDS ${VGL_DEPLOY_LIB_DIR})
+endif()
+
+# Enable developers to set data directory for testing purposes
+if(NOT EXISTS "${VGL_DATA_DIR}")
+  set(VGL_DATA_DIR "" CACHE PATH
+      "Path to directory containing data for testing" FORCE)
+endif()
+
+set(_min_js_file ${VGL_DEPLOY_LIB_DIR}/vgl.min.js)
 
 macro(list_contains var value)
   set(${var})
@@ -77,7 +99,7 @@ if (UglifyJS_EXECUTABLE)
     OUTPUT ${_min_js_file}
     COMMAND ${UglifyJS_EXECUTABLE} -o ${_min_js_file} ${_js_uglify_files}
             ${MINIFY_FLAG} ${MANGLE_FLAG}
-    DEPENDS ${DEPLOY_LIB_DIR} ${_js_uglify_files}
+    DEPENDS ${VGL_DEPLOY_LIB_DIR} ${_js_uglify_files}
   )
 else()
   # Use custom command to call CMake script to cat files together
@@ -87,18 +109,40 @@ else()
             # Note the quotes so we get the ; included
             "-DCAT_FILES=${_js_uglify_files}"
             -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/cat.cmake
-    DEPENDS ${DEPLOY_LIB_DIR} ${_js_uglify_files}
+    DEPENDS ${VGL_DEPLOY_LIB_DIR} ${_js_uglify_files}
     VERBATIM
   )
 endif()
 
 add_custom_target(${PROJECT_NAME} ALL DEPENDS ${_min_js_file})
-add_dependencies(${PROJECT_NAME} predeploy)
+add_dependencies(${PROJECT_NAME} vgl_pre_deploy)
 
 # Testing
 if (BUILD_TESTING)
   include(CTest)
   enable_testing()
+
+  if(EXISTS "${VGL_DATA_DIR}" AND IS_DIRECTORY "${VGL_DATA_DIR}")
+    message("[info] VGL data directory is set to ${VGL_DATA_DIR}")
+  else()
+    message(FATAL_ERROR "VGL testing requires valid data directory")
+  endif()
+
+  add_custom_command(
+    OUTPUT "${VGL_DEPLOY_DIR}/data"
+    COMMAND ${CMAKE_COMMAND} -E copy_directory "${VGL_DATA_DIR}"
+            "${VGL_DEPLOY_DIR}/data"
+  )
+  add_custom_target(vgl_data ALL DEPENDS "${VGL_DEPLOY_DIR}/data")
+  add_dependencies(${PROJECT_NAME} vgl_data)
+
+  add_custom_command(
+    OUTPUT "${VGL_DEPLOY_DIR}/testing"
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/testing
+            "${VGL_DEPLOY_DIR}/testing"
+  )
+  add_custom_target(vgl_testing ALL DEPENDS "${VGL_DEPLOY_DIR}/testing")
+  add_dependencies(${PROJECT_NAME} vgl_testing)
 endif()
 
 # JSLint tests.
