@@ -23,7 +23,7 @@ vglModule.trackballInteractorStyle = function() {
   if (!(this instanceof vglModule.trackballInteractorStyle)) {
     return new vglModule.trackballInteractorStyle();
   }
-  ogs.vgl.interactorStyle.call(this);
+  vglModule.interactorStyle.call(this);
   var m_that = this,
       m_leftMouseButtonDown = false,
       m_rightMouseButtonDown = false,
@@ -113,10 +113,12 @@ vglModule.trackballInteractorStyle = function() {
     if (m_leftMouseButtonDown) {
       m_camera.rotate((m_mouseLastPos.x - m_currentMousePos.x),
       (m_mouseLastPos.y - m_currentMousePos.y));
+      m_renderer.resetCameraClippingRange();
       $(m_that).trigger(vglModule.command.leftButtonPressEvent);
     }
     if (m_rightMouseButtonDown) {
       m_camera.zoom(m_dy);
+      m_renderer.resetCameraClippingRange();
       $(m_that).trigger(vglModule.command.rightButtonPressEvent);
     }
     m_mouseLastPos.x = m_currentMousePos.x;
@@ -211,4 +213,4 @@ vglModule.trackballInteractorStyle = function() {
   };
   return this;
 };
-inherit(vglModule.trackballInteractorStyle, ogs.vgl.interactorStyle);
+inherit(vglModule.trackballInteractorStyle, vglModule.interactorStyle);

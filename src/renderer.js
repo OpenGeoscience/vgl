@@ -252,6 +252,11 @@ vglModule.renderer = function() {
         j = null,
         k = null;
 
+    if (typeof bounds === 'undefined') {
+      m_camera.computeBounds();
+      bounds = m_camera.bounds();
+    }
+
     // Set the max near clipping plane and the min far clipping plane
     range[0] = a * bounds[0] + b * bounds[2] + c * bounds[4] + d;
     range[1] = 1e-18;
