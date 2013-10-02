@@ -3,10 +3,10 @@
   <head>
     <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
     <script src="http://code.jquery.com/ui/1.10.1/jquery-ui.js"></script>
-    <script type="text/javascript" src="/common/js/bootstrap.js"></script>
-    <script type="text/javascript" src="/common/js/gl-matrix.js"></script>
-    <script type="text/javascript" src="/common/js/select2.min.js"></script>
-    <script type="text/javascript" src="/lib/geoweb.min.js"></script>
+    <script type="text/javascript" src="/testing/common/js/bootstrap.js"></script>
+    <script type="text/javascript" src="/testing/common/js/gl-matrix.js"></script>
+    <script type="text/javascript" src="/testing/common/js/select2.min.js"></script>
+    <script type="text/javascript" src="/web/lib/vgl.min.js"></script>
     <script>
       var data = { "type": "FeatureCollection",
         "features": [
@@ -38,16 +38,16 @@
         ]
       };
       function doMouseDown(event){
-        var pick = ogs.vgl.picker();
+        var pick = vglModule.picker();
         var r = pick.pick(event.pageX, event.pageY, renderer);
         console.log([event.pageX, event.pageY, r]);
       }
 
       var renderer;
-      var testDrawSphere = {};
-      testDrawSphere.main = function() {
+      var testPicking = {};
+      testPicking.main = function() {
         var node = document.getElementById("glcanvas");
-        var viewer = ogs.vgl.viewer(node);
+        var viewer = vglModule.viewer(node);
         viewer.init();
 
         node.addEventListener("mousedown", doMouseDown, false);
@@ -55,28 +55,26 @@
         viewer.renderWindow().resize($(node).width(), $(node).height());
         renderer = viewer.renderWindow().activeRenderer();
 
-        var reader = ogs.vgl.geojsonReader();
+        var reader = vglModule.geojsonReader();
         var geoms = reader.readGJObject(data);
 
         for (var i = 0; i < geoms.length; ++i) {
-          var mapper = ogs.vgl.mapper();
+          var mapper = vglModule.mapper();
           mapper.setGeometryData(geoms[i]);
-
-          var material = ogs.vgl.utils.createGeometryMaterial();
-
-          var actor = ogs.vgl.actor();
+          var material = vglModule.utils.createGeometryMaterial();
+          var actor = vglModule.actor();
           actor.setMapper(mapper);
           actor.setMaterial(material);
           renderer.addActor(actor);
         }
 
-        renderer.setBackgroundColor(0.0, 0.0, 0.0, 1.0);
+        renderer.setBackgroundColor(1.0, 1.0, 1.0, 1.0);
         renderer.resetCamera();
         viewer.render();
       }
     </script>
   </head>
-  <body onload="testDrawSphere.main()">
+  <body onload="testPicking.main()">
     <div>
       <!-- It is important that canvas has height and width -->
       <canvas id="glcanvas" width="400px" height="400px"></canvas>
