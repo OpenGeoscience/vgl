@@ -51,9 +51,12 @@ set(_source_files
   picker.js
 )
 
+# VGL requires a deployment directory
 if (NOT EXISTS VGL_DEPLOY_DIR)
-  set(VGL_DEPLOY_DIR "${CMAKE_CURRENT_BINARY_DIR}/deploy" CACHE PATH "" FORCE)
-  set(VGL_DEPLOY_LIB_DIR "${VGL_DEPLOY_DIR}/web/lib" CACHE PATH "" FORCE)
+  set(VGL_DEPLOY_DIR "${CMAKE_CURRENT_BINARY_DIR}/deploy"
+      CACHE PATH "PATH to deployment directory" FORCE)
+  set(VGL_DEPLOY_LIB_DIR "${VGL_DEPLOY_DIR}/web/lib" CACHE PATH
+      "Path to deployment library directory" FORCE)
 endif()
 
 # Create deploy directory if it does not exists
@@ -62,6 +65,12 @@ if(NOT EXISTS "${VGL_DEPLOY_LIB_DIR}")
     COMMAND ${CMAKE_COMMAND} -E make_directory "${VGL_DEPLOY_LIB_DIR}"
   )
   add_custom_target(vgl_pre_deploy ALL DEPENDS ${VGL_DEPLOY_LIB_DIR})
+endif()
+
+# Enable developers to set data directory for testing purposes
+if(NOT EXISTS "${VGL_DATA_DIR}")
+  set(VGL_DATA_DIR "" CACHE PATH
+      "Path to directory containing data for testing" FORCE)
 endif()
 
 set(_min_js_file ${VGL_DEPLOY_LIB_DIR}/vgl.min.js)
@@ -113,12 +122,26 @@ if (BUILD_TESTING)
   include(CTest)
   enable_testing()
 
+  if(EXISTS "${VGL_DATA_DIR}" AND IS_DIRECTORY "${VGL_DATA_DIR}")
+    message("[info] VGL data directory is set to ${VGL_DATA_DIR}")
+  else()
+    message(FATAL_ERROR "VGL testing requires valid data directory")
+  endif()
+
   add_custom_command(
-    OUTPUT "${VGL_DEPlOY_DIR}/testing"
+    OUTPUT "${VGL_DEPLOY_DIR}/data"
+    COMMAND ${CMAKE_COMMAND} -E copy_directory "${VGL_DATA_DIR}"
+            "${VGL_DEPLOY_DIR}/data"
+  )
+  add_custom_target(vgl_data ALL DEPENDS "${VGL_DEPLOY_DIR}/data")
+  add_dependencies(${PROJECT_NAME} vgl_data)
+
+  add_custom_command(
+    OUTPUT "${VGL_DEPLOY_DIR}/testing"
     COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/testing
             "${VGL_DEPLOY_DIR}/testing"
   )
-  add_custom_target(vgl_testing ALL DEPENDS "${VGL_DEPlOY_DIR}/testing")
+  add_custom_target(vgl_testing ALL DEPENDS "${VGL_DEPLOY_DIR}/testing")
   add_dependencies(${PROJECT_NAME} vgl_testing)
 endif()
 
