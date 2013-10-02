@@ -3,10 +3,10 @@
   <head>
     <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
     <script src="http://code.jquery.com/ui/1.10.1/jquery-ui.js"></script>
-    <script type="text/javascript" src="/common/js/bootstrap.js"></script>
-    <script type="text/javascript" src="/common/js/gl-matrix.js"></script>
-    <script type="text/javascript" src="/common/js/select2.min.js"></script>
-    <script type="text/javascript" src="/lib/geoweb.min.js"></script>
+    <script type="text/javascript" src="/testing/common/js/bootstrap.js"></script>
+    <script type="text/javascript" src="/testing/common/js/gl-matrix.js"></script>
+    <script type="text/javascript" src="/testing/common/js/select2.min.js"></script>
+    <script type="text/javascript" src="/web/lib/vgl.min.js"></script>
     <script>
       var data = {};
 
@@ -20,7 +20,7 @@
         var renderer = viewer.renderWindow().activeRenderer();
 
         var reader = ogs.vgl.geojsonReader();
-        $.getJSON("/data/sphere_big.json", {
+        $.getJSON("/data/countries.json", {
           format: "json"
           })
         .done(function(data) {
@@ -35,10 +35,10 @@
             var actor = ogs.vgl.actor();
             actor.setMapper(mapper);
             actor.setMaterial(material);
-            // renderer.addActor(actor);
+            renderer.addActor(actor);
           }
 
-          renderer.setBackgroundColor(0.0, 0.0, 0.0, 1.0);
+          renderer.setBackgroundColor(1.0, 1.0, 1.0, 1.0);
           var interactorStyle = ogs.vgl.trackballInteractorStyle();
           viewer.setInteractorStyle(interactorStyle);
 
@@ -52,46 +52,12 @@
           $(interactorStyle).on(ogs.vgl.command.middleButtonPressEvent, viewer.render);
           $(interactorStyle).on(ogs.vgl.command.rightButtonPressEvent, viewer.render);
 
-          //viewer.render();
-        });
-
-        // Read country data now
-        $.getJSON("/data/countries.json", {
-          format: "json"
-          })
-        .done(function(data) {
-          var geoms = reader.readGJObject(data),
-              index = 0,
-              sourceData = null,
-              sourceDataArray = null,
-              stride = null,
-              offset = null,
-              noOfComponents = null,
-              sizeOfDataType = null,
-              ellipsoid = ogs.geo.ellipsoid.WGS84;
-
-          for (var i = 0; i < geoms.length; ++i) {
-            // console.log('x, y, z before', x, y, z);
-            ellipsoid.transformGeometry(geoms[i]);
-          }
-
-          var mapper = ogs.vgl.groupMapper();
-          mapper.setGeometryDataArray(geoms);
-
-          var material = ogs.vgl.utils.createGeometryMaterial();
-
-          var actor = ogs.vgl.actor();
-          actor.setMapper(mapper);
-          actor.setMaterial(material);
-
-          renderer.addActor(actor);
           renderer.resetCamera();
+          renderer.camera().setClippingRange(0.1, 10000.0);
           viewer.render();
-        }).fail(function(error) {
-          console.log('[error] Error parsing countries data. Message: ', error);
         });
-      }
-    </script>
+    }
+   </script>
   </head>
   <body onload="testDrawSphere.main()">
     <div>
