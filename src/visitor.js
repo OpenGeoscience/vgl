@@ -72,7 +72,7 @@ vglModule.visitor = function() {
    * Pop model-view matrix from the stack
    */
   ////////////////////////////////////////////////////////////////////////////
-  this..popModelViewMatrix = function() {
+  this.popModelViewMatrix = function() {
     this.m_modelViewMatrixStack.pop();
   };
 
