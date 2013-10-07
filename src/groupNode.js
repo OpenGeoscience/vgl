@@ -27,6 +27,9 @@ vglModule.groupNode = function() {
 
   var m_children = [];
 
+  // Reference to base class methods
+  this.b_setVisible = this.setVisible;
+
   ////////////////////////////////////////////////////////////////////////////
   /**
    * Turn on / off visibility
@@ -38,7 +41,7 @@ vglModule.groupNode = function() {
   this.setVisible = function(flag) {
     var i;
 
-    if (node.prototype.setVisible.call(this, flag) !== true) {
+    if (this.b_setVisible(flag) !== true) {
       return false;
     }
 
