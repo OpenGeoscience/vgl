@@ -1,5 +1,6 @@
 set(_tests
   drawCountries.py
+  pickObjects.py
 )
 
 foreach(_test ${_tests})
