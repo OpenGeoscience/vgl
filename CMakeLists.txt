@@ -49,6 +49,7 @@ set(_source_files
   lineSource.js
   utils.js
   picker.js
+  vtkReader.js
 )
 
 # VGL requires a deployment directory
