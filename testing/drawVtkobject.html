@@ -9,12 +9,10 @@
     <script type="text/javascript" src="/web/lib/vgl.min.js"></script>
     <script>
 
-        var lineString = "zQwAAEx9AAAAAAAAwAAAAMAAAADAAACAvwAAAMAAAADAAACAvwAAgL8AAADAAAAAwAAAgL8AAADAAAAAwAAAAMAAAIC/AACAvwAAAMAAAIC/AACAvwAAgL8AAIC/AAAAwAAAgL8AAIC/AAAAAAAAAMAAAADAAAAAAAAAgL8AAADAAAAAAAAAAMAAAIC/AAAAAAAAgL8AAIC/AACAPwAAAMAAAADAAACAPwAAgL8AAADAAACAPwAAAMAAAIC/AACAPwAAgL8AAIC/AAAAQAAAAMAAAADAAAAAQAAAgL8AAADAAAAAQAAAAMAAAIC/AAAAQAAAgL8AAIC/AACAvwAAAAAAAADAAAAAwAAAAAAAAADAAACAvwAAAAAAAIC/AAAAwAAAAAAAAIC/AAAAAAAAAAAAAADAAAAAAAAAAAAAAIC/AACAPwAAAAAAAADAAACAPwAAAAAAAIC/AAAAQAAAAAAAAADAAAAAQAAAAAAAAIC/AACAvwAAgD8AAADAAAAAwAAAgD8AAADAAACAvwAAgD8AAIC/AAAAwAAAgD8AAIC/AAAAAAAAgD8AAADAAAAAAAAAgD8AAIC/AACAPwAAgD8AAADAAACAPwAAgD8AAIC/AAAAQAAAgD8AAADAAAAAQAAAgD8AAIC/AACAvwAAAEAAAADAAAAAwAAAAEAAAADAAACAvwAAAEAAAIC/AAAAwAAAAEAAAIC/AAAAAAAAAEAAAADAAAAAAAAAAEAAAIC/AACAPwAAAEAAAADAAACAPwAAAEAAAIC/AAAAQAAAAEAAAADAAAAAQAAAAEAAAIC/AAAAwAAAAMAAAAAAAACAvwAAAMAAAAAAAACAvwAAgL8AAAAAAAAAwAAAgL8AAAAAAAAAAAAAAMAAAAAAAAAAAAAAgL8AAAAAAACAPwAAAMAAAAAAAACAPwAAgL8AAAAAAAAAQAAAAMAAAAAAAAAAQAAAgL8AAAAAAACAvwAAAAAAAAAAAAAAwAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAPwAAAAAAAAAAAAAAQAAAAAAAAAAAAACAvwAAgD8AAAAAAAAAwAAAgD8AAAAAAAAAAAAAgD8AAAAAAACAPwAAgD8AAAAAAAAAQAAAgD8AAAAAAACAvwAAAEAAAAAAAAAAwAAAAEAAAAAAAAAAAAAAAEAAAAAAAACAPwAAAEAAAAAAAAAAQAAAAEAAAAAAAAAAwAAAAMAAAIA/AACAvwAAAMAAAIA/AACAvwAAgL8AAIA/AAAAwAAAgL8AAIA/AAAAAAAAAMAAAIA/AAAAAAAAgL8AAIA/AACAPwAAAMAAAIA/AACAPwAAgL8AAIA/AAAAQAAAAMAAAIA/AAAAQAAAgL8AAIA/AACAvwAAAAAAAIA/AAAAwAAAAAAAAIA/AAAAAAAAAAAAAIA/AACAPwAAAAAAAIA/AAAAQAAAAAAAAIA/AACAvwAAgD8AAIA/AAAAwAAAgD8AAIA/AAAAAAAAgD8AAIA/AACAPwAAgD8AAIA/AAAAQAAAgD8AAIA/AACAvwAAAEAAAIA/AAAAwAAAAEAAAIA/AAAAAAAAAEAAAIA/AACAPwAAAEAAAIA/AAAAQAAAAEAAAIA/AAAAwAAAAMAAAABAAACAvwAAAMAAAABAAACAvwAAgL8AAABAAAAAwAAAgL8AAABAAAAAAAAAAMAAAABAAAAAAAAAgL8AAABAAACAPwAAAMAAAABAAACAPwAAgL8AAABAAAAAQAAAAMAAAABAAAAAQAAAgL8AAABAAACAvwAAAAAAAABAAAAAwAAAAAAAAABAAAAAAAAAAAAAAABAAACAPwAAAAAAAABAAAAAQAAAAAAAAABAAACAvwAAgD8AAABAAAAAwAAAgD8AAABAAAAAAAAAgD8AAABAAACAPwAAgD8AAABAAAAAQAAAgD8AAABAAACAvwAAAEAAAABAAAAAwAAAAEAAAABAAAAAAAAAAEAAAABAAACAPwAAAEAAAABAAAAAQAAAAEAAAABAWXfj/5a3///R2un/haj8/3WY9v/B1PT/97yh/7LM+/+dvf//293e/87a6//2o4X/gqb7/8DU9f+wyvz/8sq1/3WY9v+iwf//krT+/8zZ7f/Q2ur/e5/5//ezlv+xy/z/3N3d//KSdP+/0/b/9cSs/5q7///M2e3/osH//1Vy3//h29j/gaT7/7HL/P/vzr3/kLL+/9Lb6P9xk/T/nr7//3OW9f87TMD/ocD//1Rw3v96nfj/rsn8/2GB6f+NsP7/VHDe/2+S8/+StP7/39zZ/++Ia//T2+f/69PG/91fS//R2un/9Z+A/67J/P/o1sz/6HZc/9Xb5f/MQDn/8Y1v/+rVyf/2vaL/psT+//aggf/xzLj/wdT0/8TW8/9vkvP/09vn/7LM+/+Mr/7/dZj2/8HU9P/3vKH/ssz7/87a6//2o4X/sMr8//LKtf+StP7/zNnt//ezlv+xy/z/8pJ0//XErP/M2e3/4dvY/4Gk+//vzr3/0tvo/56+//+hwP//VHDe/67J/P+NsP7/b5Lz/1l34/+Wt///0drp/4Wo/P+dvf//293e/4Km+//A1PX/dZj2/6LB///Q2ur/e5/5/9zd3f+/0/b/mrv//6LB//9Vct//scv8/5Cy/v9xk/T/c5b1/ztMwP96nfj/YYHp/1Rw3v9YAgAAAAABAAEAAgADAAIAAAADAAQABQAFAAYABwAGAAQABwAAAAQAAQAFAAMABwACAAYAAQAIAAgACQACAAkABQAKAAoACwAGAAsACAAKAAkACwAIAAwADAANAAkADQAKAA4ADgAPAAsADwAMAA4ADQAPAAwAEAAQABEADQARAA4AEgASABMADwATABAAEgARABMAAgAUABUAFAADABUABgAWABcAFgAHABcAFQAXABQAFgAJABgAFAAYAAsAGQAWABkAGAAZAA0AGgAYABoADwAbABkAGwAaABsAEQAcABoAHAATAB0AGwAdABwAHQAUAB4AHwAeABUAHwAWACAAIQAgABcAIQAfACEAHgAgABgAIgAeACIAGQAjACAAIwAiACMAGgAkACIAJAAbACUAIwAlACQAJQAcACYAJAAmAB0AJwAlACcAJgAnAB4AKAApACgAHwApACAAKgArACoAIQArACkAKwAoACoAIgAsACgALAAjAC0AKgAtACwALQAkAC4ALAAuACUALwAtAC8ALgAvACYAMAAuADAAJwAxAC8AMQAwADEAMgAzADMANAA1ADQAMgA1AAQAMgAFADMABwA1AAYANAAzADYANgA3ADQANwAKADYACwA3ADYAOAA4ADkANwA5AA4AOAAPADkAOAA6ADoAOwA5ADsAEgA6ABMAOwA0ADwAPQA8ADUAPQAXAD0AFgA8ADcAPgA8AD4AGQA+ADkAPwA+AD8AGwA/ADsAQAA/AEAAHQBAADwAQQBCAEEAPQBCACEAQgAgAEEAPgBDAEEAQwAjAEMAPwBEAEMARAAlAEQAQABFAEQARQAnAEUAQQBGAEcARgBCAEcAKwBHACoARgBDAEgARgBIAC0ASABEAEkASABJAC8ASQBFAEoASQBKADEASgBLAEwATABNAE4ATQBLAE4AMgBLADMATAA1AE4ANABNAEwATwBPAFAATQBQADYATwA3AFAATwBRAFEAUgBQAFIAOABRADkAUgBRAFMAUwBUAFIAVAA6AFMAOwBUAE0AVQBWAFUATgBWAD0AVgA8AFUAUABXAFUAVwA+AFcAUgBYAFcAWAA/AFgAVABZAFgAWQBAAFkAVQBaAFsAWgBWAFsAQgBbAEEAWgBXAFwAWgBcAEMAXABYAF0AXABdAEQAXQBZAF4AXQBeAEUAXgBaAF8AYABfAFsAYABHAGAARgBfAFwAYQBfAGEASABhAF0AYgBhAGIASQBiAF4AYwBiAGMASgBjAGQAZQBlAGYAZwBmAGQAZwBLAGQATABlAE4AZwBNAGYAZQBoAGgAaQBmAGkATwBoAFAAaQBoAGoAagBrAGkAawBRAGoAUgBrAGoAbABsAG0AawBtAFMAbABUAG0AZgBuAG8AbgBnAG8AVgBvAFUAbgBpAHAAbgBwAFcAcABrAHEAcABxAFgAcQBtAHIAcQByAFkAcgBuAHMAdABzAG8AdABbAHQAWgBzAHAAdQBzAHUAXAB1AHEAdgB1AHYAXQB2AHIAdwB2AHcAXgB3AHMAeAB5AHgAdAB5AGAAeQBfAHgAdQB6AHgAegBhAHoAdgB7AHoAewBiAHsAdwB8AHsAfABjAHwAAACAPwAAAAAAAAAAAAAAAAAAAAAAAIA/AAAAAAAAAAAAAAAAAAAAAAAAgD8AAAAAAAAAAAAAAAAAAAAAAACAPw=="
-
       var data = {};
 
-      var makesphere = {};
-      makesphere.main = function() {
+      var testDrawCube = {};
+      testDrawCube.main = function() {
         var node = document.getElementById("glcanvas");
         var viewer = ogs.vgl.viewer(node);
         viewer.init();
@@ -23,38 +21,42 @@
         var renderer = viewer.renderWindow().activeRenderer();
 
         var reader = ogs.vgl.vtkReader();
-        var geom = reader.parseObject(lineString);
+        $.get("/data/vtkSphere.dat", {
+          })
+        .done(function(data) {
+          var geom = reader.parseObject(data);
 
-        var mapper = ogs.vgl.mapper();
-        mapper.setGeometryData(geom);
+          var mapper = ogs.vgl.mapper();
+          mapper.setGeometryData(geom);
 
-        var material = ogs.vgl.utils.createGeometryMaterial();
+          var material = ogs.vgl.utils.createGeometryMaterial();
 
-        var actor = ogs.vgl.actor();
-        actor.setMapper(mapper);
-        actor.setMaterial(material);
-        renderer.addActor(actor);
+          var actor = ogs.vgl.actor();
+          actor.setMapper(mapper);
+          actor.setMaterial(material);
+          renderer.addActor(actor);
 
-        renderer.setBackgroundColor(1.0, 1.0, 1.0, 1.0);
-        var interactorStyle = ogs.vgl.trackballInteractorStyle();
-        viewer.setInteractorStyle(interactorStyle);
+          renderer.setBackgroundColor(1.0, 1.0, 1.0, 1.0);
+          var interactorStyle = ogs.vgl.trackballInteractorStyle();
+          viewer.setInteractorStyle(interactorStyle);
 
-        document.onmousedown = viewer.handleMouseDown;
-        document.onmouseup = viewer.handleMouseUp;
-        document.onmousemove = viewer.handleMouseMove;
-        document.oncontextmenu = viewer.handleContextMenu;
-        HTMLCanvasElement.prototype.relMouseCoords = viewer.relMouseCoords;
+          document.onmousedown = viewer.handleMouseDown;
+          document.onmouseup = viewer.handleMouseUp;
+          document.onmousemove = viewer.handleMouseMove;
+          document.oncontextmenu = viewer.handleContextMenu;
+          HTMLCanvasElement.prototype.relMouseCoords = viewer.relMouseCoords;
 
-        $(interactorStyle).on(ogs.vgl.command.leftButtonPressEvent, viewer.render);
-        $(interactorStyle).on(ogs.vgl.command.middleButtonPressEvent, viewer.render);
-        $(interactorStyle).on(ogs.vgl.command.rightButtonPressEvent, viewer.render);
+          $(interactorStyle).on(ogs.vgl.command.leftButtonPressEvent, viewer.render);
+          $(interactorStyle).on(ogs.vgl.command.middleButtonPressEvent, viewer.render);
+          $(interactorStyle).on(ogs.vgl.command.rightButtonPressEvent, viewer.render);
 
-        renderer.resetCamera();
-        viewer.render();
-    }
+          renderer.resetCamera();
+          viewer.render();
+        });
+     }
     </script>
   </head>
-  <body onload="makesphere.main()">
+  <body onload="testDrawCube.main()">
     <canvas id="glcanvas" width="800px" height="600px"></canvas>
   </body>
 </html>
