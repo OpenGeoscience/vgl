@@ -12,35 +12,38 @@
 
       var testDrawCountries = {};
       testDrawCountries.main = function() {
-        var node = document.getElementById("glcanvas");
-        var viewer = ogs.vgl.viewer(node);
+        var node = document.getElementById("glcanvas"),
+            viewer = vglModule.viewer(node), renderer,
+            reader = vglModule.geojsonReader(),
+            geoms, i, mapper, material, actor,
+            interactorStyle;
+
+        interactorStyle = vglModule.trackballInteractorStyle();
+
         viewer.init();
-
         viewer.renderWindow().resize($(node).width(), $(node).height());
-        var renderer = viewer.renderWindow().activeRenderer();
+        viewer.setInteractorStyle(interactorStyle);
 
-        var reader = ogs.vgl.geojsonReader();
+        renderer = viewer.renderWindow().activeRenderer();
+
         $.getJSON("/data/countries.json", {
           format: "json"
           })
         .done(function(data) {
-          var geoms = reader.readGJObject(data);
+          geoms = reader.readGJObject(data);
 
-          for (var i = 0; i < geoms.length; ++i) {
-            var mapper = ogs.vgl.mapper();
+          for (i = 0; i < geoms.length; ++i) {
+            mapper = ogs.vgl.mapper();
             mapper.setGeometryData(geoms[i]);
 
-            var material = ogs.vgl.utils.createGeometryMaterial();
+            material = vglModule.utils.createGeometryMaterial();
 
-            var actor = ogs.vgl.actor();
+            actor = vglModule.actor();
             actor.setMapper(mapper);
             actor.setMaterial(material);
+
             renderer.addActor(actor);
           }
-
-          renderer.setBackgroundColor(1.0, 1.0, 1.0, 1.0);
-          var interactorStyle = ogs.vgl.trackballInteractorStyle();
-          viewer.setInteractorStyle(interactorStyle);
 
           document.onmousedown = viewer.handleMouseDown;
           document.onmouseup = viewer.handleMouseUp;
@@ -52,6 +55,7 @@
           $(interactorStyle).on(ogs.vgl.command.middleButtonPressEvent, viewer.render);
           $(interactorStyle).on(ogs.vgl.command.rightButtonPressEvent, viewer.render);
 
+          renderer.setBackgroundColor(1.0, 1.0, 1.0, 1.0);
           renderer.resetCamera();
           viewer.render();
         });
