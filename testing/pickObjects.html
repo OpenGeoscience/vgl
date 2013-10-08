@@ -36,39 +36,48 @@
               }
             }
         ]
-      };
-      function doMouseDown(event){
-        var pick = vglModule.picker();
-        var r = pick.pick(event.pageX, event.pageY, renderer);
-        console.log([event.pageX, event.pageY, r]);
+      }, renderer = null;
+
+      function onMouseDown(event){
+        var pick = vglModule.picker(),
+            r = pick.pick(event.pageX, event.pageY, renderer);
+            $('#display-pick').text("Picked - [" + event.pageX + "," +
+                                    event.pageY + "," + r + "]");
       }
 
-      var renderer;
       var testPicking = {};
       testPicking.main = function() {
-        var node = document.getElementById("glcanvas");
-        var viewer = vglModule.viewer(node);
+        var node = document.getElementById("glcanvas"),
+            viewer = vglModule.viewer(node),
+            reader = vglModule.geojsonReader(),
+            geoms, i, material, actor, mapper;
+
+
+        // Initialize the viewer
         viewer.init();
-
-        node.addEventListener("mousedown", doMouseDown, false);
-
         viewer.renderWindow().resize($(node).width(), $(node).height());
+
+        // Listen for mouse down events
+        node.addEventListener("mousedown", onMouseDown, false);
+
         renderer = viewer.renderWindow().activeRenderer();
 
-        var reader = vglModule.geojsonReader();
-        var geoms = reader.readGJObject(data);
-
-        for (var i = 0; i < geoms.length; ++i) {
-          var mapper = vglModule.mapper();
+        geoms = reader.readGJObject(data);
+        for (i = 0; i < geoms.length; ++i) {
+          mapper = vglModule.mapper();
           mapper.setGeometryData(geoms[i]);
-          var material = vglModule.utils.createGeometryMaterial();
-          var actor = vglModule.actor();
+
+          material = vglModule.utils.createGeometryMaterial();
+
+          actor = vglModule.actor();
           actor.setMapper(mapper);
           actor.setMaterial(material);
+
           renderer.addActor(actor);
         }
 
-        renderer.setBackgroundColor(1.0, 1.0, 1.0, 1.0);
+        // Setup renderer and then render the scene
+        renderer.setBackgroundColor(0.9, 0.9, 0.9, 1.0);
         renderer.resetCamera();
         viewer.render();
       }
@@ -79,5 +88,6 @@
       <!-- It is important that canvas has height and width -->
       <canvas id="glcanvas" width="400px" height="400px"></canvas>
     </div>
+    <div><span id="display-pick">Aashish</span></div>
   </body>
 </html>

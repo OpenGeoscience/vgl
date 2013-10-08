@@ -128,6 +128,7 @@ if (BUILD_TESTING)
     message(FATAL_ERROR "VGL testing requires valid data directory")
   endif()
 
+  # Non-GUI tests
   add_custom_command(
     OUTPUT "${VGL_DEPLOY_DIR}/data"
     COMMAND ${CMAKE_COMMAND} -E copy_directory "${VGL_DATA_DIR}"
@@ -143,6 +144,10 @@ if (BUILD_TESTING)
   )
   add_custom_target(vgl_testing ALL DEPENDS "${VGL_DEPLOY_DIR}/testing")
   add_dependencies(${PROJECT_NAME} vgl_testing)
+
+  # GUI testing (requires python)
+  find_package(PythonInterp REQUIRED)
+  add_subdirectory(src)
 endif()
 
 # JSLint tests.
