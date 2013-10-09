@@ -18,15 +18,6 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 
-base64Chars =
-    ['A','B','C','D','E','F','G','H','I','J','K','L','M',
-     'N','O','P','Q','R','S','T','U','V','W','X','Y','Z',
-     'a','b','c','d','e','f','g','h','i','j','k','l','m',
-     'n','o','p','q','r','s','t','u','v','w','x','y','z',
-     '0','1','2','3','4','5','6','7','8','9','+','/'];
-
-reverseBase64Chars = [];
-
 vglModule.vtkReader = function() {
     'use strict';
 
@@ -34,17 +25,22 @@ vglModule.vtkReader = function() {
         return new vglModule.vtkReader();
     }
 
+    var m_base64Chars =
+        ['A','B','C','D','E','F','G','H','I','J','K','L','M',
+         'N','O','P','Q','R','S','T','U','V','W','X','Y','Z',
+         'a','b','c','d','e','f','g','h','i','j','k','l','m',
+         'n','o','p','q','r','s','t','u','v','w','x','y','z',
+         '0','1','2','3','4','5','6','7','8','9','+','/'],
+        m_reverseBase64Chars = [],
+        END_OF_INPUT = -1,
+        m_base64Str = "",
+        m_base64Count = 0,
+        m_pos = 0;
 
-    var END_OF_INPUT = -1;
-    var base64Str = "";
-    var base64Count = 0;
-    var pos = 0;
 
-    for (var i = 0; i < base64Chars.length; ++i)
-    {
-        reverseBase64Chars[base64Chars[i]] = i;
-    };
-
+    for (var i=0; i < m_base64Chars.length; i++) {
+        m_reverseBase64Chars[m_base64Chars[i]] = i;
+    }
 
     ////////////////////////////////////////////////////////////////////////////
     /**
