@@ -68,25 +68,32 @@ vglModule.vtkReader = function() {
      */
     ////////////////////////////////////////////////////////////////////////////
     this.readReverseBase64 = function () {
-        if (!this.base64Str) {
-            return this.END_OF_INPUT;
+        if (!m_base64Str) {
+            return END_OF_INPUT;
+        }
+
+        if (!m_reverseBase64Chars) {
+            for (var i = 0; i < m_base64Chars.length; ++i) {
+                m_reverseBase64Chars[m_base64Chars[i]] = i;
+            }
         }
 
         while (true) {
-            if (this.base64Count >= this.base64Str.length) {
-                return this.END_OF_INPUT;
+            if (m_base64Count >= m_base64Str.length) {
+                return END_OF_INPUT;
             }
-            var nextCharacter = this.base64Str.charAt(this.base64Count);
-            this.base64Count++;
-            if (reverseBase64Chars[nextCharacter]) {
-                return reverseBase64Chars[nextCharacter];
+            var nextCharacter = m_base64Str.charAt(m_base64Count);
+            m_base64Count++;
+
+            if (m_reverseBase64Chars[nextCharacter]) {
+                return m_reverseBase64Chars[nextCharacter];
             }
             if (nextCharacter == 'A') {
                 return 0;
             }
         }
 
-        return this.END_OF_INPUT;
+        return END_OF_INPUT;
     };
 
     ////////////////////////////////////////////////////////////////////////////
@@ -98,21 +105,21 @@ vglModule.vtkReader = function() {
      */
     ////////////////////////////////////////////////////////////////////////////
     this.decode64 = function(str) {
-        this.base64Str = str;
-        this.base64Count = 0;
+        m_base64Str = str;
+        m_base64Count = 0;
 
         var result = '';
         var inBuffer = new Array(4);
         var done = false;
         while (!done &&
-               (inBuffer[0] = this.readReverseBase64()) != this.END_OF_INPUT &&
-               (inBuffer[1] = this.readReverseBase64()) != this.END_OF_INPUT) {
+               (inBuffer[0] = this.readReverseBase64()) != END_OF_INPUT &&
+               (inBuffer[1] = this.readReverseBase64()) != END_OF_INPUT) {
             inBuffer[2] = this.readReverseBase64();
             inBuffer[3] = this.readReverseBase64();
             result += this.ntos((((inBuffer[0] << 2) & 0xff)| inBuffer[1] >> 4));
-            if (inBuffer[2] != this.END_OF_INPUT) {
+            if (inBuffer[2] != END_OF_INPUT) {
                 result +=  this.ntos((((inBuffer[1] << 4) & 0xff)| inBuffer[2] >> 2));
-                if (inBuffer[3] != this.END_OF_INPUT) {
+                if (inBuffer[3] != END_OF_INPUT) {
                     result +=  this.ntos((((inBuffer[2] << 6)  & 0xff) | inBuffer[3]));
                 } else {
                     done = true;
@@ -134,10 +141,10 @@ vglModule.vtkReader = function() {
      */
     ////////////////////////////////////////////////////////////////////////////
     this.readNumber = function(ss) {
-        var v = ((ss[this.pos++]) +
-                 (ss[this.pos++] << 8) +
-                 (ss[this.pos++] << 16) +
-                 (ss[this.pos++] << 24));
+        var v = ((ss[m_pos++]) +
+                 (ss[m_pos++] << 8) +
+                 (ss[m_pos++] << 16) +
+                 (ss[m_pos++] << 24));
         return v;
     };
 
@@ -155,7 +162,7 @@ vglModule.vtkReader = function() {
         var test = new Int8Array(numberOfPoints*4*3);
 
         for(i = 0; i < numberOfPoints*4*3; ++i) {
-            test[i] = ss[this.pos++];
+            test[i] = ss[m_pos++];
         }
 
         var points = new Float32Array(test.buffer);
@@ -176,10 +183,10 @@ vglModule.vtkReader = function() {
     this.readColorArray = function (numberOfPoints, ss, vglcolors) {
         var i,r,g,b;
         for(i = 0; i < numberOfPoints; ++i) {
-            r = ss[this.pos++]/255.0;
-            g = ss[this.pos++]/255.0;
-            b = ss[this.pos++]/255.0;
-            this.pos++;
+            r = ss[m_pos++]/255.0;
+            g = ss[m_pos++]/255.0;
+            b = ss[m_pos++]/255.0;
+            m_pos++;
             vglcolors.pushBack([r,g,b]);
         }
     };
@@ -210,9 +217,9 @@ vglModule.vtkReader = function() {
             ss[i] = data.charCodeAt(i) & 0xff;
         }
 
-        this.pos = 0;
+        m_pos = 0;
         size = this.readNumber(ss);
-        type = String.fromCharCode(ss[this.pos++]);
+        type = String.fromCharCode(ss[m_pos++]);
 
         //-=-=-=-=-=[ LINES ]=-=-=-=-=-
         if (type == 'L') {
@@ -237,7 +244,7 @@ vglModule.vtkReader = function() {
             numberOfIndex = this.readNumber(ss);
             test = new Int8Array(numberOfIndex*2);
             for(i = 0; i < numberOfIndex*2; ++i) {
-                test[i] = ss[this.pos++];
+                test[i] = ss[m_pos++];
             }
 
             index = new Uint16Array(test.buffer);
@@ -248,7 +255,7 @@ vglModule.vtkReader = function() {
             //TODO: renderer is not doing anything with this yet
             test = new Int8Array(16*4);
             for(i=0; i<16*4; i++)
-            test[i] = ss[this.pos++];
+            test[i] = ss[m_pos++];
             matrix = new Float32Array(test.buffer);
             */
         }
@@ -286,7 +293,7 @@ vglModule.vtkReader = function() {
             numberOfIndex = this.readNumber(ss);
             test = new Int8Array(numberOfIndex*2);
             for(i = 0; i < numberOfIndex*2; ++i) {
-                test[i] = ss[this.pos++];
+                test[i] = ss[m_pos++];
             }
             index = new Uint16Array(test.buffer);
             vgltriangles.setIndices(index);
@@ -296,7 +303,7 @@ vglModule.vtkReader = function() {
             //TODO: renderer is not doing anything with this yet
             test = new Int8Array(16*4);
             for(i=0; i<16*4; i++)
-            test[i] = ss[this.pos++];
+            test[i] = ss[m_pos++];
             matrix = new Float32Array(test.buffer);
 
             //Getting TCoord
@@ -335,7 +342,7 @@ vglModule.vtkReader = function() {
             //TODO: not used yet
             test = new Int8Array(16*4);
             for(i=0; i<16*4; i++)
-            test[i] = ss[this.pos++];
+            test[i] = ss[m_pos++];
             matrix = new Float32Array(test.buffer);
             */
         }
