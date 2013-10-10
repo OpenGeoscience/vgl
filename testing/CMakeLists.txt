@@ -1,5 +1,5 @@
 set(tests
-  drawVtkobject.html
+  drawVtkObject.html
   pickObjects.html
   drawCountries.html
 )
