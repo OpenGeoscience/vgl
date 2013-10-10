@@ -35,12 +35,17 @@ vglModule.vtkReader = function() {
         END_OF_INPUT = -1,
         m_base64Str = "",
         m_base64Count = 0,
-        m_pos = 0;
+        m_pos = 0,
+        i = null;
+
+        //initialize the array here if not already done.
+        if (m_reverseBase64Chars.length === 0) {
+            for ( i = 0; i < m_base64Chars.length; i++) {
+                m_reverseBase64Chars[m_base64Chars[i]] = i;
+            }
+        }
 
 
-    for (var i=0; i < m_base64Chars.length; i++) {
-        m_reverseBase64Chars[m_base64Chars[i]] = i;
-    }
 
     ////////////////////////////////////////////////////////////////////////////
     /**
@@ -51,12 +56,16 @@ vglModule.vtkReader = function() {
      */
     ////////////////////////////////////////////////////////////////////////////
     this.ntos = function (n) {
+        var unN,
+            uri;
+
         n = n.toString(16);
-        if (n.length == 1) {
+        if (n.length === 1) {
             n = '0' + n;
         }
         n = '%' + n;
 
+        /*global unescape*/
         return unescape(n);
     };
 
@@ -68,27 +77,23 @@ vglModule.vtkReader = function() {
      */
     ////////////////////////////////////////////////////////////////////////////
     this.readReverseBase64 = function () {
+        var nextCharacter;
+
         if (!m_base64Str) {
             return END_OF_INPUT;
-        }
-
-        if (!m_reverseBase64Chars) {
-            for (var i = 0; i < m_base64Chars.length; ++i) {
-                m_reverseBase64Chars[m_base64Chars[i]] = i;
-            }
         }
 
         while (true) {
             if (m_base64Count >= m_base64Str.length) {
                 return END_OF_INPUT;
             }
-            var nextCharacter = m_base64Str.charAt(m_base64Count);
+            nextCharacter = m_base64Str.charAt(m_base64Count);
             m_base64Count++;
 
             if (m_reverseBase64Chars[nextCharacter]) {
                 return m_reverseBase64Chars[nextCharacter];
             }
-            if (nextCharacter == 'A') {
+            if (nextCharacter === 'A') {
                 return 0;
             }
         }
@@ -105,22 +110,24 @@ vglModule.vtkReader = function() {
      */
     ////////////////////////////////////////////////////////////////////////////
     this.decode64 = function(str) {
+        var result = '',
+            inBuffer = new Array(4),
+            done = false;
+
         m_base64Str = str;
         m_base64Count = 0;
 
-        var result = '';
-        var inBuffer = new Array(4);
-        var done = false;
+        /*jslint bitwise: true*/
         while (!done &&
-               (inBuffer[0] = this.readReverseBase64()) != END_OF_INPUT &&
-               (inBuffer[1] = this.readReverseBase64()) != END_OF_INPUT) {
+               (inBuffer[0] = this.readReverseBase64()) !== END_OF_INPUT &&
+               (inBuffer[1] = this.readReverseBase64()) !== END_OF_INPUT) {
             inBuffer[2] = this.readReverseBase64();
             inBuffer[3] = this.readReverseBase64();
-            result += this.ntos((((inBuffer[0] << 2) & 0xff)| inBuffer[1] >> 4));
-            if (inBuffer[2] != END_OF_INPUT) {
-                result +=  this.ntos((((inBuffer[1] << 4) & 0xff)| inBuffer[2] >> 2));
-                if (inBuffer[3] != END_OF_INPUT) {
-                    result +=  this.ntos((((inBuffer[2] << 6)  & 0xff) | inBuffer[3]));
+            result += this.ntos((((inBuffer[0] << 2) & 0xff) | inBuffer[1] >> 4));
+            if (inBuffer[2] !== END_OF_INPUT) {
+                result +=  this.ntos((((inBuffer[1] << 4) & 0xff) | inBuffer[2] >> 2));
+                if (inBuffer[3] !== END_OF_INPUT) {
+                    result +=  this.ntos((((inBuffer[2] << 6) & 0xff) | inBuffer[3]));
                 } else {
                     done = true;
                 }
@@ -141,6 +148,7 @@ vglModule.vtkReader = function() {
      */
     ////////////////////////////////////////////////////////////////////////////
     this.readNumber = function(ss) {
+        /*jslint bitwise: true*/
         var v = ((ss[m_pos++]) +
                  (ss[m_pos++] << 8) +
                  (ss[m_pos++] << 16) +
@@ -158,14 +166,16 @@ vglModule.vtkReader = function() {
      */
     ////////////////////////////////////////////////////////////////////////////
     this.readF3Array = function(numberOfPoints, ss) {
-        var i;
-        var test = new Int8Array(numberOfPoints*4*3);
+        /*global Int8Array*/
+        var test = new Int8Array(numberOfPoints*4*3),
+            points = null, i;
 
         for(i = 0; i < numberOfPoints*4*3; ++i) {
             test[i] = ss[m_pos++];
         }
 
-        var points = new Float32Array(test.buffer);
+        /*global Float32Array*/
+        points = new Float32Array(test.buffer);
 
         return points;
     };
@@ -200,20 +210,19 @@ vglModule.vtkReader = function() {
      */
     ////////////////////////////////////////////////////////////////////////////
     this.parseObject = function(buffer) {
-        var ss = [];
-        var test;
-        var i;
-        var size, type;
-        var numberOfPoints, numberOfIndex;
-        var points, normals, colors, index, tcoord;
+        var geom = new vglModule.geometryData(), numberOfPoints,
+            numberOfIndex, points, normals, colors, index,
+            ss = [], test, i, size, type = null, data = null,
+            vglpoints = null, vglVertexes = null, vglcolors = null,
+            vgllines = null, indices = null, v1 = null,
+            vgltriangles = null;
 
-        //create the VGL data structure that we populate
-        var geom = new vglModule.geometryData();
         geom.setName("World");
 
         //dehexlify
-        var data = this.decode64(buffer);
+        data = this.decode64(buffer);
         for(i = 0; i < data.length; ++i) {
+            /*jslint bitwise: true*/
             ss[i] = data.charCodeAt(i) & 0xff;
         }
 
@@ -222,34 +231,40 @@ vglModule.vtkReader = function() {
         type = String.fromCharCode(ss[m_pos++]);
 
         //-=-=-=-=-=[ LINES ]=-=-=-=-=-
-        if (type == 'L') {
+        if (type === 'L') {
             numberOfPoints = this.readNumber(ss);
 
             //Getting Points
-            var vglpoints = new vglModule.sourceDataP3fv();
+            vglpoints = new vglModule.sourceDataP3fv();
             points = this.readF3Array(numberOfPoints, ss);
             for(i = 0; i < numberOfPoints; ++i) {
-                vglpoints.pushBack([points[i*3+0], points[i*3+1], points[i*3+2]]);
+                vglpoints.pushBack([points[i*3/*+0*/], points[i*3+1], points[i*3+2]]);
             }
             geom.addSource(vglpoints);
 
             //Getting Colors
-            var vglcolors = new vglModule.sourceDataC3fv();
+            vglcolors = new vglModule.sourceDataC3fv();
             this.readColorArray(numberOfPoints, ss, vglcolors);
             geom.addSource(vglcolors);
 
             //Getting connectivity
-            var vgllines = new vglModule.lines();
+            vgllines = new vglModule.lines();
             geom.addPrimitive(vgllines);
             numberOfIndex = this.readNumber(ss);
+
+            /*global Int8Array*/
             test = new Int8Array(numberOfIndex*2);
             for(i = 0; i < numberOfIndex*2; ++i) {
                 test[i] = ss[m_pos++];
             }
 
+            /*global Uint16Array*/
             index = new Uint16Array(test.buffer);
             vgllines.setIndices(index);
+
+            /*global gl*/
             vgllines.setPrimitiveType(gl.LINES);
+
             /*
             //Getting Matrix
             //TODO: renderer is not doing anything with this yet
@@ -261,40 +276,44 @@ vglModule.vtkReader = function() {
         }
 
         //-=-=-=-=-=[ MESH ]=-=-=-=-=-
-        else if (type == 'M') {
+        else if (type === 'M') {
 
             numberOfPoints = this.readNumber(ss);
             //console.log("MESH " + numberOfPoints)
 
             //Getting Points
-            var vglpoints = new vglModule.sourceDataP3N3f();
+            vglpoints = new vglModule.sourceDataP3N3f();
             points = this.readF3Array(numberOfPoints, ss);
 
             //Getting Normals
             normals = this.readF3Array(numberOfPoints, ss);
 
             for(i = 0; i < numberOfPoints; ++i) {
-                var v1 = new vglModule.vertexDataP3N3f();
-                v1.m_position = new Array(points[i*3+0], points[i*3+1], points[i*3+2]);
-                v1.m_normal = new Array(normals[i*3+0], normals[i*3+1], normals[i*3+2]);
+                v1 = new vglModule.vertexDataP3N3f();
+                v1.m_position = [points[i*3/*+0*/], points[i*3+1], points[i*3+2]];
+                v1.m_normal = [normals[i*3/*+0*/], normals[i*3+1], normals[i*3+2]];
                 vglpoints.pushBack(v1);
             }
             geom.addSource(vglpoints);
 
             //Getting Colors
-            var vglcolors = new vglModule.sourceDataC3fv();
+            vglcolors = new vglModule.sourceDataC3fv();
             this.readColorArray(numberOfPoints, ss, vglcolors);
             geom.addSource(vglcolors);
 
             //Getting connectivity
             test = [];
-            var vgltriangles = new vglModule.triangles();
+            vgltriangles = new vglModule.triangles();
             geom.addPrimitive(vgltriangles);
             numberOfIndex = this.readNumber(ss);
+
+            /*global Int8Array*/
             test = new Int8Array(numberOfIndex*2);
             for(i = 0; i < numberOfIndex*2; ++i) {
                 test[i] = ss[m_pos++];
             }
+
+            /*global Uint16Array*/
             index = new Uint16Array(test.buffer);
             vgltriangles.setIndices(index);
 
@@ -313,27 +332,29 @@ vglModule.vtkReader = function() {
         }
 
         // Points
-        else if (type == 'P'){
+        else if (type === 'P'){
             numberOfPoints = this.readNumber(ss);
             //console.log("POINTS " + numberOfPoints);
 
             //Getting Points and creating 1:1 connectivity
-            var vglpoints = new vglModule.sourceDataP3fv();
+            vglpoints = new vglModule.sourceDataP3fv();
             points = this.readF3Array(numberOfPoints, ss);
-            var indices = new Uint16Array(numberOfPoints);
+
+            /*global Uint16Array*/
+            indices = new Uint16Array(numberOfPoints);
             for (i = 0; i < numberOfPoints; ++i) {
                 indices[i] = i;
-                vglpoints.pushBack([points[i*3+0],points[i*3+1],points[i*3+2]]);
+                vglpoints.pushBack([points[i*3/*+0*/],points[i*3+1],points[i*3+2]]);
             }
             geom.addSource(vglpoints);
 
             //Getting Colors
-            var vglcolors = new vglModule.sourceDataC3fv();
+            vglcolors = new vglModule.sourceDataC3fv();
             this.readColorArray(numberOfPoints, ss, vglcolors);
             geom.addSource(vglcolors);
 
             //Getting connectivity
-            var vglVertexes = new vglModule.points();
+            vglVertexes = new vglModule.points();
             vglVertexes.setIndices(indices);
             geom.addPrimitive(vglVertexes);
 
@@ -349,7 +370,7 @@ vglModule.vtkReader = function() {
 
         // Unknown
         else {
-            console.log("Ignoring unrecognized encoded data type " + type)
+            console.log("Ignoring unrecognized encoded data type " + type);
         }
 
         return geom;
