@@ -9,6 +9,16 @@
 /*global vglModule, ogs, vec4, inherit, $, Uint16Array*/
 //////////////////////////////////////////////////////////////////////////////
 
+//////////////////////////////////////////////////////////////////////////////
+/**
+ * Create a new instance of shapefile reader
+ *
+ * This contains code that reads a shapefile and produces vgl geometries
+ *
+ * @class
+ * @returns {vglModule.shapefileReader}
+ */
+//////////////////////////////////////////////////////////////////////////////
 vglModule.shapefileReader = function() {
   'use strict';
 
@@ -17,6 +27,11 @@ vglModule.shapefileReader = function() {
   }
 
   var m_that = this;
+  var SHP_HEADER_LEN = 8;
+  var SHP_NULL = 0;
+  var SHP_POINT = 1;
+  var SHP_POLYGON = 5;
+  var SHP_POLYLINE = 3;
 
   this.int8 = function (data, offset) {
       return data.charCodeAt (offset);
@@ -66,10 +81,14 @@ vglModule.shapefileReader = function() {
 
     var sign = 1 - 2 * (b7 >> 7);
     var exp = (((b7 & 0x7f) << 4) + ((b6 & 0xf0) >> 4)) - 1023;
-    //var frac = (b6 & 0x0f) * Math.pow (2, -4) + b5 * Math.pow (2, -12) + b4 * Math.pow (2, -20) + b3 * Math.pow (2, -28) + b2 * Math.pow (2, -36) + b1 * Math.pow (2, -44) + b0 * Math.pow (2, -52);
+    //var frac = (b6 & 0x0f) * Math.pow (2, -4) + b5 * Math.pow (2, -12) + b4 *
+    // Math.pow (2, -20) + b3 * Math.pow (2, -28) + b2 * Math.pow (2, -36) + b1 *
+    // Math.pow (2, -44) + b0 * Math.pow (2, -52);
 
     //return sign * (1 + frac) * Math.pow (2, exp);
-    var frac = (b6 & 0x0f) * Math.pow (2, 48) + b5 * Math.pow (2, 40) + b4 * Math.pow (2, 32) + b3 * Math.pow (2, 24) + b2 * Math.pow (2, 16) + b1 * Math.pow (2, 8) + b0;
+    var frac = (b6 & 0x0f) * Math.pow (2, 48) + b5 * Math.pow (2, 40) + b4 *
+                 Math.pow (2, 32) + b3 * Math.pow (2, 24) + b2 *
+                 Math.pow (2, 16) + b1 * Math.pow (2, 8) + b0;
 
     return sign * (1 + frac * Math.pow (2, -52)) * Math.pow (2, exp);
   };
@@ -101,12 +120,6 @@ vglModule.shapefileReader = function() {
     }
     return chars.join ('');
   };
-
-  var SHP_HEADER_LEN = 8;
-  var SHP_NULL = 0;
-  var SHP_POINT = 1;
-  var SHP_POLYGON = 5;
-  var SHP_POLYLINE = 3;
 
   this.readHeader = function (data) {
     var code = this.bint32(data, 0);
@@ -230,124 +243,123 @@ vglModule.shapefileReader = function() {
     var records = [];
     var record_offset = header_size;
     while (record_offset < header_size + num_entries * record_size) {
-        var declare = m_that.str(data, record_offset, 1);
-        if (declare == '*') {
-          // Record size in the header include the size of the delete indicator
-          record_offset += record_size;
-        }
-        else {
-          // Move offset to the start of the actual data
-          record_offset ++;
-          var record = {};
-          for (var i = 0; i < headers.length; i ++) {
-            var header = headers[i];
-            var value;
-            if (header.type == 'C') {
-                value = m_that.str(data, record_offset, header.length).trim ();
-            }
-            else if (header.type == 'N') {
-                value = parseFloat (m_that.str (data, record_offset, header.length));
-            }
-            record_offset += header.length;
-            record[header.name] = value;
+      var declare = m_that.str(data, record_offset, 1);
+      if (declare == '*') {
+        // Record size in the header include the size of the delete indicator
+        record_offset += record_size;
+      }
+      else {
+        // Move offset to the start of the actual data
+        record_offset ++;
+        var record = {};
+        for (var i = 0; i < headers.length; i ++) {
+          var header = headers[i];
+          var value;
+          if (header.type == 'C') {
+              value = m_that.str(data, record_offset, header.length).trim ();
           }
-          records.push(record);
+          else if (header.type == 'N') {
+              value = parseFloat (m_that.str (data, record_offset, header.length));
+          }
+          record_offset += header.length;
+          record[header.name] = value;
         }
+        records.push(record);
+      }
     }
     return records;
   };
 
   this.loadShp = function (data, dbf_data, indices, options) {
     var features = [];
-
     var readRing = function (offset, start, end) {
-        var ring = [];
-        for (var i = end - 1; i >= start; i --) {
-          var x = m_that.ldbl64(data, offset + 16 * i);
-          var y = m_that.ldbl64(data, offset + 16 * i + 8);
-          ring.push ([x, y]);
-        }
-        //if (ring.length <= 3)
-        // return [];
-        return ring;
+      var ring = [];
+      for (var i = end - 1; i >= start; i --) {
+        var x = m_that.ldbl64(data, offset + 16 * i);
+        var y = m_that.ldbl64(data, offset + 16 * i + 8);
+        ring.push ([x, y]);
+      }
+      //if (ring.length <= 3)
+      // return [];
+      return ring;
     };
 
     var readRecord = function (offset) {
-        var index = m_that.bint32(data, offset);
-        var record_length = m_that.bint32(data, offset + 4);
-        var record_offset = offset + 8;
-        var geom_type = m_that.lint32(data, record_offset);
+      var index = m_that.bint32(data, offset);
+      var record_length = m_that.bint32(data, offset + 4);
+      var record_offset = offset + 8;
+      var geom_type = m_that.lint32(data, record_offset);
 
-        if (geom_type == SHP_NULL) {
-          console.log ("NULL Shape");
-          //return offset + 12;
+      if (geom_type == SHP_NULL) {
+        console.log ("NULL Shape");
+        //return offset + 12;
+      }
+      else if (geom_type == SHP_POINT) {
+        var x = m_that.ldbl64(data, record_offset + 4);
+        var y = m_that.ldbl64(data, record_offset + 12);
+
+        features.push ({
+          type: 'Point',
+          attr: {},
+          geom: [[x, y]]
+        });
+      }
+      else if (geom_type == SHP_POLYGON) {
+        var num_parts = m_that.lint32(data, record_offset + 36);
+        var num_points = m_that.lint32(data, record_offset + 40);
+
+        var parts_start = offset + 52;
+        var points_start = offset + 52 + 4 * num_parts;
+
+        var rings = [];
+        for (var i = 0; i < num_parts; i ++) {
+          var start = m_that.lint32(data, parts_start + i * 4);
+          var end;
+          if (i + 1 < num_parts) {
+            end = m_that.lint32(data, parts_start + (i + 1) * 4);
+          }
+          else {
+            end = num_points;
+          }
+          var ring = readRing (points_start, start, end);
+          rings.push (ring);
         }
-        else if (geom_type == SHP_POINT) {
-          var x = m_that.ldbl64(data, record_offset + 4);
-          var y = m_that.ldbl64(data, record_offset + 12);
+        features.push ({
+          type: 'Polygon',
+          attr: {},
+          geom: [rings]
+        });
+      }
+      else if (geom_type == SHP_POLYLINE) {
+        var num_parts = m_that.lint32(data, record_offset + 36);
+        var num_points = m_that.lint32(data, record_offset + 40);
 
-          features.push ({
-            type: 'Point',
-            attr: {},
-            geom: [[x, y]]
-          });
-        }
-        else if (geom_type == SHP_POLYGON) {
-          var num_parts = m_that.lint32(data, record_offset + 36);
-          var num_points = m_that.lint32(data, record_offset + 40);
+        var parts_start = offset + 52;
+        var points_start = offset + 52 + 4 * num_parts;
 
-          var parts_start = offset + 52;
-          var points_start = offset + 52 + 4 * num_parts;
-
-          var rings = [];
-          for (var i = 0; i < num_parts; i ++) {
-            var start = m_that.lint32(data, parts_start + i * 4);
-            var end;
-            if (i + 1 < num_parts) {
+        var rings = [];
+        for (var i = 0; i < num_parts; i ++) {
+          var start = m_that.lint32(data, parts_start + i * 4);
+          var end;
+          if (i + 1 < num_parts) {
               end = m_that.lint32(data, parts_start + (i + 1) * 4);
-            }
-            else {
+          }
+          else {
               end = num_points;
-            }
-            var ring = readRing (points_start, start, end);
-            rings.push (ring);
           }
-          features.push ({
-            type: 'Polygon',
-            attr: {},
-            geom: [rings]
-          });
+          var ring = readRing (points_start, start, end);
+          rings.push (ring);
         }
-        else if (geom_type == SHP_POLYLINE) {
-          var num_parts = m_that.lint32(data, record_offset + 36);
-          var num_points = m_that.lint32(data, record_offset + 40);
-
-          var parts_start = offset + 52;
-          var points_start = offset + 52 + 4 * num_parts;
-
-          var rings = [];
-          for (var i = 0; i < num_parts; i ++) {
-            var start = m_that.lint32(data, parts_start + i * 4);
-            var end;
-            if (i + 1 < num_parts) {
-                end = m_that.lint32(data, parts_start + (i + 1) * 4);
-            }
-            else {
-                end = num_points;
-            }
-            var ring = readRing (points_start, start, end);
-            rings.push (ring);
-          }
-          features.push ({
-            type: 'Polyline',
-            attr: {},
-            geom: [rings]
-          });
-        }
-        else {
-          throw "Not Implemented: " + geom_type;
-        }
-        //return offset + 2 * record_length + SHP_HEADER_LEN;
+        features.push ({
+          type: 'Polyline',
+          attr: {},
+          geom: [rings]
+        });
+      }
+      else {
+        throw "Not Implemented: " + geom_type;
+      }
+      //return offset + 2 * record_length + SHP_HEADER_LEN;
     };
 
     var attr = this.loadDBF(dbf_data);
