@@ -1,5 +1,6 @@
 set(_tests
   drawCountries.py
+  drawCountriesReg.py
   pickObjects.py
 )
 
