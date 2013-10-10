@@ -17,7 +17,7 @@
  * primitives from it.
  *
  * @class
- * @returns {this}
+ * @returns {vglModule.geojsonReader}
  */
 //////////////////////////////////////////////////////////////////////////////
 vglModule.geojsonReader = function() {
