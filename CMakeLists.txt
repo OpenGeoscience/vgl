@@ -52,6 +52,10 @@ set(_source_files
   shapefileReader.js
 )
 
+set(paths
+  modules
+)
+
 # VGL requires a deployment directory
 if(NOT DEFINED VGL_DEPLOY_DIR)
   set(VGL_DEPLOY_DIR "${CMAKE_CURRENT_BINARY_DIR}/deploy"
@@ -60,22 +64,7 @@ if(NOT DEFINED VGL_DEPLOY_DIR)
       "Path to deployment library directory" FORCE)
 endif()
 
-# Create deploy directory if it does not exists
-if(NOT DEFINED VGL_DEPLOY_LIB_DIR)
-  add_custom_command(OUTPUT "${VGL_DEPLOY_LIB_DIR}"
-    COMMAND ${CMAKE_COMMAND} -E make_directory "${VGL_DEPLOY_LIB_DIR}"
-  )
-  add_custom_target(vgl_pre_deploy ALL DEPENDS ${VGL_DEPLOY_LIB_DIR})
-endif()
-
-# Enable developers to set data directory for testing purposes
-if(NOT EXISTS "${VGL_DATA_DIR}")
-  set(VGL_DATA_DIR "" CACHE PATH
-      "Path to directory containing data for testing" FORCE)
-endif()
-
-set(_min_js_file ${VGL_DEPLOY_LIB_DIR}/vgl.min.js)
-
+# Useuful macro
 macro(list_contains var value)
   set(${var})
   foreach(value2 ${ARGN})
@@ -85,8 +74,51 @@ macro(list_contains var value)
   endforeach(value2)
 endmacro(list_contains)
 
+#/////////////////////////////////////////////////////////////////////////////
+#//
+#//
+#//
+#/////////////////////////////////////////////////////////////////////////////
+
+set(all_generated_targets)
+
+# Copy directories / files to the deployment directory
+foreach(m ${paths})
+    set(copy_command "copy")
+    if (IS_DIRECTORY "${CMAKE_SOURCE_DIR}/${m}")
+      set(copy_command "copy_directory")
+    endif()
+    set(outpath ${VGL_DEPLOY_DIR}/${m})
+    add_custom_command(
+        OUTPUT ${outpath}
+        COMMAND ${CMAKE_COMMAND} -E ${copy_command}
+          ${CMAKE_SOURCE_DIR}/${m} ${outpath}
+        DEPENDS ${m} ${_lib_dir}
+    )
+    list(APPEND all_generated_targets ${outpath})
+endforeach()
+
+# Create deploy directory if it does not exists
+if(NOT DEFINED VGL_DEPLOY_LIB_DIR)
+  add_custom_command(OUTPUT "${VGL_DEPLOY_LIB_DIR}"
+    COMMAND ${CMAKE_COMMAND} -E make_directory "${VGL_DEPLOY_LIB_DIR}"
+  )
+  add_custom_target(vgl_pre_deploy ALL
+    DEPENDS
+      ${VGL_DEPLOY_LIB_DIR}
+  )
+endif()
+
+# Enable developers to set data directory for testing purposes
+if(NOT EXISTS "${VGL_DATA_DIR}")
+  set(VGL_DATA_DIR "" CACHE PATH
+      "Path to directory containing data for testing" FORCE)
+endif()
+
+set(_min_js_file ${VGL_DEPLOY_LIB_DIR}/vgl.min.js)
 set(_js_lint_files)
 set(_js_uglify_files)
+
 foreach(d ${_source_files})
   list_contains(contains d ${_exclude_js_lint})
   if(NOT contains)
@@ -115,7 +147,7 @@ else()
   )
 endif()
 
-add_custom_target(${PROJECT_NAME} ALL DEPENDS ${_min_js_file})
+add_custom_target(${PROJECT_NAME} ALL DEPENDS ${_min_js_file} ${all_generated_targets})
 add_dependencies(${PROJECT_NAME} vgl_pre_deploy)
 
 # Testing
