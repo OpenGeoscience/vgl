@@ -2,8 +2,12 @@ cmake_minimum_required(VERSION 2.8.8)
 
 project(vgl)
 
+set(VGL_CMAKE_DIR ${${PROJECT_NAME}_SOURCE_DIR}/cmake)
+
 set(MINIFY ON CACHE BOOL "Minify the JavaScript files prior to concatenating.")
 set(MANGLE ON CACHE BOOL "When minifying, also mangle non-public symbol names.")
+set(VGL_DATA_DIR "" CACHE PATH  "Path to directory containing data for testing.")
+set(VGL_BASELINE_DIR "" CACHE PATH "Path to directory containing baseline images for testing.")
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
@@ -52,6 +56,10 @@ set(_source_files
   shapefileReader.js
 )
 
+set(paths
+  modules
+)
+
 # VGL requires a deployment directory
 if(NOT DEFINED VGL_DEPLOY_DIR)
   set(VGL_DEPLOY_DIR "${CMAKE_CURRENT_BINARY_DIR}/deploy"
@@ -60,22 +68,7 @@ if(NOT DEFINED VGL_DEPLOY_DIR)
       "Path to deployment library directory" FORCE)
 endif()
 
-# Create deploy directory if it does not exists
-if(NOT DEFINED VGL_DEPLOY_LIB_DIR)
-  add_custom_command(OUTPUT "${VGL_DEPLOY_LIB_DIR}"
-    COMMAND ${CMAKE_COMMAND} -E make_directory "${VGL_DEPLOY_LIB_DIR}"
-  )
-  add_custom_target(vgl_pre_deploy ALL DEPENDS ${VGL_DEPLOY_LIB_DIR})
-endif()
-
-# Enable developers to set data directory for testing purposes
-if(NOT EXISTS "${VGL_DATA_DIR}")
-  set(VGL_DATA_DIR "" CACHE PATH
-      "Path to directory containing data for testing" FORCE)
-endif()
-
-set(_min_js_file ${VGL_DEPLOY_LIB_DIR}/vgl.min.js)
-
+# Useuful macro
 macro(list_contains var value)
   set(${var})
   foreach(value2 ${ARGN})
@@ -85,8 +78,45 @@ macro(list_contains var value)
   endforeach(value2)
 endmacro(list_contains)
 
+#/////////////////////////////////////////////////////////////////////////////
+#//
+#//
+#//
+#/////////////////////////////////////////////////////////////////////////////
+
+set(all_generated_targets)
+
+# Copy directories / files to the deployment directory
+foreach(m ${paths})
+    set(copy_command "copy")
+    if (IS_DIRECTORY "${CMAKE_SOURCE_DIR}/${m}")
+      set(copy_command "copy_directory")
+    endif()
+    set(outpath ${VGL_DEPLOY_DIR}/${m})
+    add_custom_command(
+        OUTPUT ${outpath}
+        COMMAND ${CMAKE_COMMAND} -E ${copy_command}
+          ${CMAKE_SOURCE_DIR}/${m} ${outpath}
+        DEPENDS ${m} ${_lib_dir}
+    )
+    list(APPEND all_generated_targets ${outpath})
+endforeach()
+
+# Create deploy directory if it does not exists
+if(NOT DEFINED VGL_DEPLOY_LIB_DIR)
+  add_custom_command(OUTPUT "${VGL_DEPLOY_LIB_DIR}"
+    COMMAND ${CMAKE_COMMAND} -E make_directory "${VGL_DEPLOY_LIB_DIR}"
+  )
+  add_custom_target(vgl_pre_deploy ALL
+    DEPENDS
+      ${VGL_DEPLOY_LIB_DIR}
+  )
+endif()
+
+set(_min_js_file ${VGL_DEPLOY_LIB_DIR}/vgl.min.js)
 set(_js_lint_files)
 set(_js_uglify_files)
+
 foreach(d ${_source_files})
   list_contains(contains d ${_exclude_js_lint})
   if(NOT contains)
@@ -115,7 +145,7 @@ else()
   )
 endif()
 
-add_custom_target(${PROJECT_NAME} ALL DEPENDS ${_min_js_file})
+add_custom_target(${PROJECT_NAME} ALL DEPENDS ${_min_js_file} ${all_generated_targets})
 add_dependencies(${PROJECT_NAME} vgl_pre_deploy)
 
 # Testing
@@ -128,6 +158,17 @@ if (BUILD_TESTING)
   else()
     message(FATAL_ERROR "VGL testing requires valid data directory")
   endif()
+
+  # Setup testing environment
+  add_custom_target(vgl_configure ALL
+    COMMAND ${CMAKE_COMMAND}
+      -DVGL_CMAKE_DIR=${VGL_CMAKE_DIR}
+      -DVGL_BASELINE_DIR=${VGL_BASELINE_DIR}
+      -DVGL_DATA_DIR=${VGL_DATA_DIR}
+      -DVGL_DEPLOY_DIR=${VGL_DEPLOY_DIR}
+      -P ${VGL_CMAKE_DIR}/configure.cmake
+  )
+  add_dependencies(${PROJECT_NAME} vgl_configure)
 
   # Non-GUI tests
   add_custom_command(
