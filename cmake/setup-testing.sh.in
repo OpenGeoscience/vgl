@@ -1,0 +1,3 @@
+#!/bin/sh
+export PYTHONPATH=@VGL_DEPLOY_DIR@/modules:${PYTHONPATH}
+echo 'Setting PYTHONPATH to' ${PYTHONPATH}

@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 2.8.8)
 
 project(vgl)
 
+set(VGL_CMAKE_DIR ${${PROJECT_NAME}_SOURCE_DIR}/cmake)
+
 set(MINIFY ON CACHE BOOL "Minify the JavaScript files prior to concatenating.")
 set(MANGLE ON CACHE BOOL "When minifying, also mangle non-public symbol names.")
 
@@ -160,6 +162,15 @@ if (BUILD_TESTING)
   else()
     message(FATAL_ERROR "VGL testing requires valid data directory")
   endif()
+
+  # Setup testing environment
+  add_custom_target(vgl_configure ALL
+    COMMAND ${CMAKE_COMMAND}
+      -DVGL_CMAKE_DIR=${VGL_CMAKE_DIR}
+      -DVGL_DEPLOY_DIR=${VGL_DEPLOY_DIR}
+      -P ${VGL_CMAKE_DIR}/configure.cmake
+  )
+  add_dependencies(${PROJECT_NAME} vgl_configure)
 
   # Non-GUI tests
   add_custom_command(
