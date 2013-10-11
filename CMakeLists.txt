@@ -6,6 +6,8 @@ set(VGL_CMAKE_DIR ${${PROJECT_NAME}_SOURCE_DIR}/cmake)
 
 set(MINIFY ON CACHE BOOL "Minify the JavaScript files prior to concatenating.")
 set(MANGLE ON CACHE BOOL "When minifying, also mangle non-public symbol names.")
+set(VGL_DATA_DIR "" CACHE PATH  "Path to directory containing data for testing.")
+set(VGL_BASELINE_DIR "" CACHE PATH "Path to directory containing baseline images for testing.")
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
@@ -111,12 +113,6 @@ if(NOT DEFINED VGL_DEPLOY_LIB_DIR)
   )
 endif()
 
-# Enable developers to set data directory for testing purposes
-if(NOT EXISTS "${VGL_DATA_DIR}")
-  set(VGL_DATA_DIR "" CACHE PATH
-      "Path to directory containing data for testing" FORCE)
-endif()
-
 set(_min_js_file ${VGL_DEPLOY_LIB_DIR}/vgl.min.js)
 set(_js_lint_files)
 set(_js_uglify_files)
@@ -167,6 +163,8 @@ if (BUILD_TESTING)
   add_custom_target(vgl_configure ALL
     COMMAND ${CMAKE_COMMAND}
       -DVGL_CMAKE_DIR=${VGL_CMAKE_DIR}
+      -DVGL_BASELINE_DIR=${VGL_BASELINE_DIR}
+      -DVGL_DATA_DIR=${VGL_DATA_DIR}
       -DVGL_DEPLOY_DIR=${VGL_DEPLOY_DIR}
       -P ${VGL_CMAKE_DIR}/configure.cmake
   )
