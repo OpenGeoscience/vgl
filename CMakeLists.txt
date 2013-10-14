@@ -89,14 +89,14 @@ set(all_generated_targets)
 # Copy directories / files to the deployment directory
 foreach(m ${paths})
     set(copy_command "copy")
-    if (IS_DIRECTORY "${CMAKE_SOURCE_DIR}/${m}")
+    if (IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/${m}")
       set(copy_command "copy_directory")
     endif()
     set(outpath ${VGL_DEPLOY_DIR}/${m})
     add_custom_command(
         OUTPUT ${outpath}
         COMMAND ${CMAKE_COMMAND} -E ${copy_command}
-          ${CMAKE_SOURCE_DIR}/${m} ${outpath}
+          ${CMAKE_CURRENT_SOURCE_DIR}/${m} ${outpath}
         DEPENDS ${m} ${_lib_dir}
     )
     list(APPEND all_generated_targets ${outpath})
