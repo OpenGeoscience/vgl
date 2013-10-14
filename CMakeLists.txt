@@ -8,6 +8,7 @@ set(MINIFY ON CACHE BOOL "Minify the JavaScript files prior to concatenating.")
 set(MANGLE ON CACHE BOOL "When minifying, also mangle non-public symbol names.")
 set(VGL_DATA_DIR "" CACHE PATH  "Path to directory containing data for testing.")
 set(VGL_BASELINE_DIR "" CACHE PATH "Path to directory containing baseline images for testing.")
+set(BUILD_TESTING OFF CACHE BOOL "Enable testing")
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
@@ -103,7 +104,7 @@ foreach(m ${paths})
 endforeach()
 
 # Create deploy directory if it does not exists
-if(NOT EXISTS VGL_DEPLOY_LIB_DIR)
+if(NOT DEFINED VGL_DEPLOY_LIB_DIR)
   add_custom_command(OUTPUT "${VGL_DEPLOY_LIB_DIR}"
     COMMAND ${CMAKE_COMMAND} -E make_directory "${VGL_DEPLOY_LIB_DIR}"
   )
