@@ -104,7 +104,7 @@ foreach(m ${paths})
 endforeach()
 
 # Create deploy directory if it does not exists
-if(NOT EXISTS VGL_DEPLOY_LIB_DIR)
+if(NOT DEFINED VGL_DEPLOY_LIB_DIR)
   add_custom_command(OUTPUT "${VGL_DEPLOY_LIB_DIR}"
     COMMAND ${CMAKE_COMMAND} -E make_directory "${VGL_DEPLOY_LIB_DIR}"
   )
