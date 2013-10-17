@@ -285,6 +285,44 @@ vglModule.renderWindow = function(canvas) {
     }
   };
 
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
+   * Get the focusDisplayPoint based on activeRenderer and its camera
+   * @returns {vec4}
+   */
+    ////////////////////////////////////////////////////////////////////////////
+  this.focusDisplayPoint = function() {
+    var camera = m_activeRender.camera(),
+      focalPoint = camera.focalPoint(),
+      focusWorldPt = vec4.fromValues(
+        focalPoint[0], focalPoint[1], focalPoint[2], 1);
+
+    return m_activeRender.worldToDisplay(
+        focusWorldPt, camera.viewMatrix(),
+        camera.projectionMatrix(), m_width, m_height);
+  };
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
+   * Transform a point in display space to world space
+   * @param {Number} x
+   * @param {Number} y
+   * @param {vec4} focusDisplayPoint
+   * @returns {vec4}
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.displayToWorld = function(x, y, focusDisplayPoint) {
+    var camera = m_activeRender.camera();
+    if(!focusDisplayPoint) {
+      focusDisplayPoint = this.focusDisplayPoint();
+    }
+
+    return m_activeRender.displayToWorld(
+      vec4.fromValues(x, y, focusDisplayPoint[2], 1.0), camera.viewMatrix(),
+      camera.projectionMatrix(), m_width, m_height);
+  };
+
   return this;
 };
 
