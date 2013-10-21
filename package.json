@@ -1,7 +1,7 @@
 {
   "name": "vgl",
   "description": "VTK for the Web.",
-  "version": "0.1.12",
+  "version": "0.1.13",
   "repository": {
     "type": "git",
     "url": "git://github.com/OpenGeoscience/vgl.git"
