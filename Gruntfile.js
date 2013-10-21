@@ -51,9 +51,17 @@ module.exports = function (grunt) {
         dest: 'dist/README.md'
       }
     },
+    shell: {
+      dist: {
+        command: 'npm publish dist',
+        options: {
+          stdout: true
+        }
+      }
+    },
     release: {
       options: {
-        npm: false, // manually run "npm publish dist"
+        npm: false,
         folder: 'dist'
       }
     }
@@ -69,4 +77,5 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-release');
 
   grunt.registerTask('default', ['clean', 'concat', 'uglify', 'copy']);
+  grunt.registerTask('dist', ['release', 'default', 'shell:dist']);
 };
