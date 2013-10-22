@@ -2,6 +2,7 @@ set(_tests
   drawCountries.py
   drawCountriesReg.py
   pickObjects.py
+  drawVtkObject.py
 )
 
 foreach(_test ${_tests})
