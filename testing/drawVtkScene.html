@@ -38,7 +38,6 @@
           actor.setMaterial(material);
           renderer.addActor(actor);
 
-          renderer.setBackgroundColor(1.0, 1.0, 1.0, 1.0);
           var interactorStyle = ogs.vgl.trackballInteractorStyle();
           viewer.setInteractorStyle(interactorStyle);
 
@@ -60,6 +59,9 @@
           renderer.camera().setViewUpDirection(
                               cameraParams.LookAt[4],cameraParams.LookAt[5],
                               cameraParams.LookAt[6]);
+
+          var bgc = cameraParams.Background1;
+          renderer.setBackgroundColor(bgc[0], bgc[1], bgc[2], 0);
 
           $(interactorStyle).on(ogs.vgl.command.leftButtonPressEvent, viewer.render);
           $(interactorStyle).on(ogs.vgl.command.middleButtonPressEvent, viewer.render);

@@ -389,12 +389,10 @@ vglModule.vtkReader = function() {
     this.parseSceneMetadata = function(sceneJSON) {
         var renderer;
 
-//        var bgColor1 = [0,0,0], bgColor2 = [0,0,0];
+        renderer = sceneJSON.Renderers[0];
 
-            renderer = sceneJSON.Renderers[0];
-
-            //Set up camera
-            renderer.Center = sceneJSON.Center;
+        //Set up camera
+        renderer.Center = sceneJSON.Center;
 
         return renderer;
     };
