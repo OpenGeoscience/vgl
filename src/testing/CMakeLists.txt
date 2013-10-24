@@ -1,8 +1,9 @@
 set(_tests
   drawCountries.py
   drawCountriesReg.py
-  pickObjects.py
   drawVtkObject.py
+  drawVtkViewer.py
+  pickObjects.py
 )
 
 foreach(_test ${_tests})
