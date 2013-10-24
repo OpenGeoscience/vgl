@@ -1,7 +1,6 @@
 set(tests
   drawCountries.html
   drawVtkObject.html
-  drawVtkScene.html
   drawVtkViewer.html
   pickObjects.html
 )
