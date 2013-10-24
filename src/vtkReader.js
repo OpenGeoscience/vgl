@@ -380,21 +380,66 @@ vglModule.vtkReader = function() {
 
     ////////////////////////////////////////////////////////////////////////////
     /**
-     * parseObject
+     * parseSceneMetadata
      *
      * @param data
      * @returns renderer
      */
     ////////////////////////////////////////////////////////////////////////////
-    this.parseSceneMetadata = function(sceneJSON) {
-        var renderer;
+    this.parseSceneMetadata = function(renderer, sceneJSON) {
 
-        renderer = sceneJSON.Renderers[0];
+        var sceneRenderer = sceneJSON.Renderers[0],
+            camera = renderer.camera(), bgc;
 
-        //Set up camera
-        renderer.Center = sceneJSON.Center;
+        camera.setCenterOfRotation(sceneJSON.Center);
+        camera.setViewAngleDegrees(sceneRenderer.LookAt[0]);
+        camera.setPosition(
+            sceneRenderer.LookAt[7], sceneRenderer.LookAt[8],
+            sceneRenderer.LookAt[9]);
+        camera.setFocalPoint(
+            sceneRenderer.LookAt[1], sceneRenderer.LookAt[2],
+            sceneRenderer.LookAt[3]);
 
-        return renderer;
+        camera.setViewUpDirection(
+            sceneRenderer.LookAt[4], sceneRenderer.LookAt[5],
+            sceneRenderer.LookAt[6]);
+
+        bgc = sceneRenderer.Background1;
+        renderer.setBackgroundColor(bgc[0], bgc[1], bgc[2], 1);
+    };
+
+    ////////////////////////////////////////////////////////////////////////////
+    /**
+     * createViewer
+     *
+     * @param data
+     * @returns renderer
+     */
+    ////////////////////////////////////////////////////////////////////////////
+    this.createViewer = function(node, width, height, geom, scene) {
+        var viewer,renderer,mapper,material,actor,interactorStyle,bgc;
+
+        viewer = ogs.vgl.viewer(node);
+        viewer.init();
+
+        viewer.renderWindow().resize(width, height);
+        renderer = viewer.renderWindow().activeRenderer();
+
+        mapper = ogs.vgl.mapper();
+        mapper.setGeometryData(this.parseObject(geom));
+
+        material = ogs.vgl.utils.createGeometryMaterial();
+
+        actor = ogs.vgl.actor();
+        actor.setMapper(mapper);
+        actor.setMaterial(material);
+        renderer.addActor(actor);
+
+        this.parseSceneMetadata(renderer, scene);
+        interactorStyle = ogs.vgl.trackballInteractorStyle();
+        viewer.setInteractorStyle(interactorStyle);
+
+        return viewer;
     };
 
     return this;
