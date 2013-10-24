@@ -215,7 +215,7 @@ vglModule.vtkReader = function() {
             ss = [], test, i, size, type = null, data = null,
             vglpoints = null, vglVertexes = null, vglcolors = null,
             vgllines = null, indices = null, v1 = null,
-            vgltriangles = null, tcoord, matrix, size;
+            vgltriangles = null, tcoord, matrix;
 
         geom.setName("World");
 
