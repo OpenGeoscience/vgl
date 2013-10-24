@@ -24,7 +24,7 @@
         var reader = ogs.vgl.vtkReader();
         var width = $(node).width(), height = $(node).height();
 
-        $.when(readData("/data/vtkSphere.dat"), readData("/data/vtkSceneMetadata.json") ).then(function(geom, scene) {
+        $.when(readData("/data/vtkCube.dat"), readData("/data/vtkSceneMetadata.json") ).then(function(geom, scene) {
 
           var viewer = reader.createViewer(node, width, height, geom, scene);
 

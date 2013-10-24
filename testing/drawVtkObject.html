@@ -21,7 +21,7 @@
         var renderer = viewer.renderWindow().activeRenderer();
 
         var reader = ogs.vgl.vtkReader();
-        $.get("/data/vtkSphere.dat", {
+        $.get("/data/vtkCube.dat", {
           })
         .done(function(data) {
           var geom = reader.parseObject(data);
