@@ -9,12 +9,11 @@
     <script type="text/javascript" src="/web/lib/vgl.min.js"></script>
     <script>
 
-      function nestedAjax(file) {
+      function readData(file) {
           return $.get(file).then(function(result){
               return result;
-      });
-}
-
+          });
+      }
 
 
       var data = {};
@@ -22,55 +21,21 @@
       var testDrawCube = {};
       testDrawCube.main = function() {
         var node = document.getElementById("glcanvas");
-        var viewer = ogs.vgl.viewer(node);
-        viewer.init();
-
-        viewer.renderWindow().resize($(node).width(), $(node).height());
-        var renderer = viewer.renderWindow().activeRenderer();
-
         var reader = ogs.vgl.vtkReader();
+        var width = $(node).width(), height = $(node).height();
 
-        $.when(nestedAjax("/data/vtkSphere.dat"), nestedAjax("/data/vtkSceneMetadata.json") ).then(function(rawGeom, camera) {
+        $.when(readData("/data/vtkSphere.dat"), readData("/data/vtkSceneMetadata.json") ).then(function(geom, scene) {
 
-             console.log("Geom:", rawGeom);
-             console.log("Camera:", camera);
+          var viewer = reader.createViewer(node, width, height, geom, scene);
 
-             var geom = reader.parseObject(rawGeom);
-             var cameraParams = reader.parseSceneMetadata(camera);
-          var mapper = ogs.vgl.mapper();
-          mapper.setGeometryData(geom);
-
-          var material = ogs.vgl.utils.createGeometryMaterial();
-
-          var actor = ogs.vgl.actor();
-          actor.setMapper(mapper);
-          actor.setMaterial(material);
-          renderer.addActor(actor);
-
-          var interactorStyle = ogs.vgl.trackballInteractorStyle();
-          viewer.setInteractorStyle(interactorStyle);
+          renderer = viewer.renderWindow().activeRenderer();
+          interactorStyle = viewer.interactorStyle();
 
           document.onmousedown = viewer.handleMouseDown;
           document.onmouseup = viewer.handleMouseUp;
           document.onmousemove = viewer.handleMouseMove;
           document.oncontextmenu = viewer.handleContextMenu;
           HTMLCanvasElement.prototype.relMouseCoords = viewer.relMouseCoords;
-
-          renderer.camera().setCenterOfRotation(cameraParams.Center);
-          renderer.camera().setViewAngleDegrees(cameraParams.LookAt[0]);
-          renderer.camera().setPosition(
-                              cameraParams.LookAt[7],cameraParams.LookAt[8],
-                              cameraParams.LookAt[9]);
-          renderer.camera().setFocalPoint(
-                              cameraParams.LookAt[1],cameraParams.LookAt[2],
-                              cameraParams.LookAt[3]);
-
-          renderer.camera().setViewUpDirection(
-                              cameraParams.LookAt[4],cameraParams.LookAt[5],
-                              cameraParams.LookAt[6]);
-
-          var bgc = cameraParams.Background1;
-          renderer.setBackgroundColor(bgc[0], bgc[1], bgc[2], 0);
 
           $(interactorStyle).on(ogs.vgl.command.leftButtonPressEvent, viewer.render);
           $(interactorStyle).on(ogs.vgl.command.middleButtonPressEvent, viewer.render);
