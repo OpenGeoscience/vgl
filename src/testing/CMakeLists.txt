@@ -2,7 +2,9 @@ set(_tests
   drawCountries.py
   drawCountriesReg.py
   drawVtkObject.py
+  drawVtkObjectReg.py
   drawVtkViewer.py
+  drawVtkViewerReg.py
   pickObjects.py
 )
 
