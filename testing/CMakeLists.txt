@@ -1,7 +1,8 @@
 set(tests
-  drawVtkObject.html
-  pickObjects.html
   drawCountries.html
+  drawVtkObject.html
+  drawVtkViewer.html
+  pickObjects.html
 )
 
 # Copy testing paths / files to the deployment directory

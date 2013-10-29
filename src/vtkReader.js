@@ -170,7 +170,7 @@ vglModule.vtkReader = function() {
         var test = new Int8Array(numberOfPoints*4*3),
             points = null, i;
 
-        for(i = 0; i < numberOfPoints*4*3; ++i) {
+        for(i = 0; i < numberOfPoints*4*3; i++) {
             test[i] = ss[m_pos++];
         }
 
@@ -192,7 +192,7 @@ vglModule.vtkReader = function() {
     ////////////////////////////////////////////////////////////////////////////
     this.readColorArray = function (numberOfPoints, ss, vglcolors) {
         var i,r,g,b;
-        for(i = 0; i < numberOfPoints; ++i) {
+        for(i = 0; i < numberOfPoints; i++) {
             r = ss[m_pos++]/255.0;
             g = ss[m_pos++]/255.0;
             b = ss[m_pos++]/255.0;
@@ -215,13 +215,13 @@ vglModule.vtkReader = function() {
             ss = [], test, i, size, type = null, data = null,
             vglpoints = null, vglVertexes = null, vglcolors = null,
             vgllines = null, indices = null, v1 = null,
-            vgltriangles = null;
+            vgltriangles = null, tcoord, matrix;
 
         geom.setName("World");
 
         //dehexlify
         data = this.decode64(buffer);
-        for(i = 0; i < data.length; ++i) {
+        for(i = 0; i < data.length; i++) {
             /*jslint bitwise: true*/
             ss[i] = data.charCodeAt(i) & 0xff;
         }
@@ -237,7 +237,7 @@ vglModule.vtkReader = function() {
             //Getting Points
             vglpoints = new vglModule.sourceDataP3fv();
             points = this.readF3Array(numberOfPoints, ss);
-            for(i = 0; i < numberOfPoints; ++i) {
+            for(i = 0; i < numberOfPoints; i++) {
                 vglpoints.pushBack([points[i*3/*+0*/], points[i*3+1], points[i*3+2]]);
             }
             geom.addSource(vglpoints);
@@ -254,7 +254,7 @@ vglModule.vtkReader = function() {
 
             /*global Int8Array*/
             test = new Int8Array(numberOfIndex*2);
-            for(i = 0; i < numberOfIndex*2; ++i) {
+            for(i = 0; i < numberOfIndex*2; i++) {
                 test[i] = ss[m_pos++];
             }
 
@@ -288,7 +288,7 @@ vglModule.vtkReader = function() {
             //Getting Normals
             normals = this.readF3Array(numberOfPoints, ss);
 
-            for(i = 0; i < numberOfPoints; ++i) {
+            for(i = 0; i < numberOfPoints; i++) {
                 v1 = new vglModule.vertexDataP3N3f();
                 v1.m_position = [points[i*3/*+0*/], points[i*3+1], points[i*3+2]];
                 v1.m_normal = [normals[i*3/*+0*/], normals[i*3+1], normals[i*3+2]];
@@ -309,7 +309,7 @@ vglModule.vtkReader = function() {
 
             /*global Int8Array*/
             test = new Int8Array(numberOfIndex*2);
-            for(i = 0; i < numberOfIndex*2; ++i) {
+            for(i = 0; i < numberOfIndex*2; i++) {
                 test[i] = ss[m_pos++];
             }
 
@@ -317,18 +317,20 @@ vglModule.vtkReader = function() {
             index = new Uint16Array(test.buffer);
             vgltriangles.setIndices(index);
 
-            /*
+
             //Getting Matrix
-            //TODO: renderer is not doing anything with this yet
-            test = new Int8Array(16*4);
-            for(i=0; i<16*4; i++)
-            test[i] = ss[m_pos++];
+            size = 16*4;
+            test = new Int8Array(size);
+            for(i = 0; i < size; i++) {
+                test[i] = ss[m_pos++];
+            }
+
             matrix = new Float32Array(test.buffer);
 
             //Getting TCoord
             //TODO: renderer is not doing anything with this yet
             tcoord = null;
-            */
+
         }
 
         // Points
@@ -342,7 +344,7 @@ vglModule.vtkReader = function() {
 
             /*global Uint16Array*/
             indices = new Uint16Array(numberOfPoints);
-            for (i = 0; i < numberOfPoints; ++i) {
+            for (i = 0; i < numberOfPoints; i++) {
                 indices[i] = i;
                 vglpoints.pushBack([points[i*3/*+0*/],points[i*3+1],points[i*3+2]]);
             }
@@ -374,6 +376,70 @@ vglModule.vtkReader = function() {
         }
 
         return geom;
+    };
+
+    ////////////////////////////////////////////////////////////////////////////
+    /**
+     * parseSceneMetadata
+     *
+     * @param data
+     * @returns renderer
+     */
+    ////////////////////////////////////////////////////////////////////////////
+    this.parseSceneMetadata = function(renderer, sceneJSON) {
+
+        var sceneRenderer = sceneJSON.Renderers[0],
+            camera = renderer.camera(), bgc;
+
+        camera.setCenterOfRotation(sceneJSON.Center);
+        camera.setViewAngleDegrees(sceneRenderer.LookAt[0]);
+        camera.setPosition(
+            sceneRenderer.LookAt[7], sceneRenderer.LookAt[8],
+            sceneRenderer.LookAt[9]);
+        camera.setFocalPoint(
+            sceneRenderer.LookAt[1], sceneRenderer.LookAt[2],
+            sceneRenderer.LookAt[3]);
+
+        camera.setViewUpDirection(
+            sceneRenderer.LookAt[4], sceneRenderer.LookAt[5],
+            sceneRenderer.LookAt[6]);
+
+        bgc = sceneRenderer.Background1;
+        renderer.setBackgroundColor(bgc[0], bgc[1], bgc[2], 1);
+    };
+
+    ////////////////////////////////////////////////////////////////////////////
+    /**
+     * createViewer
+     *
+     * @param data
+     * @returns renderer
+     */
+    ////////////////////////////////////////////////////////////////////////////
+    this.createViewer = function(node, width, height, geom, scene) {
+        var viewer,renderer,mapper,material,actor,interactorStyle,bgc;
+
+        viewer = ogs.vgl.viewer(node);
+        viewer.init();
+
+        viewer.renderWindow().resize(width, height);
+        renderer = viewer.renderWindow().activeRenderer();
+
+        mapper = ogs.vgl.mapper();
+        mapper.setGeometryData(this.parseObject(geom));
+
+        material = ogs.vgl.utils.createGeometryMaterial();
+
+        actor = ogs.vgl.actor();
+        actor.setMapper(mapper);
+        actor.setMaterial(material);
+        renderer.addActor(actor);
+
+        this.parseSceneMetadata(renderer, scene);
+        interactorStyle = ogs.vgl.trackballInteractorStyle();
+        viewer.setInteractorStyle(interactorStyle);
+
+        return viewer;
     };
 
     return this;
