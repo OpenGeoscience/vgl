@@ -156,6 +156,12 @@ if (BUILD_TESTING)
     message(FATAL_ERROR "VGL testing requires valid data directory")
   endif()
 
+  if(EXISTS "${VGL_BASELINE_DIR}" AND IS_DIRECTORY "${VGL_BASELINE_DIR}")
+    message("[info] VGL baseline directory is set to ${VGL_BASELINE_DIR}")
+  else()
+    message(FATAL_ERROR "VGL testing requires valid baseline directory")
+  endif()
+
   # Setup testing environment
   add_custom_target(vgl_configure ALL
     COMMAND ${CMAKE_COMMAND}
