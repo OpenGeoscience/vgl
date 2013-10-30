@@ -66,8 +66,6 @@ set(paths
 if(NOT DEFINED VGL_DEPLOY_DIR)
   set(VGL_DEPLOY_DIR "${CMAKE_CURRENT_BINARY_DIR}/deploy"
       CACHE PATH "PATH to deployment directory" FORCE)
-  set(VGL_DEPLOY_LIB_DIR "${VGL_DEPLOY_DIR}/web/lib" CACHE PATH
-      "Path to deployment library directory" FORCE)
 endif()
 
 # Useuful macro
@@ -86,26 +84,9 @@ endmacro(list_contains)
 #//
 #/////////////////////////////////////////////////////////////////////////////
 
-set(all_generated_targets)
-
-# Copy directories / files to the deployment directory
-foreach(m ${paths})
-    set(copy_command "copy")
-    if (IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/${m}")
-      set(copy_command "copy_directory")
-    endif()
-    set(outpath ${VGL_DEPLOY_DIR}/${m})
-    add_custom_command(
-        OUTPUT ${outpath}
-        COMMAND ${CMAKE_COMMAND} -E ${copy_command}
-          ${CMAKE_CURRENT_SOURCE_DIR}/${m} ${outpath}
-        DEPENDS ${m} ${_lib_dir}
-    )
-    list(APPEND all_generated_targets ${outpath})
-endforeach()
-
 # Create deploy directory if it does not exists
 if(NOT DEFINED VGL_DEPLOY_LIB_DIR)
+ set(VGL_DEPLOY_LIB_DIR "${VGL_DEPLOY_DIR}/web/lib")
   add_custom_command(OUTPUT "${VGL_DEPLOY_LIB_DIR}"
     COMMAND ${CMAKE_COMMAND} -E make_directory "${VGL_DEPLOY_LIB_DIR}"
   )
@@ -147,8 +128,22 @@ else()
   )
 endif()
 
-add_custom_target(${PROJECT_NAME} ALL DEPENDS ${_min_js_file} ${all_generated_targets})
+add_custom_target(${PROJECT_NAME} ALL DEPENDS ${_min_js_file})
 add_dependencies(${PROJECT_NAME} vgl_pre_deploy)
+
+# Copy directories / files to the deployment directory
+foreach(m ${paths})
+    set(copy_command "copy")
+    if (IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/${m}")
+      set(copy_command "copy_directory")
+    endif()
+    set(outpath ${VGL_DEPLOY_DIR}/${m})
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E ${copy_command}
+          ${CMAKE_CURRENT_SOURCE_DIR}/${m} ${outpath}
+        DEPENDS ${m}
+    )
+endforeach()
 
 # Testing
 if (BUILD_TESTING)
