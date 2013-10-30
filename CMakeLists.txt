@@ -65,8 +65,6 @@ set(paths
 if(NOT DEFINED VGL_DEPLOY_DIR)
   set(VGL_DEPLOY_DIR "${CMAKE_CURRENT_BINARY_DIR}/deploy"
       CACHE PATH "PATH to deployment directory" FORCE)
-  set(VGL_DEPLOY_LIB_DIR "${VGL_DEPLOY_DIR}/web/lib" CACHE PATH
-      "Path to deployment library directory" FORCE)
 endif()
 
 # Useuful macro
@@ -87,6 +85,7 @@ endmacro(list_contains)
 
 # Create deploy directory if it does not exists
 if(NOT DEFINED VGL_DEPLOY_LIB_DIR)
+ set(VGL_DEPLOY_LIB_DIR "${VGL_DEPLOY_DIR}/web/lib")
   add_custom_command(OUTPUT "${VGL_DEPLOY_LIB_DIR}"
     COMMAND ${CMAKE_COMMAND} -E make_directory "${VGL_DEPLOY_LIB_DIR}"
   )
