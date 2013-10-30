@@ -98,7 +98,7 @@ foreach(m ${paths})
         OUTPUT ${outpath}
         COMMAND ${CMAKE_COMMAND} -E ${copy_command}
           ${CMAKE_CURRENT_SOURCE_DIR}/${m} ${outpath}
-        DEPENDS ${m} ${_lib_dir}
+        DEPENDS ${m}
     )
     list(APPEND all_generated_targets ${outpath})
 endforeach()
