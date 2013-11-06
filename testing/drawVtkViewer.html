@@ -26,7 +26,9 @@
 
         $.when(readData("/data/vtkCube.dat"), readData("/data/vtkSceneMetadata.json") ).then(function(geom, scene) {
 
-          var viewer = reader.createViewer(node, width, height, geom, scene);
+          reader.addVtkObjectData(geom);
+          reader.setVtkScene(scene);
+          var viewer = reader.createViewer(node);
 
           renderer = viewer.renderWindow().activeRenderer();
           interactorStyle = viewer.interactorStyle();
