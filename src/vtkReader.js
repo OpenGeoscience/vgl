@@ -32,6 +32,9 @@ vglModule.vtkReader = function() {
      'n','o','p','q','r','s','t','u','v','w','x','y','z',
      '0','1','2','3','4','5','6','7','8','9','+','/'],
   m_reverseBase64Chars = [],
+  m_vtkObjectList = [],
+  m_vtkObjectCount = 0,
+  m_vtkScene = null,
   END_OF_INPUT = -1,
   m_base64Str = "",
   m_base64Count = 0,
@@ -399,7 +402,6 @@ vglModule.vtkReader = function() {
     camera.setFocalPoint(
       sceneRenderer.LookAt[1], sceneRenderer.LookAt[2],
       sceneRenderer.LookAt[3]);
-
     camera.setViewUpDirection(
       sceneRenderer.LookAt[4], sceneRenderer.LookAt[5],
       sceneRenderer.LookAt[6]);
@@ -416,30 +418,75 @@ vglModule.vtkReader = function() {
    * @returns renderer
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.createViewer = function(node, width, height, geom, scene) {
-    var viewer,renderer,mapper,material,actor,interactorStyle,bgc;
+  this.createViewer = function(node) {
+    var viewer, renderer, mapper, material, objIdx = 0,
+        actor, interactorStyle, bgc, geom, key, rawGeom;
+
+    if (m_vtkScene === null || m_vtkObjectCount === 0) {
+      return null;
+    }
 
     viewer = ogs.vgl.viewer(node);
     viewer.init();
 
-    viewer.renderWindow().resize(width, height);
+    viewer.renderWindow().resize(node.width, node.height);
     renderer = viewer.renderWindow().activeRenderer();
 
-    mapper = ogs.vgl.mapper();
-    mapper.setGeometryData(this.parseObject(geom));
+    for(objIdx; objIdx < m_vtkObjectCount; objIdx++) {
+      mapper = ogs.vgl.mapper();
+      rawGeom = m_vtkObjectList[objIdx];
+      geom = this.parseObject(rawGeom);
+      mapper.setGeometryData(geom);
+      material = ogs.vgl.utils.createGeometryMaterial();
+      actor = ogs.vgl.actor();
+      actor.setMapper(mapper);
+      actor.setMaterial(material);
+      renderer.addActor(actor);
+    }
 
-    material = ogs.vgl.utils.createGeometryMaterial();
-
-    actor = ogs.vgl.actor();
-    actor.setMapper(mapper);
-    actor.setMaterial(material);
-    renderer.addActor(actor);
-
-    this.parseSceneMetadata(renderer, scene);
+    this.parseSceneMetadata(renderer, m_vtkScene);
     interactorStyle = ogs.vgl.trackballInteractorStyle();
     viewer.setInteractorStyle(interactorStyle);
 
     return viewer;
+  };
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
+   * addVtkObjectData - Adds binary VTK geometry data to the list for parsing.
+   *
+   * @param data
+   * @returns void
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.addVtkObjectData = function(data) {
+    m_vtkObjectList[m_vtkObjectCount] = data;
+    m_vtkObjectCount++;
+  };
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
+   * clearVtkObjectData - Clear out the list of VTK geometry data.
+   *
+   * @param void
+   * @returns void
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.clearVtkObjectData = function() {
+    m_vtkObjectList = [];
+    m_vtkObjectCount = 0;
+  };
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
+   * setVtkScene - Set the VTK scene data for camera initialization.
+   *
+   * @param scene
+   * @returns void
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.setVtkScene = function(scene) {
+    m_vtkScene = scene;
   };
 
   return this;
