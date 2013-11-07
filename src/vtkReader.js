@@ -392,7 +392,7 @@ vglModule.vtkReader = function() {
   this.parseSceneMetadata = function(renderer, sceneJSON) {
 
     var sceneRenderer = sceneJSON.Renderers[0],
-    camera = renderer.camera(), bgc;
+        camera = renderer.camera(), bgc;
 
     camera.setCenterOfRotation(sceneJSON.Center);
     camera.setViewAngleDegrees(sceneRenderer.LookAt[0]);
@@ -420,7 +420,7 @@ vglModule.vtkReader = function() {
   ////////////////////////////////////////////////////////////////////////////
   this.createViewer = function(node) {
     var viewer, renderer, mapper, material, objIdx = 0,
-        actor, interactorStyle, bgc, geom, key, rawGeom;
+        actor, interactorStyle, bgc, geom, rawGeom;
 
     if (m_vtkScene === null || m_vtkObjectCount === 0) {
       return null;
