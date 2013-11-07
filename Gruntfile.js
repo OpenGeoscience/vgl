@@ -39,6 +39,31 @@ module.exports = function (grunt) {
     },
     jshint: {
       all: ['Gruntfile.js', 'src/*.js']
+    },
+    clean: ["dist"],
+    copy: {
+      pkg: {
+        src: 'package.json',
+        dest: 'dist/package.json'
+      },
+      readme: {
+        src: 'README.md',
+        dest: 'dist/README.md'
+      }
+    },
+    shell: {
+      dist: {
+        command: 'npm publish dist',
+        options: {
+          stdout: true
+        }
+      }
+    },
+    release: {
+      options: {
+        npm: false,
+        folder: 'dist'
+      }
     }
   });
 
@@ -47,6 +72,10 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('grunt-contrib-copy');
+  grunt.loadNpmTasks('grunt-contrib-clean');
+  grunt.loadNpmTasks('grunt-release');
 
-  grunt.registerTask('default', ['concat', 'uglify']);
+  grunt.registerTask('default', ['clean', 'concat', 'uglify', 'copy']);
+  grunt.registerTask('dist', ['release', 'default', 'shell:dist']);
 };

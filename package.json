@@ -1,18 +1,20 @@
 {
   "name": "vgl",
   "description": "VTK for the Web.",
-  "version": "0.1.0",
+  "version": "0.1.13",
   "repository": {
     "type": "git",
     "url": "git://github.com/OpenGeoscience/vgl.git"
   },
-
   "devDependencies": {
     "grunt": "~0.4.0",
     "grunt-contrib-jshint": "~0.1.1",
     "grunt-contrib-uglify": "~0.2.4",
     "grunt-contrib-watch": "~0.3.1",
     "grunt-contrib-concat": "~0.3.0",
-    "grunt-shell": ">=0.2.1"
+    "grunt-contrib-copy": "~0.4.0",
+    "grunt-contrib-clean": "~0.5.0",
+    "grunt-shell": ">=0.2.1",
+    "grunt-release": "~0.6.0"
   }
 }
