@@ -373,6 +373,11 @@ vglModule.vtkReader = function() {
       */
     }
 
+    //ColorMap
+    else if (type === 'C') {
+
+    }
+
     // Unknown
     else {
       console.log("Ignoring unrecognized encoded data type " + type);
@@ -420,7 +425,8 @@ vglModule.vtkReader = function() {
   ////////////////////////////////////////////////////////////////////////////
   this.createViewer = function(node) {
     var viewer, renderer, mapper, material, objIdx = 0,
-        actor, interactorStyle, bgc, geom, rawGeom;
+        actor, interactorStyle, bgc, geom, rawGeom, vtkObject,
+        shaderProg, opacityUniform;
 
     if (m_vtkScene === null || m_vtkObjectCount === 0) {
       return null;
@@ -434,10 +440,20 @@ vglModule.vtkReader = function() {
 
     for(objIdx; objIdx < m_vtkObjectCount; objIdx++) {
       mapper = ogs.vgl.mapper();
-      rawGeom = m_vtkObjectList[objIdx];
+      vtkObject = m_vtkObjectList[objIdx];
+      rawGeom = vtkObject.data;
       geom = this.parseObject(rawGeom);
       mapper.setGeometryData(geom);
       material = ogs.vgl.utils.createGeometryMaterial();
+
+      //default opacity === solid. If were transparent, set it lower.
+      if (vtkObject.hasTransparency) {
+        shaderProg = material.shaderProgram();
+        opacityUniform = shaderProg.uniform("opacity");
+        opacityUniform = new ogs.vgl.floatUniform("opacity", 0.5);
+        shaderProg.addUniform(opacityUniform);
+      }
+
       actor = ogs.vgl.actor();
       actor.setMapper(mapper);
       actor.setMaterial(material);
@@ -455,12 +471,20 @@ vglModule.vtkReader = function() {
   /**
    * addVtkObjectData - Adds binary VTK geometry data to the list for parsing.
    *
-   * @param data
+   * @param vtkObject
+   *
+   *        vtkObject = {
+   *                      data:,
+   *                      hasTransparency:,
+   *                      layer:
+   *                    };
+   *
+   *
    * @returns void
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.addVtkObjectData = function(data) {
-    m_vtkObjectList[m_vtkObjectCount] = data;
+  this.addVtkObjectData = function(vtkObject) {
+    m_vtkObjectList[m_vtkObjectCount] = vtkObject;
     m_vtkObjectCount++;
   };
 
