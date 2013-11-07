@@ -157,7 +157,7 @@ vglModule.mapper = function() {
 
   ////////////////////////////////////////////////////////////////////////////
   /**
-   * Set solid color of the geometry. Default is white [1.0, 1.0, 1.0]
+   * Set solid color of the geometry. Default is teal [1.0, 1.0, 1.0]
    *
    * @param r Red component of the color [0.0 - 1.0]
    * @param g Green component of the color [0.0 - 1.0]

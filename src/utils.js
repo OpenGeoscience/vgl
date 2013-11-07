@@ -417,12 +417,14 @@ vglModule.utils.createGeometryMaterial = function() {
        vertexShader = vglModule.utils.createVertexShader(gl),
        fragmentShader = vglModule.utils.createFragmentShader(gl),
        posVertAttr = new vglModule.vertexAttribute("vertexPosition"),
+       colorVertAttr = new vglModule.vertexAttribute("vertexColor"),
        pointsizeUniform = new vglModule.floatUniform("pointSize", 5.0),
-       opacityUniform = new vglModule.floatUniform("opacity", 0.5),
+       opacityUniform = new vglModule.floatUniform("opacity", 1.0),
        modelViewUniform = new vglModule.modelViewUniform("modelViewMatrix"),
        projectionUniform = new vglModule.projectionUniform("projectionMatrix");
 
   prog.addVertexAttribute(posVertAttr, vglModule.vertexAttributeKeys.Position);
+  prog.addVertexAttribute(colorVertAttr, vglModule.vertexAttributeKeys.Color);
   prog.addUniform(pointsizeUniform);
   prog.addUniform(opacityUniform);
   prog.addUniform(modelViewUniform);
@@ -581,7 +583,7 @@ vglModule.utils.createSolidColorMaterial = function(color) {
       fragmentShader = vglModule.utils.createFragmentShaderSolidColor(gl, color),
       posVertAttr = new vglModule.vertexAttribute("vertexPosition"),
       pointsizeUniform = new vglModule.floatUniform("pointSize", 5.0),
-      opacityUniform = new vglModule.floatUniform("opacity", 0.5),
+      opacityUniform = new vglModule.floatUniform("opacity", 1.0),
       modelViewUniform = new vglModule.modelViewUniform("modelViewMatrix"),
       projectionUniform = new vglModule.projectionUniform("projectionMatrix");
 
