@@ -245,6 +245,142 @@ vglModule.utils.createFragmentShader = function(context) {
   return shader;
 };
 
+
+
+//////////////////////////////////////////////////////////////////////////////
+/**
+ * Create a Blinn-Phong vertex shader
+ *
+ * Helper function to create Blinn-Phong vertex shader
+ *
+ * @param context
+ * @returns {vglModule.shader}
+ */
+//////////////////////////////////////////////////////////////////////////////
+vglModule.utils.createBlinnPhongVertexShader = function(context) {
+  'use strict';
+
+  var vertexShaderSource = [
+      'attribute highp vec3 vertexPosition;',
+      'attribute mediump vec3 vertexNormal;',
+      'attribute mediump vec3 vertexColor;',
+
+      'uniform highp mat4 projectionMatrix;',
+      'uniform mat4 modelViewMatrix;',
+      'uniform mat4 normalMatrix;',
+
+      'varying highp vec4 varPosition;',
+      'varying mediump vec3 varNormal;',
+      'varying mediump vec3 iVertexColor;',
+
+      'void main(void)',
+      '{',
+      'varPosition = projectionMatrix * modelViewMatrix * vec4(vertexPosition, 1.0);',
+      'gl_Position = varPosition;',
+      'varNormal = vec3(normalMatrix * vec4(vertexNormal, 0.0));',
+      'iVertexColor = vertexColor;',
+      '}' ].join('\n'),
+
+      shader = new vglModule.shader(gl.VERTEX_SHADER);
+
+  shader.setShaderSource(vertexShaderSource);
+
+  return shader;
+};
+
+
+//////////////////////////////////////////////////////////////////////////////
+/**
+ * Create a new instance of Blinn-Phong fragment shader
+ *
+ * Helper function to create Blinn-Phong fragment shader
+ *
+ * @param context
+ * @returns {vglModule.shader}
+ */
+//////////////////////////////////////////////////////////////////////////////
+vglModule.utils.createBlinnPhongFragmentShader = function(context) {
+  'use strict';
+  var fragmentShaderSource = [
+    'precision mediump float;',
+    'varying vec3 varNormal;',
+    'varying vec4 varPosition;',
+    'varying mediump vec3 iVertexColor;',
+    'const vec3 lightPos = vec3(0.0,0.0,1000.0);',
+    'const vec3 ambientColor = vec3(0.3, 0.0, 0.0);',
+    'const vec3 specColor = vec3(1.0, 1.0, 1.0);',
+
+    'void main() {',
+    'vec3 normal = normalize(varNormal);',
+    'vec3 lightDir = normalize(lightPos - varPosition.xyz);',
+    'vec3 reflectDir = reflect(-lightDir, normal);',
+    'vec3 viewDir = normalize(varPosition.xyz);',
+
+    'float lambertian = max(dot(lightDir,normal), 0.0);',
+    'float specular = 0.0;',
+
+    'if(lambertian > 0.0) {',
+    'float specAngle = max(dot(reflectDir, viewDir), 0.0);',
+    'specular = pow(specAngle, 4.0);',
+    '}',
+    'gl_FragColor = vec4(ambientColor +',
+    'lambertian*iVertexColor +',
+    'specular*specColor, 1.0);',
+ //   'gl_FragColor = vec4(viewDir,1.0);',
+
+    '}' ].join('\n'),
+    shader = new vglModule.shader(gl.FRAGMENT_SHADER);
+
+/*
+    // only ambient
+    if(mode == 2) gl_FragColor = vec4(ambientColor, 1.0);
+    // only diffuse
+    if(mode == 3) gl_FragColor = vec4(lambertian*diffuseColor, 1.0);
+    // only specular
+    if(mode == 4) gl_FragColor = vec4(specular*specColor, 1.0);
+
+}
+
+
+      'varying mediump vec3 varNormal;',
+      'varying highp vec4 varPosition;',
+      'varying mediump vec3 iVertexColor;',
+
+      'uniform mediump float opacity;',
+
+      'void main(void) {',
+      'mediump vec3 lightDirection = normalize(vec3(0.0, 0.0, 1000.0) - varPosition.xyz);',
+
+      'lowp vec4 color = vec4(iVertexColor, opacity);',
+      'highp vec3 n = normalize(varNormal);',
+      //very shiny -- maybe dumb down to 16
+      'highp float specularShininess = 16.0;',
+      'lowp vec4  specularColor = vec4(0.6, 0.6, 0.6, 1.0);',
+      'highp vec3  viewDirection = normalize(-varPosition.xyz);',
+      'highp vec3 halfVector = normalize(lightDirection + viewDirection);',
+      'lowp float nDotL = max(dot(n, normalize(lightDirection)), 0.0);',
+      'lowp float nDotH = max(dot(n, halfVector), 0.1);',
+      'color = color * nDotL + specularColor * pow(nDotH, specularShininess);',
+      'gl_FragColor = color;',
+      '}' ].join('\n'),
+*/
+//      shader = new vglModule.shader(gl.FRAGMENT_SHADER);
+
+  shader.setShaderSource(fragmentShaderSource);
+  return shader;
+};
+
+
+/*
+
+      vec3 reflectDir = reflect(-lightDir, normal);
+      specAngle = max(dot(reflectDir, viewDir), 0.0);
+      // note that the exponent is different here
+      specular = pow(specAngle, 4.0);
+
+*/
+
+
 //////////////////////////////////////////////////////////////////////////////
 /**
  * Create a new instance of fragment shader with an assigned constant color.
@@ -439,6 +575,46 @@ vglModule.utils.createGeometryMaterial = function() {
 
 //////////////////////////////////////////////////////////////////////////////
 /**
+ * Create a new instance of geometry material with the blinn-phong shader
+ *
+ * Helper function to create color blinn-phong shaded geometry material
+ *
+ * @returns {vglModule.material}
+ */
+//////////////////////////////////////////////////////////////////////////////
+vglModule.utils.createBlinnPhongMaterial = function() {
+  'use strict';
+   var mat = new vglModule.material(),
+       blend = new vglModule.blend(),
+       prog = new vglModule.shaderProgram(),
+       vertexShader = vglModule.utils.createBlinnPhongVertexShader(gl),
+       fragmentShader = vglModule.utils.createBlinnPhongFragmentShader(gl),
+       posVertAttr = new vglModule.vertexAttribute("vertexPosition"),
+       normalVertAttr = new vglModule.vertexAttribute("vertexNormal"),
+       colorVertAttr = new vglModule.vertexAttribute("vertexColor"),
+       opacityUniform = new vglModule.floatUniform("opacity", 1.0),
+       modelViewUniform = new vglModule.modelViewUniform("modelViewMatrix"),
+       normalUniform = new vglModule.normalMatrixUniform("normalMatrix"),
+       projectionUniform = new vglModule.projectionUniform("projectionMatrix");
+
+  prog.addVertexAttribute(posVertAttr, vglModule.vertexAttributeKeys.Position);
+  prog.addVertexAttribute(normalVertAttr, vglModule.vertexAttributeKeys.Normal);
+  prog.addVertexAttribute(colorVertAttr, vglModule.vertexAttributeKeys.Color);
+  prog.addUniform(opacityUniform);
+  prog.addUniform(modelViewUniform);
+  prog.addUniform(projectionUniform);
+  prog.addUniform(normalUniform);
+  prog.addShader(fragmentShader);
+  prog.addShader(vertexShader);
+  mat.addAttribute(prog);
+  mat.addAttribute(blend);
+
+  return mat;
+};
+
+
+//////////////////////////////////////////////////////////////////////////////
+/**
  * Create a new instance of colored geometry material
  *
  * Helper function to create color geometry material
@@ -476,6 +652,7 @@ vglModule.utils.createColorMaterial = function() {
 
   return mat;
 };
+
 
 //////////////////////////////////////////////////////////////////////////////
 /**

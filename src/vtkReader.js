@@ -444,7 +444,8 @@ vglModule.vtkReader = function() {
       rawGeom = vtkObject.data;
       geom = this.parseObject(rawGeom);
       mapper.setGeometryData(geom);
-      material = ogs.vgl.utils.createGeometryMaterial();
+      material = ogs.vgl.utils.createBlinnPhongMaterial();
+//createGeometryMaterial();
 
       //default opacity === solid. If were transparent, set it lower.
       if (vtkObject.hasTransparency) {
