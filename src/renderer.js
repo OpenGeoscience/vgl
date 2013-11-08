@@ -20,6 +20,7 @@ vglModule.renderState = function() {
   'use strict';
 
   this.m_modelViewMatrix = mat4.create();
+  this.m_normalMatrix = mat4.create();
   this.m_projectionMatrix = null;
   this.m_material = null;
   this.m_mapper = null;
@@ -125,7 +126,8 @@ vglModule.renderer = function() {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.render = function() {
-    var i, renSt, children, actor = null, sortedActors = [];
+    var i, renSt, children, actor = null, sortedActors = [],
+        mvMatrixInv = mat4.create();
 
     gl.clearColor(m_backgroundColor[0], m_backgroundColor[1],
       m_backgroundColor[2], m_backgroundColor[3]);
@@ -163,6 +165,8 @@ vglModule.renderer = function() {
         mat4.ortho(renSt.m_projectionMatrix, 0, m_width, 0, m_height, -1, 1);
       }
 
+      mat4.invert(mvMatrixInv, renSt.m_modelViewMatrix);
+      mat4.transpose(renSt.m_normalMatrix, mvMatrixInv);
       renSt.m_material = actor.material();
       renSt.m_mapper = actor.mapper();
 

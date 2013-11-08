@@ -302,3 +302,44 @@ vglModule.floatUniform = function(name, value) {
 };
 
 inherit(vglModule.floatUniform, vglModule.uniform);
+
+
+///////////////////////////////////////////////////////////////////////////////
+/**
+ * Create new instance of class normalMatrixUniform
+ *
+ * @param name
+ * @returns {vglModule.normalMatrixUniform}
+ */
+///////////////////////////////////////////////////////////////////////////////
+vglModule.normalMatrixUniform = function(name) {
+  'use strict';
+
+  if (!(this instanceof vglModule.normalMatrixUniform)) {
+    return new vglModule.normalMatrixUniform(name);
+  }
+
+  if (name.length === 0) {
+    name = "normalMatrix";
+  }
+
+  vglModule.uniform.call(this, gl.FLOAT_MAT4, name);
+
+  this.set(mat4.create());
+
+  /////////////////////////////////////////////////////////////////////////////
+  /**
+   * Update the uniform given a render state and shader program
+   *
+   * @param {vglModule.renderState} renderState
+   * @param {vglModule.shaderProgram} program
+   */
+  /////////////////////////////////////////////////////////////////////////////
+  this.update = function(renderState, program) {
+    this.set(renderState.m_normalMatrix);
+  };
+
+  return this;
+};
+
+inherit(vglModule.normalMatrixUniform, vglModule.uniform);
