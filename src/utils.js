@@ -295,6 +295,8 @@ vglModule.utils.createBlinnPhongVertexShader = function(context) {
  *
  * Helper function to create Blinn-Phong fragment shader
  *
+ * NOTE: Shader assumes directional light
+ *
  * @param context
  * @returns {vglModule.shader}
  */
@@ -306,27 +308,27 @@ vglModule.utils.createBlinnPhongFragmentShader = function(context) {
     'varying vec3 varNormal;',
     'varying vec4 varPosition;',
     'varying mediump vec3 iVertexColor;',
-    'const vec3 lightPos = vec3(0.0,0.0,1000.0);',
-    'const vec3 ambientColor = vec3(0.3, 0.0, 0.0);',
+    'const vec3 lightPos = vec3(0.0, 0.0,10000.0);',
+    'const vec3 ambientColor = vec3(0.01, 0.01, 0.01);',
     'const vec3 specColor = vec3(1.0, 1.0, 1.0);',
 
     'void main() {',
     'vec3 normal = normalize(varNormal);',
-    'vec3 lightDir = normalize(lightPos - varPosition.xyz);',
-    'vec3 reflectDir = reflect(-lightDir, normal);',
-    'vec3 viewDir = normalize(varPosition.xyz);',
+    'vec3 lightDir = normalize(lightPos);',
+    'vec3 reflectDir = -reflect(lightDir, normal);',
+    'vec3 viewDir = normalize(-varPosition.xyz);',
 
     'float lambertian = max(dot(lightDir,normal), 0.0);',
     'float specular = 0.0;',
 
     'if(lambertian > 0.0) {',
     'float specAngle = max(dot(reflectDir, viewDir), 0.0);',
-    'specular = pow(specAngle, 4.0);',
+    'specular = pow(specAngle, 64.0);',
     '}',
     'gl_FragColor = vec4(ambientColor +',
     'lambertian*iVertexColor +',
     'specular*specColor, 1.0);',
- //   'gl_FragColor = vec4(viewDir,1.0);',
+//    'gl_FragColor = vec4(viewDir,1.0);',
 
     '}' ].join('\n'),
     shader = new vglModule.shader(gl.FRAGMENT_SHADER);
