@@ -249,15 +249,15 @@ vglModule.utils.createFragmentShader = function(context) {
 
 //////////////////////////////////////////////////////////////////////////////
 /**
- * Create a Blinn-Phong vertex shader
+ * Create a Phong vertex shader
  *
- * Helper function to create Blinn-Phong vertex shader
+ * Helper function to create Phong vertex shader
  *
  * @param context
  * @returns {vglModule.shader}
  */
 //////////////////////////////////////////////////////////////////////////////
-vglModule.utils.createBlinnPhongVertexShader = function(context) {
+vglModule.utils.createPhongVertexShader = function(context) {
   'use strict';
 
   var vertexShaderSource = [
@@ -291,9 +291,9 @@ vglModule.utils.createBlinnPhongVertexShader = function(context) {
 
 //////////////////////////////////////////////////////////////////////////////
 /**
- * Create a new instance of Blinn-Phong fragment shader
+ * Create a new instance of Phong fragment shader
  *
- * Helper function to create Blinn-Phong fragment shader
+ * Helper function to create Phong fragment shader
  *
  * NOTE: Shader assumes directional light
  *
@@ -301,7 +301,7 @@ vglModule.utils.createBlinnPhongVertexShader = function(context) {
  * @returns {vglModule.shader}
  */
 //////////////////////////////////////////////////////////////////////////////
-vglModule.utils.createBlinnPhongFragmentShader = function(context) {
+vglModule.utils.createPhongFragmentShader = function(context) {
   'use strict';
   var fragmentShaderSource = [
     'precision mediump float;',
@@ -584,13 +584,13 @@ vglModule.utils.createGeometryMaterial = function() {
  * @returns {vglModule.material}
  */
 //////////////////////////////////////////////////////////////////////////////
-vglModule.utils.createBlinnPhongMaterial = function() {
+vglModule.utils.createPhongMaterial = function() {
   'use strict';
    var mat = new vglModule.material(),
        blend = new vglModule.blend(),
        prog = new vglModule.shaderProgram(),
-       vertexShader = vglModule.utils.createBlinnPhongVertexShader(gl),
-       fragmentShader = vglModule.utils.createBlinnPhongFragmentShader(gl),
+       vertexShader = vglModule.utils.createPhongVertexShader(gl),
+       fragmentShader = vglModule.utils.createPhongFragmentShader(gl),
        posVertAttr = new vglModule.vertexAttribute("vertexPosition"),
        normalVertAttr = new vglModule.vertexAttribute("vertexNormal"),
        colorVertAttr = new vglModule.vertexAttribute("vertexColor"),
