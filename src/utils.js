@@ -275,8 +275,8 @@ vglModule.utils.createBlinnPhongVertexShader = function(context) {
 
       'void main(void)',
       '{',
-      'varPosition = projectionMatrix * modelViewMatrix * vec4(vertexPosition, 1.0);',
-      'gl_Position = varPosition;',
+      'varPosition = modelViewMatrix * vec4(vertexPosition, 1.0);',
+      'gl_Position = projectionMatrix * varPosition;',
       'varNormal = vec3(normalMatrix * vec4(vertexNormal, 0.0));',
       'iVertexColor = vertexColor;',
       '}' ].join('\n'),
