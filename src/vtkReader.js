@@ -375,7 +375,7 @@ vglModule.vtkReader = function() {
 
     //ColorMap
     else if (type === 'C') {
-
+      console.log("Color map is not implemented yet");
     }
 
     // Unknown
