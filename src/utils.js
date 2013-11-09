@@ -367,7 +367,6 @@ vglModule.utils.createTextureMaterial = function(isRgba) {
     fragmentShader = null,
     posVertAttr = new vglModule.vertexAttribute("vertexPosition"),
     texCoordVertAttr = new vglModule.vertexAttribute("textureCoord"),
-    colorVertAttr = new vglModule.vertexAttribute("vertexColor"),
     pointsizeUniform = new vglModule.floatUniform("pointSize", 5.0),
     modelViewUniform = new vglModule.modelViewUniform("modelViewMatrix"),
     projectionUniform = new vglModule.projectionUniform("projectionMatrix"),
@@ -377,7 +376,6 @@ vglModule.utils.createTextureMaterial = function(isRgba) {
   samplerUniform.set(0);
 
   prog.addVertexAttribute(posVertAttr, vglModule.vertexAttributeKeys.Position);
-  prog.addVertexAttribute(colorVertAttr, vglModule.vertexAttributeKeys.Color);
   prog.addVertexAttribute(texCoordVertAttr,
                           vglModule.vertexAttributeKeys.TextureCoordinate);
   prog.addUniform(pointsizeUniform);
