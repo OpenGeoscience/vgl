@@ -328,59 +328,12 @@ vglModule.utils.createPhongFragmentShader = function(context) {
     'gl_FragColor = vec4(ambientColor +',
     'lambertian*iVertexColor +',
     'specular*specColor, 1.0);',
-//    'gl_FragColor = vec4(viewDir,1.0);',
-
     '}' ].join('\n'),
     shader = new vglModule.shader(gl.FRAGMENT_SHADER);
-
-/*
-    // only ambient
-    if(mode == 2) gl_FragColor = vec4(ambientColor, 1.0);
-    // only diffuse
-    if(mode == 3) gl_FragColor = vec4(lambertian*diffuseColor, 1.0);
-    // only specular
-    if(mode == 4) gl_FragColor = vec4(specular*specColor, 1.0);
-
-}
-
-
-      'varying mediump vec3 varNormal;',
-      'varying highp vec4 varPosition;',
-      'varying mediump vec3 iVertexColor;',
-
-      'uniform mediump float opacity;',
-
-      'void main(void) {',
-      'mediump vec3 lightDirection = normalize(vec3(0.0, 0.0, 1000.0) - varPosition.xyz);',
-
-      'lowp vec4 color = vec4(iVertexColor, opacity);',
-      'highp vec3 n = normalize(varNormal);',
-      //very shiny -- maybe dumb down to 16
-      'highp float specularShininess = 16.0;',
-      'lowp vec4  specularColor = vec4(0.6, 0.6, 0.6, 1.0);',
-      'highp vec3  viewDirection = normalize(-varPosition.xyz);',
-      'highp vec3 halfVector = normalize(lightDirection + viewDirection);',
-      'lowp float nDotL = max(dot(n, normalize(lightDirection)), 0.0);',
-      'lowp float nDotH = max(dot(n, halfVector), 0.1);',
-      'color = color * nDotL + specularColor * pow(nDotH, specularShininess);',
-      'gl_FragColor = color;',
-      '}' ].join('\n'),
-*/
-//      shader = new vglModule.shader(gl.FRAGMENT_SHADER);
 
   shader.setShaderSource(fragmentShaderSource);
   return shader;
 };
-
-
-/*
-
-      vec3 reflectDir = reflect(-lightDir, normal);
-      specAngle = max(dot(reflectDir, viewDir), 0.0);
-      // note that the exponent is different here
-      specular = pow(specAngle, 4.0);
-
-*/
 
 
 //////////////////////////////////////////////////////////////////////////////
