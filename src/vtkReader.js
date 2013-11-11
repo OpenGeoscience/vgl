@@ -220,8 +220,6 @@ vglModule.vtkReader = function() {
     vgllines = null, indices = null, v1 = null,
     vgltriangles = null, tcoord, matrix;
 
-    geom.setName("World");
-
     //dehexlify
     data = this.decode64(buffer);
     for(i = 0; i < data.length; i++) {
@@ -232,6 +230,7 @@ vglModule.vtkReader = function() {
     m_pos = 0;
     size = this.readNumber(ss);
     type = String.fromCharCode(ss[m_pos++]);
+    geom.setName(type);
 
     //-=-=-=-=-=[ LINES ]=-=-=-=-=-
     if (type === 'L') {
@@ -426,7 +425,7 @@ vglModule.vtkReader = function() {
   this.createViewer = function(node) {
     var viewer, renderer, mapper, material, objIdx = 0,
         actor, interactorStyle, bgc, geom, rawGeom, vtkObject,
-        shaderProg, opacityUniform;
+        shaderProg, opacityUniform, geomType;
 
     if (m_vtkScene === null || m_vtkObjectCount === 0) {
       return null;
@@ -443,8 +442,23 @@ vglModule.vtkReader = function() {
       vtkObject = m_vtkObjectList[objIdx];
       rawGeom = vtkObject.data;
       geom = this.parseObject(rawGeom);
+      geomType = geom.name();
       mapper.setGeometryData(geom);
-      material = ogs.vgl.utils.createPhongMaterial();
+
+      //create material based on type.
+      if (geomType === "M") {
+        material = ogs.vgl.utils.createPhongMaterial();
+      }
+      else if(geomType === "L") {
+        material = ogs.vgl.utils.createGeometryMaterial();
+      }
+      else if("P") {
+        material = ogs.vgl.utils.createGeometryMaterial();
+      }
+      else if("C") {
+        material = ogs.vgl.utils.createGeometryMaterial();
+      }
+
 
       //default opacity === solid. If were transparent, set it lower.
       if (vtkObject.hasTransparency) {
