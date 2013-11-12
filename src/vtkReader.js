@@ -371,12 +371,10 @@ vglModule.vtkReader = function() {
       matrix = new Float32Array(test.buffer);
       */
     }
-
     //ColorMap
     else if (type === 'C') {
-
+      console.log('Skipping parsing color map');
     }
-
     // Unknown
     else {
       console.log("Ignoring unrecognized encoded data type " + type);
@@ -452,13 +450,12 @@ vglModule.vtkReader = function() {
       else if(geomType === "L") {
         material = ogs.vgl.utils.createGeometryMaterial();
       }
-      else if("P") {
+      else if(geomType === "P") {
         material = ogs.vgl.utils.createGeometryMaterial();
       }
-      else if("C") {
+      else if(geomType === "C") {
         material = ogs.vgl.utils.createGeometryMaterial();
       }
-
 
       //default opacity === solid. If were transparent, set it lower.
       if (vtkObject.hasTransparency) {

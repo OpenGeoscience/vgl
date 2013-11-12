@@ -245,8 +245,6 @@ vglModule.utils.createFragmentShader = function(context) {
   return shader;
 };
 
-
-
 //////////////////////////////////////////////////////////////////////////////
 /**
  * Create a Phong vertex shader
@@ -287,7 +285,6 @@ vglModule.utils.createPhongVertexShader = function(context) {
 
   return shader;
 };
-
 
 //////////////////////////////////////////////////////////////////////////////
 /**
@@ -530,9 +527,9 @@ vglModule.utils.createGeometryMaterial = function() {
 
 //////////////////////////////////////////////////////////////////////////////
 /**
- * Create a new instance of geometry material with the blinn-phong shader
+ * Create a new instance of geometry material with the phong shader
  *
- * Helper function to create color blinn-phong shaded geometry material
+ * Helper function to create color phong shaded geometry material
  *
  * @returns {vglModule.material}
  */
@@ -566,7 +563,6 @@ vglModule.utils.createPhongMaterial = function() {
 
   return mat;
 };
-
 
 //////////////////////////////////////////////////////////////////////////////
 /**
@@ -607,7 +603,6 @@ vglModule.utils.createColorMaterial = function() {
 
   return mat;
 };
-
 
 //////////////////////////////////////////////////////////////////////////////
 /**
