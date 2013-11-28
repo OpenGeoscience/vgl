@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+    <script src="http://code.jquery.com/ui/1.10.1/jquery-ui.js"></script>
+    <script type="text/javascript" src="/testing/common/js/bootstrap.js"></script>
+    <script type="text/javascript" src="/testing/common/js/gl-matrix.js"></script>
+    <script type="text/javascript" src="/testing/common/js/select2.min.js"></script>
+    <script type="text/javascript" src="/web/lib/vgl.min.js"></script>
+    <script>
+
+      var data = {};
+
+      var testDrawCube = {};
+      testDrawCube.main = function() {
+        var node = document.getElementById("glcanvas");
+        var viewer = ogs.vgl.viewer(node);
+        viewer.init();
+
+        viewer.renderWindow().resize($(node).width(), $(node).height());
+        var renderer = viewer.renderWindow().activeRenderer();
+
+        var reader = ogs.vgl.vtkReader();
+        $.get("/data/vtkCube.dat", {
+          })
+        .done(function(data) {
+          var geom = reader.parseObject(data);
+
+          var mapper = ogs.vgl.mapper();
+          mapper.setGeometryData(geom);
+
+          var material = ogs.vgl.utils.createGeometryMaterial();
+
+          var actor = ogs.vgl.actor();
+          actor.setMapper(mapper);
+          actor.setMaterial(material);
+          renderer.addActor(actor);
+
+          renderer.setBackgroundColor(1.0, 1.0, 1.0, 1.0);
+          var interactorStyle = ogs.vgl.trackballInteractorStyle();
+          viewer.setInteractorStyle(interactorStyle);
+
+          document.onmousedown = viewer.handleMouseDown;
+          document.onmouseup = viewer.handleMouseUp;
+          document.onmousemove = viewer.handleMouseMove;
+          document.oncontextmenu = viewer.handleContextMenu;
+          HTMLCanvasElement.prototype.relMouseCoords = viewer.relMouseCoords;
+
+          $(interactorStyle).on(ogs.vgl.command.leftButtonPressEvent, viewer.render);
+          $(interactorStyle).on(ogs.vgl.command.middleButtonPressEvent, viewer.render);
+          $(interactorStyle).on(ogs.vgl.command.rightButtonPressEvent, viewer.render);
+
+          renderer.resetCamera();
+          viewer.render();
+        });
+     }
+    </script>
+  </head>
+  <body onload="testDrawCube.main()">
+    <canvas id="glcanvas" width="800px" height="600px"></canvas>
+  </body>
+</html>

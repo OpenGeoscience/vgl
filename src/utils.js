@@ -247,6 +247,94 @@ vglModule.utils.createFragmentShader = function(context) {
 
 //////////////////////////////////////////////////////////////////////////////
 /**
+ * Create a Phong vertex shader
+ *
+ * Helper function to create Phong vertex shader
+ *
+ * @param context
+ * @returns {vglModule.shader}
+ */
+//////////////////////////////////////////////////////////////////////////////
+vglModule.utils.createPhongVertexShader = function(context) {
+  'use strict';
+
+  var vertexShaderSource = [
+      'attribute highp vec3 vertexPosition;',
+      'attribute mediump vec3 vertexNormal;',
+      'attribute mediump vec3 vertexColor;',
+
+      'uniform highp mat4 projectionMatrix;',
+      'uniform mat4 modelViewMatrix;',
+      'uniform mat4 normalMatrix;',
+
+      'varying highp vec4 varPosition;',
+      'varying mediump vec3 varNormal;',
+      'varying mediump vec3 iVertexColor;',
+
+      'void main(void)',
+      '{',
+      'varPosition = modelViewMatrix * vec4(vertexPosition, 1.0);',
+      'gl_Position = projectionMatrix * varPosition;',
+      'varNormal = vec3(normalMatrix * vec4(vertexNormal, 0.0));',
+      'iVertexColor = vertexColor;',
+      '}' ].join('\n'),
+
+      shader = new vglModule.shader(gl.VERTEX_SHADER);
+
+  shader.setShaderSource(vertexShaderSource);
+
+  return shader;
+};
+
+//////////////////////////////////////////////////////////////////////////////
+/**
+ * Create a new instance of Phong fragment shader
+ *
+ * Helper function to create Phong fragment shader
+ *
+ * NOTE: Shader assumes directional light
+ *
+ * @param context
+ * @returns {vglModule.shader}
+ */
+//////////////////////////////////////////////////////////////////////////////
+vglModule.utils.createPhongFragmentShader = function(context) {
+  'use strict';
+  var fragmentShaderSource = [
+    'precision mediump float;',
+    'varying vec3 varNormal;',
+    'varying vec4 varPosition;',
+    'varying mediump vec3 iVertexColor;',
+    'const vec3 lightPos = vec3(0.0, 0.0,10000.0);',
+    'const vec3 ambientColor = vec3(0.01, 0.01, 0.01);',
+    'const vec3 specColor = vec3(1.0, 1.0, 1.0);',
+
+    'void main() {',
+    'vec3 normal = normalize(varNormal);',
+    'vec3 lightDir = normalize(lightPos);',
+    'vec3 reflectDir = -reflect(lightDir, normal);',
+    'vec3 viewDir = normalize(-varPosition.xyz);',
+
+    'float lambertian = max(dot(lightDir,normal), 0.0);',
+    'float specular = 0.0;',
+
+    'if(lambertian > 0.0) {',
+    'float specAngle = max(dot(reflectDir, viewDir), 0.0);',
+    'specular = pow(specAngle, 64.0);',
+    '}',
+    'gl_FragColor = vec4(ambientColor +',
+    'lambertian*iVertexColor +',
+    'specular*specColor, 1.0);',
+    '}' ].join('\n'),
+    shader = new vglModule.shader(gl.FRAGMENT_SHADER);
+
+  shader.setShaderSource(fragmentShaderSource);
+  return shader;
+};
+
+
+//////////////////////////////////////////////////////////////////////////////
+/**
  * Create a new instance of fragment shader with an assigned constant color.
  *
  * Helper function to create default fragment shader
@@ -367,7 +455,6 @@ vglModule.utils.createTextureMaterial = function(isRgba) {
     fragmentShader = null,
     posVertAttr = new vglModule.vertexAttribute("vertexPosition"),
     texCoordVertAttr = new vglModule.vertexAttribute("textureCoord"),
-    colorVertAttr = new vglModule.vertexAttribute("vertexColor"),
     pointsizeUniform = new vglModule.floatUniform("pointSize", 5.0),
     modelViewUniform = new vglModule.modelViewUniform("modelViewMatrix"),
     projectionUniform = new vglModule.projectionUniform("projectionMatrix"),
@@ -377,7 +464,6 @@ vglModule.utils.createTextureMaterial = function(isRgba) {
   samplerUniform.set(0);
 
   prog.addVertexAttribute(posVertAttr, vglModule.vertexAttributeKeys.Position);
-  prog.addVertexAttribute(colorVertAttr, vglModule.vertexAttributeKeys.Color);
   prog.addVertexAttribute(texCoordVertAttr,
                           vglModule.vertexAttributeKeys.TextureCoordinate);
   prog.addUniform(pointsizeUniform);
@@ -417,16 +503,57 @@ vglModule.utils.createGeometryMaterial = function() {
        vertexShader = vglModule.utils.createVertexShader(gl),
        fragmentShader = vglModule.utils.createFragmentShader(gl),
        posVertAttr = new vglModule.vertexAttribute("vertexPosition"),
+       colorVertAttr = new vglModule.vertexAttribute("vertexColor"),
        pointsizeUniform = new vglModule.floatUniform("pointSize", 5.0),
-       opacityUniform = new vglModule.floatUniform("opacity", 0.5),
+       opacityUniform = new vglModule.floatUniform("opacity", 1.0),
        modelViewUniform = new vglModule.modelViewUniform("modelViewMatrix"),
        projectionUniform = new vglModule.projectionUniform("projectionMatrix");
 
   prog.addVertexAttribute(posVertAttr, vglModule.vertexAttributeKeys.Position);
+  prog.addVertexAttribute(colorVertAttr, vglModule.vertexAttributeKeys.Color);
   prog.addUniform(pointsizeUniform);
   prog.addUniform(opacityUniform);
   prog.addUniform(modelViewUniform);
   prog.addUniform(projectionUniform);
+  prog.addShader(fragmentShader);
+  prog.addShader(vertexShader);
+  mat.addAttribute(prog);
+  mat.addAttribute(blend);
+
+  return mat;
+};
+
+//////////////////////////////////////////////////////////////////////////////
+/**
+ * Create a new instance of geometry material with the phong shader
+ *
+ * Helper function to create color phong shaded geometry material
+ *
+ * @returns {vglModule.material}
+ */
+//////////////////////////////////////////////////////////////////////////////
+vglModule.utils.createPhongMaterial = function() {
+  'use strict';
+   var mat = new vglModule.material(),
+       blend = new vglModule.blend(),
+       prog = new vglModule.shaderProgram(),
+       vertexShader = vglModule.utils.createPhongVertexShader(gl),
+       fragmentShader = vglModule.utils.createPhongFragmentShader(gl),
+       posVertAttr = new vglModule.vertexAttribute("vertexPosition"),
+       normalVertAttr = new vglModule.vertexAttribute("vertexNormal"),
+       colorVertAttr = new vglModule.vertexAttribute("vertexColor"),
+       opacityUniform = new vglModule.floatUniform("opacity", 1.0),
+       modelViewUniform = new vglModule.modelViewUniform("modelViewMatrix"),
+       normalUniform = new vglModule.normalMatrixUniform("normalMatrix"),
+       projectionUniform = new vglModule.projectionUniform("projectionMatrix");
+
+  prog.addVertexAttribute(posVertAttr, vglModule.vertexAttributeKeys.Position);
+  prog.addVertexAttribute(normalVertAttr, vglModule.vertexAttributeKeys.Normal);
+  prog.addVertexAttribute(colorVertAttr, vglModule.vertexAttributeKeys.Color);
+  prog.addUniform(opacityUniform);
+  prog.addUniform(modelViewUniform);
+  prog.addUniform(projectionUniform);
+  prog.addUniform(normalUniform);
   prog.addShader(fragmentShader);
   prog.addShader(vertexShader);
   mat.addAttribute(prog);
@@ -581,7 +708,7 @@ vglModule.utils.createSolidColorMaterial = function(color) {
       fragmentShader = vglModule.utils.createFragmentShaderSolidColor(gl, color),
       posVertAttr = new vglModule.vertexAttribute("vertexPosition"),
       pointsizeUniform = new vglModule.floatUniform("pointSize", 5.0),
-      opacityUniform = new vglModule.floatUniform("opacity", 0.5),
+      opacityUniform = new vglModule.floatUniform("opacity", 1.0),
       modelViewUniform = new vglModule.modelViewUniform("modelViewMatrix"),
       projectionUniform = new vglModule.projectionUniform("projectionMatrix");
 

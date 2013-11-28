@@ -62,9 +62,6 @@ vglModule.trackballInteractorStyle = function() {
   /////////////////////////////////////////////////////////////////////////////
   this.handleMouseMove = function(event) {
     var canvas = m_that.viewer().canvas();
-    if (event.target !== canvas) {
-      return true;
-    }
     m_width = m_that.viewer().renderWindow().windowSize()[0];
     m_height = m_that.viewer().renderWindow().windowSize()[1];
     m_renderer = m_that.viewer().renderWindow().activeRenderer();
@@ -144,9 +141,6 @@ vglModule.trackballInteractorStyle = function() {
   /////////////////////////////////////////////////////////////////////////////
   this.handleMouseDown = function(event) {
     var canvas = m_that.viewer().canvas();
-    if (event.target !== canvas) {
-      return true;
-    }
     if (event.button === 0) {
       m_leftMouseButtonDown = true;
     }
@@ -182,9 +176,6 @@ vglModule.trackballInteractorStyle = function() {
   /////////////////////////////////////////////////////////////////////////////
   this.handleMouseUp = function(event) {
     var canvas = m_that.viewer().canvas();
-    if (event.target !== canvas) {
-      return true;
-    }
     if (event.button === 0) {
       m_leftMouseButtonDown = false;
     }

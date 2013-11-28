@@ -27,8 +27,8 @@ vglModule.camera = function() {
 
   /** @private */
   var m_viewAngle = (Math.PI * 30) / 180.0,
-      m_position = vec3.fromValues(0.0, 0.0, 0.0),
-      m_focalPoint = vec3.fromValues(0.0, 0.0, -5.0),
+      m_position = vec4.fromValues(0.0, 0.0, 0.0, 1.0),
+      m_focalPoint = vec4.fromValues(0.0, 0.0, -5.0, 1.0),
       m_centerOfRotation = vec3.fromValues(0.0, 0.0, 0.0),
       m_viewUp = vec4.fromValues(0.0, 1.0, 0.0, 0.0),
       m_rightDir = vec4.fromValues(1.0, 0.0, 0.0, 0.0),
@@ -58,6 +58,26 @@ vglModule.camera = function() {
 
   ////////////////////////////////////////////////////////////////////////////
   /**
+   * Set view angle of the camera in degrees, which is converted to radians.
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.setViewAngleDegrees = function(a) {
+    m_viewAngle = (Math.PI * a) / 180.0;
+    this.modified();
+  };
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
+   * Set view angle of the camera in degrees, which is converted to radians.
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.setViewAngle = function(a) {
+    m_viewAngle = a;
+    this.modified();
+  };
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
    * Get position of the camera
    */
   ////////////////////////////////////////////////////////////////////////////
@@ -71,7 +91,7 @@ vglModule.camera = function() {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.setPosition = function(x, y, z) {
-    m_position = vec3.fromValues(x, y, z);
+    m_position = vec4.fromValues(x, y, z, 1.0);
     this.modified();
   };
 
@@ -90,7 +110,7 @@ vglModule.camera = function() {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.setFocalPoint = function(x, y, z) {
-    m_focalPoint = vec3.fromValues(x, y, z);
+    m_focalPoint = vec4.fromValues(x, y, z, 1.0);
     this.modified();
   };
 
@@ -109,7 +129,7 @@ vglModule.camera = function() {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.setViewUpDirection = function(x, y, z) {
-    m_viewUp = vec3.fromValues(x, y, z);
+    m_viewUp = vec4.fromValues(x, y, z, 0);
     this.modified();
   };
 
@@ -352,8 +372,8 @@ vglModule.camera = function() {
     mat4.rotate(mat, mat, dy, m_rightDir);
     mat4.translate(mat, mat, inverseCenterOfRotation);
 
-    vec3.transformMat4(m_position, m_position, mat);
-    vec3.transformMat4(m_focalPoint, m_focalPoint, mat);
+    vec4.transformMat4(m_position, m_position, mat);
+    vec4.transformMat4(m_focalPoint, m_focalPoint, mat);
 
     // Update viewup vector
     vec4.transformMat4(m_viewUp, m_viewUp, mat);
