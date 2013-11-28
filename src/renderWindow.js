@@ -285,22 +285,14 @@ vglModule.renderWindow = function(canvas) {
     }
   };
 
-
   ////////////////////////////////////////////////////////////////////////////
   /**
-   * Get the focusDisplayPoint based on activeRenderer and its camera
+   * Get the focusDisplayPoint from the activeRenderer
    * @returns {vec4}
    */
-    ////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////
   this.focusDisplayPoint = function() {
-    var camera = m_activeRender.camera(),
-      focalPoint = camera.focalPoint(),
-      focusWorldPt = vec4.fromValues(
-        focalPoint[0], focalPoint[1], focalPoint[2], 1);
-
-    return m_activeRender.worldToDisplay(
-        focusWorldPt, camera.viewMatrix(),
-        camera.projectionMatrix(), m_width, m_height);
+    return m_activeRender.focusDisplayPoint();
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -315,7 +307,7 @@ vglModule.renderWindow = function(canvas) {
   this.displayToWorld = function(x, y, focusDisplayPoint) {
     var camera = m_activeRender.camera();
     if(!focusDisplayPoint) {
-      focusDisplayPoint = this.focusDisplayPoint();
+      focusDisplayPoint = m_activeRender.focusDisplayPoint();
     }
 
     return m_activeRender.displayToWorld(
