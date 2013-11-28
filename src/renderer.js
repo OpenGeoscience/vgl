@@ -495,6 +495,22 @@ vglModule.renderer = function() {
     return worldPt;
   };
 
+  ////////////////////////////////////////////////////////////////////////////
+  /**
+   * Get the focusDisplayPoint
+   * @returns {vec4}
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.focusDisplayPoint = function() {
+    var focalPoint = m_camera.focalPoint(),
+      focusWorldPt = vec4.fromValues(
+        focalPoint[0], focalPoint[1], focalPoint[2], 1);
+
+    return this.worldToDisplay(
+      focusWorldPt, m_camera.viewMatrix(),
+      m_camera.projectionMatrix(), m_width, m_height);
+  };
+
   return this;
 };
 

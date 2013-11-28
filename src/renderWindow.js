@@ -285,6 +285,36 @@ vglModule.renderWindow = function(canvas) {
     }
   };
 
+  ////////////////////////////////////////////////////////////////////////////
+  /**
+   * Get the focusDisplayPoint from the activeRenderer
+   * @returns {vec4}
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.focusDisplayPoint = function() {
+    return m_activeRender.focusDisplayPoint();
+  };
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
+   * Transform a point in display space to world space
+   * @param {Number} x
+   * @param {Number} y
+   * @param {vec4} focusDisplayPoint
+   * @returns {vec4}
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.displayToWorld = function(x, y, focusDisplayPoint) {
+    var camera = m_activeRender.camera();
+    if(!focusDisplayPoint) {
+      focusDisplayPoint = m_activeRender.focusDisplayPoint();
+    }
+
+    return m_activeRender.displayToWorld(
+      vec4.fromValues(x, y, focusDisplayPoint[2], 1.0), camera.viewMatrix(),
+      camera.projectionMatrix(), m_width, m_height);
+  };
+
   return this;
 };
 
