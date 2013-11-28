@@ -45,6 +45,7 @@ vglModule.renderer = function() {
   var m_backgroundColor = [0.0, 0.0, 0.0, 1.0],
       m_sceneRoot = new vglModule.groupNode(),
       m_camera = new vglModule.camera(),
+      m_nearClippingPlaneTolerance = null,
       m_x = 0,
       m_y = 0,
       m_width = 0,
@@ -288,29 +289,23 @@ vglModule.renderer = function() {
     // Make sure near is not bigger than far
     range[0] = (range[0] >= range[1]) ? (0.01 * range[1]) : (range[0]);
 
-    // @todo
     // Make sure near is at least some fraction of far - this prevents near
     // from being behind the camera or too close in front. How close is too
-    // close depends on the resolution of the depth buffer
-    // if (!this->NearClippingPlaneTolerance)
-    //   {
-    //   this->NearClippingPlaneTolerance = 0.01;
-    //   if (this->RenderWindow)
-    //     {
-    //     int ZBufferDepth = this->RenderWindow->GetDepthBufferSize();
-    //     if ( ZBufferDepth > 16 )
-    //       {
-    //       this->NearClippingPlaneTolerance = 0.001;
-    //       }
-    //     }
-    //   }
+    // close depends on the resolution of the depth buffer.
+    if (!m_nearClippingPlaneTolerance) {
+      m_nearClippingPlaneTolerance = 0.01;
+
+      if (gl !== null && gl.getParameter(gl.DEPTH_BITS) > 16) {
+        m_nearClippingPlaneTolerance = 0.001;
+      }
+    }
 
     // make sure the front clipping range is not too far from the far clippnig
     // range, this is to make sure that the zbuffer resolution is effectively
-    // used
-    // if (range[0] < this->NearClippingPlaneTolerance*range[1]) {
-    //   range[0] = this->NearClippingPlaneTolerance*range[1];
-    // }
+    // used.
+    if (range[0] < m_nearClippingPlaneTolerance*range[1]) {
+       range[0] = m_nearClippingPlaneTolerance*range[1];
+    }
 
     m_camera.setClippingRange(range[0], range[1]);
   };
