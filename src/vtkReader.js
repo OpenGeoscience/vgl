@@ -440,7 +440,7 @@ vglModule.vtkReader = function() {
     tmpList = this.clearVtkObjectData();
     for(layer = m_vtkScene.Renderers.length - 1; layer >= 0; layer--) {
       layerList = tmpList[layer];
-      if (layerList == null || typeof layerList === 'undefined') {
+      if (layerList === null || typeof layerList === 'undefined') {
         continue;
       }
 
@@ -458,10 +458,10 @@ vglModule.vtkReader = function() {
         else if(geomType === "L") {
           material = ogs.vgl.utils.createGeometryMaterial();
         }
-        else if("P") {
+        else if(geomType === "P") {
           material = ogs.vgl.utils.createGeometryMaterial();
         }
-        else if("C") {
+        else if(geomType === "C") {
           material = ogs.vgl.utils.createGeometryMaterial();
         }
 

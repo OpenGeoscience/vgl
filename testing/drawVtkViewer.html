@@ -34,7 +34,7 @@
 
           reader.addVtkObjectData(vtkObject);
           reader.setVtkScene(scene);
-          var viewer = reader.createViewer(node);
+          var viewer = reader.updateViewer(node);
 
           renderer = viewer.renderWindow().activeRenderer();
           interactorStyle = viewer.interactorStyle();
