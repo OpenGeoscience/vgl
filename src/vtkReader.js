@@ -39,6 +39,7 @@ vglModule.vtkReader = function() {
   m_base64Str = "",
   m_base64Count = 0,
   m_pos = 0,
+  m_viewer = null,
   i = null;
 
   //initialize the array here if not already done.
@@ -420,62 +421,71 @@ vglModule.vtkReader = function() {
    * @returns renderer
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.createViewer = function(node) {
-    var viewer, renderer, mapper, material, objIdx = 0,
-        actor, interactorStyle, bgc, geom, rawGeom, vtkObject,
-        shaderProg, opacityUniform, geomType;
+  this.updateViewer = function(node) {
+    var renderer, mapper, material, objIdx = 0,
+    actor, interactorStyle, bgc, geom, rawGeom, vtkObject,
+    shaderProg, opacityUniform, geomType, layer, layerList, tmpList;
 
-    if (m_vtkScene === null || m_vtkObjectCount === 0) {
+    if (m_vtkObjectCount === 0) {
       return null;
     }
 
-    viewer = ogs.vgl.viewer(node);
-    viewer.init();
-
-    viewer.renderWindow().resize(node.width, node.height);
-    renderer = viewer.renderWindow().activeRenderer();
-
-    for(objIdx; objIdx < m_vtkObjectCount; objIdx++) {
-      mapper = ogs.vgl.mapper();
-      vtkObject = m_vtkObjectList[objIdx];
-      rawGeom = vtkObject.data;
-      geom = this.parseObject(rawGeom);
-      geomType = geom.name();
-      mapper.setGeometryData(geom);
-
-      //create material based on type.
-      if (geomType === "M") {
-        material = ogs.vgl.utils.createPhongMaterial();
-      }
-      else if(geomType === "L") {
-        material = ogs.vgl.utils.createGeometryMaterial();
-      }
-      else if(geomType === "P") {
-        material = ogs.vgl.utils.createGeometryMaterial();
-      }
-      else if(geomType === "C") {
-        material = ogs.vgl.utils.createGeometryMaterial();
-      }
-
-      //default opacity === solid. If were transparent, set it lower.
-      if (vtkObject.hasTransparency) {
-        shaderProg = material.shaderProgram();
-        opacityUniform = shaderProg.uniform("opacity");
-        opacityUniform = new ogs.vgl.floatUniform("opacity", 0.5);
-        shaderProg.addUniform(opacityUniform);
-      }
-
-      actor = ogs.vgl.actor();
-      actor.setMapper(mapper);
-      actor.setMaterial(material);
-      renderer.addActor(actor);
+    if(m_viewer === null) {
+      m_viewer = ogs.vgl.viewer(node);
+      m_viewer.init();
+      m_viewer.renderWindow().resize(node.width, node.height);
     }
 
+    renderer = m_viewer.renderWindow().activeRenderer();
+    tmpList = this.clearVtkObjectData();
+    for(layer = m_vtkScene.Renderers.length - 1; layer >= 0; layer--) {
+      layerList = tmpList[layer];
+      if (layerList === null || typeof layerList === 'undefined') {
+        continue;
+      }
+
+      for(objIdx; objIdx < layerList.length; objIdx++) {
+        mapper = ogs.vgl.mapper();
+        vtkObject = layerList[objIdx];
+        geom = this.parseObject(vtkObject.data);
+        geomType = geom.name();
+        mapper.setGeometryData(geom);
+
+        //create material based on type.
+        if (geomType === "M") {
+          material = ogs.vgl.utils.createPhongMaterial();
+        }
+        else if(geomType === "L") {
+          material = ogs.vgl.utils.createGeometryMaterial();
+        }
+        else if(geomType === "P") {
+          material = ogs.vgl.utils.createGeometryMaterial();
+        }
+        else if(geomType === "C") {
+          material = ogs.vgl.utils.createGeometryMaterial();
+        }
+
+        //default opacity === solid. If were transparent, set it lower.
+        //**TODO: We should render solid first, then transparent,
+        // but currently don't.
+        if (vtkObject.hasTransparency) {
+          shaderProg = material.shaderProgram();
+          opacityUniform = shaderProg.uniform("opacity");
+          opacityUniform = new ogs.vgl.floatUniform("opacity", 0.5);
+          shaderProg.addUniform(opacityUniform);
+        }
+
+        actor = ogs.vgl.actor();
+        actor.setMapper(mapper);
+        actor.setMaterial(material);
+        renderer.addActor(actor);
+      }
+    }
     this.parseSceneMetadata(renderer, m_vtkScene);
     interactorStyle = ogs.vgl.trackballInteractorStyle();
-    viewer.setInteractorStyle(interactorStyle);
+    m_viewer.setInteractorStyle(interactorStyle);
 
-    return viewer;
+    return m_viewer;
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -495,7 +505,20 @@ vglModule.vtkReader = function() {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.addVtkObjectData = function(vtkObject) {
-    m_vtkObjectList[m_vtkObjectCount] = vtkObject;
+    var layerList, i = 0, md5;
+    if (typeof m_vtkObjectList[vtkObject.layer] === 'undefined') {
+      m_vtkObjectList[vtkObject.layer] = [];
+    }
+
+    layerList = m_vtkObjectList[vtkObject.layer];
+    for (i; i < layerList.length; ++i) {
+      md5 = layerList[i].md5;
+      if (vtkObject.md5 === md5) {
+        return;
+      }
+    }
+
+    m_vtkObjectList[vtkObject.layer].push(vtkObject);
     m_vtkObjectCount++;
   };
 
@@ -508,8 +531,10 @@ vglModule.vtkReader = function() {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.clearVtkObjectData = function() {
-    m_vtkObjectList = [];
+    var tmpList = m_vtkObjectList;
+    m_vtkObjectList = [[]];
     m_vtkObjectCount = 0;
+    return tmpList;
   };
 
   ////////////////////////////////////////////////////////////////////////////
