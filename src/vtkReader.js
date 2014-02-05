@@ -392,12 +392,12 @@ vglModule.vtkReader = function() {
    * @returns renderer
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.parseSceneMetadata = function(renderer, sceneJSON) {
+  this.parseSceneMetadata = function(renderer, layer) {
 
-    var sceneRenderer = sceneJSON.Renderers[0],
+    var sceneRenderer = m_vtkScene.Renderers[layer],
         camera = renderer.camera(), bgc;
 
-    camera.setCenterOfRotation(sceneJSON.Center);
+    camera.setCenterOfRotation(m_vtkScene.Center);
     camera.setViewAngleDegrees(sceneRenderer.LookAt[0]);
     camera.setPosition(
       sceneRenderer.LookAt[7], sceneRenderer.LookAt[8],
@@ -409,8 +409,11 @@ vglModule.vtkReader = function() {
       sceneRenderer.LookAt[4], sceneRenderer.LookAt[5],
       sceneRenderer.LookAt[6]);
 
-    bgc = sceneRenderer.Background1;
-    renderer.setBackgroundColor(bgc[0], bgc[1], bgc[2], 1);
+    if (layer === 0)
+    {
+      bgc = sceneRenderer.Background1;
+      renderer.setBackgroundColor(bgc[0], bgc[1], bgc[2], 1);
+    }
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -436,13 +439,25 @@ vglModule.vtkReader = function() {
       m_viewer.renderWindow().resize(node.width, node.height);
     }
 
-    renderer = m_viewer.renderWindow().activeRenderer();
     tmpList = this.clearVtkObjectData();
     for(layer = m_vtkScene.Renderers.length - 1; layer >= 0; layer--) {
       layerList = tmpList[layer];
       if (layerList === null || typeof layerList === 'undefined') {
         continue;
       }
+
+      if ( layer === 0 )
+      {
+        renderer = m_viewer.renderWindow().activeRenderer();
+      }
+      else
+      {
+//	  continue;
+        renderer = new ogs.vgl.renderer();
+        m_viewer.renderWindow().addRenderer(renderer);
+      }
+
+      this.parseSceneMetadata(renderer, layer);
 
       for(objIdx; objIdx < layerList.length; objIdx++) {
         mapper = ogs.vgl.mapper();
@@ -473,6 +488,7 @@ vglModule.vtkReader = function() {
           opacityUniform = shaderProg.uniform("opacity");
           opacityUniform = new ogs.vgl.floatUniform("opacity", 0.5);
           shaderProg.addUniform(opacityUniform);
+          material.setBinNumber(1000);
         }
 
         actor = ogs.vgl.actor();
@@ -481,7 +497,7 @@ vglModule.vtkReader = function() {
         renderer.addActor(actor);
       }
     }
-    this.parseSceneMetadata(renderer, m_vtkScene);
+
     interactorStyle = ogs.vgl.trackballInteractorStyle();
     m_viewer.setInteractorStyle(interactorStyle);
 
