@@ -35,7 +35,6 @@ set(_source_files
   node.js
   groupNode.js
   actor.js
-  camera.js
   freezeObject.js
   defaultValue.js
   geojsonReader.js
@@ -48,6 +47,7 @@ set(_source_files
   material.js
   renderer.js
   renderWindow.js
+  camera.js
   interactorStyle.js
   trackballInteractorStyle.js
   viewer.js

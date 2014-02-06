@@ -4,10 +4,17 @@
  */
 
 /*jslint devel: true, forin: true, newcap: true, plusplus: true*/
-/*jslint white: true, continue:true, indent: 2*/
+/*jslint white: true, continue:true, indent: 2, bitwise: true*/
 
-/*global vglModule, ogs, vec3, vec4, mat4, inherit, $*/
+/*global vglModule, gl, ogs, vec3, vec4, mat4, inherit, $*/
 //////////////////////////////////////////////////////////////////////////////
+
+vglModule.vglStateAttributeBits = {
+  ClearMask : {
+    ColorBufferBit : 2,
+    DepthBufferBit : 4
+  }
+};
 
 //////////////////////////////////////////////////////////////////////////////
 /**
@@ -45,7 +52,11 @@ vglModule.camera = function() {
       m_right = 1.0,
       m_top = +1.0,
       m_bottom = -1.0,
-      m_enableParallelProjection = false;
+      m_enableParallelProjection = false,
+      m_clearColor = [1.0, 1.0, 1.0, 1.0],
+      m_clearDepth = 1.0,
+      m_clearMask = vglModule.vglStateAttributeBits.ClearMask.ColorBufferBit |
+                    vglModule.vglStateAttributeBits.ClearMask.DepthBufferBit;
 
   ////////////////////////////////////////////////////////////////////////////
   /**
@@ -272,6 +283,101 @@ vglModule.camera = function() {
   ////////////////////////////////////////////////////////////////////////////
   this.projectionMatrix = function() {
     return this.computeProjectionMatrix();
+  };
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
+   * Return clear mask used by this camera
+   *
+   * @returns {number}
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.clearMask = function() {
+    return m_clearMask;
+  };
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
+   * Return actual mask used by the camera
+   *
+   * @returns {number}
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.mask = function() {
+    var mask = null;
+    if (m_clearMask &
+        vglModule.vglStateAttributeBits.ClearMask.ColorBufferBit) {
+      mask = gl.COLOR_BUFFER_BIT;
+    }
+
+    if (m_clearMask &
+        vglModule.vglStateAttributeBits.ClearMask.DepthBufferBit) {
+      if (mask !== null) {
+        mask = mask | gl.DEPTH_BUFFER_BIT;
+      } else {
+        mask = gl.DEPTH_BUFFER_BIT;
+      }
+    }
+
+    return mask;
+  };
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
+   * Set clear mask for camera
+   *
+   * @param mask
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.setClearMask = function(mask) {
+    m_clearMask = mask;
+    this.modified();
+  };
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
+   *
+   * @returns {{1.0: null, 1.0: null, 1.0: null, 1.0: null}}
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.clearColor = function() {
+    return m_clearColor;
+  };
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
+   *
+   * @param color
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.setClearColor = function(r, g, b, a) {
+    m_clearColor[0] = r;
+    m_clearColor[0] = g;
+    m_clearColor[0] = b;
+    m_clearColor[0] = a;
+
+    this.modified();
+  };
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
+   *
+   * @returns {{1.0: null}}
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.clearDepth = function() {
+    return m_clearDepth;
+  };
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
+   *
+   * @param depth
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.setClearDepth = function(depth) {
+    m_clearDepth = depth;
+    this.modified();
   };
 
   ////////////////////////////////////////////////////////////////////////////

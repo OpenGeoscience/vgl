@@ -42,8 +42,7 @@ vglModule.renderer = function() {
   vglModule.object.call(this);
 
   /** @private */
-  var m_backgroundColor = [0.0, 0.0, 0.0, 1.0],
-      m_sceneRoot = new vglModule.groupNode(),
+  var m_sceneRoot = new vglModule.groupNode(),
       m_camera = new vglModule.camera(),
       m_nearClippingPlaneTolerance = null,
       m_x = 0,
@@ -77,7 +76,7 @@ vglModule.renderer = function() {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.backgroundColor = function() {
-    return m_backgroundColor;
+    return m_camera.clearColor();
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -91,11 +90,7 @@ vglModule.renderer = function() {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.setBackgroundColor = function(r, g, b, a) {
-    m_backgroundColor[0] = r;
-    m_backgroundColor[1] = g;
-    m_backgroundColor[2] = b;
-    m_backgroundColor[3] = a;
-
+    m_camera.setClearColor(r, g, b, a);
     this.modified();
   };
 
@@ -128,13 +123,23 @@ vglModule.renderer = function() {
   ////////////////////////////////////////////////////////////////////////////
   this.render = function() {
     var i, renSt, children, actor = null, sortedActors = [],
-        mvMatrixInv = mat4.create();
+        mvMatrixInv = mat4.create(), clearColor = null;
 
-    gl.clearColor(m_backgroundColor[0], m_backgroundColor[1],
-      m_backgroundColor[2], m_backgroundColor[3]);
     gl.enable(gl.DEPTH_TEST);
     gl.depthFunc(gl.LEQUAL);
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+    if (m_camera.clearMask() &
+        vglModule.vglStateAttributeBits.ClearMask.ColorBufferBit) {
+      clearColor = m_camera.clearColor();
+      gl.clearColor(clearColor[0], clearColor[1], clearColor[2], clearColor[30]);
+    }
+
+    if (m_camera.clearMask() &
+        vglModule.vglStateAttributeBits.ClearMask.DepthBufferBit) {
+      gl.clearDepth(m_camera.clearDepth());
+    }
+
+    gl.clear(m_camera.mask());
 
     renSt = new vglModule.renderState();
     children = m_sceneRoot.children();
