@@ -9,13 +9,6 @@
 /*global vglModule, gl, ogs, vec3, vec4, mat4, inherit, $*/
 //////////////////////////////////////////////////////////////////////////////
 
-vglModule.vglStateAttributeBits = {
-  ClearMask : {
-    ColorBufferBit : 2,
-    DepthBufferBit : 4
-  }
-};
-
 //////////////////////////////////////////////////////////////////////////////
 /**
  * Create a new instance of class camera
@@ -55,8 +48,8 @@ vglModule.camera = function() {
       m_enableParallelProjection = false,
       m_clearColor = [1.0, 1.0, 1.0, 1.0],
       m_clearDepth = 1.0,
-      m_clearMask = vglModule.vglStateAttributeBits.ClearMask.ColorBufferBit |
-                    vglModule.vglStateAttributeBits.ClearMask.DepthBufferBit;
+      m_clearMask = vglModule.GL.ColorBufferBit |
+                    vglModule.GL.DepthBufferBit;
 
   ////////////////////////////////////////////////////////////////////////////
   /**
@@ -294,32 +287,6 @@ vglModule.camera = function() {
   ////////////////////////////////////////////////////////////////////////////
   this.clearMask = function() {
     return m_clearMask;
-  };
-
-  ////////////////////////////////////////////////////////////////////////////
-  /**
-   * Return actual mask used by the camera
-   *
-   * @returns {number}
-   */
-  ////////////////////////////////////////////////////////////////////////////
-  this.mask = function() {
-    var mask = null;
-    if (m_clearMask &
-        vglModule.vglStateAttributeBits.ClearMask.ColorBufferBit) {
-      mask = gl.COLOR_BUFFER_BIT;
-    }
-
-    if (m_clearMask &
-        vglModule.vglStateAttributeBits.ClearMask.DepthBufferBit) {
-      if (mask !== null) {
-        mask = mask | gl.DEPTH_BUFFER_BIT;
-      } else {
-        mask = gl.DEPTH_BUFFER_BIT;
-      }
-    }
-
-    return mask;
   };
 
   ////////////////////////////////////////////////////////////////////////////

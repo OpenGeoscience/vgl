@@ -128,18 +128,16 @@ vglModule.renderer = function() {
     gl.enable(gl.DEPTH_TEST);
     gl.depthFunc(gl.LEQUAL);
 
-    if (m_camera.clearMask() &
-        vglModule.vglStateAttributeBits.ClearMask.ColorBufferBit) {
+    if (m_camera.clearMask() & vglModule.GL.ColorBufferBit) {
       clearColor = m_camera.clearColor();
       gl.clearColor(clearColor[0], clearColor[1], clearColor[2], clearColor[30]);
     }
 
-    if (m_camera.clearMask() &
-        vglModule.vglStateAttributeBits.ClearMask.DepthBufferBit) {
+    if (m_camera.clearMask() & vglModule.GL.DepthBufferBit) {
       gl.clearDepth(m_camera.clearDepth());
     }
 
-    gl.clear(m_camera.mask());
+    gl.clear(m_camera.clearMask());
 
     renSt = new vglModule.renderState();
     children = m_sceneRoot.children();

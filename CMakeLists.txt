@@ -28,6 +28,7 @@ find_package(UglifyJS)
 
 set(_source_files
   init.js
+  GL.js
   timestamp.js
   object.js
   command.js
