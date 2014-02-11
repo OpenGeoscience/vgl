@@ -139,6 +139,9 @@ vglModule.renderer = function() {
 
     gl.clear(m_camera.clearMask());
 
+    // Set the viewport for this renderer
+    gl.viewport(m_x, m_y, m_width, m_height);
+
     renSt = new vglModule.renderState();
     children = m_sceneRoot.children();
 
@@ -338,7 +341,6 @@ vglModule.renderer = function() {
     m_width = width;
     m_height = height;
 
-    gl.viewport(x, y, m_width, m_height);
     m_camera.setViewAspect(m_width / m_height);
     this.modified();
   };
