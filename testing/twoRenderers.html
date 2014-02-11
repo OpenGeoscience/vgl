@@ -29,6 +29,7 @@
 
         // Second renderer that draws on top of the first one
         viewer.renderWindow().addRenderer(renderer2);
+        renderer2.resize(100, 100);
         renderer2.camera().setClearMask(vglModule.GL.DepthBufferBit);
 
         $.getJSON("/data/countries.json", {
