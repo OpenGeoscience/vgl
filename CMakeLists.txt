@@ -51,6 +51,7 @@ set(_source_files
   camera.js
   interactorStyle.js
   trackballInteractorStyle.js
+  pvwInteractorStyle.js
   viewer.js
   shader.js
   shaderProgram.js
