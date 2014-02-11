@@ -130,6 +130,12 @@ vglModule.pvwInteractorStyle = function() {
       }
 
       m_renderer.resetCameraClippingRange();
+
+      // Apply rotation to all other cameras
+      for (i = 0; i < rens.length; ++i) {
+        rens[i].resetCameraClippingRange();
+      }
+
       $(m_that).trigger(vglModule.command.leftButtonPressEvent);
     }
     if (m_rightMouseButtonDown) {
