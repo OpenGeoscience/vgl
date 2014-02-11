@@ -78,7 +78,7 @@ vglModule.pvwInteractorStyle = function() {
     // Get secondary cameras
     rens = m_that.viewer().renderWindow().renderers();
     for (i = 0; i < rens.length; ++i) {
-      if (m_renderer != rens[i]) {
+      if (m_renderer !== rens[i]) {
         secCameras.push(rens[i].camera());
       }
     }
