@@ -9,6 +9,7 @@ set(MANGLE ON CACHE BOOL "When minifying, also mangle non-public symbol names.")
 set(VGL_DATA_DIR "" CACHE PATH  "Path to directory containing data for testing.")
 set(VGL_BASELINE_DIR "" CACHE PATH "Path to directory containing baseline images for testing.")
 set(BUILD_TESTING OFF CACHE BOOL "Enable testing")
+set(BUILD_DOCUMENTATION OFF CACHE BOOL "Enable building documentation")
 
 if(NOT ${MINIFY})
     set(MINIFY_FLAG "-b")
@@ -209,3 +210,52 @@ endif()
 foreach(f ${_js_lint_files})
     add_test(jslint-${f} ${JSLint_EXECUTABLE} ${f})
 endforeach()
+
+# Documentation
+if (BUILD_DOCUMENTATION)
+  # Find jsdoc-toolkit-rst-template
+  find_package(JSDocToolkitTemplate)
+
+  # Find jsdoc-toolkit
+  find_package(JSDocToolkit)
+
+  # Find ant
+  find_program(ANT_EXECUTABLE NAMES ant DOC   "The ant build tool")
+  if(NOT ANT_EXECUTABLE)
+    message(FATAL_ERROR "Can not find ant build tool: ant")
+  endif()
+
+  # Find sphinx-build
+  find_program(SPHINX_BUILD_EXECUTABLE NAMES sphinx-build DOC "The ant build tool")
+  if(NOT SPHINX_BUILD_EXECUTABLE)
+    message(FATAL_ERROR "Can not find ant build tool: sphinx-build")
+  endif()
+
+  add_custom_command(
+    OUTPUT ${vgl_BINARY_DIR}/docs
+    COMMAND ${ANT_EXECUTABLE} -Djs.src.dir=${vgl_SOURCE_DIR}/src -Djs.rst.dir=${vgl_BINARY_DIR}/docs
+                -Djsdoc-toolkit.dir=${JSDOC_TOOLKIT_DIR}
+    WORKING_DIRECTORY "${JSDOC_TOOLKIT_TEMPLATE_DIR}"
+  )
+  add_custom_target(vgl_build_docs ALL DEPENDS "${vgl_BINARY_DIR}/docs")
+
+  message(STATUS "${vgl_SOURCE_DIR}/docs/conf.py")
+
+  # Copy config to the docs directory
+  add_custom_command(
+    OUTPUT "${vgl_BINARY_DIR}/docs/conf.py"
+    COMMAND ${CMAKE_COMMAND} -E copy "${vgl_SOURCE_DIR}/docs/conf.py"
+            "${vgl_BINARY_DIR}/docs/conf.py"
+  )
+  add_custom_target(vgl_copy_sphinx_config ALL DEPENDS "${vgl_BINARY_DIR}/docs")
+  add_dependencies(vgl_copy_sphinx_config vgl_build_docs)
+
+  add_custom_command(
+    OUTPUT ${vgl_BINARY_DIR}/docs/sphinx
+    COMMAND ${SPHINX_BUILD_EXECUTABLE} -b html "${vgl_BINARY_DIR}/docs" "${vgl_BINARY_DIR}/docs/sphnix"
+  )
+  add_custom_target(vgl_build_docs_sphinx ALL DEPENDS "${vgl_BINARY_DIR}/docs/sphinx")
+  add_dependencies(vgl_build_docs_sphinx vgl_copy_sphinx_config)
+  add_dependencies(${PROJECT_NAME} vgl_build_docs_sphinx)
+
+endif()
