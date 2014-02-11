@@ -6,6 +6,7 @@ set(_tests
   drawVtkViewer.py
   drawVtkViewerReg.py
   pickObjects.py
+  twoRenderers.py
 )
 
 foreach(_test ${_tests})
