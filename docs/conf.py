@@ -108,7 +108,7 @@ html_theme_options = {
     'navbar_title': "VGL",
 
     # Tab name for entire site. (Default: "Site")
-    'navbar_site_name': "VGL",
+    'navbar_site_name': "Site",
 
     # A list of tuples containing pages or urls to link to.
     # Valid tuples should be in the following forms:
@@ -118,7 +118,7 @@ html_theme_options = {
     # Note the "1" or "True" value above as the third argument to indicate
     # an arbitrary url.
     'navbar_links': [
-        ("github", "https://github.com/OpenGeoscience/vgl", True),
+        ("GitHub", "https://github.com/OpenGeoscience/vgl", True),
     ],
 
     # Render the next and previous page links in navbar. (Default: true)
@@ -150,13 +150,13 @@ html_theme_options = {
 
     # Location of link to source.
     # Options are "nav" (default), "footer" or anything else to exclude.
-    'source_link_position': "nav",
+    'source_link_position': "",
 
     # Bootswatch (http://bootswatch.com/) theme.
     #
     # Options are nothing with "" (default) or the name of a valid theme
     # such as "amelia" or "cosmo".
-    'bootswatch_theme': "cosmo",
+    'bootswatch_theme': "spacelab",
 
     # Choose Bootstrap version.
     # Values: "3" (default) or "2" (in quotes)
