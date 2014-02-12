@@ -234,7 +234,7 @@ if (BUILD_DOCUMENTATION)
   add_custom_command(
     OUTPUT ${vgl_BINARY_DIR}/docs
     COMMAND ${ANT_EXECUTABLE} -Djs.src.dir=${vgl_SOURCE_DIR}/src -Djs.rst.dir=${vgl_BINARY_DIR}/docs
-                -Djsdoc-toolkit.dir=${JSDOC_TOOLKIT_DIR}
+            -Djsdoc-toolkit.dir=${JSDOC_TOOLKIT_DIR}
     WORKING_DIRECTORY "${JSDOC_TOOLKIT_TEMPLATE_DIR}"
   )
   add_custom_target(vgl_build_docs ALL DEPENDS "${vgl_BINARY_DIR}/docs")
@@ -247,7 +247,7 @@ if (BUILD_DOCUMENTATION)
     COMMAND ${CMAKE_COMMAND} -E copy "${vgl_SOURCE_DIR}/docs/conf.py"
             "${vgl_BINARY_DIR}/docs/conf.py"
   )
-  add_custom_target(vgl_copy_sphinx_config ALL DEPENDS "${vgl_BINARY_DIR}/docs")
+  add_custom_target(vgl_copy_sphinx_config ALL DEPENDS "${vgl_BINARY_DIR}/docs/conf.py")
   add_dependencies(vgl_copy_sphinx_config vgl_build_docs)
 
   add_custom_command(
