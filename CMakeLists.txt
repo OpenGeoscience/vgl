@@ -246,7 +246,7 @@ if (BUILD_DOCUMENTATION)
   # Copy config to the docs directory
   add_custom_command(
     OUTPUT "${vgl_BINARY_DIR}/docs/conf.py"
-    COMMAND ${CMAKE_COMMAND} -E copy "${vgl_SOURCE_DIR}/docs/conf.py"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${vgl_SOURCE_DIR}/docs/conf.py"
             "${vgl_BINARY_DIR}/docs/conf.py"
   )
   add_custom_target(vgl_copy_sphinx_config ALL DEPENDS
