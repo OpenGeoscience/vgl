@@ -303,8 +303,9 @@ vglModule.camera = function() {
 
   ////////////////////////////////////////////////////////////////////////////
   /**
+   * Get clear color (background color) of the camera
    *
-   * @returns {{1.0: null, 1.0: null, 1.0: null, 1.0: null}}
+   * @returns {Array}
    */
   ////////////////////////////////////////////////////////////////////////////
   this.clearColor = function() {
@@ -313,15 +314,16 @@ vglModule.camera = function() {
 
   ////////////////////////////////////////////////////////////////////////////
   /**
+   * Set clear color (background color) for the camera
    *
-   * @param color
+   * @param color RGBA
    */
   ////////////////////////////////////////////////////////////////////////////
   this.setClearColor = function(r, g, b, a) {
     m_clearColor[0] = r;
-    m_clearColor[0] = g;
-    m_clearColor[0] = b;
-    m_clearColor[0] = a;
+    m_clearColor[1] = g;
+    m_clearColor[2] = b;
+    m_clearColor[3] = a;
 
     this.modified();
   };

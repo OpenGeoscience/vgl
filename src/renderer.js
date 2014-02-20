@@ -130,7 +130,7 @@ vglModule.renderer = function() {
 
     if (m_camera.clearMask() & vglModule.GL.ColorBufferBit) {
       clearColor = m_camera.clearColor();
-      gl.clearColor(clearColor[0], clearColor[1], clearColor[2], clearColor[30]);
+      gl.clearColor(clearColor[0], clearColor[1], clearColor[2], clearColor[3]);
     }
 
     if (m_camera.clearMask() & vglModule.GL.DepthBufferBit) {
