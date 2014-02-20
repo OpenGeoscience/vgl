@@ -26,114 +26,33 @@ vglModule.actor = function() {
   vglModule.node.call(this);
 
   /** @private */
-  var m_center = [],
-      m_rotation = [],
-      m_scale = [],
-      m_translation = [0, 0, 0],
+  var m_transformMatrix = mat4.create(),
       m_referenceFrame = vglModule.boundingObject.ReferenceFrame.Relative,
       m_mapper = null;
 
-  m_center.length = 3;
-  m_rotation.length = 4;
-  m_scale.length = 3;
-  m_translation.length = 3;
-
   ////////////////////////////////////////////////////////////////////////////
   /**
-   * Get center of transformation
+   * Get transformation matrix used by the actor
    *
-   * @returns {Array}
+   * @returns {mat4}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.center = function() {
-    return m_center;
+  this.matrix = function() {
+    return m_transformMatrix;
   };
 
   ////////////////////////////////////////////////////////////////////////////
   /**
-   * Set center of transformation
+   * Set transformation matrix for the actor
    *
-   * @param {Number} x
-   * @param {Number} y
-   * @param {Number} z
+   * @param {mat4} 4X4 transformation matrix
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.setCenter = function(x, y, z) {
-    m_center[0] = x;
-    m_center[1] = y;
-    m_center[2] = z;
-  };
-
-  ////////////////////////////////////////////////////////////////////////////
-  /**
-   * Get rotation defined by axis & angle (radians)
-   *
-   * @returns {Array}
-   */
-  ////////////////////////////////////////////////////////////////////////////
-  this.rotation = function() {
-  };
-
-  ////////////////////////////////////////////////////////////////////////////
-  /**
-   * Set rotation defined by axis & angle (radians)
-   *
-   * @param {Number} angle
-   * @param {Number} x
-   * @param {Number} y
-   * @param {Number} z
-   */
-  ////////////////////////////////////////////////////////////////////////////
-  this.setRotation = function(angle, x, y, z) {
-    this.boundsModified();
-  };
-
-  ////////////////////////////////////////////////////////////////////////////
-  /**
-   * Get scale in x, y and z directions
-   *
-   * @returns {Array}
-   */
-  ////////////////////////////////////////////////////////////////////////////
-  this.scale = function() {
-  };
-
-  ////////////////////////////////////////////////////////////////////////////
-  /**
-   * Set scale in x, y and z directions
-   *
-   * @param {Number} x Scale in x direction
-   * @param {Number} y Scale in y direction
-   * @param {Number} z Scale in z direction
-   */
-  ////////////////////////////////////////////////////////////////////////////
-  this.setScale = function(x, y, z) {
-    this.boundsModified();
-  };
-
-  ////////////////////////////////////////////////////////////////////////////
-  /**
-   * Get translation in x, y and z directions
-   *
-   * @returns {Array}
-   */
-  ////////////////////////////////////////////////////////////////////////////
-  this.translation = function() {
-    return m_translation;
-  };
-
-  ////////////////////////////////////////////////////////////////////////////
-  /**
-   * Set translation in x, y and z directions
-   *
-   * @param {Number} x Translation in x direction
-   * @param {Number} y Translation in y direction
-   * @param {Number} z Translation in z direction
-   */
-  ////////////////////////////////////////////////////////////////////////////
-  this.setTranslation = function(x, y, z) {
-    m_translation = [x, y, z];
-    this.boundsModified();
+  this.setMatrix = function(tmatrix) {
+    if (tmatrix !== m_transformMatrix) {
+      m_transformMatrix = tmatrix;
+      this.modified();
+    }
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -162,31 +81,6 @@ vglModule.actor = function() {
       return true;
     }
     return false;
-  };
-
-  ////////////////////////////////////////////////////////////////////////////
-  /**
-   * Evaluate the transform associated with the actor.
-   *
-   * @returns {mat4}
-   */
-  ////////////////////////////////////////////////////////////////////////////
-  this.modelViewMatrix = function() {
-    var mat = mat4.create();
-    mat4.identity(mat);
-    mat4.translate(mat, mat, m_translation);
-    return mat;
-  };
-
-  ////////////////////////////////////////////////////////////////////////////
-  /**
-   * Return model-view matrix for the actor
-   *
-   * @returns {mat4}
-   */
-  ////////////////////////////////////////////////////////////////////////////
-  this.matrix = function() {
-    return this.modelViewMatrix();
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -271,9 +165,8 @@ vglModule.actor = function() {
       minPt = [mapperBounds[0], mapperBounds[2], mapperBounds[4]];
       maxPt = [mapperBounds[1], mapperBounds[3], mapperBounds[5]];
 
-      actorMatrix = this.modelViewMatrix();
-      vec3.transformMat4(minPt, minPt, actorMatrix);
-      vec3.transformMat4(maxPt, maxPt, actorMatrix);
+      vec3.transformMat4(minPt, minPt, m_transformMatrix);
+      vec3.transformMat4(maxPt, maxPt, m_transformMatrix);
 
       newBounds = [
         minPt[0] > maxPt[0] ? maxPt[0] : minPt[0],
