@@ -4,6 +4,7 @@ set(tests
   drawVtkViewer.html
   pickObjects.html
   twoRenderers.html
+  actorTransform.html
 )
 
 # Copy testing paths / files to the deployment directory
