@@ -14,7 +14,7 @@
 import sys, os
 
 # At the top.
-import sphinx_bootstrap_theme
+#import sphinx_bootstrap_theme
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -97,8 +97,8 @@ pygments_style = 'sphinx'
 #html_theme = 'default'
 
 # Activate the theme.
-html_theme = 'bootstrap'
-html_theme_path = sphinx_bootstrap_theme.get_html_theme_path()
+# html_theme = 'bootstrap'
+# html_theme_path = sphinx_bootstrap_theme.get_html_theme_path()
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -156,11 +156,11 @@ html_theme_options = {
     #
     # Options are nothing with "" (default) or the name of a valid theme
     # such as "amelia" or "cosmo".
-    'bootswatch_theme': "spacelab",
+    #'bootswatch_theme': "cosmo",
 
     # Choose Bootstrap version.
     # Values: "3" (default) or "2" (in quotes)
-    'bootstrap_version': "3",
+    #'bootstrap_version': "3",
 }
 
 # Add any paths that contain custom themes here, relative to this directory.
