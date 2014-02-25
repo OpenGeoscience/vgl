@@ -37,6 +37,7 @@ vgl.vtkReader = function() {
   m_vtkObjHashList = [],
   m_vtkObjectCount = 0,
   m_vtkScene = null,
+  m_node = null,
   END_OF_INPUT = -1,
   m_base64Str = "",
   m_base64Count = 0,
@@ -560,22 +561,10 @@ vgl.vtkReader = function() {
    * @returns viewer
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.updateViewer = function(node) {
+  this.updateViewer = function() {
     var renderer, mapper, material, objIdx, renderer1, renderer2,
         actor, interactorStyle, bgc, geom, rawGeom, vtkObject,
         shaderProg, opacityUniform, geomType, layer, layerList, tmpList;
-
-    if (m_vtkObjectCount === 0) {
-      return null;
-    }
-
-    if(m_viewer === null) {
-      m_viewer = ogs.vgl.viewer(node);
-      m_viewer.init();
-      m_vtkRenderedList[0] = m_viewer.renderWindow().activeRenderer();
-    }
-
-    m_viewer.renderWindow().resize(node.width, node.height);
 
     tmpList = this.clearVtkObjectData();
     for(layer = m_vtkScene.Renderers.length - 1; layer >= 0; layer--) {
@@ -585,19 +574,42 @@ vgl.vtkReader = function() {
       }
 
       renderer = this.getRenderer(layer);
-      this.parseSceneMetadata(renderer, layer, node);
-
+      this.parseSceneMetadata(renderer, layer, m_node);
       for(objIdx = 0; objIdx < layerList.length; objIdx++) {
         vtkObject = layerList[objIdx];
         this.parseObject(vtkObject, renderer);
       }
     }
 
-    interactorStyle = ogs.vgl.pvwInteractorStyle();
-    m_viewer.setInteractorStyle(interactorStyle);
-
     return m_viewer;
   };
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
+   * createViewer - Creates a new viewer object.
+   *
+   * @param
+   *
+   * @returns void
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.createNewViewer = function(node) {
+    var interactorStyle;
+
+    console.log("createViewer width/height: " + node.width + " " + node.height);
+
+    if(m_viewer === null) {
+      m_node = node;
+      m_viewer = ogs.vgl.viewer(node);
+      m_viewer.init();
+      m_vtkRenderedList[0] = m_viewer.renderWindow().activeRenderer();
+      m_viewer.renderWindow().resize(node.width, node.height);
+      interactorStyle = ogs.vgl.pvwInteractorStyle();
+      m_viewer.setInteractorStyle(interactorStyle);
+    }
+
+    m_node = node;
+  }
 
   ////////////////////////////////////////////////////////////////////////////
   /**
@@ -617,6 +629,7 @@ vgl.vtkReader = function() {
   ////////////////////////////////////////////////////////////////////////////
   this.addVtkObjectData = function(vtkObject) {
     var layerList, i = 0, md5;
+
     if ( m_vtkObjectList.hasOwnProperty(vtkObject.layer) === false ) {
       m_vtkObjectList[vtkObject.layer] = [];
     }
@@ -635,6 +648,7 @@ vgl.vtkReader = function() {
 
     // Add the md5 for this object so we don't add it again.
     m_vtkObjHashList.push(vtkObject.md5);
+//     renderer = this.getRenderer(layer);
 
     m_vtkObjectList[vtkObject.layer].push(vtkObject);
     m_vtkObjectCount++;
@@ -683,8 +697,9 @@ vgl.vtkReader = function() {
       if (layer === 0) {
         console.log(
           "Error: layer 0 redererer is active render but is missing from list");
-
-        return m_viewer.renderWindow().activeRenderer();
+        renderer = m_viewer.renderWindow().activeRenderer()
+        m_vtkRenderedList[layer] = renderer;
+        return renderer;
       }
 
       renderer = new ogs.vgl.renderer();
