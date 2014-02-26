@@ -6,7 +6,7 @@
 /*jslint devel: true, forin: true, newcap: true, plusplus: true*/
 /*jslint white: true, continue:true, indent: 2*/
 
-/*global vglModule, ogs, vec4, inherit, $, Uint16Array*/
+/*global vgl, ogs, vec4, inherit, $, Uint16Array*/
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
@@ -16,14 +16,14 @@
  * This contains code that reads a shapefile and produces vgl geometries
  *
  * @class
- * @returns {vglModule.shapefileReader}
+ * @returns {vgl.shapefileReader}
  */
 //////////////////////////////////////////////////////////////////////////////
-vglModule.shapefileReader = function() {
+vgl.shapefileReader = function() {
   'use strict';
 
-  if (!(this instanceof vglModule.shapefileReader)) {
-    return new vglModule.shapefileReader();
+  if (!(this instanceof vgl.shapefileReader)) {
+    return new vgl.shapefileReader();
   }
 
   var m_that = this;

@@ -13,12 +13,12 @@
       var testDrawCountries = {};
       testDrawCountries.main = function() {
         var node = document.getElementById("glcanvas"),
-            viewer = vglModule.viewer(node), renderer,
-            reader = vglModule.geojsonReader(),
+            viewer = vgl.viewer(node), renderer,
+            reader = vgl.geojsonReader(),
             geoms, i, mapper, material, actor,
             interactorStyle;
 
-        interactorStyle = vglModule.trackballInteractorStyle();
+        interactorStyle = vgl.trackballInteractorStyle();
 
         viewer.init();
         viewer.renderWindow().resize($(node).width(), $(node).height());
@@ -36,9 +36,9 @@
             mapper = ogs.vgl.mapper();
             mapper.setGeometryData(geoms[i]);
 
-            material = vglModule.utils.createGeometryMaterial();
+            material = vgl.utils.createGeometryMaterial();
 
-            actor = vglModule.actor();
+            actor = vgl.actor();
             actor.setMapper(mapper);
             actor.setMaterial(material);
 

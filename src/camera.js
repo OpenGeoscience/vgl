@@ -6,7 +6,7 @@
 /*jslint devel: true, forin: true, newcap: true, plusplus: true*/
 /*jslint white: true, continue:true, indent: 2, bitwise: true*/
 
-/*global vglModule, gl, ogs, vec3, vec4, mat4, inherit, $*/
+/*global vgl, gl, ogs, vec3, vec4, mat4, inherit, $*/
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
@@ -14,16 +14,16 @@
  * Create a new instance of class camera
  *
  * @class
- * @returns {vglModule.camera}
+ * @returns {vgl.camera}
  */
 //////////////////////////////////////////////////////////////////////////////
-vglModule.camera = function() {
+vgl.camera = function() {
   'use strict';
 
-  if (!(this instanceof vglModule.camera)) {
-    return new vglModule.camera();
+  if (!(this instanceof vgl.camera)) {
+    return new vgl.camera();
   }
-  vglModule.groupNode.call(this);
+  vgl.groupNode.call(this);
 
   /** @private */
   var m_viewAngle = (Math.PI * 30) / 180.0,
@@ -48,8 +48,8 @@ vglModule.camera = function() {
       m_enableParallelProjection = false,
       m_clearColor = [1.0, 1.0, 1.0, 1.0],
       m_clearDepth = 1.0,
-      m_clearMask = vglModule.GL.ColorBufferBit |
-                    vglModule.GL.DepthBufferBit;
+      m_clearMask = vgl.GL.ColorBufferBit |
+                    vgl.GL.DepthBufferBit;
 
   ////////////////////////////////////////////////////////////////////////////
   /**
@@ -501,4 +501,4 @@ vglModule.camera = function() {
   return this;
 };
 
-inherit(vglModule.camera, vglModule.groupNode);
+inherit(vgl.camera, vgl.groupNode);

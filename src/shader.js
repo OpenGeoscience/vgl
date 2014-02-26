@@ -6,7 +6,7 @@
 /*jslint devel: true, forin: true, newcap: true, plusplus: true*/
 /*jslint white: true, continue:true, indent: 2*/
 
-/*global gl, vglModule, ogs, vec4, inherit, $*/
+/*global gl, vgl, ogs, vec4, inherit, $*/
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
@@ -14,19 +14,19 @@
  * Create a new instance of class shader
  *
  * @param type
- * @returns {vglModule.shader}
+ * @returns {vgl.shader}
  */
 //////////////////////////////////////////////////////////////////////////////
-vglModule.shader = function(type) {
+vgl.shader = function(type) {
   'use strict';
 
-  if (!(this instanceof vglModule.shader)) {
-    return new vglModule.shader(type);
+  if (!(this instanceof vgl.shader)) {
+    return new vgl.shader(type);
   }
-  vglModule.object.call(this);
+  vgl.object.call(this);
 
   var m_shaderHandle = null,
-      m_compileTimestamp = vglModule.timestamp(),
+      m_compileTimestamp = vgl.timestamp(),
       m_shaderType = type,
       m_shaderSource = "";
 
@@ -116,4 +116,4 @@ vglModule.shader = function(type) {
   };
 };
 
-inherit(vglModule.shader, vglModule.object);
+inherit(vgl.shader, vgl.object);

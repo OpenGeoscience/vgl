@@ -6,7 +6,7 @@
 /*jslint devel: true, forin: true, newcap: true, plusplus: true*/
 /*jslint white: true, continue:true, indent: 2*/
 
-/*global vglModule, ogs, vec4, inherit, $*/
+/*global vgl, ogs, vec4, inherit, $*/
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
@@ -14,18 +14,18 @@
  * Create a new instance of class object
  *
  * @class
- * @returns {vglModule.object}
+ * @returns {vgl.object}
  */
 //////////////////////////////////////////////////////////////////////////////
-vglModule.object = function() {
+vgl.object = function() {
   'use strict';
 
-  if (!(this instanceof vglModule.object)) {
-    return new vglModule.object();
+  if (!(this instanceof vgl.object)) {
+    return new vgl.object();
   }
 
   /** @private */
-  var m_modifiedTime = vglModule.timestamp();
+  var m_modifiedTime = vgl.timestamp();
   m_modifiedTime.modified();
 
   ////////////////////////////////////////////////////////////////////////////

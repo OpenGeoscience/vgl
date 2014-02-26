@@ -6,7 +6,7 @@
 /*jslint devel: true, forin: true, newcap: true, plusplus: true*/
 /*jslint white: true, continue:true, indent: 2*/
 
-/*global vglModule, ogs, vec4, inherit, $*/
+/*global vgl, ogs, vec4, inherit, $*/
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
@@ -14,16 +14,16 @@
  * Create a new instance of class pointSource
  *
  * @class
- * @returns {vglModule.pointSource}
+ * @returns {vgl.pointSource}
  */
 //////////////////////////////////////////////////////////////////////////////
-vglModule.pointSource = function() {
+vgl.pointSource = function() {
   'use strict';
 
-  if (!(this instanceof vglModule.pointSource)) {
-    return new vglModule.pointSource();
+  if (!(this instanceof vgl.pointSource)) {
+    return new vgl.pointSource();
   }
-  vglModule.source.call(this);
+  vgl.source.call(this);
 
   var m_positions = [],
       m_colors = [],
@@ -86,7 +86,7 @@ vglModule.pointSource = function() {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.create = function() {
-    m_geom = new vglModule.geometryData();
+    m_geom = new vgl.geometryData();
 
     if (m_positions.length % 3 !== 0) {
       console.log("[ERROR] Invalid length of the points array");
@@ -106,15 +106,15 @@ vglModule.pointSource = function() {
       indices[i] = i;
     }
 
-    pointsPrimitive = new vglModule.points();
+    pointsPrimitive = new vgl.points();
     pointsPrimitive.setIndices(indices);
 
-    sourcePositions = vglModule.sourceDataP3fv();
+    sourcePositions = vgl.sourceDataP3fv();
     sourcePositions.pushBack(m_positions);
     m_geom.addSource(sourcePositions);
 
     if ((m_colors.length > 0) && m_colors.length === m_positions.length) {
-      sourceColors = vglModule.sourceDataC3fv();
+      sourceColors = vgl.sourceDataC3fv();
       sourceColors.pushBack(m_colors);
       m_geom.addSource(sourceColors);
     }
@@ -125,7 +125,7 @@ vglModule.pointSource = function() {
 
     if ((m_textureCoords.length > 0)
         && m_textureCoords.length === m_positions.length) {
-      sourceTexCoords = vglModule.sourceDataT2fv();
+      sourceTexCoords = vgl.sourceDataT2fv();
       sourceTexCoords.pushBack(m_textureCoords);
       m_geom.addSource(sourceTexCoords);
     }
@@ -141,4 +141,4 @@ vglModule.pointSource = function() {
   };
 };
 
-inherit(vglModule.pointSource, vglModule.source);
+inherit(vgl.pointSource, vgl.source);

@@ -6,7 +6,7 @@
 /*jslint devel: true, forin: true, newcap: true, plusplus: true*/
 /*jslint white: true, continue:true, indent: 2*/
 
-/*global vglModule, ogs, vec4, inherit, $*/
+/*global vgl, ogs, vec4, inherit, $*/
 //////////////////////////////////////////////////////////////////////////////
 
 // TODO Current we support only one context
@@ -17,16 +17,16 @@ var gl = null;
  * Create a new instance of class renderWindow
  *
  * @class
- * @returns {vglModule.renderWindow}
+ * @returns {vgl.renderWindow}
  */
 //////////////////////////////////////////////////////////////////////////////
-vglModule.renderWindow = function(canvas) {
+vgl.renderWindow = function(canvas) {
   'use strict';
 
-  if (!(this instanceof vglModule.renderWindow)) {
-    return new vglModule.renderWindow(canvas);
+  if (!(this instanceof vgl.renderWindow)) {
+    return new vgl.renderWindow(canvas);
   }
-  vglModule.object.call(this);
+  vgl.object.call(this);
 
   /** @private */
   var m_x = 0,
@@ -115,7 +115,7 @@ vglModule.renderWindow = function(canvas) {
   /**
    * Get active renderer of the the render window
    *
-   * @returns vglModule.renderer
+   * @returns vgl.renderer
    */
   ////////////////////////////////////////////////////////////////////////////
   this.activeRenderer = function() {
@@ -168,7 +168,7 @@ vglModule.renderWindow = function(canvas) {
    * Return a renderer at a given index
    *
    * @param index
-   * @returns {vglModule.renderer}
+   * @returns {vgl.renderer}
    */
   ////////////////////////////////////////////////////////////////////////////
   this.getRenderer = function(index) {
@@ -328,4 +328,4 @@ vglModule.renderWindow = function(canvas) {
   return this;
 };
 
-inherit(vglModule.renderWindow, vglModule.object);
+inherit(vgl.renderWindow, vgl.object);

@@ -6,7 +6,7 @@
 /*jslint devel: true, forin: true, newcap: true, plusplus: true*/
 /*jslint white: true, continue:true, indent: 2*/
 
-/*global vglModule, ogs, vec4, inherit, $*/
+/*global vgl, ogs, vec4, inherit, $*/
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
@@ -15,10 +15,10 @@
  * otherwise the second parameter.
  *
  * @class
- * @returns {vglModule.defaultValue}
+ * @returns {vgl.defaultValue}
  */
 //////////////////////////////////////////////////////////////////////////////
-vglModule.defaultValue = function(a, b) {
+vgl.defaultValue = function(a, b) {
   'use strict';
 
   if (typeof a !== 'undefined') {
@@ -27,4 +27,4 @@ vglModule.defaultValue = function(a, b) {
   return b;
 };
 
-vglModule.defaultValue.EMPTY_OBJECT = vglModule.freezeObject({});
+vgl.defaultValue.EMPTY_OBJECT = vgl.freezeObject({});

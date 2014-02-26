@@ -6,10 +6,10 @@
 /*jslint devel: true, forin: true, newcap: true, plusplus: true*/
 /*jslint white: true, continue:true, indent: 2*/
 
-/*global vglModule, ogs, vec4, inherit, $*/
+/*global vgl, ogs, vec4, inherit, $*/
 //////////////////////////////////////////////////////////////////////////////
 
-vglModule.materialAttributeType = {
+vgl.materialAttributeType = {
   "Undefined" : 0x0,
   "ShaderProgram" : 0x1,
   "Texture" : 0x2,
@@ -23,16 +23,16 @@ vglModule.materialAttributeType = {
  *
  * @class
  * @param type
- * @returns {vglModule.materialAttribute}
+ * @returns {vgl.materialAttribute}
  */
 //////////////////////////////////////////////////////////////////////////////
-vglModule.materialAttribute = function(type) {
+vgl.materialAttribute = function(type) {
   'use strict';
 
-  if (!(this instanceof vglModule.materialAttribute)) {
-    return new vglModule.materialAttribute();
+  if (!(this instanceof vgl.materialAttribute)) {
+    return new vgl.materialAttribute();
   }
-  vglModule.object.call(this);
+  vgl.object.call(this);
 
   /** @private */
   var m_type = type,
@@ -138,4 +138,4 @@ vglModule.materialAttribute = function(type) {
   return this;
 };
 
-inherit(vglModule.materialAttribute, vglModule.object);
+inherit(vgl.materialAttribute, vgl.object);

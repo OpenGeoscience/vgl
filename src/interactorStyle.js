@@ -6,25 +6,25 @@
 /*jslint devel: true, forin: true, newcap: true, plusplus: true*/
 /*jslint white: true, continue:true, indent: 2*/
 
-/*global vglModule, ogs, vec4, inherit, $*/
+/*global vgl, ogs, vec4, inherit, $*/
 //////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////
 /**
  * Create a new instance of class interactorStyle
  *
- * @class vglModule.interactorStyle
+ * @class vgl.interactorStyle
  * interactorStyle is a base class for all interactor styles
- * @returns {vglModule.interactorStyle}
+ * @returns {vgl.interactorStyle}
  */
 ////////////////////////////////////////////////////////////////////////////
-vglModule.interactorStyle = function() {
+vgl.interactorStyle = function() {
   'use strict';
 
-  if (!(this instanceof vglModule.interactorStyle)) {
-    return new vglModule.interactorStyle();
+  if (!(this instanceof vgl.interactorStyle)) {
+    return new vgl.interactorStyle();
   }
-  vglModule.object.call(this);
+  vgl.object.call(this);
 
   // Private member variables
   var m_that = this,
@@ -51,11 +51,11 @@ vglModule.interactorStyle = function() {
   this.setViewer = function(viewer) {
     if (viewer !== m_viewer) {
       m_viewer = viewer;
-      $(m_viewer).on(vglModule.command.mousePressEvent, m_that.handleMouseDown);
-      $(m_viewer).on(vglModule.command.mouseReleaseEvent, m_that.handleMouseUp);
-      $(m_viewer).on(vglModule.command.mouseMoveEvent, m_that.handleMouseMove);
-      $(m_viewer).on(vglModule.command.keyPressEvent, m_that.handleKeyPress);
-      $(m_viewer).on(vglModule.command.mouseContextMenuEvent,
+      $(m_viewer).on(vgl.command.mousePressEvent, m_that.handleMouseDown);
+      $(m_viewer).on(vgl.command.mouseReleaseEvent, m_that.handleMouseUp);
+      $(m_viewer).on(vgl.command.mouseMoveEvent, m_that.handleMouseMove);
+      $(m_viewer).on(vgl.command.keyPressEvent, m_that.handleKeyPress);
+      $(m_viewer).on(vgl.command.mouseContextMenuEvent,
                      m_that.handleContextMenu);
       this.modified();
     }
@@ -124,4 +124,4 @@ vglModule.interactorStyle = function() {
   return this;
 };
 
-inherit(vglModule.interactorStyle, vglModule.object);
+inherit(vgl.interactorStyle, vgl.object);

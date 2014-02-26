@@ -6,7 +6,7 @@
 /*jslint devel: true, forin: true, newcap: true, plusplus: true*/
 /*jslint white: true, continue:true, indent: 2*/
 
-/*global vglModule, ogs, vec4, inherit, $*/
+/*global vgl, ogs, vec4, inherit, $*/
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
@@ -18,11 +18,11 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 
-vglModule.vtkReader = function() {
+vgl.vtkReader = function() {
   'use strict';
 
-  if (!(this instanceof vglModule.vtkReader)) {
-    return new vglModule.vtkReader();
+  if (!(this instanceof vgl.vtkReader)) {
+    return new vgl.vtkReader();
   }
 
   var m_base64Chars =
@@ -215,7 +215,7 @@ vglModule.vtkReader = function() {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.parseObject = function(vtkObject, renderer) {
-    var geom = new vglModule.geometryData(),
+    var geom = new vgl.geometryData(),
         mapper = ogs.vgl.mapper(),
         ss = [], type = null, data = null, size,
         matrix = null, buffer = null, material = null,
@@ -298,7 +298,7 @@ vglModule.vtkReader = function() {
     numberOfPoints = this.readNumber(ss);
 
     //Getting Points
-    vglpoints = new vglModule.sourceDataP3fv();
+    vglpoints = new vgl.sourceDataP3fv();
     points = this.readF3Array(numberOfPoints, ss);
     for(i = 0; i < numberOfPoints; i++) {
       vglpoints.pushBack([points[i*3/*+0*/], points[i*3+1], points[i*3+2]]);
@@ -306,12 +306,12 @@ vglModule.vtkReader = function() {
     geom.addSource(vglpoints);
 
     //Getting Colors
-    vglcolors = new vglModule.sourceDataC3fv();
+    vglcolors = new vgl.sourceDataC3fv();
     this.readColorArray(numberOfPoints, ss, vglcolors);
     geom.addSource(vglcolors);
 
     //Getting connectivity
-    vgllines = new vglModule.lines();
+    vgllines = new vgl.lines();
     geom.addPrimitive(vgllines);
     numberOfIndex = this.readNumber(ss);
 
@@ -358,14 +358,14 @@ vglModule.vtkReader = function() {
     numberOfPoints = this.readNumber(ss);
 
     //Getting Points
-    vglpoints = new vglModule.sourceDataP3N3f();
+    vglpoints = new vgl.sourceDataP3N3f();
     points = this.readF3Array(numberOfPoints, ss);
 
     //Getting Normals
     normals = this.readF3Array(numberOfPoints, ss);
 
     for(i = 0; i < numberOfPoints; i++) {
-      v1 = new vglModule.vertexDataP3N3f();
+      v1 = new vgl.vertexDataP3N3f();
       v1.m_position = [points[i*3/*+0*/], points[i*3+1], points[i*3+2]];
       v1.m_normal = [normals[i*3/*+0*/], normals[i*3+1], normals[i*3+2]];
       vglpoints.pushBack(v1);
@@ -373,13 +373,13 @@ vglModule.vtkReader = function() {
     geom.addSource(vglpoints);
 
     //Getting Colors
-    vglcolors = new vglModule.sourceDataC3fv();
+    vglcolors = new vgl.sourceDataC3fv();
     this.readColorArray(numberOfPoints, ss, vglcolors);
     geom.addSource(vglcolors);
 
     //Getting connectivity
     temp = [];
-    vgltriangles = new vglModule.triangles();
+    vgltriangles = new vgl.triangles();
     numberOfIndex = this.readNumber(ss);
 
     /*global Int8Array*/
@@ -426,7 +426,7 @@ vglModule.vtkReader = function() {
     numberOfPoints = this.readNumber(ss);
 
     //Getting Points and creating 1:1 connectivity
-    vglpoints = new vglModule.sourceDataP3fv();
+    vglpoints = new vgl.sourceDataP3fv();
     points = this.readF3Array(numberOfPoints, ss);
 
     /*global Uint16Array*/
@@ -438,12 +438,12 @@ vglModule.vtkReader = function() {
     geom.addSource(vglpoints);
 
     //Getting Colors
-    vglcolors = new vglModule.sourceDataC3fv();
+    vglcolors = new vgl.sourceDataC3fv();
     this.readColorArray(numberOfPoints, ss, vglcolors);
     geom.addSource(vglcolors);
 
     //Getting connectivity
-    vglVertexes = new vglModule.points();
+    vglVertexes = new vgl.points();
     vglVertexes.setIndices(indices);
     geom.addPrimitive(vglVertexes);
 
@@ -692,7 +692,7 @@ vglModule.vtkReader = function() {
 
       //We're assuming this is not layer 0.
       //That renderer is created by default.
-      renderer.camera().setClearMask(vglModule.GL.DepthBufferBit);
+      renderer.camera().setClearMask(vgl.GL.DepthBufferBit);
       m_vtkRenderedList[layer] = renderer;
     }
 

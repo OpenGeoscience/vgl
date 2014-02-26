@@ -39,7 +39,7 @@
       }, renderer = null;
 
       function onMouseDown(event){
-        var pick = vglModule.picker(),
+        var pick = vgl.picker(),
             r = pick.pick(event.pageX, event.pageY, renderer);
             $('#display-pick').text("Picked - [" + event.pageX + "," +
                                     event.pageY + "," + r + "]");
@@ -48,8 +48,8 @@
       var testPicking = {};
       testPicking.main = function() {
         var node = document.getElementById("glcanvas"),
-            viewer = vglModule.viewer(node),
-            reader = vglModule.geojsonReader(),
+            viewer = vgl.viewer(node),
+            reader = vgl.geojsonReader(),
             geoms, i, material, actor, mapper;
 
 
@@ -64,12 +64,12 @@
 
         geoms = reader.readGJObject(data);
         for (i = 0; i < geoms.length; ++i) {
-          mapper = vglModule.mapper();
+          mapper = vgl.mapper();
           mapper.setGeometryData(geoms[i]);
 
-          material = vglModule.utils.createGeometryMaterial();
+          material = vgl.utils.createGeometryMaterial();
 
-          actor = vglModule.actor();
+          actor = vgl.actor();
           actor.setMapper(mapper);
           actor.setMaterial(material);
 

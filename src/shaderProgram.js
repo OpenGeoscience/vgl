@@ -6,7 +6,7 @@
 /*jslint devel: true, forin: true, newcap: true, plusplus: true*/
 /*jslint white: true, continue:true, indent: 2*/
 
-/*global vglModule, gl, ogs, vec4, inherit, $*/
+/*global vgl, gl, ogs, vec4, inherit, $*/
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
@@ -14,21 +14,21 @@
  * Create a new instace of class shaderProgram
  *
  * @class
- * @returns {vglModule.shaderProgram}
+ * @returns {vgl.shaderProgram}
  */
 //////////////////////////////////////////////////////////////////////////////
-vglModule.shaderProgram = function() {
+vgl.shaderProgram = function() {
   'use strict';
 
-  if (!(this instanceof vglModule.shaderProgram)) {
-    return new vglModule.shaderProgram();
+  if (!(this instanceof vgl.shaderProgram)) {
+    return new vgl.shaderProgram();
   }
-  vglModule.materialAttribute.call(
-    this, vglModule.materialAttributeType.ShaderProgram);
+  vgl.materialAttribute.call(
+    this, vgl.materialAttributeType.ShaderProgram);
 
   /** @private */
   var m_programHandle = 0,
-      m_compileTimestamp = vglModule.timestamp(),
+      m_compileTimestamp = vgl.timestamp(),
       m_shaders = [],
       m_uniforms = [],
       m_vertexAttributes = {},
@@ -359,4 +359,4 @@ vglModule.shaderProgram = function() {
   return this;
 };
 
-inherit(vglModule.shaderProgram, vglModule.materialAttribute);
+inherit(vgl.shaderProgram, vgl.materialAttribute);

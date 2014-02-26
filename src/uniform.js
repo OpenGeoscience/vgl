@@ -6,7 +6,7 @@
 /*jslint devel: true, forin: true, newcap: true, plusplus: true*/
 /*jslint white: true, continue:true, indent: 2*/
 
-/*global vglModule, gl, ogs, vec2, vec3, vec4, mat3, mat4, inherit, $*/
+/*global vgl, gl, ogs, vec2, vec3, vec4, mat3, mat4, inherit, $*/
 //////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -15,14 +15,14 @@
  *
  * @param type
  * @param name
- * @returns {vglModule.uniform} OpenGL uniform encapsulation
+ * @returns {vgl.uniform} OpenGL uniform encapsulation
  */
 ///////////////////////////////////////////////////////////////////////////////
-vglModule.uniform = function(type, name) {
+vgl.uniform = function(type, name) {
   'use strict';
 
-  if (!(this instanceof vglModule.uniform)) {
-    return new vglModule.uniform();
+  if (!(this instanceof vgl.uniform)) {
+    return new vgl.uniform();
   }
 
   this.getTypeNumberOfComponents = function(type) {
@@ -197,21 +197,21 @@ vglModule.uniform = function(type, name) {
  * Create new instance of class modelViewUniform
  *
  * @param name
- * @returns {vglModule.modelViewUniform}
+ * @returns {vgl.modelViewUniform}
  */
 ///////////////////////////////////////////////////////////////////////////////
-vglModule.modelViewUniform = function(name) {
+vgl.modelViewUniform = function(name) {
   'use strict';
 
-  if (!(this instanceof vglModule.modelViewUniform)) {
-    return new vglModule.modelViewUniform(name);
+  if (!(this instanceof vgl.modelViewUniform)) {
+    return new vgl.modelViewUniform(name);
   }
 
   if (name.length === 0) {
     name = "modelViewMatrix";
   }
 
-  vglModule.uniform.call(this, gl.FLOAT_MAT4, name);
+  vgl.uniform.call(this, gl.FLOAT_MAT4, name);
 
   this.set(mat4.create());
 
@@ -219,8 +219,8 @@ vglModule.modelViewUniform = function(name) {
   /**
    * Update the uniform given a render state and shader program
    *
-   * @param {vglModule.renderState} renderState
-   * @param {vglModule.shaderProgram} program
+   * @param {vgl.renderState} renderState
+   * @param {vgl.shaderProgram} program
    */
   /////////////////////////////////////////////////////////////////////////////
   this.update = function(renderState, program) {
@@ -230,28 +230,28 @@ vglModule.modelViewUniform = function(name) {
   return this;
 };
 
-inherit(vglModule.modelViewUniform, vglModule.uniform);
+inherit(vgl.modelViewUniform, vgl.uniform);
 
 //////////////////////////////////////////////////////////////////////////////
 /**
  * Create a new instance of class projectionUniform
  *
  * @param name
- * @returns {vglModule.projectionUniform}
+ * @returns {vgl.projectionUniform}
  */
 ///////////////////////////////////////////////////////////////////////////////
-vglModule.projectionUniform = function(name) {
+vgl.projectionUniform = function(name) {
   'use strict';
 
-  if (!(this instanceof vglModule.projectionUniform)) {
-    return new vglModule.projectionUniform(name);
+  if (!(this instanceof vgl.projectionUniform)) {
+    return new vgl.projectionUniform(name);
   }
 
   if (name.length === 0) {
     name = "projectionMatrix";
   }
 
-  vglModule.uniform.call(this, gl.FLOAT_MAT4, name);
+  vgl.uniform.call(this, gl.FLOAT_MAT4, name);
 
   this.set(mat4.create());
 
@@ -270,7 +270,7 @@ vglModule.projectionUniform = function(name) {
   return this;
 };
 
-inherit(vglModule.projectionUniform, vglModule.uniform);
+inherit(vgl.projectionUniform, vgl.uniform);
 
 ///////////////////////////////////////////////////////////////////////////////
 /**
@@ -278,14 +278,14 @@ inherit(vglModule.projectionUniform, vglModule.uniform);
  *
  * @param name
  * @param value
- * @returns {vglModule.floatUniform}
+ * @returns {vgl.floatUniform}
  */
 ///////////////////////////////////////////////////////////////////////////////
-vglModule.floatUniform = function(name, value) {
+vgl.floatUniform = function(name, value) {
   'use strict';
 
-  if (!(this instanceof vglModule.floatUniform)) {
-    return new vglModule.floatUniform(name, value);
+  if (!(this instanceof vgl.floatUniform)) {
+    return new vgl.floatUniform(name, value);
   }
 
   if (name.length === 0) {
@@ -296,12 +296,12 @@ vglModule.floatUniform = function(name, value) {
     value = 1.0;
   }
 
-  vglModule.uniform.call(this, gl.FLOAT, name);
+  vgl.uniform.call(this, gl.FLOAT, name);
 
   this.set(value);
 };
 
-inherit(vglModule.floatUniform, vglModule.uniform);
+inherit(vgl.floatUniform, vgl.uniform);
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -309,21 +309,21 @@ inherit(vglModule.floatUniform, vglModule.uniform);
  * Create new instance of class normalMatrixUniform
  *
  * @param name
- * @returns {vglModule.normalMatrixUniform}
+ * @returns {vgl.normalMatrixUniform}
  */
 ///////////////////////////////////////////////////////////////////////////////
-vglModule.normalMatrixUniform = function(name) {
+vgl.normalMatrixUniform = function(name) {
   'use strict';
 
-  if (!(this instanceof vglModule.normalMatrixUniform)) {
-    return new vglModule.normalMatrixUniform(name);
+  if (!(this instanceof vgl.normalMatrixUniform)) {
+    return new vgl.normalMatrixUniform(name);
   }
 
   if (name.length === 0) {
     name = "normalMatrix";
   }
 
-  vglModule.uniform.call(this, gl.FLOAT_MAT4, name);
+  vgl.uniform.call(this, gl.FLOAT_MAT4, name);
 
   this.set(mat4.create());
 
@@ -331,8 +331,8 @@ vglModule.normalMatrixUniform = function(name) {
   /**
    * Update the uniform given a render state and shader program
    *
-   * @param {vglModule.renderState} renderState
-   * @param {vglModule.shaderProgram} program
+   * @param {vgl.renderState} renderState
+   * @param {vgl.shaderProgram} program
    */
   /////////////////////////////////////////////////////////////////////////////
   this.update = function(renderState, program) {
@@ -342,4 +342,4 @@ vglModule.normalMatrixUniform = function(name) {
   return this;
 };
 
-inherit(vglModule.normalMatrixUniform, vglModule.uniform);
+inherit(vgl.normalMatrixUniform, vgl.uniform);

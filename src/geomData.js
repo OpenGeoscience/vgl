@@ -6,7 +6,7 @@
 /*jslint devel: true, forin: true, newcap: true, plusplus: true*/
 /*jslint white: true, continue:true, indent: 2*/
 
-/*global vglModule, ogs, vec4, Uint16Array, gl, inherit, $*/
+/*global vgl, ogs, vec4, Uint16Array, gl, inherit, $*/
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
@@ -30,14 +30,14 @@ var vertexAttributeKeys = {
  * Create a new instance of class primitive
  *
  * @class
- * @return {vglModule.primitive}
+ * @return {vgl.primitive}
  */
 //////////////////////////////////////////////////////////////////////////////
-vglModule.primitive = function() {
+vgl.primitive = function() {
   'use strict';
 
-  if (!(this instanceof vglModule.primitive)) {
-    return new vglModule.primitive();
+  if (!(this instanceof vgl.primitive)) {
+    return new vgl.primitive();
   }
 
   /** @private */
@@ -157,17 +157,17 @@ vglModule.primitive = function() {
 /**
  * Create a new instance of class triangleStrip
  *
- * @returns {vglModule.triangleStrip}
+ * @returns {vgl.triangleStrip}
  */
 //////////////////////////////////////////////////////////////////////////////
-vglModule.triangleStrip = function() {
+vgl.triangleStrip = function() {
   'use strict';
 
-  if (!(this instanceof vglModule.triangleStrip)) {
-    return new vglModule.triangleStrip();
+  if (!(this instanceof vgl.triangleStrip)) {
+    return new vgl.triangleStrip();
   }
 
-  vglModule.primitive.call(this);
+  vgl.primitive.call(this);
 
   this.setPrimitiveType(gl.TRIANGLE_STRIP);
   this.setIndicesValueType(gl.UNSIGNED_SHORT);
@@ -176,22 +176,22 @@ vglModule.triangleStrip = function() {
   return this;
 };
 
-inherit(vglModule.triangleStrip, vglModule.primitive);
+inherit(vgl.triangleStrip, vgl.primitive);
 
 ////////////////////////////////////////////////////////////////////////////
 /**
  * Create a new instance of class triangles
  *
- * @returns {vglModule.triangles}
+ * @returns {vgl.triangles}
  */
 ////////////////////////////////////////////////////////////////////////////
-vglModule.triangles = function() {
+vgl.triangles = function() {
   'use strict';
 
-  if (!(this instanceof vglModule.triangles)) {
-    return new vglModule.triangles();
+  if (!(this instanceof vgl.triangles)) {
+    return new vgl.triangles();
   }
-  vglModule.primitive.call(this);
+  vgl.primitive.call(this);
 
   this.setPrimitiveType(gl.TRIANGLES);
   this.setIndicesValueType(gl.UNSIGNED_SHORT);
@@ -200,22 +200,22 @@ vglModule.triangles = function() {
   return this;
 };
 
-inherit(vglModule.triangles, vglModule.primitive);
+inherit(vgl.triangles, vgl.primitive);
 
 //////////////////////////////////////////////////////////////////////////////
 /**
  * create a instance of lines primitive type
  *
- * @returns {vglModule.lines}
+ * @returns {vgl.lines}
  */
 //////////////////////////////////////////////////////////////////////////////
-vglModule.lines = function() {
+vgl.lines = function() {
   'use strict';
 
-  if (!(this instanceof vglModule.lines)) {
-    return new vglModule.lines();
+  if (!(this instanceof vgl.lines)) {
+    return new vgl.lines();
   }
-  vglModule.primitive.call(this);
+  vgl.primitive.call(this);
 
   this.setPrimitiveType(gl.LINES);
   this.setIndicesValueType(gl.UNSIGNED_SHORT);
@@ -223,22 +223,22 @@ vglModule.lines = function() {
 
   return this;
 };
-inherit(vglModule.lines, vglModule.primitive);
+inherit(vgl.lines, vgl.primitive);
 
 //////////////////////////////////////////////////////////////////////////////
 /**
  * create a instance of line strip primitive type
  *
- * @returns {vglModule.lineStrip}
+ * @returns {vgl.lineStrip}
  */
 //////////////////////////////////////////////////////////////////////////////
-vglModule.lineStrip = function() {
+vgl.lineStrip = function() {
   'use strict';
 
-  if (!(this instanceof vglModule.lineStrip)) {
-    return new vglModule.lineStrip();
+  if (!(this instanceof vgl.lineStrip)) {
+    return new vgl.lineStrip();
   }
-  vglModule.primitive.call(this);
+  vgl.primitive.call(this);
 
   this.setPrimitiveType(gl.LINE_STRIP);
   this.setIndicesValueType(gl.UNSIGNED_SHORT);
@@ -246,22 +246,22 @@ vglModule.lineStrip = function() {
 
   return this;
 };
-inherit(vglModule.lineStrip, vglModule.primitive);
+inherit(vgl.lineStrip, vgl.primitive);
 
 //////////////////////////////////////////////////////////////////////////////
 /**
  * Create a new instance of class points
  *
- * @returns {vglModule.points}
+ * @returns {vgl.points}
  */
 //////////////////////////////////////////////////////////////////////////////
-vglModule.points = function() {
+vgl.points = function() {
   'use strict';
 
-  if (!(this instanceof vglModule.points)) {
-    return new vglModule.points();
+  if (!(this instanceof vgl.points)) {
+    return new vgl.points();
   }
-  vglModule.primitive.call(this);
+  vgl.primitive.call(this);
 
   this.setPrimitiveType(gl.POINTS);
   this.setIndicesValueType(gl.UNSIGNED_SHORT);
@@ -270,20 +270,20 @@ vglModule.points = function() {
   return this;
 };
 
-inherit(vglModule.points, vglModule.primitive);
+inherit(vgl.points, vgl.primitive);
 
 //////////////////////////////////////////////////////////////////////////////
 /**
  * Create a new instance of class vertexDataP3f
  *
- * @returns {vglModule.vertexDataP3f}
+ * @returns {vgl.vertexDataP3f}
  */
 //////////////////////////////////////////////////////////////////////////////
-vglModule.vertexDataP3f = function() {
+vgl.vertexDataP3f = function() {
   'use strict';
 
-  if (!(this instanceof vglModule.vertexDataP3f)) {
-    return new vglModule.vertexDataP3f();
+  if (!(this instanceof vgl.vertexDataP3f)) {
+    return new vgl.vertexDataP3f();
   }
 
   /** @private */
@@ -297,14 +297,14 @@ vglModule.vertexDataP3f = function() {
  * Create a new instance of class vertexDataP3N3f
  *
  * @class
- * @returns {vglModule.vertexDataP3N3f}
+ * @returns {vgl.vertexDataP3N3f}
  */
 //////////////////////////////////////////////////////////////////////////////
-vglModule.vertexDataP3N3f = function() {
+vgl.vertexDataP3N3f = function() {
   'use strict';
 
-  if (!(this instanceof vglModule.vertexDataP3N3f)) {
-    return new vglModule.vertexDataP3N3f();
+  if (!(this instanceof vgl.vertexDataP3N3f)) {
+    return new vgl.vertexDataP3N3f();
   }
 
   this.m_position = [];
@@ -318,14 +318,14 @@ vglModule.vertexDataP3N3f = function() {
  * Create a new instance of class vertexDataP3T3f
  *
  * @class
- * @returns {vglModule.vertexDataP3T3f}
+ * @returns {vgl.vertexDataP3T3f}
  */
 //////////////////////////////////////////////////////////////////////////////
-vglModule.vertexDataP3T3f = function() {
+vgl.vertexDataP3T3f = function() {
   'use strict';
 
-  if (!(this instanceof vglModule.vertexDataP3T3f)) {
-    return new vglModule.vertexDataP3T3f();
+  if (!(this instanceof vgl.vertexDataP3T3f)) {
+    return new vgl.vertexDataP3T3f();
   }
 
   this.m_position = [];
@@ -338,14 +338,14 @@ vglModule.vertexDataP3T3f = function() {
 /**
  * Create a new instance of class sourceData
  * @class
- * @returns {vglModule.sourceData}
+ * @returns {vgl.sourceData}
  */
 //////////////////////////////////////////////////////////////////////////////
-vglModule.sourceData = function() {
+vgl.sourceData = function() {
   'use strict';
 
-  if (!(this instanceof vglModule.sourceData)) {
-    return new vglModule.sourceData();
+  if (!(this instanceof vgl.sourceData)) {
+    return new vgl.sourceData();
   }
 
   var m_attributesMap = {},
@@ -596,20 +596,20 @@ vglModule.sourceData = function() {
 /**
  * Create a new instance of class sourceDataP3T3f
  *
- * @returns {vglModule.sourceDataP3T3f}
+ * @returns {vgl.sourceDataP3T3f}
  */
 //////////////////////////////////////////////////////////////////////////////
-vglModule.sourceDataP3T3f = function() {
+vgl.sourceDataP3T3f = function() {
   'use strict';
 
-  if (!(this instanceof vglModule.sourceDataP3T3f)) {
-    return new vglModule.sourceDataP3T3f();
+  if (!(this instanceof vgl.sourceDataP3T3f)) {
+    return new vgl.sourceDataP3T3f();
   }
-  vglModule.sourceData.call(this);
+  vgl.sourceData.call(this);
 
-  this.addAttribute(vglModule.vertexAttributeKeys.Position, gl.FLOAT, 4, 0, 6 * 4, 3,
+  this.addAttribute(vgl.vertexAttributeKeys.Position, gl.FLOAT, 4, 0, 6 * 4, 3,
                     false);
-  this.addAttribute(vglModule.vertexAttributeKeys.TextureCoordinate, gl.FLOAT, 4, 12,
+  this.addAttribute(vgl.vertexAttributeKeys.TextureCoordinate, gl.FLOAT, 4, 12,
                     6 * 4, 3, false);
 
   this.pushBack = function(value) {
@@ -620,27 +620,27 @@ vglModule.sourceDataP3T3f = function() {
   return this;
 };
 
-inherit(vglModule.sourceDataP3T3f, vglModule.sourceData);
+inherit(vgl.sourceDataP3T3f, vgl.sourceData);
 
 //////////////////////////////////////////////////////////////////////////////
 /**
  * Create a new instance of class sourceDataP3N3f
  *
- * @returns {vglModule.sourceDataP3N3f}
+ * @returns {vgl.sourceDataP3N3f}
  */
 //////////////////////////////////////////////////////////////////////////////
-vglModule.sourceDataP3N3f = function() {
+vgl.sourceDataP3N3f = function() {
   'use strict';
 
-  if (!(this instanceof vglModule.sourceDataP3N3f)) {
-    return new vglModule.sourceDataP3N3f();
+  if (!(this instanceof vgl.sourceDataP3N3f)) {
+    return new vgl.sourceDataP3N3f();
   }
 
-  vglModule.sourceData.call(this);
+  vgl.sourceData.call(this);
 
-  this.addAttribute(vglModule.vertexAttributeKeys.Position, gl.FLOAT, 4, 0, 6 * 4, 3,
+  this.addAttribute(vgl.vertexAttributeKeys.Position, gl.FLOAT, 4, 0, 6 * 4, 3,
                     false);
-  this.addAttribute(vglModule.vertexAttributeKeys.Normal, gl.FLOAT, 4, 12, 6 * 4, 3,
+  this.addAttribute(vgl.vertexAttributeKeys.Normal, gl.FLOAT, 4, 12, 6 * 4, 3,
                     false);
 
   this.pushBack = function(value) {
@@ -651,25 +651,25 @@ vglModule.sourceDataP3N3f = function() {
   return this;
 };
 
-inherit(vglModule.sourceDataP3N3f, vglModule.sourceData);
+inherit(vgl.sourceDataP3N3f, vgl.sourceData);
 
 /////////////////////////////////////////////////////////////////////////////
 /**
  * Create a new instance of class sourceDataP3fv
  *
- * @returns {vglModule.sourceDataP3fv}
+ * @returns {vgl.sourceDataP3fv}
  */
 //////////////////////////////////////////////////////////////////////////////
-vglModule.sourceDataP3fv = function() {
+vgl.sourceDataP3fv = function() {
   'use strict';
 
-  if (!(this instanceof vglModule.sourceDataP3fv)) {
-    return new vglModule.sourceDataP3fv();
+  if (!(this instanceof vgl.sourceDataP3fv)) {
+    return new vgl.sourceDataP3fv();
   }
 
-  vglModule.sourceData.call(this);
+  vgl.sourceData.call(this);
 
-  this.addAttribute(vglModule.vertexAttributeKeys.Position, gl.FLOAT, 4, 0, 3 * 4, 3,
+  this.addAttribute(vgl.vertexAttributeKeys.Position, gl.FLOAT, 4, 0, 3 * 4, 3,
                     false);
 
   this.pushBack = function(value) {
@@ -679,25 +679,25 @@ vglModule.sourceDataP3fv = function() {
   return this;
 };
 
-inherit(vglModule.sourceDataP3fv, vglModule.sourceData);
+inherit(vgl.sourceDataP3fv, vgl.sourceData);
 
 //////////////////////////////////////////////////////////////////////////////
 /**
  * Create a new instance of class sourceDataT2fv
  *
- * @returns {vglModule.sourceDataT2fv}
+ * @returns {vgl.sourceDataT2fv}
  */
 //////////////////////////////////////////////////////////////////////////////
-vglModule.sourceDataT2fv = function() {
+vgl.sourceDataT2fv = function() {
   'use strict';
 
-  if (!(this instanceof vglModule.sourceDataT2fv)) {
-    return new vglModule.sourceDataT2fv();
+  if (!(this instanceof vgl.sourceDataT2fv)) {
+    return new vgl.sourceDataT2fv();
   }
 
-  vglModule.sourceData.call(this);
+  vgl.sourceData.call(this);
 
-  this.addAttribute(vglModule.vertexAttributeKeys.TextureCoordinate, gl.FLOAT, 4, 0,
+  this.addAttribute(vgl.vertexAttributeKeys.TextureCoordinate, gl.FLOAT, 4, 0,
                     2 * 4, 2, false);
 
   this.pushBack = function(value) {
@@ -707,25 +707,25 @@ vglModule.sourceDataT2fv = function() {
   return this;
 };
 
-inherit(vglModule.sourceDataT2fv, vglModule.sourceData);
+inherit(vgl.sourceDataT2fv, vgl.sourceData);
 
 //////////////////////////////////////////////////////////////////////////////
 /**
  * Create a new instance of class sourceDataC3fv
  *
- * @returns {vglModule.sourceDataC3fv}
+ * @returns {vgl.sourceDataC3fv}
  */
 //////////////////////////////////////////////////////////////////////////////
-vglModule.sourceDataC3fv = function() {
+vgl.sourceDataC3fv = function() {
   'use strict';
 
-  if (!(this instanceof vglModule.sourceDataC3fv)) {
-    return new vglModule.sourceDataC3fv();
+  if (!(this instanceof vgl.sourceDataC3fv)) {
+    return new vgl.sourceDataC3fv();
   }
 
-  vglModule.sourceData.call(this);
+  vgl.sourceData.call(this);
 
-  this.addAttribute(vglModule.vertexAttributeKeys.Color, gl.FLOAT, 4, 0, 3 * 4, 3, false);
+  this.addAttribute(vgl.vertexAttributeKeys.Color, gl.FLOAT, 4, 0, 3 * 4, 3, false);
 
   this.pushBack = function(value) {
     this.insert(value);
@@ -734,21 +734,21 @@ vglModule.sourceDataC3fv = function() {
   return this;
 };
 
-inherit(vglModule.sourceDataC3fv, vglModule.sourceData);
+inherit(vgl.sourceDataC3fv, vgl.sourceData);
 
 //////////////////////////////////////////////////////////////////////////////
 /**
  * Create a new instance of class sourceDataSf meant to hold scalar float values
  *
  * @class
- * @returns {vglModule.sourceDataSf}
+ * @returns {vgl.sourceDataSf}
  */
 //////////////////////////////////////////////////////////////////////////////
-vglModule.sourceDataSf = function() {
+vgl.sourceDataSf = function() {
   'use strict';
 
-  if (!(this instanceof vglModule.sourceDataSf)) {
-    return new vglModule.sourceDataSf();
+  if (!(this instanceof vgl.sourceDataSf)) {
+    return new vgl.sourceDataSf();
   }
 
   var m_min = null,
@@ -756,9 +756,9 @@ vglModule.sourceDataSf = function() {
       m_fixedmin = null,
       m_fixedmax = null;
 
-  vglModule.sourceData.call(this);
+  vgl.sourceData.call(this);
 
-  this.addAttribute(vglModule.vertexAttributeKeys.Scalar, gl.FLOAT, 4, 0, 4, 1, false);
+  this.addAttribute(vgl.vertexAttributeKeys.Scalar, gl.FLOAT, 4, 0, 4, 1, false);
 
   this.pushBack = function(value) {
     if (m_max === null || value > m_max) {
@@ -778,7 +778,7 @@ vglModule.sourceDataSf = function() {
       m_min = value;
     }
     //call superclass ??
-    //vglModule.sourceData.insertAt.call(this, index, value);
+    //vgl.sourceData.insertAt.call(this, index, value);
     this.data()[index] = value;
   };
 
@@ -798,31 +798,31 @@ vglModule.sourceDataSf = function() {
   return this;
 };
 
-inherit(vglModule.sourceDataSf, vglModule.sourceData);
+inherit(vgl.sourceDataSf, vgl.sourceData);
 
 //////////////////////////////////////////////////////////////////////////////
 /**
  * Create a new instance of class geometryData
  *
  * @class
- * @returns {vglModule.geometryData}
+ * @returns {vgl.geometryData}
  */
  /////////////////////////////////////////////////////////////////////////////
-vglModule.geometryData = function() {
+vgl.geometryData = function() {
   'use strict';
 
-  if (!(this instanceof vglModule.geometryData)) {
-    return vglModule.geometryData();
+  if (!(this instanceof vgl.geometryData)) {
+    return vgl.geometryData();
   }
-  vglModule.data.call(this);
+  vgl.data.call(this);
 
   /** @private */
   var m_name = "",
       m_primitives = [],
       m_sources = [],
       m_bounds = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-      m_computeBoundsTimestamp = vglModule.timestamp(),
-      m_boundsDirtyTimestamp = vglModule.timestamp();
+      m_computeBoundsTimestamp = vgl.timestamp(),
+      m_boundsDirtyTimestamp = vgl.timestamp();
 
   ////////////////////////////////////////////////////////////////////////////
   /**
@@ -830,7 +830,7 @@ vglModule.geometryData = function() {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.type = function() {
-    return vglModule.data.geometry;
+    return vgl.data.geometry;
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -863,7 +863,7 @@ vglModule.geometryData = function() {
     if (m_sources.indexOf(source) === -1) {
       m_sources.push(source);
 
-      if (source.hasKey(vglModule.vertexAttributeKeys.Position)) {
+      if (source.hasKey(vgl.vertexAttributeKeys.Position)) {
         m_boundsDirtyTimestamp.modified();
       }
       return true;
@@ -992,7 +992,7 @@ vglModule.geometryData = function() {
   ////////////////////////////////////////////////////////////////////////////
   this.computeBounds = function() {
     if (m_boundsDirtyTimestamp.getMTime() > m_computeBoundsTimestamp.getMTime()) {
-      var attr = vglModule.vertexAttributeKeys.Position,
+      var attr = vgl.vertexAttributeKeys.Position,
           sourceData = this.sourceData(attr),
           data = sourceData.data(),
           numberOfComponents = sourceData.attributeNumberOfComponents(attr),
@@ -1043,7 +1043,7 @@ vglModule.geometryData = function() {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.findClosestVertex = function(point) {
-    var attr = vglModule.vertexAttributeKeys.Position,
+    var attr = vgl.vertexAttributeKeys.Position,
         sourceData = this.sourceData(attr),
         sizeOfDataType = sourceData.sizeOfAttributeDataType(attr),
         numberOfComponents = sourceData.attributeNumberOfComponents(attr),
@@ -1087,7 +1087,7 @@ vglModule.geometryData = function() {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.getPosition = function(index) {
-    var attr = vglModule.vertexAttributeKeys.Position,
+    var attr = vgl.vertexAttributeKeys.Position,
         sourceData = this.sourceData(attr),
         sizeOfDataType = sourceData.sizeOfAttributeDataType(attr),
         numberOfComponents = sourceData.attributeNumberOfComponents(attr),
@@ -1111,7 +1111,7 @@ vglModule.geometryData = function() {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.getScalar = function(index) {
-    var attr = vglModule.vertexAttributeKeys.Scalar,
+    var attr = vgl.vertexAttributeKeys.Scalar,
         sourceData = this.sourceData(attr),
         numberOfComponents, sizeOfDataType, data, stride, offset;
 

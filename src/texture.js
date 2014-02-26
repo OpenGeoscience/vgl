@@ -6,7 +6,7 @@
 /*jslint devel: true, forin: true, newcap: true, plusplus: true*/
 /*jslint white: true, continue:true, indent: 2*/
 
-/*global Uint8Array, vglModule, gl, ogs, vec4, inherit, $*/
+/*global Uint8Array, vgl, gl, ogs, vec4, inherit, $*/
 //////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -14,17 +14,17 @@
  * Create a new instance of class texture
  *
  * @class
- * @returns {vglModule.texture}
+ * @returns {vgl.texture}
  */
 ///////////////////////////////////////////////////////////////////////////////
-vglModule.texture = function() {
+vgl.texture = function() {
   'use strict';
 
-  if (!(this instanceof vglModule.texture)) {
-    return new vglModule.texture();
+  if (!(this instanceof vgl.texture)) {
+    return new vgl.texture();
   }
-  vglModule.materialAttribute.call(
-    this, vglModule.materialAttributeType.Texture);
+  vgl.materialAttribute.call(
+    this, vgl.materialAttributeType.Texture);
 
   this.m_width = 0;
   this.m_height = 0;
@@ -40,7 +40,7 @@ vglModule.texture = function() {
 
   this.m_image = null;
 
-  var m_setupTimestamp = vglModule.timestamp();
+  var m_setupTimestamp = vgl.timestamp();
 
   /////////////////////////////////////////////////////////////////////////////
   /**
@@ -113,7 +113,7 @@ vglModule.texture = function() {
   /**
    * Get image used by the texture
    *
-   * @returns {vglModule.image}
+   * @returns {vgl.image}
    */
   /////////////////////////////////////////////////////////////////////////////
   this.image = function() {
@@ -124,7 +124,7 @@ vglModule.texture = function() {
   /**
    * Set image for the texture
    *
-   * @param {vglModule.image} image
+   * @param {vgl.image} image
    * @returns {boolean}
    */
   /////////////////////////////////////////////////////////////////////////////
@@ -376,25 +376,25 @@ vglModule.texture = function() {
   return this;
 };
 
-inherit(vglModule.texture, vglModule.materialAttribute);
+inherit(vgl.texture, vgl.materialAttribute);
 
 ///////////////////////////////////////////////////////////////////////////////
 /**
  * Create a new instance of class lookupTable
  *
  * @class
- * @returns {vglModule.lookupTable}
+ * @returns {vgl.lookupTable}
  */
 ///////////////////////////////////////////////////////////////////////////////
-vglModule.lookupTable = function() {
+vgl.lookupTable = function() {
   'use strict';
 
-  if (!(this instanceof vglModule.lookupTable)) {
-    return new vglModule.lookupTable();
+  if (!(this instanceof vgl.lookupTable)) {
+    return new vgl.lookupTable();
   }
-  vglModule.texture.call(this);
+  vgl.texture.call(this);
 
-  var m_setupTimestamp = vglModule.timestamp(),
+  var m_setupTimestamp = vgl.timestamp(),
       m_range = [0,0];
 
   this.m_colorTable = //paraview bwr colortable
@@ -437,7 +437,7 @@ vglModule.lookupTable = function() {
   /**
    * Create lookup table, initialize parameters, and bind data to it
    *
-   * @param {vglModule.renderState} renderState
+   * @param {vgl.renderState} renderState
    */
   /////////////////////////////////////////////////////////////////////////////
   this.setup = function(renderState) {
@@ -544,4 +544,4 @@ vglModule.lookupTable = function() {
   return this;
 };
 
-inherit(vglModule.lookupTable, vglModule.texture);
+inherit(vgl.lookupTable, vgl.texture);

@@ -6,24 +6,24 @@
 /*jslint devel: true, forin: true, newcap: true, plusplus: true*/
 /*jslint white: true, continue:true, indent: 2*/
 
-/*global vglModule, ogs, vec4, inherit, $*/
+/*global vgl, ogs, vec4, inherit, $*/
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
 /**
  * Create a new instance of pvwInteractorStyle (for ParaViewWeb)
  *
- * @class vglModule.pvwInteractorStyle
- * @returns {vglModule.pvwInteractorStyle}
+ * @class vgl.pvwInteractorStyle
+ * @returns {vgl.pvwInteractorStyle}
  */
 //////////////////////////////////////////////////////////////////////////////
-vglModule.pvwInteractorStyle = function() {
+vgl.pvwInteractorStyle = function() {
   'use strict';
 
-  if (!(this instanceof vglModule.pvwInteractorStyle)) {
-    return new vglModule.pvwInteractorStyle();
+  if (!(this instanceof vgl.pvwInteractorStyle)) {
+    return new vgl.pvwInteractorStyle();
   }
-  vglModule.trackballInteractorStyle.call(this);
+  vgl.trackballInteractorStyle.call(this);
   var m_that = this,
       m_leftMouseButtonDown = false,
       m_rightMouseButtonDown = false,
@@ -117,7 +117,7 @@ vglModule.pvwInteractorStyle = function() {
 
     if (m_middleMouseButtonDown) {
       m_camera.pan(-m_dx, -m_dy, -m_dz);
-      $(m_that).trigger(vglModule.command.middleButtonPressEvent);
+      $(m_that).trigger(vgl.command.middleButtonPressEvent);
     }
     if (m_leftMouseButtonDown) {
       deltaxy = [(m_mouseLastPos.x - m_currentMousePos.x),
@@ -136,7 +136,7 @@ vglModule.pvwInteractorStyle = function() {
         rens[i].resetCameraClippingRange();
       }
 
-      $(m_that).trigger(vglModule.command.leftButtonPressEvent);
+      $(m_that).trigger(vgl.command.leftButtonPressEvent);
     }
     if (m_rightMouseButtonDown) {
       m_zTrans = (m_currentMousePos.y - m_mouseLastPos.y) / m_height;
@@ -148,7 +148,7 @@ vglModule.pvwInteractorStyle = function() {
         m_camera.zoom(1 + Math.abs(m_zTrans));
       }
       m_renderer.resetCameraClippingRange();
-      $(m_that).trigger(vglModule.command.rightButtonPressEvent);
+      $(m_that).trigger(vgl.command.rightButtonPressEvent);
     }
     m_mouseLastPos.x = m_currentMousePos.x;
     m_mouseLastPos.y = m_currentMousePos.y;
@@ -214,4 +214,4 @@ vglModule.pvwInteractorStyle = function() {
 
   return this;
 };
-inherit(vglModule.pvwInteractorStyle, vglModule.trackballInteractorStyle);
+inherit(vgl.pvwInteractorStyle, vgl.trackballInteractorStyle);

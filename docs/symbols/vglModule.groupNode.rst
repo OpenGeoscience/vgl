@@ -1,0 +1,473 @@
+
+
+===============================================
+vgl.groupNode (class)
+===============================================
+
+
+.. contents::
+   :local:
+
+.. js:class:: vgl.groupNode ()
+
+      
+   
+   .. ============================== constructor details ====================
+   
+   
+   
+   
+   
+   
+   
+   
+   Create a new instance of class groupNode
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   :returns:
+     
+           
+   
+     :rtype: vgl.groupNode
+     
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   .. ============================== properties summary =====================
+   
+   
+   
+   .. ============================== events summary ========================
+   
+   
+   
+   
+   
+   .. ============================== field details ==========================
+   
+   
+   
+   .. ============================== method details =========================
+   
+   
+   
+   
+   
+   
+   .. js:function:: vgl.groupNode.setVisible(flag)
+   
+       
+   
+       
+       
+       :param  flag:
+   
+         
+   
+         
+       
+       
+   
+       Turn on / off visibility
+   
+       
+   
+   
+     
+   
+     
+   
+     
+   
+     
+       
+       :returns:
+         
+   
+       :rtype: boolean
+       
+     
+   
+     
+   
+     
+   
+   
+   
+   
+   .. js:function:: vgl.groupNode.addChild(childNode)
+   
+       
+   
+       
+       
+       :param  childNode:
+   
+         
+   
+         
+       
+       
+   
+       Make the incoming node as child of the group node
+   
+       
+   
+   
+     
+   
+     
+   
+     
+   
+     
+       
+       :returns:
+         
+   
+       :rtype: boolean
+       
+     
+   
+     
+   
+     
+   
+   
+   
+   
+   .. js:function:: vgl.groupNode.removeChild(childNode)
+   
+       
+   
+       
+       
+       :param  childNode:
+   
+         
+   
+         
+       
+       
+   
+       Remove parent-child relationship between the group and incoming node
+   
+       
+   
+   
+     
+   
+     
+   
+     
+   
+     
+       
+       :returns:
+         
+   
+       :rtype: boolean
+       
+     
+   
+     
+   
+     
+   
+   
+   
+   
+   .. js:function:: vgl.groupNode.removeChildren()
+   
+       
+   
+       
+   
+       Remove parent-child relationship between child nodes and the group node
+   
+       
+   
+   
+     
+   
+     
+   
+     
+   
+     
+   
+     
+   
+     
+   
+   
+   
+   
+   .. js:function:: vgl.groupNode.children()
+   
+       
+   
+       
+   
+       Return children of this group node
+   
+       
+   
+   
+     
+   
+     
+   
+     
+   
+     
+       
+       :returns:
+         
+   
+       :rtype: Array
+       
+     
+   
+     
+   
+     
+   
+   
+   
+   
+   .. js:function:: vgl.groupNode.accept(visitor)
+   
+       
+   
+       
+       
+       :param  visitor:
+   
+         
+   
+         
+       
+       
+   
+       Accept a visitor and traverse the scene tree
+   
+       
+   
+   
+     
+   
+     
+   
+     
+   
+     
+   
+     
+   
+     
+   
+   
+   
+   
+   .. js:function:: vgl.groupNode.traverse(visitor)
+   
+       
+   
+       
+       
+       :param  visitor:
+   
+         
+   
+         
+       
+       
+   
+       Traverse the scene
+   
+       
+   
+   
+     
+   
+     
+   
+     
+   
+     
+   
+     
+   
+     
+   
+   
+   
+   
+   .. js:function:: vgl.groupNode.traverseChildrenAndUpdateBounds(visitor)
+   
+       
+   
+       
+       
+       :param  visitor:
+   
+         
+   
+         
+       
+       
+   
+       Traverse all of the children and update the bounds for each
+   
+       
+   
+   
+     
+   
+     
+   
+     
+   
+     
+   
+     
+   
+     
+   
+   
+   
+   
+   .. js:function:: vgl.groupNode.traverseChildren(visitor)
+   
+       
+   
+       
+       
+       :param  visitor:
+   
+         
+   
+         
+       
+       
+   
+       Traverse children of the group node
+   
+       
+   
+   
+     
+   
+     
+   
+     
+   
+     
+   
+     
+   
+     
+   
+   
+   
+   
+   .. js:function:: vgl.groupNode.computeBounds()
+   
+       
+   
+       
+   
+       Compute bounds for the group node
+   
+       
+   
+   
+     
+   
+     
+   
+     
+   
+     
+   
+     
+   
+     
+   
+   
+   
+   
+   .. js:function:: vgl.groupNode.updateBounds(child)
+   
+       
+   
+       
+       
+       :param  child:
+   
+         
+   
+         
+       
+       
+   
+       Update bounds for the group node
+       
+       This method is used internally to update bounds of the group node by
+       traversing each of its child.
+   
+       
+   
+   
+     
+   
+     
+   
+     
+   
+     
+   
+     
+   
+     
+   
+   
+   
+   .. ============================== event details =========================
+   
+   
+
+.. container:: footer
+
+   Documentation generated by jsdoc-toolkit_  2.4.0 using jsdoc-toolkit-rst-template_
+
+.. _jsdoc-toolkit: http://code.google.com/p/jsdoc-toolkit/
+.. _jsdoc-toolkit-rst-template: http://code.google.com/p/jsdoc-toolkit-rst-template/
+.. _sphinx: http://sphinx.pocoo.org/
+
+
+
+
+.. vim: set ft=rst :

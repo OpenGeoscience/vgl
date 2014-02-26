@@ -6,7 +6,7 @@
 /*jslint devel: true, forin: true, newcap: true, plusplus: true*/
 /*jslint white: true, continue:true, indent: 2*/
 
-/*global vglModule, ogs, vec4, inherit, $*/
+/*global vgl, ogs, vec4, inherit, $*/
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
@@ -14,16 +14,16 @@
  * Create a new instance of class node
  *
  * @class
- * @returns {vglModule.node}
+ * @returns {vgl.node}
  */
 //////////////////////////////////////////////////////////////////////////////
-vglModule.node = function() {
+vgl.node = function() {
   'use strict';
 
-  if (!(this instanceof vglModule.node)) {
-    return new vglModule.node();
+  if (!(this instanceof vgl.node)) {
+    return new vgl.node();
   }
-  vglModule.boundingObject.call(this);
+  vgl.boundingObject.call(this);
 
   /** @private */
   var m_parent = null,
@@ -191,4 +191,4 @@ vglModule.node = function() {
   return this;
 };
 
-inherit(vglModule.node, vglModule.boundingObject);
+inherit(vgl.node, vgl.boundingObject);

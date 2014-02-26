@@ -6,7 +6,7 @@
 /*jslint devel: true, forin: true, newcap: true, plusplus: true*/
 /*jslint white: true, continue:true, indent: 2*/
 
-/*global vglModule, ogs, vec4, inherit, $*/
+/*global vgl, ogs, vec4, inherit, $*/
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
@@ -16,7 +16,7 @@
  * @param obj
  */
 //////////////////////////////////////////////////////////////////////////////
-vglModule.freezeObject = function(obj) {
+vgl.freezeObject = function(obj) {
   'use strict';
 
   /**

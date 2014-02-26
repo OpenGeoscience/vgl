@@ -6,24 +6,24 @@
 /*jslint devel: true, forin: true, newcap: true, plusplus: true*/
 /*jslint white: true, continue:true, indent: 2*/
 
-/*global vglModule, ogs, vec4, inherit, $*/
+/*global vgl, ogs, vec4, inherit, $*/
 //////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////
 /**
  * Create a new instance of class source
  *
- * @returns {vglModule.source}
+ * @returns {vgl.source}
  */
 ///////////////////////////////////////////////////////////////////////////////
-vglModule.source = function() {
+vgl.source = function() {
   'use strict';
 
-  if (!(this instanceof vglModule.source)) {
-    return new vglModule.source();
+  if (!(this instanceof vgl.source)) {
+    return new vgl.source();
   }
 
-  vglModule.object.call(this);
+  vgl.object.call(this);
 
   /////////////////////////////////////////////////////////////////////////////
   /**
@@ -36,4 +36,4 @@ vglModule.source = function() {
   return this;
 };
 
-inherit(vglModule.source, vglModule.object);
+inherit(vgl.source, vgl.object);

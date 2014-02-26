@@ -6,27 +6,27 @@
 /*jslint devel: true, forin: true, newcap: true, plusplus: true*/
 /*jslint white: true, indent: 2*/
 
-/*global vglModule, ogs, inherit, $, Image*/
-/*global vglModule*/
+/*global vgl, ogs, inherit, $, Image*/
+/*global vgl*/
 //////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////
 /**
  * Create a new instance of class legend
  *
- * @class vglModule.legend
+ * @class vgl.legend
  * @description legend class is intended to create legend for 2D/3D scene.
  *
- * @returns {vglModule.legend}
+ * @returns {vgl.legend}
  */
 ////////////////////////////////////////////////////////////////////////////
-vglModule.legend = function() {
+vgl.legend = function() {
     'use strict';
 
-    if (!(this instanceof vglModule.legend)) {
-        return new vglModule.legend();
+    if (!(this instanceof vgl.legend)) {
+        return new vgl.legend();
     }
-    vglModule.actor.call(this);
+    vgl.actor.call(this);
 
   ////////////////////////////////////////////////////////////////////////////
   /**
