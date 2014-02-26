@@ -1,14 +1,14 @@
 
 
 ===============================================
-vglModule.shapefileReader (class)
+vgl.shapefileReader (class)
 ===============================================
 
 
 .. contents::
    :local:
 
-.. js:class:: vglModule.shapefileReader ()
+.. js:class:: vgl.shapefileReader ()
 
       
    
@@ -41,7 +41,7 @@ vglModule.shapefileReader (class)
      
            
    
-     :rtype: vglModule.shapefileReader
+     :rtype: vgl.shapefileReader
      
    
    

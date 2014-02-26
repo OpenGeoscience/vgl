@@ -1,14 +1,14 @@
 
 
 ===============================================
-vglModule.boundingObject (class)
+vgl.boundingObject (class)
 ===============================================
 
 
 .. contents::
    :local:
 
-.. js:class:: vglModule.boundingObject ()
+.. js:class:: vgl.boundingObject ()
 
       
    
@@ -39,7 +39,7 @@ vglModule.boundingObject (class)
      
            
    
-     :rtype: vglModule.boundingObject
+     :rtype: vgl.boundingObject
      
    
    
@@ -75,7 +75,7 @@ vglModule.boundingObject (class)
    
    
    
-   .. js:function:: vglModule.boundingObject.bounds()
+   .. js:function:: vgl.boundingObject.bounds()
    
        
    
@@ -101,7 +101,7 @@ vglModule.boundingObject (class)
    
    
    
-   .. js:function:: vglModule.boundingObject.setBounds(minX, maxX, minY, maxY, minZ, maxZ)
+   .. js:function:: vgl.boundingObject.setBounds(minX, maxX, minY, maxY, minZ, maxZ)
    
        
    
@@ -165,7 +165,7 @@ vglModule.boundingObject (class)
    
    
    
-   .. js:function:: vglModule.boundingObject.resetBounds()
+   .. js:function:: vgl.boundingObject.resetBounds()
    
        
    
@@ -191,7 +191,7 @@ vglModule.boundingObject (class)
    
    
    
-   .. js:function:: vglModule.boundingObject.computeBounds()
+   .. js:function:: vgl.boundingObject.computeBounds()
    
        
    
@@ -219,7 +219,7 @@ vglModule.boundingObject (class)
    
    
    
-   .. js:function:: vglModule.boundingObject.computeBoundsTimestamp()
+   .. js:function:: vgl.boundingObject.computeBoundsTimestamp()
    
        
    
@@ -241,7 +241,7 @@ vglModule.boundingObject (class)
        :returns:
          
    
-       :rtype: vglModule.timestamp
+       :rtype: vgl.timestamp
        
      
    
@@ -252,7 +252,7 @@ vglModule.boundingObject (class)
    
    
    
-   .. js:function:: vglModule.boundingObject.boundsDirtyTimestamp()
+   .. js:function:: vgl.boundingObject.boundsDirtyTimestamp()
    
        
    
@@ -274,7 +274,7 @@ vglModule.boundingObject (class)
        :returns:
          
    
-       :rtype: vglModule.timestamp
+       :rtype: vgl.timestamp
        
      
    

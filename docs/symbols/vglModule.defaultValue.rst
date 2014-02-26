@@ -1,14 +1,14 @@
 
 
 ===============================================
-vglModule.defaultValue (class)
+vgl.defaultValue (class)
 ===============================================
 
 
 .. contents::
    :local:
 
-.. js:class:: vglModule.defaultValue (a, b)
+.. js:class:: vgl.defaultValue (a, b)
 
       
    
@@ -52,7 +52,7 @@ vglModule.defaultValue (class)
      
            
    
-     :rtype: vglModule.defaultValue
+     :rtype: vgl.defaultValue
      
    
    

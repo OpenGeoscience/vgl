@@ -39,7 +39,7 @@ m_globalModifiedTime (class)
      
            
    
-     :rtype: vglModule.timestamp
+     :rtype: vgl.timestamp
      
    
    

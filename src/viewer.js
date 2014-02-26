@@ -6,7 +6,7 @@
 /*jslint devel: true, forin: true, newcap: true, plusplus: true*/
 /*jslint white: true, continue:true, indent: 2*/
 
-/*global window, vglModule, ogs, vec4, inherit, $*/
+/*global window, vgl, ogs, vec4, inherit, $*/
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
@@ -14,24 +14,24 @@
  * Create a new instance of class viewer
  *
  * @param canvas
- * @returns {vglModule.viewer}
+ * @returns {vgl.viewer}
  */
 //////////////////////////////////////////////////////////////////////////////
-vglModule.viewer = function(canvas) {
+vgl.viewer = function(canvas) {
   'use strict';
 
-  if (!(this instanceof vglModule.viewer)) {
-    return new vglModule.viewer(canvas);
+  if (!(this instanceof vgl.viewer)) {
+    return new vgl.viewer(canvas);
   }
 
-  vglModule.object.call(this);
+  vgl.object.call(this);
 
   var m_that = this,
       m_canvas = canvas,
       m_ready = false,
       m_interactorStyle = null,
-      m_renderer = vglModule.renderer(),
-      m_renderWindow = vglModule.renderWindow(m_canvas);
+      m_renderer = vgl.renderer(),
+      m_renderWindow = vgl.renderWindow(m_canvas);
 
   m_renderWindow.addRenderer(m_renderer);
 
@@ -50,7 +50,7 @@ vglModule.viewer = function(canvas) {
   /**
    * Return render window of the viewer
    *
-   * @returns {vglModule.renderWindow}
+   * @returns {vgl.renderWindow}
    */
   ////////////////////////////////////////////////////////////////////////////
   this.renderWindow = function() {
@@ -79,7 +79,7 @@ vglModule.viewer = function(canvas) {
   /**
    * Get interactor style of the viewer
    *
-   * @returns {vglModule.interactorStyle}
+   * @returns {vgl.interactorStyle}
    */
   ////////////////////////////////////////////////////////////////////////////
   this.interactorStyle = function() {
@@ -90,7 +90,7 @@ vglModule.viewer = function(canvas) {
   /**
    * Set interactor style to be used by the viewer
    *
-   * @param {vglModule.interactorStyle} style
+   * @param {vgl.interactorStyle} style
    */
   ////////////////////////////////////////////////////////////////////////////
   this.setInteractorStyle = function(style) {
@@ -117,7 +117,7 @@ vglModule.viewer = function(canvas) {
         fixedEvent.preventDefault();
       }
       fixedEvent.state = 'down';
-      fixedEvent.type = vglModule.command.mousePressEvent;
+      fixedEvent.type = vgl.command.mousePressEvent;
       $(m_that).trigger(fixedEvent);
     }
 
@@ -137,7 +137,7 @@ vglModule.viewer = function(canvas) {
       var fixedEvent = $.event.fix(event || window.event);
       fixedEvent.preventDefault();
       fixedEvent.state = 'up';
-      fixedEvent.type = vglModule.command.mouseReleaseEvent;
+      fixedEvent.type = vgl.command.mouseReleaseEvent;
       $(m_that).trigger(fixedEvent);
     }
 
@@ -156,7 +156,7 @@ vglModule.viewer = function(canvas) {
     if (m_ready === true) {
       var fixedEvent = $.event.fix(event || window.event);
       fixedEvent.preventDefault();
-      fixedEvent.type = vglModule.command.mouseMoveEvent;
+      fixedEvent.type = vgl.command.mouseMoveEvent;
       $(m_that).trigger(fixedEvent);
     }
 
@@ -175,7 +175,7 @@ vglModule.viewer = function(canvas) {
     if (m_ready === true) {
       var fixedEvent = $.event.fix(event || window.event);
       fixedEvent.preventDefault();
-      fixedEvent.type = vglModule.command.keyPressEvent;
+      fixedEvent.type = vgl.command.keyPressEvent;
       $(m_that).trigger(fixedEvent);
     }
 
@@ -194,7 +194,7 @@ vglModule.viewer = function(canvas) {
     if (m_ready === true) {
       var fixedEvent = $.event.fix(event || window.event);
       fixedEvent.preventDefault();
-      fixedEvent.type = vglModule.command.contextMenuEvent;
+      fixedEvent.type = vgl.command.contextMenuEvent;
       $(m_that).trigger(fixedEvent);
     }
 
@@ -242,4 +242,4 @@ vglModule.viewer = function(canvas) {
   return this;
 };
 
-inherit(vglModule.viewer, vglModule.object);
+inherit(vgl.viewer, vgl.object);

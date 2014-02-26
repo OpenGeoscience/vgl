@@ -1,14 +1,14 @@
 
 
 ===============================================
-vglModule.mapper (class)
+vgl.mapper (class)
 ===============================================
 
 
 .. contents::
    :local:
 
-.. js:class:: vglModule.mapper ()
+.. js:class:: vgl.mapper ()
 
       
    
@@ -39,7 +39,7 @@ vglModule.mapper (class)
      
            
    
-     :rtype: vglModule.mapper
+     :rtype: vgl.mapper
      
    
    
@@ -75,7 +75,7 @@ vglModule.mapper (class)
    
    
    
-   .. js:function:: vglModule.mapper.computeBounds()
+   .. js:function:: vgl.mapper.computeBounds()
    
        
    
@@ -101,7 +101,7 @@ vglModule.mapper (class)
    
    
    
-   .. js:function:: vglModule.mapper.color()
+   .. js:function:: vgl.mapper.color()
    
        
    
@@ -127,7 +127,7 @@ vglModule.mapper (class)
    
    
    
-   .. js:function:: vglModule.mapper.setColor(r, g, b)
+   .. js:function:: vgl.mapper.setColor(r, g, b)
    
        
    
@@ -173,7 +173,7 @@ vglModule.mapper (class)
    
    
    
-   .. js:function:: vglModule.mapper.geometryData()
+   .. js:function:: vgl.mapper.geometryData()
    
        
    
@@ -199,7 +199,7 @@ vglModule.mapper (class)
    
    
    
-   .. js:function:: vglModule.mapper.setGeometryData(geom)
+   .. js:function:: vgl.mapper.setGeometryData(geom)
    
        
    
@@ -233,7 +233,7 @@ vglModule.mapper (class)
    
    
    
-   .. js:function:: vglModule.mapper.render(renderState)
+   .. js:function:: vgl.mapper.render(renderState)
    
        
    

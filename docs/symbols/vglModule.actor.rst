@@ -1,14 +1,14 @@
 
 
 ===============================================
-vglModule.actor (class)
+vgl.actor (class)
 ===============================================
 
 
 .. contents::
    :local:
 
-.. js:class:: vglModule.actor ()
+.. js:class:: vgl.actor ()
 
       
    
@@ -39,7 +39,7 @@ vglModule.actor (class)
      
            
    
-     :rtype: vglModule.actor
+     :rtype: vgl.actor
      
    
    
@@ -75,7 +75,7 @@ vglModule.actor (class)
    
    
    
-   .. js:function:: vglModule.actor.matrix()
+   .. js:function:: vgl.actor.matrix()
    
        
    
@@ -108,7 +108,7 @@ vglModule.actor (class)
    
    
    
-   .. js:function:: vglModule.actor.setMatrix(4X4)
+   .. js:function:: vgl.actor.setMatrix(4X4)
    
        
    
@@ -142,7 +142,7 @@ vglModule.actor (class)
    
    
    
-   .. js:function:: vglModule.actor.referenceFrame()
+   .. js:function:: vgl.actor.referenceFrame()
    
        
    
@@ -175,13 +175,13 @@ vglModule.actor (class)
    
    
    
-   .. js:function:: vglModule.actor.setReferenceFrame(referenceFrame)
+   .. js:function:: vgl.actor.setReferenceFrame(referenceFrame)
    
        
    
        
        
-       :param vglModule.boundingObject.ReferenceFrame referenceFrame:
+       :param vgl.boundingObject.ReferenceFrame referenceFrame:
    
          Possible values are (Absolute | Relative)
    
@@ -209,7 +209,7 @@ vglModule.actor (class)
    
    
    
-   .. js:function:: vglModule.actor.mapper()
+   .. js:function:: vgl.actor.mapper()
    
        
    
@@ -231,7 +231,7 @@ vglModule.actor (class)
        :returns:
          
    
-       :rtype: vglModule.mapper
+       :rtype: vgl.mapper
        
      
    
@@ -242,13 +242,13 @@ vglModule.actor (class)
    
    
    
-   .. js:function:: vglModule.actor.setMapper()
+   .. js:function:: vgl.actor.setMapper()
    
        
    
        
        
-       :param vglModule.mapper :
+       :param vgl.mapper :
    
          
    
@@ -276,7 +276,7 @@ vglModule.actor (class)
    
    
    
-   .. js:function:: vglModule.actor.accept(visitor)
+   .. js:function:: vgl.actor.accept(visitor)
    
        
    
@@ -310,7 +310,7 @@ vglModule.actor (class)
    
    
    
-   .. js:function:: vglModule.actor.ascend(visitor)
+   .. js:function:: vgl.actor.ascend(visitor)
    
        
    
@@ -344,7 +344,7 @@ vglModule.actor (class)
    
    
    
-   .. js:function:: vglModule.actor.computeLocalToWorldMatrix(matrix, visitor)
+   .. js:function:: vgl.actor.computeLocalToWorldMatrix(matrix, visitor)
    
        
    
@@ -384,7 +384,7 @@ vglModule.actor (class)
    
    
    
-   .. js:function:: vglModule.actor.computeWorldToLocalMatrix(matrix, visitor)
+   .. js:function:: vgl.actor.computeWorldToLocalMatrix(matrix, visitor)
    
        
    
@@ -424,7 +424,7 @@ vglModule.actor (class)
    
    
    
-   .. js:function:: vglModule.actor.computeBounds()
+   .. js:function:: vgl.actor.computeBounds()
    
        
    

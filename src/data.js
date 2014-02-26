@@ -6,14 +6,14 @@
 /*jslint devel: true, forin: true, newcap: true, plusplus: true*/
 /*jslint white: true, continue:true, indent: 2*/
 
-/*global vglModule, ogs, vec4, inherit, $*/
+/*global vgl, ogs, vec4, inherit, $*/
 //////////////////////////////////////////////////////////////////////////////
 
-vglModule.data = function() {
+vgl.data = function() {
   'use strict';
 
-  if (!(this instanceof vglModule.data)) {
-    return new vglModule.data();
+  if (!(this instanceof vgl.data)) {
+    return new vgl.data();
   }
 
   ////////////////////////////////////////////////////////////////////////////
@@ -25,8 +25,8 @@ vglModule.data = function() {
   };
 };
 
-vglModule.data.raster = 0;
-vglModule.data.point = 1;
-vglModule.data.lineString = 2;
-vglModule.data.polygon = 3;
-vglModule.data.geometry = 10;
+vgl.data.raster = 0;
+vgl.data.point = 1;
+vgl.data.lineString = 2;
+vgl.data.polygon = 3;
+vgl.data.geometry = 10;

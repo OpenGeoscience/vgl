@@ -6,19 +6,19 @@
 /*jslint devel: true, forin: true, newcap: true, plusplus: true*/
 /*jslint white: true, continue:true, indent: 2*/
 
-/*global vglModule, ogs, vec4, inherit, $*/
+/*global vgl, ogs, vec4, inherit, $*/
 //////////////////////////////////////////////////////////////////////////////
 
-vglModule.groupMapper = function() {
+vgl.groupMapper = function() {
   'use strict';
 
-  if (!(this instanceof vglModule.groupMapper)) {
-    return new vglModule.groupMapper();
+  if (!(this instanceof vgl.groupMapper)) {
+    return new vgl.groupMapper();
   }
-  vglModule.mapper.call(this);
+  vgl.mapper.call(this);
 
   /** @private */
-  var m_createMappersTimestamp = vglModule.timestamp(),
+  var m_createMappersTimestamp = vgl.timestamp(),
       m_mappers = [],
       m_geomDataArray = [];
 
@@ -45,7 +45,7 @@ vglModule.groupMapper = function() {
   /**
    * Connect mapper to its geometry data
    *
-   * @param geom {vglModule.geomData}
+   * @param geom {vgl.geomData}
    */
   ////////////////////////////////////////////////////////////////////////////
   this.setGeometryData = function(geom) {
@@ -150,7 +150,7 @@ vglModule.groupMapper = function() {
     if (this.getMTime() > m_createMappersTimestamp.getMTime()) {
       // NOTE Hoping that it will release the graphics resources
       for (i = 0; i < m_geomDataArray.length; ++i) {
-        m_mappers.push(vglModule.mapper());
+        m_mappers.push(vgl.mapper());
         m_mappers[i].setGeometryData(m_geomDataArray[i]);
       }
         m_createMappersTimestamp.modified();
@@ -164,4 +164,4 @@ vglModule.groupMapper = function() {
   return this;
 };
 
-inherit(vglModule.groupMapper, vglModule.mapper);
+inherit(vgl.groupMapper, vgl.mapper);

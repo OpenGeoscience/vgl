@@ -1,14 +1,14 @@
 
 
 ===============================================
-vglModule.lookupTable (class)
+vgl.lookupTable (class)
 ===============================================
 
 
 .. contents::
    :local:
 
-.. js:class:: vglModule.lookupTable ()
+.. js:class:: vgl.lookupTable ()
 
       
    
@@ -39,7 +39,7 @@ vglModule.lookupTable (class)
      
            
    
-     :rtype: vglModule.lookupTable
+     :rtype: vgl.lookupTable
      
    
    
@@ -75,13 +75,13 @@ vglModule.lookupTable (class)
    
    
    
-   .. js:function:: vglModule.lookupTable.setup(renderState)
+   .. js:function:: vgl.lookupTable.setup(renderState)
    
        
    
        
        
-       :param vglModule.renderState renderState:
+       :param vgl.renderState renderState:
    
          
    
@@ -109,7 +109,7 @@ vglModule.lookupTable (class)
    
    
    
-   .. js:function:: vglModule.lookupTable.colorTable()
+   .. js:function:: vgl.lookupTable.colorTable()
    
        
    
@@ -142,7 +142,7 @@ vglModule.lookupTable (class)
    
    
    
-   .. js:function:: vglModule.lookupTable.setColorTable(colors)
+   .. js:function:: vgl.lookupTable.setColorTable(colors)
    
        
    
@@ -183,7 +183,7 @@ vglModule.lookupTable (class)
    
    
    
-   .. js:function:: vglModule.lookupTable.range()
+   .. js:function:: vgl.lookupTable.range()
    
        
    
@@ -216,7 +216,7 @@ vglModule.lookupTable (class)
    
    
    
-   .. js:function:: vglModule.lookupTable.setRange(range)
+   .. js:function:: vgl.lookupTable.setRange(range)
    
        
    
@@ -257,7 +257,7 @@ vglModule.lookupTable (class)
    
    
    
-   .. js:function:: vglModule.lookupTable.updateRange(range)
+   .. js:function:: vgl.lookupTable.updateRange(range)
    
        
    

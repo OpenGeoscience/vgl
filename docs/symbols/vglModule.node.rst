@@ -1,14 +1,14 @@
 
 
 ===============================================
-vglModule.node (class)
+vgl.node (class)
 ===============================================
 
 
 .. contents::
    :local:
 
-.. js:class:: vglModule.node ()
+.. js:class:: vgl.node ()
 
       
    
@@ -39,7 +39,7 @@ vglModule.node (class)
      
            
    
-     :rtype: vglModule.node
+     :rtype: vgl.node
      
    
    
@@ -75,7 +75,7 @@ vglModule.node (class)
    
    
    
-   .. js:function:: vglModule.node.accept(visitor)
+   .. js:function:: vgl.node.accept(visitor)
    
        
    
@@ -109,7 +109,7 @@ vglModule.node (class)
    
    
    
-   .. js:function:: vglModule.node.material()
+   .. js:function:: vgl.node.material()
    
        
    
@@ -135,7 +135,7 @@ vglModule.node (class)
    
    
    
-   .. js:function:: vglModule.node.setMaterial(material)
+   .. js:function:: vgl.node.setMaterial(material)
    
        
    
@@ -176,7 +176,7 @@ vglModule.node (class)
    
    
    
-   .. js:function:: vglModule.node.visible()
+   .. js:function:: vgl.node.visible()
    
        
    
@@ -209,7 +209,7 @@ vglModule.node (class)
    
    
    
-   .. js:function:: vglModule.node.setVisible(flag)
+   .. js:function:: vgl.node.setVisible(flag)
    
        
    
@@ -250,7 +250,7 @@ vglModule.node (class)
    
    
    
-   .. js:function:: vglModule.node.parent()
+   .. js:function:: vgl.node.parent()
    
        
    
@@ -283,7 +283,7 @@ vglModule.node (class)
    
    
    
-   .. js:function:: vglModule.node.setParent(parent)
+   .. js:function:: vgl.node.setParent(parent)
    
        
    
@@ -324,7 +324,7 @@ vglModule.node (class)
    
    
    
-   .. js:function:: vglModule.node.overlay()
+   .. js:function:: vgl.node.overlay()
    
        
    
@@ -357,7 +357,7 @@ vglModule.node (class)
    
    
    
-   .. js:function:: vglModule.node.setOverlay(flag)
+   .. js:function:: vgl.node.setOverlay(flag)
    
        
    
@@ -398,7 +398,7 @@ vglModule.node (class)
    
    
    
-   .. js:function:: vglModule.node.traverse(visitor)
+   .. js:function:: vgl.node.traverse(visitor)
    
        
    
@@ -432,7 +432,7 @@ vglModule.node (class)
    
    
    
-   .. js:function:: vglModule.node.boundsModified()
+   .. js:function:: vgl.node.boundsModified()
    
        
    

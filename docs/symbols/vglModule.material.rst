@@ -1,14 +1,14 @@
 
 
 ===============================================
-vglModule.material (class)
+vgl.material (class)
 ===============================================
 
 
 .. contents::
    :local:
 
-.. js:class:: vglModule.material ()
+.. js:class:: vgl.material ()
 
       
    
@@ -39,7 +39,7 @@ vglModule.material (class)
      
            
    
-     :rtype: vglModule.material
+     :rtype: vgl.material
      
    
    
@@ -75,7 +75,7 @@ vglModule.material (class)
    
    
    
-   .. js:function:: vglModule.material.binNumber()
+   .. js:function:: vgl.material.binNumber()
    
        
    
@@ -108,7 +108,7 @@ vglModule.material (class)
    
    
    
-   .. js:function:: vglModule.material.setBinNumber(binNo)
+   .. js:function:: vgl.material.setBinNumber(binNo)
    
        
    
@@ -142,7 +142,7 @@ vglModule.material (class)
    
    
    
-   .. js:function:: vglModule.material.exists(attr)
+   .. js:function:: vgl.material.exists(attr)
    
        
    
@@ -183,7 +183,7 @@ vglModule.material (class)
    
    
    
-   .. js:function:: vglModule.material.setAttribute(attr)
+   .. js:function:: vgl.material.setAttribute(attr)
    
        
    
@@ -227,7 +227,7 @@ vglModule.material (class)
    
    
    
-   .. js:function:: vglModule.material.addAttribute(attr)
+   .. js:function:: vgl.material.addAttribute(attr)
    
        
    
@@ -268,7 +268,7 @@ vglModule.material (class)
    
    
    
-   .. js:function:: vglModule.material.shaderProgram()
+   .. js:function:: vgl.material.shaderProgram()
    
        
    
@@ -290,7 +290,7 @@ vglModule.material (class)
        :returns:
          
    
-       :rtype: vglModule.shaderProgram
+       :rtype: vgl.shaderProgram
        
      
    
@@ -301,7 +301,7 @@ vglModule.material (class)
    
    
    
-   .. js:function:: vglModule.material.render(renderState)
+   .. js:function:: vgl.material.render(renderState)
    
        
    
@@ -335,7 +335,7 @@ vglModule.material (class)
    
    
    
-   .. js:function:: vglModule.material.remove(renderState)
+   .. js:function:: vgl.material.remove(renderState)
    
        
    
@@ -369,7 +369,7 @@ vglModule.material (class)
    
    
    
-   .. js:function:: vglModule.material.bind(renderState)
+   .. js:function:: vgl.material.bind(renderState)
    
        
    
@@ -403,7 +403,7 @@ vglModule.material (class)
    
    
    
-   .. js:function:: vglModule.material.undoBind(renderState)
+   .. js:function:: vgl.material.undoBind(renderState)
    
        
    
@@ -437,7 +437,7 @@ vglModule.material (class)
    
    
    
-   .. js:function:: vglModule.material.bindVertexData(renderState, key)
+   .. js:function:: vgl.material.bindVertexData(renderState, key)
    
        
    
@@ -477,7 +477,7 @@ vglModule.material (class)
    
    
    
-   .. js:function:: vglModule.material.undoBindVertexData(renderState, key)
+   .. js:function:: vgl.material.undoBindVertexData(renderState, key)
    
        
    

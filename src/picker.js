@@ -6,24 +6,24 @@
 /*jslint devel: true, forin: true, newcap: true, plusplus: true*/
 /*jslint white: true, continue:true, indent: 2*/
 
-/*global vglModule, ogs, vec4, inherit, $*/
+/*global vgl, ogs, vec4, inherit, $*/
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
 /**
  * Create a new instance of class picker
  *
- * @class vglModule.picker
- * @returns {vglModule.picker}
+ * @class vgl.picker
+ * @returns {vgl.picker}
  */
 //////////////////////////////////////////////////////////////////////////////
-vglModule.picker = function() {
+vgl.picker = function() {
   'use strict';
 
-  if (!(this instanceof vglModule.picker)) {
-    return new vglModule.picker();
+  if (!(this instanceof vgl.picker)) {
+    return new vgl.picker();
   }
-  vglModule.object.call(this);
+  vgl.object.call(this);
 
   /** @private */
   var m_that = this,
@@ -140,4 +140,4 @@ vglModule.picker = function() {
   return this;
 };
 
-inherit(vglModule.picker, vglModule.object);
+inherit(vgl.picker, vgl.object);

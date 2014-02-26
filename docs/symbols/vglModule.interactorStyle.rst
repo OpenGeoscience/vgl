@@ -1,14 +1,14 @@
 
 
 ===============================================
-vglModule.interactorStyle (class)
+vgl.interactorStyle (class)
 ===============================================
-vglModule.interactorStyle interactorStyle is a base class for all interactor styles
+vgl.interactorStyle interactorStyle is a base class for all interactor styles
 
 .. contents::
    :local:
 
-.. js:class:: vglModule.interactorStyle ()
+.. js:class:: vgl.interactorStyle ()
 
       
    
@@ -39,7 +39,7 @@ vglModule.interactorStyle interactorStyle is a base class for all interactor sty
      
            
    
-     :rtype: vglModule.interactorStyle
+     :rtype: vgl.interactorStyle
      
    
    
@@ -75,7 +75,7 @@ vglModule.interactorStyle interactorStyle is a base class for all interactor sty
    
    
    
-   .. js:function:: vglModule.interactorStyle.viewer()
+   .. js:function:: vgl.interactorStyle.viewer()
    
        
    
@@ -108,7 +108,7 @@ vglModule.interactorStyle interactorStyle is a base class for all interactor sty
    
    
    
-   .. js:function:: vglModule.interactorStyle.setViewer(viewer)
+   .. js:function:: vgl.interactorStyle.setViewer(viewer)
    
        
    
@@ -142,7 +142,7 @@ vglModule.interactorStyle interactorStyle is a base class for all interactor sty
    
    
    
-   .. js:function:: vglModule.interactorStyle.handleMouseDown(event)
+   .. js:function:: vgl.interactorStyle.handleMouseDown(event)
    
        
    
@@ -183,7 +183,7 @@ vglModule.interactorStyle interactorStyle is a base class for all interactor sty
    
    
    
-   .. js:function:: vglModule.interactorStyle.handleMouseUp(event)
+   .. js:function:: vgl.interactorStyle.handleMouseUp(event)
    
        
    
@@ -224,7 +224,7 @@ vglModule.interactorStyle interactorStyle is a base class for all interactor sty
    
    
    
-   .. js:function:: vglModule.interactorStyle.handleMouseMove(event)
+   .. js:function:: vgl.interactorStyle.handleMouseMove(event)
    
        
    
@@ -265,7 +265,7 @@ vglModule.interactorStyle interactorStyle is a base class for all interactor sty
    
    
    
-   .. js:function:: vglModule.interactorStyle.handleKeyPress(event)
+   .. js:function:: vgl.interactorStyle.handleKeyPress(event)
    
        
    
@@ -306,7 +306,7 @@ vglModule.interactorStyle interactorStyle is a base class for all interactor sty
    
    
    
-   .. js:function:: vglModule.interactorStyle.handleContextMenu(event)
+   .. js:function:: vgl.interactorStyle.handleContextMenu(event)
    
        
    

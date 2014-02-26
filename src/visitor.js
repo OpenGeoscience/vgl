@@ -6,7 +6,7 @@
 /*jslint devel: true, forin: true, newcap: true, plusplus: true*/
 /*jslint white: true, continue:true, indent: 2*/
 
-/*global vglModule, ogs, vec4, inherit, $*/
+/*global vgl, ogs, vec4, inherit, $*/
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
@@ -43,13 +43,13 @@ var VisitorType = {
 /**
  * Create a new instance of visitor class
  *
- * @returns {vglModule.visitor}
+ * @returns {vgl.visitor}
  */
 //////////////////////////////////////////////////////////////////////////////
-vglModule.visitor = function() {
+vgl.visitor = function() {
   'use strict';
 
-  vglModule.object.call(this);
+  vgl.object.call(this);
 
   var m_visitorType = VisitorType.UpdateVisitor,
       m_traversalMode = TraversalMode.TraverseAllChildren,
@@ -140,7 +140,7 @@ vglModule.visitor = function() {
   /**
    * Traverse node and its children if any
    *
-   * @param {vglModule.node} node
+   * @param {vgl.node} node
    */
   ////////////////////////////////////////////////////////////////////////////
   this.traverse = function(node) {
@@ -158,7 +158,7 @@ vglModule.visitor = function() {
   /**
    * Start node traversal
    *
-   * @param {vglModule.node} node
+   * @param {vgl.node} node
    */
   ////////////////////////////////////////////////////////////////////////////
   this.visit = function(node) {
@@ -169,7 +169,7 @@ vglModule.visitor = function() {
   /**
    * Start actor traversal
    *
-   * @param {vglModule.actor} actor
+   * @param {vgl.actor} actor
    */
   ////////////////////////////////////////////////////////////////////////////
   this.visit = function(actor) {
@@ -178,4 +178,4 @@ vglModule.visitor = function() {
 
   return this;
 }
-inherit(visitor, vglModule.object);
+inherit(visitor, vgl.object);

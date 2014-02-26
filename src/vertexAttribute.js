@@ -6,7 +6,7 @@
 /*jslint devel: true, forin: true, newcap: true, plusplus: true*/
 /*jslint white: true, continue:true, indent: 2*/
 
-/*global vglModule, gl, ogs, vec4, inherit, $*/
+/*global vgl, gl, ogs, vec4, inherit, $*/
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
@@ -19,7 +19,7 @@
  *         CountAttributeIndex: number}}
  */
 //////////////////////////////////////////////////////////////////////////////
-vglModule.vertexAttributeKeys = {
+vgl.vertexAttributeKeys = {
   "Position" : 0,
   "Normal" : 1,
   "TextureCoordinate" : 2,
@@ -39,14 +39,14 @@ vglModule.vertexAttributeKeys = {
  * Create a new instance of vertexAttribute
  *
  * @param {string} name
- * @returns {vglModule.vertexAttribute}
+ * @returns {vgl.vertexAttribute}
  */
 //////////////////////////////////////////////////////////////////////////////
-vglModule.vertexAttribute = function(name) {
+vgl.vertexAttribute = function(name) {
   'use strict';
 
-  if (!(this instanceof vglModule.vertexAttribute)) {
-    return new vglModule.vertexAttribute(name);
+  if (!(this instanceof vgl.vertexAttribute)) {
+    return new vgl.vertexAttribute(name);
   }
 
   var m_name = name;
@@ -66,8 +66,8 @@ vglModule.vertexAttribute = function(name) {
   /**
    * Bind vertex data to the given render state
    *
-   * @param {vglModule.renderState} renderState
-   * @param {vglModule.vertexAttributeKeys} key
+   * @param {vgl.renderState} renderState
+   * @param {vgl.vertexAttributeKeys} key
    */
   //////////////////////////////////////////////////////////////////////////////
   this.bindVertexData = function(renderState, key) {
@@ -88,8 +88,8 @@ vglModule.vertexAttribute = function(name) {
   /**
    * Undo bind vertex data for a given render state
    *
-   * @param {vglModule.renderState} renderState
-   * @param {vglModule.vertexAttributeKeys} key
+   * @param {vgl.renderState} renderState
+   * @param {vgl.vertexAttributeKeys} key
    */
   //////////////////////////////////////////////////////////////////////////////
   this.undoBindVertexData = function(renderState, key) {

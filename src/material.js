@@ -6,7 +6,7 @@
 /*jslint devel: true, forin: true, newcap: true, plusplus: true*/
 /*jslint white: true, continue:true, indent: 2*/
 
-/*global vglModule, ogs, vec4, inherit, $*/
+/*global vgl, ogs, vec4, inherit, $*/
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
@@ -14,19 +14,19 @@
  * Create a new instance of class material
  *
  * @class
- * @returns {vglModule.material}
+ * @returns {vgl.material}
  */
 //////////////////////////////////////////////////////////////////////////////
-vglModule.material = function() {
+vgl.material = function() {
   'use strict';
 
-  if (!(this instanceof vglModule.material)) {
-    return new vglModule.material();
+  if (!(this instanceof vgl.material)) {
+    return new vgl.material();
   }
-  vglModule.object.call(this);
+  vgl.object.call(this);
 
   // / Private member variables
-  var m_shaderProgram = new vglModule.shaderProgram(),
+  var m_shaderProgram = new vgl.shaderProgram(),
       m_binNumber = 100,
       m_textureAttributes = {},
       m_attributes = {};
@@ -64,7 +64,7 @@ vglModule.material = function() {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.exists = function(attr) {
-    if (attr.type() === vglModule.materialAttribute.Texture) {
+    if (attr.type() === vgl.materialAttribute.Texture) {
       return m_textureAttributes.hasOwnProperty(attr);
     }
 
@@ -83,7 +83,7 @@ vglModule.material = function() {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.setAttribute = function(attr) {
-    if (attr.type() === vglModule.materialAttributeType.Texture &&
+    if (attr.type() === vgl.materialAttributeType.Texture &&
         m_textureAttributes[attr.textureUnit()] !== attr) {
       m_textureAttributes[attr.textureUnit()] = attr;
       this.modified();
@@ -95,7 +95,7 @@ vglModule.material = function() {
     }
 
     // Shader is a very special attribute
-    if (attr.type() === vglModule.materialAttributeType.ShaderProgram) {
+    if (attr.type() === vgl.materialAttributeType.ShaderProgram) {
       m_shaderProgram = attr;
     }
 
@@ -117,7 +117,7 @@ vglModule.material = function() {
       return false;
     }
 
-    if (attr.type() === vglModule.materialAttributeType.Texture) {
+    if (attr.type() === vgl.materialAttributeType.Texture) {
       // TODO Currently we don't check if we are replacing or not.
       // It would be nice to have a flag for it.
       m_textureAttributes[attr.textureUnit()] = attr;
@@ -126,7 +126,7 @@ vglModule.material = function() {
     }
 
     // Shader is a very special attribute
-    if (attr.type() === vglModule.materialAttributeType.ShaderProgram) {
+    if (attr.type() === vgl.materialAttributeType.ShaderProgram) {
       m_shaderProgram = attr;
     }
 
@@ -139,7 +139,7 @@ vglModule.material = function() {
   /**
    * Return shader program used by the material
    *
-   * @returns {vglModule.shaderProgram}
+   * @returns {vgl.shaderProgram}
    */
   ////////////////////////////////////////////////////////////////////////////
   this.shaderProgram = function() {
@@ -252,7 +252,7 @@ vglModule.material = function() {
   return this;
 };
 
-vglModule.material.RenderBin = {
+vgl.material.RenderBin = {
   "Base" : 0,
   "Default" : 100,
   "Opaque" : 100,
@@ -260,4 +260,4 @@ vglModule.material.RenderBin = {
   "Overlay" : 10000
 };
 
-inherit(vglModule.material, vglModule.object);
+inherit(vgl.material, vgl.object);

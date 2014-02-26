@@ -6,7 +6,7 @@
 /*jslint devel: true, forin: true, newcap: true, plusplus: true*/
 /*jslint white: true, continue:true, indent: 2, bitwise: true*/
 
-/*global vglModule, gl, ogs, vec3, vec4, mat4, inherit, $*/
+/*global vgl, gl, ogs, vec3, vec4, mat4, inherit, $*/
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
@@ -20,7 +20,7 @@
  * @class
  */
 //////////////////////////////////////////////////////////////////////////////
-vglModule.GL = {
+vgl.GL = {
    ColorBufferBit : 0x00004000,
    DepthBufferBit : 0x00000100
 };

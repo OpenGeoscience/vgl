@@ -1,14 +1,14 @@
 
 
 ===============================================
-vglModule.trackballInteractorStyle (class)
+vgl.trackballInteractorStyle (class)
 ===============================================
-vglModule.trackballInteractorStyle
+vgl.trackballInteractorStyle
 
 .. contents::
    :local:
 
-.. js:class:: vglModule.trackballInteractorStyle ()
+.. js:class:: vgl.trackballInteractorStyle ()
 
       
    
@@ -39,7 +39,7 @@ vglModule.trackballInteractorStyle
      
            
    
-     :rtype: vglModule.trackballInteractorStyle
+     :rtype: vgl.trackballInteractorStyle
      
    
    
@@ -75,7 +75,7 @@ vglModule.trackballInteractorStyle
    
    
    
-   .. js:function:: vglModule.trackballInteractorStyle.handleMouseMove(event)
+   .. js:function:: vgl.trackballInteractorStyle.handleMouseMove(event)
    
        
    
@@ -116,7 +116,7 @@ vglModule.trackballInteractorStyle
    
    
    
-   .. js:function:: vglModule.trackballInteractorStyle.handleMouseDown(event)
+   .. js:function:: vgl.trackballInteractorStyle.handleMouseDown(event)
    
        
    
@@ -157,7 +157,7 @@ vglModule.trackballInteractorStyle
    
    
    
-   .. js:function:: vglModule.trackballInteractorStyle.handleMouseUp(event)
+   .. js:function:: vgl.trackballInteractorStyle.handleMouseUp(event)
    
        
    

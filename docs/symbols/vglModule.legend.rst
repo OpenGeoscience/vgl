@@ -1,14 +1,14 @@
 
 
 ===============================================
-vglModule.legend (class)
+vgl.legend (class)
 ===============================================
-vglModule.legend
+vgl.legend
 
 .. contents::
    :local:
 
-.. js:class:: vglModule.legend ()
+.. js:class:: vgl.legend ()
 
       
    
@@ -40,7 +40,7 @@ vglModule.legend
      
            
    
-     :rtype: vglModule.legend
+     :rtype: vgl.legend
      
    
    
@@ -76,7 +76,7 @@ vglModule.legend
    
    
    
-   .. js:function:: vglModule.legend.lookupTable()
+   .. js:function:: vgl.legend.lookupTable()
    
        
    
@@ -109,7 +109,7 @@ vglModule.legend
    
    
    
-   .. js:function:: vglModule.legend.setLookupTable(lookupTable)
+   .. js:function:: vgl.legend.setLookupTable(lookupTable)
    
        
    

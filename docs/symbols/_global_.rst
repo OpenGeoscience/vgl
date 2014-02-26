@@ -116,7 +116,7 @@ _global_ (data)
      
      
    
-   .. js:attribute:: _global_.vglModule
+   .. js:attribute:: _global_.vgl
    
      
      

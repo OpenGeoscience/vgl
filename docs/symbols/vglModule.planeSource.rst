@@ -1,14 +1,14 @@
 
 
 ===============================================
-vglModule.planeSource (class)
+vgl.planeSource (class)
 ===============================================
 
 
 .. contents::
    :local:
 
-.. js:class:: vglModule.planeSource ()
+.. js:class:: vgl.planeSource ()
 
       
    
@@ -39,7 +39,7 @@ vglModule.planeSource (class)
      
            
    
-     :rtype: vglModule.planeSource
+     :rtype: vgl.planeSource
      
    
    
@@ -75,7 +75,7 @@ vglModule.planeSource (class)
    
    
    
-   .. js:function:: vglModule.planeSource.setOrigin(x, y, z)
+   .. js:function:: vgl.planeSource.setOrigin(x, y, z)
    
        
    
@@ -121,7 +121,7 @@ vglModule.planeSource (class)
    
    
    
-   .. js:function:: vglModule.planeSource.setPoint1(x, y, z)
+   .. js:function:: vgl.planeSource.setPoint1(x, y, z)
    
        
    
@@ -167,7 +167,7 @@ vglModule.planeSource (class)
    
    
    
-   .. js:function:: vglModule.planeSource.setPoint2(x, y, z)
+   .. js:function:: vgl.planeSource.setPoint2(x, y, z)
    
        
    
@@ -213,7 +213,7 @@ vglModule.planeSource (class)
    
    
    
-   .. js:function:: vglModule.planeSource.create()
+   .. js:function:: vgl.planeSource.create()
    
        
    

@@ -1,14 +1,14 @@
 
 
 ===============================================
-vglModule.picker (class)
+vgl.picker (class)
 ===============================================
-vglModule.picker
+vgl.picker
 
 .. contents::
    :local:
 
-.. js:class:: vglModule.picker ()
+.. js:class:: vgl.picker ()
 
       
    
@@ -39,7 +39,7 @@ vglModule.picker
      
            
    
-     :rtype: vglModule.picker
+     :rtype: vgl.picker
      
    
    
@@ -75,7 +75,7 @@ vglModule.picker
    
    
    
-   .. js:function:: vglModule.picker.getActors()
+   .. js:function:: vgl.picker.getActors()
    
        
    
@@ -101,7 +101,7 @@ vglModule.picker
    
    
    
-   .. js:function:: vglModule.picker.pick(selectionX, selectionY, renderer)
+   .. js:function:: vgl.picker.pick(selectionX, selectionY, renderer)
    
        
    

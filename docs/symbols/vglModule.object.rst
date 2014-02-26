@@ -1,14 +1,14 @@
 
 
 ===============================================
-vglModule.object (class)
+vgl.object (class)
 ===============================================
 
 
 .. contents::
    :local:
 
-.. js:class:: vglModule.object ()
+.. js:class:: vgl.object ()
 
       
    
@@ -39,7 +39,7 @@ vglModule.object (class)
      
            
    
-     :rtype: vglModule.object
+     :rtype: vgl.object
      
    
    
@@ -75,7 +75,7 @@ vglModule.object (class)
    
    
    
-   .. js:function:: vglModule.object.modified()
+   .. js:function:: vgl.object.modified()
    
        
    
@@ -101,7 +101,7 @@ vglModule.object (class)
    
    
    
-   .. js:function:: vglModule.object.getMTime()
+   .. js:function:: vgl.object.getMTime()
    
        
    

@@ -6,7 +6,7 @@
 /*jslint devel: true, forin: true, newcap: true, plusplus: true*/
 /*jslint white: true, continue:true, indent: 2*/
 
-/*global vglModule, gl, ogs, vec4, Float32Array, inherit, $*/
+/*global vgl, gl, ogs, vec4, Float32Array, inherit, $*/
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
@@ -14,16 +14,16 @@
  * Create a new instance of class mapper
  *
  * @class
- * @returns {vglModule.mapper}
+ * @returns {vgl.mapper}
  */
 //////////////////////////////////////////////////////////////////////////////
-vglModule.mapper = function() {
+vgl.mapper = function() {
   'use strict';
 
-  if (!(this instanceof vglModule.mapper)) {
-    return new vglModule.mapper();
+  if (!(this instanceof vgl.mapper)) {
+    return new vgl.mapper();
   }
-  vglModule.boundingObject.call(this);
+  vgl.boundingObject.call(this);
 
   /** @private */
   var m_dirty = true,
@@ -31,7 +31,7 @@ vglModule.mapper = function() {
       m_geomData = null,
       m_buffers = [],
       m_bufferVertexAttributeMap = {},
-      m_glCompileTimestamp = vglModule.timestamp();
+      m_glCompileTimestamp = vgl.timestamp();
 
   ////////////////////////////////////////////////////////////////////////////
   /**
@@ -206,7 +206,7 @@ vglModule.mapper = function() {
     }
 
     // Fixed vertex color
-    gl.vertexAttrib3fv(vglModule.vertexAttributeKeys.Color, this.color());
+    gl.vertexAttrib3fv(vgl.vertexAttributeKeys.Color, this.color());
 
     // TODO Use renderState
     var bufferIndex = 0,
@@ -235,4 +235,4 @@ vglModule.mapper = function() {
   return this;
 };
 
-inherit(vglModule.mapper, vglModule.boundingObject);
+inherit(vgl.mapper, vgl.boundingObject);

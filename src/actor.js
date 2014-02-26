@@ -6,7 +6,7 @@
 /*jslint devel: true, forin: true, newcap: true, plusplus: true*/
 /*jslint white: true, continue:true, indent: 2*/
 
-/*global vglModule, ogs, vec3, vec4, mat4, inherit, $*/
+/*global vgl, ogs, vec3, vec4, mat4, inherit, $*/
 //////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////
@@ -14,20 +14,20 @@
  * Create a new instance of class actor
  *
  * @class
- * @returns {vglModule.actor}
+ * @returns {vgl.actor}
  */
 ////////////////////////////////////////////////////////////////////////////
-vglModule.actor = function() {
+vgl.actor = function() {
   'use strict';
 
-  if (!(this instanceof vglModule.actor)) {
-    return new vglModule.actor();
+  if (!(this instanceof vgl.actor)) {
+    return new vgl.actor();
   }
-  vglModule.node.call(this);
+  vgl.node.call(this);
 
   /** @private */
   var m_transformMatrix = mat4.create(),
-      m_referenceFrame = vglModule.boundingObject.ReferenceFrame.Relative,
+      m_referenceFrame = vgl.boundingObject.ReferenceFrame.Relative,
       m_mapper = null;
 
   ////////////////////////////////////////////////////////////////////////////
@@ -70,7 +70,7 @@ vglModule.actor = function() {
   /**
    * Set reference frame for the transformations
    *
-   * @param {vglModule.boundingObject.ReferenceFrame}
+   * @param {vgl.boundingObject.ReferenceFrame}
    * referenceFrame Possible values are (Absolute | Relative)
    */
   ////////////////////////////////////////////////////////////////////////////
@@ -87,7 +87,7 @@ vglModule.actor = function() {
   /**
    * Return mapper where actor gets it behavior and data
    *
-   * @returns {vglModule.mapper}
+   * @returns {vgl.mapper}
    */
   ////////////////////////////////////////////////////////////////////////////
   this.mapper = function() {
@@ -98,7 +98,7 @@ vglModule.actor = function() {
   /**
    * Connect an actor to its data source
    *
-   * @param {vglModule.mapper}
+   * @param {vgl.mapper}
    */
   ////////////////////////////////////////////////////////////////////////////
   this.setMapper = function(mapper) {
@@ -188,4 +188,4 @@ vglModule.actor = function() {
   return this;
 };
 
-inherit(vglModule.actor, vglModule.node);
+inherit(vgl.actor, vgl.node);

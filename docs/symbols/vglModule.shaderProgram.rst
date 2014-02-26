@@ -1,14 +1,14 @@
 
 
 ===============================================
-vglModule.shaderProgram (class)
+vgl.shaderProgram (class)
 ===============================================
 
 
 .. contents::
    :local:
 
-.. js:class:: vglModule.shaderProgram ()
+.. js:class:: vgl.shaderProgram ()
 
       
    
@@ -39,7 +39,7 @@ vglModule.shaderProgram (class)
      
            
    
-     :rtype: vglModule.shaderProgram
+     :rtype: vgl.shaderProgram
      
    
    
@@ -75,7 +75,7 @@ vglModule.shaderProgram (class)
    
    
    
-   .. js:function:: vglModule.shaderProgram.queryUniformLocation(name)
+   .. js:function:: vgl.shaderProgram.queryUniformLocation(name)
    
        
    
@@ -116,7 +116,7 @@ vglModule.shaderProgram (class)
    
    
    
-   .. js:function:: vglModule.shaderProgram.queryAttributeLocation(name)
+   .. js:function:: vgl.shaderProgram.queryAttributeLocation(name)
    
        
    
@@ -157,7 +157,7 @@ vglModule.shaderProgram (class)
    
    
    
-   .. js:function:: vglModule.shaderProgram.addShader(shader)
+   .. js:function:: vgl.shaderProgram.addShader(shader)
    
        
    
@@ -198,7 +198,7 @@ vglModule.shaderProgram (class)
    
    
    
-   .. js:function:: vglModule.shaderProgram.addUniform(uniform)
+   .. js:function:: vgl.shaderProgram.addUniform(uniform)
    
        
    
@@ -239,7 +239,7 @@ vglModule.shaderProgram (class)
    
    
    
-   .. js:function:: vglModule.shaderProgram.addVertexAttribute(attr, key)
+   .. js:function:: vgl.shaderProgram.addVertexAttribute(attr, key)
    
        
    
@@ -279,7 +279,7 @@ vglModule.shaderProgram (class)
    
    
    
-   .. js:function:: vglModule.shaderProgram.uniformLocation(name)
+   .. js:function:: vgl.shaderProgram.uniformLocation(name)
    
        
    
@@ -323,7 +323,7 @@ vglModule.shaderProgram (class)
    
    
    
-   .. js:function:: vglModule.shaderProgram.attributeLocation(name)
+   .. js:function:: vgl.shaderProgram.attributeLocation(name)
    
        
    
@@ -367,7 +367,7 @@ vglModule.shaderProgram (class)
    
    
    
-   .. js:function:: vglModule.shaderProgram.uniform(name)
+   .. js:function:: vgl.shaderProgram.uniform(name)
    
        
    
@@ -408,7 +408,7 @@ vglModule.shaderProgram (class)
    
    
    
-   .. js:function:: vglModule.shaderProgram.updateUniforms()
+   .. js:function:: vgl.shaderProgram.updateUniforms()
    
        
    
@@ -436,7 +436,7 @@ vglModule.shaderProgram (class)
    
    
    
-   .. js:function:: vglModule.shaderProgram.link()
+   .. js:function:: vgl.shaderProgram.link()
    
        
    
@@ -469,7 +469,7 @@ vglModule.shaderProgram (class)
    
    
    
-   .. js:function:: vglModule.shaderProgram.use()
+   .. js:function:: vgl.shaderProgram.use()
    
        
    
@@ -495,7 +495,7 @@ vglModule.shaderProgram (class)
    
    
    
-   .. js:function:: vglModule.shaderProgram.cleanUp()
+   .. js:function:: vgl.shaderProgram.cleanUp()
    
        
    
@@ -521,7 +521,7 @@ vglModule.shaderProgram (class)
    
    
    
-   .. js:function:: vglModule.shaderProgram.deleteProgram()
+   .. js:function:: vgl.shaderProgram.deleteProgram()
    
        
    
@@ -547,7 +547,7 @@ vglModule.shaderProgram (class)
    
    
    
-   .. js:function:: vglModule.shaderProgram.deleteVertexAndFragment()
+   .. js:function:: vgl.shaderProgram.deleteVertexAndFragment()
    
        
    
@@ -573,7 +573,7 @@ vglModule.shaderProgram (class)
    
    
    
-   .. js:function:: vglModule.shaderProgram.bind(renderState)
+   .. js:function:: vgl.shaderProgram.bind(renderState)
    
        
    
@@ -614,7 +614,7 @@ vglModule.shaderProgram (class)
    
    
    
-   .. js:function:: vglModule.shaderProgram.undoBind(renderState)
+   .. js:function:: vgl.shaderProgram.undoBind(renderState)
    
        
    
@@ -648,7 +648,7 @@ vglModule.shaderProgram (class)
    
    
    
-   .. js:function:: vglModule.shaderProgram.bindVertexData(renderState, key)
+   .. js:function:: vgl.shaderProgram.bindVertexData(renderState, key)
    
        
    
@@ -688,7 +688,7 @@ vglModule.shaderProgram (class)
    
    
    
-   .. js:function:: vglModule.shaderProgram.undoBindVertexData(renderState, key)
+   .. js:function:: vgl.shaderProgram.undoBindVertexData(renderState, key)
    
        
    
@@ -728,7 +728,7 @@ vglModule.shaderProgram (class)
    
    
    
-   .. js:function:: vglModule.shaderProgram.bindUniforms()
+   .. js:function:: vgl.shaderProgram.bindUniforms()
    
        
    
@@ -754,7 +754,7 @@ vglModule.shaderProgram (class)
    
    
    
-   .. js:function:: vglModule.shaderProgram.bindAttributes()
+   .. js:function:: vgl.shaderProgram.bindAttributes()
    
        
    

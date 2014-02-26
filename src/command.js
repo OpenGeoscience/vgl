@@ -6,7 +6,7 @@
 /*jslint devel: true, forin: true, newcap: true, plusplus: true*/
 /*jslint white: true, continue:true, indent: 2*/
 
-/*global vglModule, ogs, vec4, inherit, $*/
+/*global vgl, ogs, vec4, inherit, $*/
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
@@ -14,48 +14,48 @@
  * Create a new instance of class command
  *
  * @class command
- * @returns {vglModule.command}
+ * @returns {vgl.command}
  */
 //////////////////////////////////////////////////////////////////////////////
-vglModule.command = function() {
+vgl.command = function() {
   'use strict';
 
-  if (!(this instanceof vglModule.command)) {
-    return new vglModule.command();
+  if (!(this instanceof vgl.command)) {
+    return new vgl.command();
   }
-  vglModule.object.call(this);
+  vgl.object.call(this);
 
   return this;
 };
 
-inherit(vglModule.command, vglModule.object);
+inherit(vgl.command, vgl.object);
 
 //////////////////////////////////////////////////////////////////////////////
 /**
  * Event types
  */
 //////////////////////////////////////////////////////////////////////////////
-vglModule.command.keyPressEvent = "keyPressEvent";
-vglModule.command.mousePressEvent = "mousePressEvent";
-vglModule.command.mouseReleaseEvent = "mouseReleaseEvent";
-vglModule.command.contextMenuEvent = "contextMenuEvent";
-vglModule.command.configureEvent = "configureEvent";
-vglModule.command.enableEvent = "enableEvent";
-vglModule.command.mouseWheelBackwardEvent = "mouseWheelBackwardEvent";
-vglModule.command.keyReleaseEvent = "keyReleaseEvent";
-vglModule.command.middleButtonPressEvent = "middleButtonPressEvent";
-vglModule.command.startInteractionEvent = "startInteractionEvent";
-vglModule.command.enterEvent = "enterEvent";
-vglModule.command.rightButtonPressEvent = "rightButtonPressEvent";
-vglModule.command.middleButtonReleaseEvent = "middleButtonReleaseEvent";
-vglModule.command.charEvent = "charEvent";
-vglModule.command.disableEvent = "disableEvent";
-vglModule.command.endInteractionEvent = "endInteractionEvent";
-vglModule.command.mouseMoveEvent = "mouseMoveEvent";
-vglModule.command.mouseWheelForwardEvent = "mouseWheelForwardEvent";
-vglModule.command.exposeEvent = "exposeEvent";
-vglModule.command.timerEvent = "timerEvent";
-vglModule.command.leftButtonPressEvent = "leftButtonPressEvent";
-vglModule.command.leaveEvent = "leaveEvent";
-vglModule.command.rightButtonReleaseEvent = "rightButtonReleaseEvent";
-vglModule.command.leftButtonReleaseEvent = "leftButtonReleaseEvent";
+vgl.command.keyPressEvent = "keyPressEvent";
+vgl.command.mousePressEvent = "mousePressEvent";
+vgl.command.mouseReleaseEvent = "mouseReleaseEvent";
+vgl.command.contextMenuEvent = "contextMenuEvent";
+vgl.command.configureEvent = "configureEvent";
+vgl.command.enableEvent = "enableEvent";
+vgl.command.mouseWheelBackwardEvent = "mouseWheelBackwardEvent";
+vgl.command.keyReleaseEvent = "keyReleaseEvent";
+vgl.command.middleButtonPressEvent = "middleButtonPressEvent";
+vgl.command.startInteractionEvent = "startInteractionEvent";
+vgl.command.enterEvent = "enterEvent";
+vgl.command.rightButtonPressEvent = "rightButtonPressEvent";
+vgl.command.middleButtonReleaseEvent = "middleButtonReleaseEvent";
+vgl.command.charEvent = "charEvent";
+vgl.command.disableEvent = "disableEvent";
+vgl.command.endInteractionEvent = "endInteractionEvent";
+vgl.command.mouseMoveEvent = "mouseMoveEvent";
+vgl.command.mouseWheelForwardEvent = "mouseWheelForwardEvent";
+vgl.command.exposeEvent = "exposeEvent";
+vgl.command.timerEvent = "timerEvent";
+vgl.command.leftButtonPressEvent = "leftButtonPressEvent";
+vgl.command.leaveEvent = "leaveEvent";
+vgl.command.rightButtonReleaseEvent = "rightButtonReleaseEvent";
+vgl.command.leftButtonReleaseEvent = "leftButtonReleaseEvent";

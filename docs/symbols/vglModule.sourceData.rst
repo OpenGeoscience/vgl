@@ -1,14 +1,14 @@
 
 
 ===============================================
-vglModule.sourceData (class)
+vgl.sourceData (class)
 ===============================================
 
 
 .. contents::
    :local:
 
-.. js:class:: vglModule.sourceData ()
+.. js:class:: vgl.sourceData ()
 
       
    
@@ -39,7 +39,7 @@ vglModule.sourceData (class)
      
            
    
-     :rtype: vglModule.sourceData
+     :rtype: vgl.sourceData
      
    
    
@@ -75,7 +75,7 @@ vglModule.sourceData (class)
    
    
    
-   .. js:function:: vglModule.sourceData.data()
+   .. js:function:: vgl.sourceData.data()
    
        
    
@@ -108,7 +108,7 @@ vglModule.sourceData (class)
    
    
    
-   .. js:function:: vglModule.sourceData.addAttribute(key, dataType, sizeOfDataType, offset, stride, noOfComponents, normalized)
+   .. js:function:: vgl.sourceData.addAttribute(key, dataType, sizeOfDataType, offset, stride, noOfComponents, normalized)
    
        
    
@@ -178,7 +178,7 @@ vglModule.sourceData (class)
    
    
    
-   .. js:function:: vglModule.sourceData.sizeOfArray()
+   .. js:function:: vgl.sourceData.sizeOfArray()
    
        
    
@@ -204,7 +204,7 @@ vglModule.sourceData (class)
    
    
    
-   .. js:function:: vglModule.sourceData.lengthOfArray()
+   .. js:function:: vgl.sourceData.lengthOfArray()
    
        
    
@@ -230,7 +230,7 @@ vglModule.sourceData (class)
    
    
    
-   .. js:function:: vglModule.sourceData.sizeInBytes()
+   .. js:function:: vgl.sourceData.sizeInBytes()
    
        
    
@@ -256,7 +256,7 @@ vglModule.sourceData (class)
    
    
    
-   .. js:function:: vglModule.sourceData.hasKey(key)
+   .. js:function:: vgl.sourceData.hasKey(key)
    
        
    
@@ -290,7 +290,7 @@ vglModule.sourceData (class)
    
    
    
-   .. js:function:: vglModule.sourceData.keys()
+   .. js:function:: vgl.sourceData.keys()
    
        
    
@@ -316,7 +316,7 @@ vglModule.sourceData (class)
    
    
    
-   .. js:function:: vglModule.sourceData.numberOfAttributes()
+   .. js:function:: vgl.sourceData.numberOfAttributes()
    
        
    
@@ -342,7 +342,7 @@ vglModule.sourceData (class)
    
    
    
-   .. js:function:: vglModule.sourceData.attributeNumberOfComponents(key)
+   .. js:function:: vgl.sourceData.attributeNumberOfComponents(key)
    
        
    
@@ -376,7 +376,7 @@ vglModule.sourceData (class)
    
    
    
-   .. js:function:: vglModule.sourceData.normalized(key)
+   .. js:function:: vgl.sourceData.normalized(key)
    
        
    
@@ -410,7 +410,7 @@ vglModule.sourceData (class)
    
    
    
-   .. js:function:: vglModule.sourceData.sizeOfAttributeDataType(key)
+   .. js:function:: vgl.sourceData.sizeOfAttributeDataType(key)
    
        
    
@@ -444,7 +444,7 @@ vglModule.sourceData (class)
    
    
    
-   .. js:function:: vglModule.sourceData.attributeDataType(key)
+   .. js:function:: vgl.sourceData.attributeDataType(key)
    
        
    
@@ -478,7 +478,7 @@ vglModule.sourceData (class)
    
    
    
-   .. js:function:: vglModule.sourceData.attributeOffset(key)
+   .. js:function:: vgl.sourceData.attributeOffset(key)
    
        
    
@@ -512,7 +512,7 @@ vglModule.sourceData (class)
    
    
    
-   .. js:function:: vglModule.sourceData.attributeStride(key)
+   .. js:function:: vgl.sourceData.attributeStride(key)
    
        
    
@@ -546,7 +546,7 @@ vglModule.sourceData (class)
    
    
    
-   .. js:function:: vglModule.sourceData.pushBack(vertexData)
+   .. js:function:: vgl.sourceData.pushBack(vertexData)
    
        
    
@@ -580,7 +580,7 @@ vglModule.sourceData (class)
    
    
    
-   .. js:function:: vglModule.sourceData.insert(data)
+   .. js:function:: vgl.sourceData.insert(data)
    
        
    

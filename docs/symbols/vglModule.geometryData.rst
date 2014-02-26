@@ -1,14 +1,14 @@
 
 
 ===============================================
-vglModule.geometryData (class)
+vgl.geometryData (class)
 ===============================================
 
 
 .. contents::
    :local:
 
-.. js:class:: vglModule.geometryData ()
+.. js:class:: vgl.geometryData ()
 
       
    
@@ -39,7 +39,7 @@ vglModule.geometryData (class)
      
            
    
-     :rtype: vglModule.geometryData
+     :rtype: vgl.geometryData
      
    
    
@@ -75,7 +75,7 @@ vglModule.geometryData (class)
    
    
    
-   .. js:function:: vglModule.geometryData.type()
+   .. js:function:: vgl.geometryData.type()
    
        
    
@@ -101,7 +101,7 @@ vglModule.geometryData (class)
    
    
    
-   .. js:function:: vglModule.geometryData.name()
+   .. js:function:: vgl.geometryData.name()
    
        
    
@@ -127,7 +127,7 @@ vglModule.geometryData (class)
    
    
    
-   .. js:function:: vglModule.geometryData.setName(name)
+   .. js:function:: vgl.geometryData.setName(name)
    
        
    
@@ -161,7 +161,7 @@ vglModule.geometryData (class)
    
    
    
-   .. js:function:: vglModule.geometryData.addSource(source)
+   .. js:function:: vgl.geometryData.addSource(source)
    
        
    
@@ -195,7 +195,7 @@ vglModule.geometryData (class)
    
    
    
-   .. js:function:: vglModule.geometryData.source(index)
+   .. js:function:: vgl.geometryData.source(index)
    
        
    
@@ -229,7 +229,7 @@ vglModule.geometryData (class)
    
    
    
-   .. js:function:: vglModule.geometryData.numberOfSources()
+   .. js:function:: vgl.geometryData.numberOfSources()
    
        
    
@@ -255,7 +255,7 @@ vglModule.geometryData (class)
    
    
    
-   .. js:function:: vglModule.geometryData.sourceData(key)
+   .. js:function:: vgl.geometryData.sourceData(key)
    
        
    
@@ -289,7 +289,7 @@ vglModule.geometryData (class)
    
    
    
-   .. js:function:: vglModule.geometryData.addPrimitive(primitive)
+   .. js:function:: vgl.geometryData.addPrimitive(primitive)
    
        
    
@@ -323,7 +323,7 @@ vglModule.geometryData (class)
    
    
    
-   .. js:function:: vglModule.geometryData.primitive(index)
+   .. js:function:: vgl.geometryData.primitive(index)
    
        
    
@@ -357,7 +357,7 @@ vglModule.geometryData (class)
    
    
    
-   .. js:function:: vglModule.geometryData.numberOfPrimitives()
+   .. js:function:: vgl.geometryData.numberOfPrimitives()
    
        
    
@@ -383,7 +383,7 @@ vglModule.geometryData (class)
    
    
    
-   .. js:function:: vglModule.geometryData.bounds()
+   .. js:function:: vgl.geometryData.bounds()
    
        
    
@@ -409,7 +409,7 @@ vglModule.geometryData (class)
    
    
    
-   .. js:function:: vglModule.geometryData.resetBounds()
+   .. js:function:: vgl.geometryData.resetBounds()
    
        
    
@@ -435,7 +435,7 @@ vglModule.geometryData (class)
    
    
    
-   .. js:function:: vglModule.geometryData.setBounds(minX, maxX, minY, maxY, minZ, maxZ)
+   .. js:function:: vgl.geometryData.setBounds(minX, maxX, minY, maxY, minZ, maxZ)
    
        
    
@@ -499,7 +499,7 @@ vglModule.geometryData (class)
    
    
    
-   .. js:function:: vglModule.geometryData.computeBounds()
+   .. js:function:: vgl.geometryData.computeBounds()
    
        
    
@@ -525,7 +525,7 @@ vglModule.geometryData (class)
    
    
    
-   .. js:function:: vglModule.geometryData.findClosestVertex(point)
+   .. js:function:: vgl.geometryData.findClosestVertex(point)
    
        
    
@@ -559,7 +559,7 @@ vglModule.geometryData (class)
    
    
    
-   .. js:function:: vglModule.geometryData.getPosition(index)
+   .. js:function:: vgl.geometryData.getPosition(index)
    
        
    
@@ -593,7 +593,7 @@ vglModule.geometryData (class)
    
    
    
-   .. js:function:: vglModule.geometryData.getScalar(index)
+   .. js:function:: vgl.geometryData.getScalar(index)
    
        
    

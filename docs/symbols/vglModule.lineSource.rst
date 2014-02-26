@@ -1,14 +1,14 @@
 
 
 ===============================================
-vglModule.lineSource (class)
+vgl.lineSource (class)
 ===============================================
 
 
 .. contents::
    :local:
 
-.. js:class:: vglModule.lineSource (positions, colors)
+.. js:class:: vgl.lineSource (positions, colors)
 
       
    
@@ -51,7 +51,7 @@ vglModule.lineSource (class)
      
            
    
-     :rtype: vglModule.lineSource
+     :rtype: vgl.lineSource
      
    
    
@@ -87,7 +87,7 @@ vglModule.lineSource (class)
    
    
    
-   .. js:function:: vglModule.lineSource.setPositions(positions)
+   .. js:function:: vgl.lineSource.setPositions(positions)
    
        
    
@@ -121,7 +121,7 @@ vglModule.lineSource (class)
    
    
    
-   .. js:function:: vglModule.lineSource.setColors(colors)
+   .. js:function:: vgl.lineSource.setColors(colors)
    
        
    
@@ -155,7 +155,7 @@ vglModule.lineSource (class)
    
    
    
-   .. js:function:: vglModule.lineSource.create()
+   .. js:function:: vgl.lineSource.create()
    
        
    

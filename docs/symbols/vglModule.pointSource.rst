@@ -1,14 +1,14 @@
 
 
 ===============================================
-vglModule.pointSource (class)
+vgl.pointSource (class)
 ===============================================
 
 
 .. contents::
    :local:
 
-.. js:class:: vglModule.pointSource ()
+.. js:class:: vgl.pointSource ()
 
       
    
@@ -39,7 +39,7 @@ vglModule.pointSource (class)
      
            
    
-     :rtype: vglModule.pointSource
+     :rtype: vgl.pointSource
      
    
    
@@ -75,7 +75,7 @@ vglModule.pointSource (class)
    
    
    
-   .. js:function:: vglModule.pointSource.setPositions(positions)
+   .. js:function:: vgl.pointSource.setPositions(positions)
    
        
    
@@ -109,7 +109,7 @@ vglModule.pointSource (class)
    
    
    
-   .. js:function:: vglModule.pointSource.setColors(colors)
+   .. js:function:: vgl.pointSource.setColors(colors)
    
        
    
@@ -143,7 +143,7 @@ vglModule.pointSource (class)
    
    
    
-   .. js:function:: vglModule.pointSource.setTextureCoordinates(texcoords)
+   .. js:function:: vgl.pointSource.setTextureCoordinates(texcoords)
    
        
    
@@ -177,7 +177,7 @@ vglModule.pointSource (class)
    
    
    
-   .. js:function:: vglModule.pointSource.create()
+   .. js:function:: vgl.pointSource.create()
    
        
    

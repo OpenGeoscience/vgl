@@ -1,14 +1,14 @@
 
 
 ===============================================
-vglModule.GL (class)
+vgl.GL (class)
 ===============================================
 
 
 .. contents::
    :local:
 
-.. js:class:: vglModule.GL ()
+.. js:class:: vgl.GL ()
 
       
    

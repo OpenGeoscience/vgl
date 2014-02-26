@@ -13,13 +13,13 @@
       var testDrawCountries = {};
       testDrawCountries.main = function() {
         var node = document.getElementById("glcanvas"),
-            viewer = vglModule.viewer(node), renderer,
-            renderer2 = vglModule.renderer(),
-            reader = vglModule.geojsonReader(),
+            viewer = vgl.viewer(node), renderer,
+            renderer2 = vgl.renderer(),
+            reader = vgl.geojsonReader(),
             geoms, i, mapper, mapper2, material, material2, actor,
             actor2, interactorStyle;
 
-        interactorStyle = vglModule.pvwInteractorStyle();
+        interactorStyle = vgl.pvwInteractorStyle();
 
         viewer.init();
         viewer.renderWindow().resize($(node).width(), $(node).height());
@@ -30,7 +30,7 @@
         // Second renderer that draws on top of the first one
         viewer.renderWindow().addRenderer(renderer2);
         renderer2.resize(100, 100);
-        renderer2.camera().setClearMask(vglModule.GL.DepthBufferBit);
+        renderer2.camera().setClearMask(vgl.GL.DepthBufferBit);
 
         $.getJSON("/data/countries.json", {
           format: "json"
@@ -39,21 +39,21 @@
           geoms = reader.readGJObject(data);
 
           for (i = 0; i < geoms.length; ++i) {
-            mapper = vglModule.mapper();
+            mapper = vgl.mapper();
             mapper.setGeometryData(geoms[i]);
 
-            material = vglModule.utils.createGeometryMaterial();
-            actor = vglModule.actor();
+            material = vgl.utils.createGeometryMaterial();
+            actor = vgl.actor();
             mapper.setColor(1.0, 0.0, 0.0);
             actor.setMapper(mapper);
             actor.setMaterial(material);
 
             renderer.addActor(actor);
 
-            mapper2 = vglModule.mapper();
+            mapper2 = vgl.mapper();
             mapper2.setGeometryData(geoms[i]);
-            actor2 = vglModule.actor();
-            material2 = vglModule.utils.createGeometryMaterial();
+            actor2 = vgl.actor();
+            material2 = vgl.utils.createGeometryMaterial();
             mapper2.setColor(0.0, 0.0, 1.0);
             actor2.setMapper(mapper2);
             actor2.setMaterial(material2);

@@ -1,14 +1,14 @@
 
 
 ===============================================
-vglModule.primitive (class)
+vgl.primitive (class)
 ===============================================
 
 
 .. contents::
    :local:
 
-.. js:class:: vglModule.primitive ()
+.. js:class:: vgl.primitive ()
 
       
    
@@ -39,7 +39,7 @@ vglModule.primitive (class)
      
            
    
-     :rtype: vglModule.primitive
+     :rtype: vgl.primitive
      
    
    
@@ -75,7 +75,7 @@ vglModule.primitive (class)
    
    
    
-   .. js:function:: vglModule.primitive.indices()
+   .. js:function:: vgl.primitive.indices()
    
        
    
@@ -108,7 +108,7 @@ vglModule.primitive (class)
    
    
    
-   .. js:function:: vglModule.primitive.createIndices(type)
+   .. js:function:: vgl.primitive.createIndices(type)
    
        
    
@@ -142,7 +142,7 @@ vglModule.primitive (class)
    
    
    
-   .. js:function:: vglModule.primitive.numberOfIndices()
+   .. js:function:: vgl.primitive.numberOfIndices()
    
        
    
@@ -168,7 +168,7 @@ vglModule.primitive (class)
    
    
    
-   .. js:function:: vglModule.primitive.sizeInBytes()
+   .. js:function:: vgl.primitive.sizeInBytes()
    
        
    
@@ -194,7 +194,7 @@ vglModule.primitive (class)
    
    
    
-   .. js:function:: vglModule.primitive.setPrimitiveType(type)
+   .. js:function:: vgl.primitive.setPrimitiveType(type)
    
        
    
@@ -228,7 +228,7 @@ vglModule.primitive (class)
    
    
    
-   .. js:function:: vglModule.primitive.indicesPerPrimitive()
+   .. js:function:: vgl.primitive.indicesPerPrimitive()
    
        
    
@@ -254,7 +254,7 @@ vglModule.primitive (class)
    
    
    
-   .. js:function:: vglModule.primitive.setIndicesPerPrimitive(count)
+   .. js:function:: vgl.primitive.setIndicesPerPrimitive(count)
    
        
    
@@ -288,7 +288,7 @@ vglModule.primitive (class)
    
    
    
-   .. js:function:: vglModule.primitive.indicesValueType()
+   .. js:function:: vgl.primitive.indicesValueType()
    
        
    
@@ -314,7 +314,7 @@ vglModule.primitive (class)
    
    
    
-   .. js:function:: vglModule.primitive.setIndicesValueType(type)
+   .. js:function:: vgl.primitive.setIndicesValueType(type)
    
        
    
@@ -348,7 +348,7 @@ vglModule.primitive (class)
    
    
    
-   .. js:function:: vglModule.primitive.setIndices(indicesArray)
+   .. js:function:: vgl.primitive.setIndices(indicesArray)
    
        
    

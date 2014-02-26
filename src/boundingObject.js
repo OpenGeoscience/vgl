@@ -6,7 +6,7 @@
 /*jslint devel: true, forin: true, newcap: true, plusplus: true*/
 /*jslint white: true, continue:true, indent: 2*/
 
-/*global vglModule, ogs, vec4, inherit, $*/
+/*global vgl, ogs, vec4, inherit, $*/
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
@@ -14,21 +14,21 @@
  * Create a new instance of class boundingObject
  *
  * @class
- * @return {vglModule.boundingObject}
+ * @return {vgl.boundingObject}
  */
 //////////////////////////////////////////////////////////////////////////////
-vglModule.boundingObject = function() {
+vgl.boundingObject = function() {
   'use strict';
 
-  if (!(this instanceof vglModule.boundingObject)) {
-    return new vglModule.boundingObject();
+  if (!(this instanceof vgl.boundingObject)) {
+    return new vgl.boundingObject();
   }
-  vglModule.object.call(this);
+  vgl.object.call(this);
 
   /** @private */
   var m_bounds = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-      m_computeBoundsTimestamp = vglModule.timestamp(),
-      m_boundsDirtyTimestamp = vglModule.timestamp();
+      m_computeBoundsTimestamp = vgl.timestamp(),
+      m_boundsDirtyTimestamp = vgl.timestamp();
 
   m_computeBoundsTimestamp.modified();
   m_boundsDirtyTimestamp.modified();
@@ -91,7 +91,7 @@ vglModule.boundingObject = function() {
   /**
    * Return bounds computation modification time
    *
-   * @returns {vglModule.timestamp}
+   * @returns {vgl.timestamp}
    */
   ////////////////////////////////////////////////////////////////////////////
   this.computeBoundsTimestamp = function() {
@@ -102,7 +102,7 @@ vglModule.boundingObject = function() {
   /**
    * Return bounds dirty timestamp
    *
-   * @returns {vglModule.timestamp}
+   * @returns {vgl.timestamp}
    */
   ////////////////////////////////////////////////////////////////////////////
   this.boundsDirtyTimestamp = function() {
@@ -114,9 +114,9 @@ vglModule.boundingObject = function() {
   return this;
 };
 
-vglModule.boundingObject.ReferenceFrame = {
+vgl.boundingObject.ReferenceFrame = {
   "Relative" : 0,
   "Absolute" : 1
 };
 
-inherit(vglModule.boundingObject, vglModule.object);
+inherit(vgl.boundingObject, vgl.object);

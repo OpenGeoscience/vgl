@@ -1,14 +1,14 @@
 
 
 ===============================================
-vglModule.groupNode (class)
+vgl.groupNode (class)
 ===============================================
 
 
 .. contents::
    :local:
 
-.. js:class:: vglModule.groupNode ()
+.. js:class:: vgl.groupNode ()
 
       
    
@@ -39,7 +39,7 @@ vglModule.groupNode (class)
      
            
    
-     :rtype: vglModule.groupNode
+     :rtype: vgl.groupNode
      
    
    
@@ -75,7 +75,7 @@ vglModule.groupNode (class)
    
    
    
-   .. js:function:: vglModule.groupNode.setVisible(flag)
+   .. js:function:: vgl.groupNode.setVisible(flag)
    
        
    
@@ -116,7 +116,7 @@ vglModule.groupNode (class)
    
    
    
-   .. js:function:: vglModule.groupNode.addChild(childNode)
+   .. js:function:: vgl.groupNode.addChild(childNode)
    
        
    
@@ -157,7 +157,7 @@ vglModule.groupNode (class)
    
    
    
-   .. js:function:: vglModule.groupNode.removeChild(childNode)
+   .. js:function:: vgl.groupNode.removeChild(childNode)
    
        
    
@@ -198,7 +198,7 @@ vglModule.groupNode (class)
    
    
    
-   .. js:function:: vglModule.groupNode.removeChildren()
+   .. js:function:: vgl.groupNode.removeChildren()
    
        
    
@@ -224,7 +224,7 @@ vglModule.groupNode (class)
    
    
    
-   .. js:function:: vglModule.groupNode.children()
+   .. js:function:: vgl.groupNode.children()
    
        
    
@@ -257,7 +257,7 @@ vglModule.groupNode (class)
    
    
    
-   .. js:function:: vglModule.groupNode.accept(visitor)
+   .. js:function:: vgl.groupNode.accept(visitor)
    
        
    
@@ -291,7 +291,7 @@ vglModule.groupNode (class)
    
    
    
-   .. js:function:: vglModule.groupNode.traverse(visitor)
+   .. js:function:: vgl.groupNode.traverse(visitor)
    
        
    
@@ -325,7 +325,7 @@ vglModule.groupNode (class)
    
    
    
-   .. js:function:: vglModule.groupNode.traverseChildrenAndUpdateBounds(visitor)
+   .. js:function:: vgl.groupNode.traverseChildrenAndUpdateBounds(visitor)
    
        
    
@@ -359,7 +359,7 @@ vglModule.groupNode (class)
    
    
    
-   .. js:function:: vglModule.groupNode.traverseChildren(visitor)
+   .. js:function:: vgl.groupNode.traverseChildren(visitor)
    
        
    
@@ -393,7 +393,7 @@ vglModule.groupNode (class)
    
    
    
-   .. js:function:: vglModule.groupNode.computeBounds()
+   .. js:function:: vgl.groupNode.computeBounds()
    
        
    
@@ -419,7 +419,7 @@ vglModule.groupNode (class)
    
    
    
-   .. js:function:: vglModule.groupNode.updateBounds(child)
+   .. js:function:: vgl.groupNode.updateBounds(child)
    
        
    

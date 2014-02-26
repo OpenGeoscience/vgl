@@ -1,14 +1,14 @@
 
 
 ===============================================
-vglModule.geojsonReader (class)
+vgl.geojsonReader (class)
 ===============================================
 
 
 .. contents::
    :local:
 
-.. js:class:: vglModule.geojsonReader ()
+.. js:class:: vgl.geojsonReader ()
 
       
    
@@ -42,7 +42,7 @@ vglModule.geojsonReader (class)
      
            
    
-     :rtype: vglModule.geojsonReader
+     :rtype: vgl.geojsonReader
      
    
    
@@ -78,7 +78,7 @@ vglModule.geojsonReader (class)
    
    
    
-   .. js:function:: vglModule.geojsonReader.readScalars(coordinates, geom, size_estimate, idx)
+   .. js:function:: vgl.geojsonReader.readScalars(coordinates, geom, size_estimate, idx)
    
        
    
@@ -130,7 +130,7 @@ vglModule.geojsonReader (class)
    
    
    
-   .. js:function:: vglModule.geojsonReader.readPoint(coordinates)
+   .. js:function:: vgl.geojsonReader.readPoint(coordinates)
    
        
    
@@ -160,7 +160,7 @@ vglModule.geojsonReader (class)
        :returns:
          
    
-       :rtype: vglModule.geometryData
+       :rtype: vgl.geometryData
        
      
    
@@ -171,7 +171,7 @@ vglModule.geojsonReader (class)
    
    
    
-   .. js:function:: vglModule.geojsonReader.readMultiPoint(coordinates)
+   .. js:function:: vgl.geojsonReader.readMultiPoint(coordinates)
    
        
    
@@ -201,7 +201,7 @@ vglModule.geojsonReader (class)
        :returns:
          
    
-       :rtype: vglModule.geometryData
+       :rtype: vgl.geometryData
        
      
    
@@ -212,7 +212,7 @@ vglModule.geojsonReader (class)
    
    
    
-   .. js:function:: vglModule.geojsonReader.readLineString(coordinates)
+   .. js:function:: vgl.geojsonReader.readLineString(coordinates)
    
        
    
@@ -242,7 +242,7 @@ vglModule.geojsonReader (class)
        :returns:
          
    
-       :rtype: vglModule.geometryData
+       :rtype: vgl.geometryData
        
      
    
@@ -253,7 +253,7 @@ vglModule.geojsonReader (class)
    
    
    
-   .. js:function:: vglModule.geojsonReader.readMultiLineString(coordinates)
+   .. js:function:: vgl.geojsonReader.readMultiLineString(coordinates)
    
        
    
@@ -283,7 +283,7 @@ vglModule.geojsonReader (class)
        :returns:
          
    
-       :rtype: vglModule.geometryData
+       :rtype: vgl.geometryData
        
      
    
@@ -294,7 +294,7 @@ vglModule.geojsonReader (class)
    
    
    
-   .. js:function:: vglModule.geojsonReader.readPolygon(coordinates)
+   .. js:function:: vgl.geojsonReader.readPolygon(coordinates)
    
        
    
@@ -324,7 +324,7 @@ vglModule.geojsonReader (class)
        :returns:
          
    
-       :rtype: vglModule.geometryData
+       :rtype: vgl.geometryData
        
      
    
@@ -335,7 +335,7 @@ vglModule.geojsonReader (class)
    
    
    
-   .. js:function:: vglModule.geojsonReader.readMultiPolygon(coordinates)
+   .. js:function:: vgl.geojsonReader.readMultiPolygon(coordinates)
    
        
    
@@ -365,7 +365,7 @@ vglModule.geojsonReader (class)
        :returns:
          
    
-       :rtype: vglModule.geometryData
+       :rtype: vgl.geometryData
        
      
    
@@ -376,7 +376,7 @@ vglModule.geojsonReader (class)
    
    
    
-   .. js:function:: vglModule.geojsonReader.readGJObjectInt(object)
+   .. js:function:: vgl.geojsonReader.readGJObjectInt(object)
    
        
    
@@ -417,7 +417,7 @@ vglModule.geojsonReader (class)
    
    
    
-   .. js:function:: vglModule.geojsonReader.readGJObject(object)
+   .. js:function:: vgl.geojsonReader.readGJObject(object)
    
        
    
@@ -458,7 +458,7 @@ vglModule.geojsonReader (class)
    
    
    
-   .. js:function:: vglModule.geojsonReader.linearizeGeoms(geoms, geom)
+   .. js:function:: vgl.geojsonReader.linearizeGeoms(geoms, geom)
    
        
    
@@ -498,7 +498,7 @@ vglModule.geojsonReader (class)
    
    
    
-   .. js:function:: vglModule.geojsonReader.readGeomObject(object)
+   .. js:function:: vgl.geojsonReader.readGeomObject(object)
    
        
    
@@ -539,7 +539,7 @@ vglModule.geojsonReader (class)
    
    
    
-   .. js:function:: vglModule.geojsonReader.getPrimitives(buffer)
+   .. js:function:: vgl.geojsonReader.getPrimitives(buffer)
    
        
    

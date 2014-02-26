@@ -1,14 +1,14 @@
 
 
 ===============================================
-vglModule.camera (class)
+vgl.camera (class)
 ===============================================
 
 
 .. contents::
    :local:
 
-.. js:class:: vglModule.camera ()
+.. js:class:: vgl.camera ()
 
       
    
@@ -39,7 +39,7 @@ vglModule.camera (class)
      
            
    
-     :rtype: vglModule.camera
+     :rtype: vgl.camera
      
    
    
@@ -75,7 +75,7 @@ vglModule.camera (class)
    
    
    
-   .. js:function:: vglModule.camera.viewAngle()
+   .. js:function:: vgl.camera.viewAngle()
    
        
    
@@ -101,7 +101,7 @@ vglModule.camera (class)
    
    
    
-   .. js:function:: vglModule.camera.setViewAngleDegrees(a)
+   .. js:function:: vgl.camera.setViewAngleDegrees(a)
    
        
    
@@ -135,7 +135,7 @@ vglModule.camera (class)
    
    
    
-   .. js:function:: vglModule.camera.setViewAngle(a)
+   .. js:function:: vgl.camera.setViewAngle(a)
    
        
    
@@ -169,7 +169,7 @@ vglModule.camera (class)
    
    
    
-   .. js:function:: vglModule.camera.position()
+   .. js:function:: vgl.camera.position()
    
        
    
@@ -195,7 +195,7 @@ vglModule.camera (class)
    
    
    
-   .. js:function:: vglModule.camera.setPosition(x, y, z)
+   .. js:function:: vgl.camera.setPosition(x, y, z)
    
        
    
@@ -241,7 +241,7 @@ vglModule.camera (class)
    
    
    
-   .. js:function:: vglModule.camera.focalPoint()
+   .. js:function:: vgl.camera.focalPoint()
    
        
    
@@ -267,7 +267,7 @@ vglModule.camera (class)
    
    
    
-   .. js:function:: vglModule.camera.setFocalPoint(x, y, z)
+   .. js:function:: vgl.camera.setFocalPoint(x, y, z)
    
        
    
@@ -313,7 +313,7 @@ vglModule.camera (class)
    
    
    
-   .. js:function:: vglModule.camera.viewUpDirection()
+   .. js:function:: vgl.camera.viewUpDirection()
    
        
    
@@ -339,7 +339,7 @@ vglModule.camera (class)
    
    
    
-   .. js:function:: vglModule.camera.setViewUpDirection(x, y, z)
+   .. js:function:: vgl.camera.setViewUpDirection(x, y, z)
    
        
    
@@ -385,7 +385,7 @@ vglModule.camera (class)
    
    
    
-   .. js:function:: vglModule.camera.centerOfRotation()
+   .. js:function:: vgl.camera.centerOfRotation()
    
        
    
@@ -411,7 +411,7 @@ vglModule.camera (class)
    
    
    
-   .. js:function:: vglModule.camera.setCenterOfRotation(centerOfRotation)
+   .. js:function:: vgl.camera.setCenterOfRotation(centerOfRotation)
    
        
    
@@ -445,7 +445,7 @@ vglModule.camera (class)
    
    
    
-   .. js:function:: vglModule.camera.getClippingRange()
+   .. js:function:: vgl.camera.getClippingRange()
    
        
    
@@ -471,7 +471,7 @@ vglModule.camera (class)
    
    
    
-   .. js:function:: vglModule.camera.setClippingRange(near, far)
+   .. js:function:: vgl.camera.setClippingRange(near, far)
    
        
    
@@ -511,7 +511,7 @@ vglModule.camera (class)
    
    
    
-   .. js:function:: vglModule.camera.viewAspect()
+   .. js:function:: vgl.camera.viewAspect()
    
        
    
@@ -537,7 +537,7 @@ vglModule.camera (class)
    
    
    
-   .. js:function:: vglModule.camera.setViewAspect(aspect)
+   .. js:function:: vgl.camera.setViewAspect(aspect)
    
        
    
@@ -571,7 +571,7 @@ vglModule.camera (class)
    
    
    
-   .. js:function:: vglModule.camera.isEnabledParallelProjection()
+   .. js:function:: vgl.camera.isEnabledParallelProjection()
    
        
    
@@ -597,7 +597,7 @@ vglModule.camera (class)
    
    
    
-   .. js:function:: vglModule.camera.enableParallelProjection(flag)
+   .. js:function:: vgl.camera.enableParallelProjection(flag)
    
        
    
@@ -631,7 +631,7 @@ vglModule.camera (class)
    
    
    
-   .. js:function:: vglModule.camera.setParallelProjection(left, right, top, bottom)
+   .. js:function:: vgl.camera.setParallelProjection(left, right, top, bottom)
    
        
    
@@ -683,7 +683,7 @@ vglModule.camera (class)
    
    
    
-   .. js:function:: vglModule.camera.directionOfProjection()
+   .. js:function:: vgl.camera.directionOfProjection()
    
        
    
@@ -709,7 +709,7 @@ vglModule.camera (class)
    
    
    
-   .. js:function:: vglModule.camera.viewPlaneNormal()
+   .. js:function:: vgl.camera.viewPlaneNormal()
    
        
    
@@ -735,7 +735,7 @@ vglModule.camera (class)
    
    
    
-   .. js:function:: vglModule.camera.viewMatrix()
+   .. js:function:: vgl.camera.viewMatrix()
    
        
    
@@ -770,7 +770,7 @@ vglModule.camera (class)
    
    
    
-   .. js:function:: vglModule.camera.projectionMatrix()
+   .. js:function:: vgl.camera.projectionMatrix()
    
        
    
@@ -805,7 +805,7 @@ vglModule.camera (class)
    
    
    
-   .. js:function:: vglModule.camera.clearMask()
+   .. js:function:: vgl.camera.clearMask()
    
        
    
@@ -838,7 +838,7 @@ vglModule.camera (class)
    
    
    
-   .. js:function:: vglModule.camera.setClearMask(mask)
+   .. js:function:: vgl.camera.setClearMask(mask)
    
        
    
@@ -872,7 +872,7 @@ vglModule.camera (class)
    
    
    
-   .. js:function:: vglModule.camera.clearColor()
+   .. js:function:: vgl.camera.clearColor()
    
        
    
@@ -905,7 +905,7 @@ vglModule.camera (class)
    
    
    
-   .. js:function:: vglModule.camera.setClearColor(color, g, b, a)
+   .. js:function:: vgl.camera.setClearColor(color, g, b, a)
    
        
    
@@ -957,7 +957,7 @@ vglModule.camera (class)
    
    
    
-   .. js:function:: vglModule.camera.clearDepth()
+   .. js:function:: vgl.camera.clearDepth()
    
        
    
@@ -990,7 +990,7 @@ vglModule.camera (class)
    
    
    
-   .. js:function:: vglModule.camera.setClearDepth(depth)
+   .. js:function:: vgl.camera.setClearDepth(depth)
    
        
    
@@ -1024,7 +1024,7 @@ vglModule.camera (class)
    
    
    
-   .. js:function:: vglModule.camera.computeDirectionOfProjection()
+   .. js:function:: vgl.camera.computeDirectionOfProjection()
    
        
    
@@ -1050,7 +1050,7 @@ vglModule.camera (class)
    
    
    
-   .. js:function:: vglModule.camera.computeViewPlaneNormal()
+   .. js:function:: vgl.camera.computeViewPlaneNormal()
    
        
    
@@ -1076,7 +1076,7 @@ vglModule.camera (class)
    
    
    
-   .. js:function:: vglModule.camera.zoom(d)
+   .. js:function:: vgl.camera.zoom(d)
    
        
    
@@ -1110,7 +1110,7 @@ vglModule.camera (class)
    
    
    
-   .. js:function:: vglModule.camera.pan(dx, dy, dz)
+   .. js:function:: vgl.camera.pan(dx, dy, dz)
    
        
    
@@ -1156,7 +1156,7 @@ vglModule.camera (class)
    
    
    
-   .. js:function:: vglModule.camera.computeOrthogonalAxes()
+   .. js:function:: vgl.camera.computeOrthogonalAxes()
    
        
    
@@ -1182,7 +1182,7 @@ vglModule.camera (class)
    
    
    
-   .. js:function:: vglModule.camera.rotate(dx, dy)
+   .. js:function:: vgl.camera.rotate(dx, dy)
    
        
    
@@ -1222,7 +1222,7 @@ vglModule.camera (class)
    
    
    
-   .. js:function:: vglModule.camera.computeViewMatrix()
+   .. js:function:: vgl.camera.computeViewMatrix()
    
        
    
@@ -1248,7 +1248,7 @@ vglModule.camera (class)
    
    
    
-   .. js:function:: vglModule.camera.computeProjectionMatrix()
+   .. js:function:: vgl.camera.computeProjectionMatrix()
    
        
    

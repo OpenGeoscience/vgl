@@ -1,14 +1,14 @@
 
 
 ===============================================
-vglModule.renderWindow (class)
+vgl.renderWindow (class)
 ===============================================
 
 
 .. contents::
    :local:
 
-.. js:class:: vglModule.renderWindow (canvas)
+.. js:class:: vgl.renderWindow (canvas)
 
       
    
@@ -46,7 +46,7 @@ vglModule.renderWindow (class)
      
            
    
-     :rtype: vglModule.renderWindow
+     :rtype: vgl.renderWindow
      
    
    
@@ -82,7 +82,7 @@ vglModule.renderWindow (class)
    
    
    
-   .. js:function:: vglModule.renderWindow.windowSize()
+   .. js:function:: vgl.renderWindow.windowSize()
    
        
    
@@ -115,7 +115,7 @@ vglModule.renderWindow (class)
    
    
    
-   .. js:function:: vglModule.renderWindow.setWindowSize(width, height)
+   .. js:function:: vgl.renderWindow.setWindowSize(width, height)
    
        
    
@@ -162,7 +162,7 @@ vglModule.renderWindow (class)
    
    
    
-   .. js:function:: vglModule.renderWindow.windowPosition()
+   .. js:function:: vgl.renderWindow.windowPosition()
    
        
    
@@ -195,7 +195,7 @@ vglModule.renderWindow (class)
    
    
    
-   .. js:function:: vglModule.renderWindow.setWindowPosition(x, y)
+   .. js:function:: vgl.renderWindow.setWindowPosition(x, y)
    
        
    
@@ -242,7 +242,7 @@ vglModule.renderWindow (class)
    
    
    
-   .. js:function:: vglModule.renderWindow.renderers()
+   .. js:function:: vgl.renderWindow.renderers()
    
        
    
@@ -275,7 +275,7 @@ vglModule.renderWindow (class)
    
    
    
-   .. js:function:: vglModule.renderWindow.activeRenderer()
+   .. js:function:: vgl.renderWindow.activeRenderer()
    
        
    
@@ -295,7 +295,7 @@ vglModule.renderWindow (class)
      
        
        :returns:
-         vglModule.renderer
+         vgl.renderer
    
        
        
@@ -308,7 +308,7 @@ vglModule.renderWindow (class)
    
    
    
-   .. js:function:: vglModule.renderWindow.addRenderer(ren)
+   .. js:function:: vgl.renderWindow.addRenderer(ren)
    
        
    
@@ -349,7 +349,7 @@ vglModule.renderWindow (class)
    
    
    
-   .. js:function:: vglModule.renderWindow.removeRenderer(ren)
+   .. js:function:: vgl.renderWindow.removeRenderer(ren)
    
        
    
@@ -390,7 +390,7 @@ vglModule.renderWindow (class)
    
    
    
-   .. js:function:: vglModule.renderWindow.getRenderer(index)
+   .. js:function:: vgl.renderWindow.getRenderer(index)
    
        
    
@@ -420,7 +420,7 @@ vglModule.renderWindow (class)
        :returns:
          
    
-       :rtype: vglModule.renderer
+       :rtype: vgl.renderer
        
      
    
@@ -431,7 +431,7 @@ vglModule.renderWindow (class)
    
    
    
-   .. js:function:: vglModule.renderWindow.hasRenderer(ren)
+   .. js:function:: vgl.renderWindow.hasRenderer(ren)
    
        
    
@@ -472,7 +472,7 @@ vglModule.renderWindow (class)
    
    
    
-   .. js:function:: vglModule.renderWindow.resize(width, height)
+   .. js:function:: vgl.renderWindow.resize(width, height)
    
        
    
@@ -512,7 +512,7 @@ vglModule.renderWindow (class)
    
    
    
-   .. js:function:: vglModule.renderWindow.positionAndResize(x, y, width, height)
+   .. js:function:: vgl.renderWindow.positionAndResize(x, y, width, height)
    
        
    
@@ -564,7 +564,7 @@ vglModule.renderWindow (class)
    
    
    
-   .. js:function:: vglModule.renderWindow.createWindow()
+   .. js:function:: vgl.renderWindow.createWindow()
    
        
    
@@ -597,7 +597,7 @@ vglModule.renderWindow (class)
    
    
    
-   .. js:function:: vglModule.renderWindow.deleteWindow()
+   .. js:function:: vgl.renderWindow.deleteWindow()
    
        
    
@@ -623,7 +623,7 @@ vglModule.renderWindow (class)
    
    
    
-   .. js:function:: vglModule.renderWindow.render()
+   .. js:function:: vgl.renderWindow.render()
    
        
    
@@ -649,7 +649,7 @@ vglModule.renderWindow (class)
    
    
    
-   .. js:function:: vglModule.renderWindow.focusDisplayPoint()
+   .. js:function:: vgl.renderWindow.focusDisplayPoint()
    
        
    
@@ -682,7 +682,7 @@ vglModule.renderWindow (class)
    
    
    
-   .. js:function:: vglModule.renderWindow.displayToWorld(x, y, focusDisplayPoint)
+   .. js:function:: vgl.renderWindow.displayToWorld(x, y, focusDisplayPoint)
    
        
    

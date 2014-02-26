@@ -1,14 +1,14 @@
 
 
 ===============================================
-vglModule.materialAttribute (class)
+vgl.materialAttribute (class)
 ===============================================
 
 
 .. contents::
    :local:
 
-.. js:class:: vglModule.materialAttribute (type)
+.. js:class:: vgl.materialAttribute (type)
 
       
    
@@ -46,7 +46,7 @@ vglModule.materialAttribute (class)
      
            
    
-     :rtype: vglModule.materialAttribute
+     :rtype: vgl.materialAttribute
      
    
    
@@ -82,7 +82,7 @@ vglModule.materialAttribute (class)
    
    
    
-   .. js:function:: vglModule.materialAttribute.type()
+   .. js:function:: vgl.materialAttribute.type()
    
        
    
@@ -115,7 +115,7 @@ vglModule.materialAttribute (class)
    
    
    
-   .. js:function:: vglModule.materialAttribute.enabled()
+   .. js:function:: vgl.materialAttribute.enabled()
    
        
    
@@ -148,7 +148,7 @@ vglModule.materialAttribute (class)
    
    
    
-   .. js:function:: vglModule.materialAttribute.setup(renderState)
+   .. js:function:: vgl.materialAttribute.setup(renderState)
    
        
    
@@ -189,7 +189,7 @@ vglModule.materialAttribute (class)
    
    
    
-   .. js:function:: vglModule.materialAttribute.bind(renderState)
+   .. js:function:: vgl.materialAttribute.bind(renderState)
    
        
    
@@ -230,7 +230,7 @@ vglModule.materialAttribute (class)
    
    
    
-   .. js:function:: vglModule.materialAttribute.undoBind(renderState)
+   .. js:function:: vgl.materialAttribute.undoBind(renderState)
    
        
    
@@ -271,7 +271,7 @@ vglModule.materialAttribute (class)
    
    
    
-   .. js:function:: vglModule.materialAttribute.setupVertexData(renderState, key)
+   .. js:function:: vgl.materialAttribute.setupVertexData(renderState, key)
    
        
    
@@ -318,7 +318,7 @@ vglModule.materialAttribute (class)
    
    
    
-   .. js:function:: vglModule.materialAttribute.bindVertexData(renderState, key)
+   .. js:function:: vgl.materialAttribute.bindVertexData(renderState, key)
    
        
    
@@ -365,7 +365,7 @@ vglModule.materialAttribute (class)
    
    
    
-   .. js:function:: vglModule.materialAttribute.undoBindVertexData(renderState, key)
+   .. js:function:: vgl.materialAttribute.undoBindVertexData(renderState, key)
    
        
    

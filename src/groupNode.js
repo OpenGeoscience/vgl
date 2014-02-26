@@ -6,7 +6,7 @@
 /*jslint devel: true, forin: true, newcap: true, plusplus: true*/
 /*jslint white: true, continue:true, indent: 2*/
 
-/*global vglModule, ogs, vec4, inherit, $*/
+/*global vgl, ogs, vec4, inherit, $*/
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
@@ -14,16 +14,16 @@
  * Create a new instance of class groupNode
  *
  * @class
- * @returns {vglModule.groupNode}
+ * @returns {vgl.groupNode}
  */
 //////////////////////////////////////////////////////////////////////////////
-vglModule.groupNode = function() {
+vgl.groupNode = function() {
   'use strict';
 
-  if (!(this instanceof vglModule.groupNode)) {
-    return new vglModule.groupNode();
+  if (!(this instanceof vgl.groupNode)) {
+    return new vgl.groupNode();
   }
-  vglModule.node.call(this);
+  vgl.node.call(this);
 
   var m_children = [];
 
@@ -61,7 +61,7 @@ vglModule.groupNode = function() {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.addChild = function(childNode) {
-    if (childNode instanceof vglModule.node) {
+    if (childNode instanceof vgl.node) {
       if (m_children.indexOf(childNode) === -1) {
         childNode.setParent(this);
         m_children.push(childNode);
@@ -185,7 +185,7 @@ vglModule.groupNode = function() {
   this.traverseChildren = function(visitor) {
     var i;
 
-    if (visitor.mode() === vglModule.vesVisitor.TraverseAllChildren) {
+    if (visitor.mode() === vgl.vesVisitor.TraverseAllChildren) {
       for (i = 0; i < m_children.length(); ++i) {
         m_children[i].accept(visitor);
       }
@@ -253,4 +253,4 @@ vglModule.groupNode = function() {
   return this;
 };
 
-inherit(vglModule.groupNode, vglModule.node);
+inherit(vgl.groupNode, vgl.node);

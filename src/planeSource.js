@@ -6,7 +6,7 @@
 /*jslint devel: true, forin: true, newcap: true, plusplus: true*/
 /*jslint white: true, continue:true, indent: 2*/
 
-/*global vglModule, ogs, vec4, inherit, $*/
+/*global vgl, ogs, vec4, inherit, $*/
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
@@ -14,16 +14,16 @@
  * Create a new instance of class planeSource
  *
  * @class
- * @returns {vglModule.planeSource}
+ * @returns {vgl.planeSource}
  */
 //////////////////////////////////////////////////////////////////////////////
-vglModule.planeSource = function() {
+vgl.planeSource = function() {
   'use strict';
 
-  if (!(this instanceof vglModule.planeSource)) {
-    return new vglModule.planeSource();
+  if (!(this instanceof vgl.planeSource)) {
+    return new vgl.planeSource();
   }
-  vglModule.source.call(this);
+  vgl.source.call(this);
 
   var m_origin = [ 0.0, 0.0, 0.0 ],
       m_point1 = [ 1.0, 0.0, 0.0 ],
@@ -86,7 +86,7 @@ vglModule.planeSource = function() {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.create = function() {
-    m_geom = new vglModule.geometryData();
+    m_geom = new vgl.geometryData();
 
     var x = [], tc = [], v1 = [], v2 = [],
         pts = [], i, j, k, ii, numPts, numPolys,
@@ -157,16 +157,16 @@ vglModule.planeSource = function() {
       indices[i] = i;
     }
 
-    tristrip = new vglModule.triangleStrip();
+    tristrip = new vgl.triangleStrip();
     tristrip.setIndices(indices);
 
-    sourcePositions = vglModule.sourceDataP3fv();
+    sourcePositions = vgl.sourceDataP3fv();
     sourcePositions.pushBack(positions);
 
-    sourceColors = vglModule.sourceDataC3fv();
+    sourceColors = vgl.sourceDataC3fv();
     sourceColors.pushBack(colors);
 
-    sourceTexCoords = vglModule.sourceDataT2fv();
+    sourceTexCoords = vgl.sourceDataT2fv();
     sourceTexCoords.pushBack(texCoords);
 
     m_geom.addSource(sourcePositions);
@@ -178,4 +178,4 @@ vglModule.planeSource = function() {
   };
 };
 
-inherit(vglModule.planeSource, vglModule.source);
+inherit(vgl.planeSource, vgl.source);

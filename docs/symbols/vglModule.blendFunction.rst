@@ -1,14 +1,14 @@
 
 
 ===============================================
-vglModule.blendFunction (class)
+vgl.blendFunction (class)
 ===============================================
 
 
 .. contents::
    :local:
 
-.. js:class:: vglModule.blendFunction (source, destination)
+.. js:class:: vgl.blendFunction (source, destination)
 
       
    
@@ -51,7 +51,7 @@ vglModule.blendFunction (class)
      
            
    
-     :rtype: vglModule.blendFunction
+     :rtype: vgl.blendFunction
      
    
    
@@ -87,13 +87,13 @@ vglModule.blendFunction (class)
    
    
    
-   .. js:function:: vglModule.blendFunction.apply()
+   .. js:function:: vgl.blendFunction.apply()
    
        
    
        
        
-       :param vglModule.renderState :
+       :param vgl.renderState :
    
          
    

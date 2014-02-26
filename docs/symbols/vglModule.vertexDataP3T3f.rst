@@ -1,14 +1,14 @@
 
 
 ===============================================
-vglModule.vertexDataP3T3f (class)
+vgl.vertexDataP3T3f (class)
 ===============================================
 
 
 .. contents::
    :local:
 
-.. js:class:: vglModule.vertexDataP3T3f ()
+.. js:class:: vgl.vertexDataP3T3f ()
 
       
    
@@ -39,7 +39,7 @@ vglModule.vertexDataP3T3f (class)
      
            
    
-     :rtype: vglModule.vertexDataP3T3f
+     :rtype: vgl.vertexDataP3T3f
      
    
    

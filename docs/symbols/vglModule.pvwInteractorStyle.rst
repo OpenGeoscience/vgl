@@ -1,14 +1,14 @@
 
 
 ===============================================
-vglModule.pvwInteractorStyle (class)
+vgl.pvwInteractorStyle (class)
 ===============================================
-vglModule.pvwInteractorStyle
+vgl.pvwInteractorStyle
 
 .. contents::
    :local:
 
-.. js:class:: vglModule.pvwInteractorStyle ()
+.. js:class:: vgl.pvwInteractorStyle ()
 
       
    
@@ -39,7 +39,7 @@ vglModule.pvwInteractorStyle
      
            
    
-     :rtype: vglModule.pvwInteractorStyle
+     :rtype: vgl.pvwInteractorStyle
      
    
    
@@ -75,7 +75,7 @@ vglModule.pvwInteractorStyle
    
    
    
-   .. js:function:: vglModule.pvwInteractorStyle.handleMouseMove(event)
+   .. js:function:: vgl.pvwInteractorStyle.handleMouseMove(event)
    
        
    
@@ -116,7 +116,7 @@ vglModule.pvwInteractorStyle
    
    
    
-   .. js:function:: vglModule.pvwInteractorStyle.handleMouseDown(event)
+   .. js:function:: vgl.pvwInteractorStyle.handleMouseDown(event)
    
        
    
@@ -157,7 +157,7 @@ vglModule.pvwInteractorStyle
    
    
    
-   .. js:function:: vglModule.pvwInteractorStyle.handleMouseUp(event)
+   .. js:function:: vgl.pvwInteractorStyle.handleMouseUp(event)
    
        
    

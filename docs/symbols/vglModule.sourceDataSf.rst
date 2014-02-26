@@ -1,14 +1,14 @@
 
 
 ===============================================
-vglModule.sourceDataSf (class)
+vgl.sourceDataSf (class)
 ===============================================
 
 
 .. contents::
    :local:
 
-.. js:class:: vglModule.sourceDataSf ()
+.. js:class:: vgl.sourceDataSf ()
 
       
    
@@ -39,7 +39,7 @@ vglModule.sourceDataSf (class)
      
            
    
-     :rtype: vglModule.sourceDataSf
+     :rtype: vgl.sourceDataSf
      
    
    

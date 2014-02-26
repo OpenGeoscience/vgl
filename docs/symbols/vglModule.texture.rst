@@ -1,14 +1,14 @@
 
 
 ===============================================
-vglModule.texture (class)
+vgl.texture (class)
 ===============================================
 
 
 .. contents::
    :local:
 
-.. js:class:: vglModule.texture ()
+.. js:class:: vgl.texture ()
 
       
    
@@ -39,7 +39,7 @@ vglModule.texture (class)
      
            
    
-     :rtype: vglModule.texture
+     :rtype: vgl.texture
      
    
    
@@ -75,7 +75,7 @@ vglModule.texture (class)
    
    
    
-   .. js:function:: vglModule.texture.setup(renderState)
+   .. js:function:: vgl.texture.setup(renderState)
    
        
    
@@ -109,7 +109,7 @@ vglModule.texture (class)
    
    
    
-   .. js:function:: vglModule.texture.bind(renderState)
+   .. js:function:: vgl.texture.bind(renderState)
    
        
    
@@ -143,7 +143,7 @@ vglModule.texture (class)
    
    
    
-   .. js:function:: vglModule.texture.undoBind(renderState)
+   .. js:function:: vgl.texture.undoBind(renderState)
    
        
    
@@ -177,7 +177,7 @@ vglModule.texture (class)
    
    
    
-   .. js:function:: vglModule.texture.image()
+   .. js:function:: vgl.texture.image()
    
        
    
@@ -199,7 +199,7 @@ vglModule.texture (class)
        :returns:
          
    
-       :rtype: vglModule.image
+       :rtype: vgl.image
        
      
    
@@ -210,13 +210,13 @@ vglModule.texture (class)
    
    
    
-   .. js:function:: vglModule.texture.setImage(image)
+   .. js:function:: vgl.texture.setImage(image)
    
        
    
        
        
-       :param vglModule.image image:
+       :param vgl.image image:
    
          
    
@@ -251,7 +251,7 @@ vglModule.texture (class)
    
    
    
-   .. js:function:: vglModule.texture.textureUnit()
+   .. js:function:: vgl.texture.textureUnit()
    
        
    
@@ -284,7 +284,7 @@ vglModule.texture (class)
    
    
    
-   .. js:function:: vglModule.texture.setTextureUnit(unit)
+   .. js:function:: vgl.texture.setTextureUnit(unit)
    
        
    
@@ -325,7 +325,7 @@ vglModule.texture (class)
    
    
    
-   .. js:function:: vglModule.texture.width()
+   .. js:function:: vgl.texture.width()
    
        
    
@@ -358,7 +358,7 @@ vglModule.texture (class)
    
    
    
-   .. js:function:: vglModule.texture.setWidth(width)
+   .. js:function:: vgl.texture.setWidth(width)
    
        
    
@@ -399,7 +399,7 @@ vglModule.texture (class)
    
    
    
-   .. js:function:: vglModule.texture.depth()
+   .. js:function:: vgl.texture.depth()
    
        
    
@@ -432,7 +432,7 @@ vglModule.texture (class)
    
    
    
-   .. js:function:: vglModule.texture.setDepth(depth)
+   .. js:function:: vgl.texture.setDepth(depth)
    
        
    
@@ -473,7 +473,7 @@ vglModule.texture (class)
    
    
    
-   .. js:function:: vglModule.texture.textureHandle()
+   .. js:function:: vgl.texture.textureHandle()
    
        
    
@@ -506,7 +506,7 @@ vglModule.texture (class)
    
    
    
-   .. js:function:: vglModule.texture.internalFormat()
+   .. js:function:: vgl.texture.internalFormat()
    
        
    
@@ -539,7 +539,7 @@ vglModule.texture (class)
    
    
    
-   .. js:function:: vglModule.texture.setInternalFormat(internalFormat)
+   .. js:function:: vgl.texture.setInternalFormat(internalFormat)
    
        
    
@@ -580,7 +580,7 @@ vglModule.texture (class)
    
    
    
-   .. js:function:: vglModule.texture.pixelFormat()
+   .. js:function:: vgl.texture.pixelFormat()
    
        
    
@@ -613,7 +613,7 @@ vglModule.texture (class)
    
    
    
-   .. js:function:: vglModule.texture.setPixelFormat(pixelFormat)
+   .. js:function:: vgl.texture.setPixelFormat(pixelFormat)
    
        
    
@@ -654,7 +654,7 @@ vglModule.texture (class)
    
    
    
-   .. js:function:: vglModule.texture.pixelDataType()
+   .. js:function:: vgl.texture.pixelDataType()
    
        
    
@@ -687,7 +687,7 @@ vglModule.texture (class)
    
    
    
-   .. js:function:: vglModule.texture.setPixelDataType(pixelDataType)
+   .. js:function:: vgl.texture.setPixelDataType(pixelDataType)
    
        
    
@@ -728,7 +728,7 @@ vglModule.texture (class)
    
    
    
-   .. js:function:: vglModule.texture.computeInternalFormatUsingImage()
+   .. js:function:: vgl.texture.computeInternalFormatUsingImage()
    
        
    
@@ -754,7 +754,7 @@ vglModule.texture (class)
    
    
    
-   .. js:function:: vglModule.texture.updateDimensions()
+   .. js:function:: vgl.texture.updateDimensions()
    
        
    

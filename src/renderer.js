@@ -6,17 +6,17 @@
 /*jslint devel: true, forin: true, newcap: true, plusplus: true*/
 /*jslint white: true, continue:true, bitwise:true, indent: 2*/
 
-/*global vglModule, gl, ogs, vec2, vec3, vec4, mat4, inherit, $*/
+/*global vgl, gl, ogs, vec2, vec3, vec4, mat4, inherit, $*/
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
 /**
  * Create a new instance of class renderState
  *
- * @returns {vglModule.renderState}
+ * @returns {vgl.renderState}
  */
 //////////////////////////////////////////////////////////////////////////////
-vglModule.renderState = function() {
+vgl.renderState = function() {
   'use strict';
 
   this.m_modelViewMatrix = mat4.create();
@@ -30,20 +30,20 @@ vglModule.renderState = function() {
 /**
  * Create a new instance of class renderer *
  *
- * @returns {vglModule.renderer}
+ * @returns {vgl.renderer}
  */
 ////////////////////////////////////////////////////////////////////////////
-vglModule.renderer = function() {
+vgl.renderer = function() {
   'use strict';
 
-  if (!(this instanceof vglModule.renderer)) {
-    return new vglModule.renderer();
+  if (!(this instanceof vgl.renderer)) {
+    return new vgl.renderer();
   }
-  vglModule.object.call(this);
+  vgl.object.call(this);
 
   /** @private */
-  var m_sceneRoot = new vglModule.groupNode(),
-      m_camera = new vglModule.camera(),
+  var m_sceneRoot = new vgl.groupNode(),
+      m_camera = new vgl.camera(),
       m_nearClippingPlaneTolerance = null,
       m_x = 0,
       m_y = 0,
@@ -98,7 +98,7 @@ vglModule.renderer = function() {
   /**
    * Get scene root
    *
-   * @returns {vglModule.groupNode}
+   * @returns {vgl.groupNode}
    */
   ////////////////////////////////////////////////////////////////////////////
   this.sceneRoot = function() {
@@ -109,7 +109,7 @@ vglModule.renderer = function() {
   /**
    * Get main camera of the renderer
    *
-   * @returns {vglModule.camera}
+   * @returns {vgl.camera}
    */
   ////////////////////////////////////////////////////////////////////////////
   this.camera = function() {
@@ -128,12 +128,12 @@ vglModule.renderer = function() {
     gl.enable(gl.DEPTH_TEST);
     gl.depthFunc(gl.LEQUAL);
 
-    if (m_camera.clearMask() & vglModule.GL.ColorBufferBit) {
+    if (m_camera.clearMask() & vgl.GL.ColorBufferBit) {
       clearColor = m_camera.clearColor();
       gl.clearColor(clearColor[0], clearColor[1], clearColor[2], clearColor[3]);
     }
 
-    if (m_camera.clearMask() & vglModule.GL.DepthBufferBit) {
+    if (m_camera.clearMask() & vgl.GL.DepthBufferBit) {
       gl.clearDepth(m_camera.clearDepth());
     }
 
@@ -142,7 +142,7 @@ vglModule.renderer = function() {
     // Set the viewport for this renderer
     gl.viewport(m_x, m_y, m_width, m_height);
 
-    renSt = new vglModule.renderState();
+    renSt = new vgl.renderState();
     children = m_sceneRoot.children();
 
     for ( i = 0; i < children.length; ++i) {
@@ -162,7 +162,7 @@ vglModule.renderer = function() {
       actor = sortedActors[i][1];
 
       if (actor.referenceFrame() ===
-          vglModule.boundingObject.ReferenceFrame.Relative) {
+          vgl.boundingObject.ReferenceFrame.Relative) {
         mat4.multiply(renSt.m_modelViewMatrix, m_camera.viewMatrix(),
           actor.matrix());
         renSt.m_projectionMatrix = m_camera.projectionMatrix();
@@ -354,7 +354,7 @@ vglModule.renderer = function() {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.addActor = function(actor) {
-    if (actor instanceof vglModule.actor) {
+    if (actor instanceof vgl.actor) {
       m_sceneRoot.addChild(actor);
       this.modified();
       return true;
@@ -519,4 +519,4 @@ vglModule.renderer = function() {
   return this;
 };
 
-inherit(vglModule.renderer, vglModule.object);
+inherit(vgl.renderer, vgl.object);

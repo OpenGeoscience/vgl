@@ -6,7 +6,7 @@
 /*jslint devel: true, forin: true, newcap: true, plusplus: true*/
 /*jslint white: true, continue:true, indent: 2*/
 
-/*global vglModule, ogs, vec4, inherit, $*/
+/*global vgl, ogs, vec4, inherit, $*/
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
@@ -14,16 +14,16 @@
  * Create a new instance of class lineSource
  *
  * @class
- * @returns {vglModule.lineSource}
+ * @returns {vgl.lineSource}
  */
 //////////////////////////////////////////////////////////////////////////////
-vglModule.lineSource = function(positions, colors) {
+vgl.lineSource = function(positions, colors) {
   'use strict';
 
-  if (!(this instanceof vglModule.lineSource)) {
-    return new vglModule.lineSource();
+  if (!(this instanceof vgl.lineSource)) {
+    return new vgl.lineSource();
   }
-  vglModule.source.call(this);
+  vgl.source.call(this);
 
   var m_positions = positions,
       m_colors = colors,
@@ -88,7 +88,7 @@ vglModule.lineSource = function(positions, colors) {
       return;
     }
 
-    var m_geom = new vglModule.geometryData(),
+    var m_geom = new vgl.geometryData(),
         numPts = m_positions.length / 3,
         i,
         indices = [],
@@ -102,16 +102,16 @@ vglModule.lineSource = function(positions, colors) {
       indices[i] = i;
     }
 
-    linesPrimitive = new vglModule.lines();
+    linesPrimitive = new vgl.lines();
     linesPrimitive.setIndices(indices);
 
-    sourcePositions = vglModule.sourceDataP3fv();
+    sourcePositions = vgl.sourceDataP3fv();
     sourcePositions.pushBack(m_positions);
     m_geom.addSource(sourcePositions);
 
     if ( m_colors && (m_colors.length > 0) &&
          m_colors.length === m_positions.length) {
-      sourceColors = vglModule.sourceDataC3fv();
+      sourceColors = vgl.sourceDataC3fv();
       sourceColors.pushBack(m_colors);
       m_geom.addSource(sourceColors);
     }
@@ -127,4 +127,4 @@ vglModule.lineSource = function(positions, colors) {
   };
 };
 
-inherit(vglModule.lineSource, vglModule.source);
+inherit(vgl.lineSource, vgl.source);
