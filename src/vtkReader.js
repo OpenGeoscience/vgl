@@ -525,16 +525,19 @@ vgl.vtkReader = function() {
    * @returns renderer
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.parseSceneMetadata = function(renderer, layer, node) {
+  this.parseSceneMetadata = function(renderer, layer) {
 
     var sceneRenderer = m_vtkScene.Renderers[layer],
         camera = renderer.camera(), bgc, localWidth, localHeight;
 
-    localWidth = (sceneRenderer.size[0] - sceneRenderer.origin[0])*node.width;
-    localHeight = (sceneRenderer.size[1] - sceneRenderer.origin[1])*node.height;
+    localWidth = (sceneRenderer.size[0] - sceneRenderer.origin[0])*m_node.width;
+    localHeight = (sceneRenderer.size[1] - sceneRenderer.origin[1])*m_node.height;
     renderer.resize(localWidth, localHeight)
 
-    camera.setCenterOfRotation(m_vtkScene.Center);
+    /// We are setting the center to the focal point because of
+    /// a possible paraview web bug. The center of rotation isn't
+    /// getting updated correctly on resetCamera.
+    camera.setCenterOfRotation([sceneRenderer.LookAt[1], sceneRenderer.LookAt[2],sceneRenderer.LookAt[3]]);
     camera.setViewAngleDegrees(sceneRenderer.LookAt[0]);
     camera.setPosition(
       sceneRenderer.LookAt[7], sceneRenderer.LookAt[8],
