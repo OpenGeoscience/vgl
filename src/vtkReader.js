@@ -577,7 +577,13 @@ vgl.vtkReader = function() {
       }
 
       renderer = this.getRenderer(layer);
-      this.parseSceneMetadata(renderer, layer, m_node);
+      this.parseSceneMetadata(renderer, layer);
+
+      //We've done an initial resize, so prevent further
+      if (layer > 0) {
+        renderer.setResizable(false);
+      }
+
       for(objIdx = 0; objIdx < layerList.length; objIdx++) {
         vtkObject = layerList[objIdx];
         this.parseObject(vtkObject, renderer);
@@ -599,8 +605,6 @@ vgl.vtkReader = function() {
   this.createNewViewer = function(node) {
     var interactorStyle;
 
-    console.log("createViewer width/height: " + node.width + " " + node.height);
-
     if(m_viewer === null) {
       m_node = node;
       m_viewer = ogs.vgl.viewer(node);
@@ -611,8 +615,25 @@ vgl.vtkReader = function() {
       m_viewer.setInteractorStyle(interactorStyle);
     }
 
-    m_node = node;
+    return m_viewer;
   }
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
+   * updateCanvas -
+   *
+   * @param
+   *
+   * @returns void
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.updateCanvas = function(node) {
+    m_node = node;
+    m_viewer.renderWindow().resize(node.width, node.height);
+
+    return m_viewer;
+  }
+
 
   ////////////////////////////////////////////////////////////////////////////
   /**
@@ -680,7 +701,6 @@ vgl.vtkReader = function() {
   this.clearVtkObjectData = function() {
     var tmpList = m_vtkObjectList;
     m_vtkObjectList = {};
-    m_vtkObjectCount = 0;
     return tmpList;
   };
 
