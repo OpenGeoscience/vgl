@@ -24,17 +24,19 @@
         $.get("/data/vtkCube.dat", {
           })
         .done(function(data) {
-          var geom = reader.parseObject(data);
 
-          var mapper = vgl.mapper();
-          mapper.setGeometryData(geom);
+          //add object to the reader
+          var vtkObject = {
+            md5: 012345,
+            part: 1,
+            vid: -1,
+            id: 1,
+            data: data,
+            hasTransparency: 1,
+            layer: 0
+          };
 
-          var material = vgl.utils.createGeometryMaterial();
-
-          var actor = vgl.actor();
-          actor.setMapper(mapper);
-          actor.setMaterial(material);
-          renderer.addActor(actor);
+          reader.parseObject(vtkObject, renderer);
 
           renderer.setBackgroundColor(1.0, 1.0, 1.0, 1.0);
           var interactorStyle = vgl.trackballInteractorStyle();
