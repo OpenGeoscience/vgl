@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////////
 /**
- * @module ogs.vgl
+ * @module vgl
  */
 
 /*jslint devel: true, forin: true, newcap: true, plusplus: true*/
@@ -39,8 +39,8 @@ vgl.camera = function() {
       m_viewPlaneNormal = vec4.fromValues(0.0, 0.0, 1.0, 0.0),
       m_viewMatrix = mat4.create(),
       m_projectionMatrix = mat4.create(),
-      m_computeModelViewMatrixTime = ogs.vgl.timestamp(),
-      m_computeProjectMatrixTime = ogs.vgl.timestamp(),
+      m_computeModelViewMatrixTime = vgl.timestamp(),
+      m_computeProjectMatrixTime = vgl.timestamp(),
       m_left = -1.0,
       m_right = 1.0,
       m_top = +1.0,

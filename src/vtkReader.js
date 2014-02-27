@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////////
 /**
- * @module ogs.vgl
+ * @module vgl
  */
 
 /*jslint devel: true, forin: true, newcap: true, plusplus: true*/
@@ -217,7 +217,7 @@ vgl.vtkReader = function() {
   ////////////////////////////////////////////////////////////////////////////
   this.parseObject = function(vtkObject, renderer) {
     var geom = new vgl.geometryData(),
-        mapper = ogs.vgl.mapper(),
+        mapper = vgl.mapper(),
         ss = [], type = null, data = null, size,
         matrix = null, buffer = null, material = null,
         actor = null, shaderProg, opacityUniform, objMatrix;
@@ -240,22 +240,22 @@ vgl.vtkReader = function() {
     // Lines
     if (type === 'L') {
       matrix = this.parseLineData(geom, ss);
-      material = ogs.vgl.utils.createGeometryMaterial();
+      material = vgl.utils.createGeometryMaterial();
     }
     // Mesh
     else if (type === 'M') {
       matrix = this.parseMeshData(geom, ss);
-      material = ogs.vgl.utils.createPhongMaterial();
+      material = vgl.utils.createPhongMaterial();
     }
     // Points
     else if (type === 'P'){
       matrix = this.parsePointData(geom, ss);
-      material = ogs.vgl.utils.createGeometryMaterial();
+      material = vgl.utils.createGeometryMaterial();
     }
     // ColorMap
     else if (type === 'C') {
       matrix = this.parseColorMapData(geom, ss, size);
-      material = ogs.vgl.utils.createGeometryMaterial();
+      material = vgl.utils.createGeometryMaterial();
     }
     // Unknown
     else {
@@ -268,14 +268,14 @@ vgl.vtkReader = function() {
     if (vtkObject.hasTransparency) {
       shaderProg = material.shaderProgram();
       opacityUniform = shaderProg.uniform("opacity");
-      opacityUniform = new ogs.vgl.floatUniform("opacity", 0.5);
+      opacityUniform = new vgl.floatUniform("opacity", 0.5);
       shaderProg.addUniform(opacityUniform);
       material.setBinNumber(1000);
     }
 
     objMatrix = mat4.transpose(mat4.create(), matrix),
 
-    actor = ogs.vgl.actor();
+    actor = vgl.actor();
     actor.setMapper(mapper);
     actor.setMaterial(material);
     actor.setMatrix(objMatrix);
@@ -607,11 +607,11 @@ vgl.vtkReader = function() {
 
     if(m_viewer === null) {
       m_node = node;
-      m_viewer = ogs.vgl.viewer(node);
+      m_viewer = vgl.viewer(node);
       m_viewer.init();
       m_vtkRenderedList[0] = m_viewer.renderWindow().activeRenderer();
       m_viewer.renderWindow().resize(node.width, node.height);
-      interactorStyle = ogs.vgl.pvwInteractorStyle();
+      interactorStyle = vgl.pvwInteractorStyle();
       m_viewer.setInteractorStyle(interactorStyle);
     }
 
@@ -725,7 +725,7 @@ vgl.vtkReader = function() {
         return renderer;
       }
 
-      renderer = new ogs.vgl.renderer();
+      renderer = new vgl.renderer();
       m_viewer.renderWindow().addRenderer(renderer);
 
       //We're assuming this is not layer 0.

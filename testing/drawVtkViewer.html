@@ -21,7 +21,7 @@
       var testDrawCube = {};
       testDrawCube.main = function() {
         var node = document.getElementById("glcanvas");
-        var reader = ogs.vgl.vtkReader();
+        var reader = vgl.vtkReader();
         var width = $(node).width(), height = $(node).height();
 
         $.when(readData("/data/vtkCube.dat"), readData("/data/vtkSceneMetadata.json") ).then(function(geom, scene) {
@@ -45,9 +45,9 @@
           document.oncontextmenu = viewer.handleContextMenu;
           HTMLCanvasElement.prototype.relMouseCoords = viewer.relMouseCoords;
 
-          $(interactorStyle).on(ogs.vgl.command.leftButtonPressEvent, viewer.render);
-          $(interactorStyle).on(ogs.vgl.command.middleButtonPressEvent, viewer.render);
-          $(interactorStyle).on(ogs.vgl.command.rightButtonPressEvent, viewer.render);
+          $(interactorStyle).on(vgl.command.leftButtonPressEvent, viewer.render);
+          $(interactorStyle).on(vgl.command.middleButtonPressEvent, viewer.render);
+          $(interactorStyle).on(vgl.command.rightButtonPressEvent, viewer.render);
 
           viewer.render();
 

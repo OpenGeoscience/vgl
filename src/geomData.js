@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////////
 /**
- * @module ogs.vgl
+ * @module vgl
  */
 
 /*jslint devel: true, forin: true, newcap: true, plusplus: true*/
@@ -1141,4 +1141,4 @@ vgl.geometryData = function() {
   return this;
 };
 
-inherit(ogs.vgl.geometryData, ogs.vgl.data);
+inherit(vgl.geometryData, vgl.data);

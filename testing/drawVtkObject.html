@@ -14,30 +14,30 @@
       var testDrawCube = {};
       testDrawCube.main = function() {
         var node = document.getElementById("glcanvas");
-        var viewer = ogs.vgl.viewer(node);
+        var viewer = vgl.viewer(node);
         viewer.init();
 
         viewer.renderWindow().resize($(node).width(), $(node).height());
         var renderer = viewer.renderWindow().activeRenderer();
 
-        var reader = ogs.vgl.vtkReader();
+        var reader = vgl.vtkReader();
         $.get("/data/vtkCube.dat", {
           })
         .done(function(data) {
           var geom = reader.parseObject(data);
 
-          var mapper = ogs.vgl.mapper();
+          var mapper = vgl.mapper();
           mapper.setGeometryData(geom);
 
-          var material = ogs.vgl.utils.createGeometryMaterial();
+          var material = vgl.utils.createGeometryMaterial();
 
-          var actor = ogs.vgl.actor();
+          var actor = vgl.actor();
           actor.setMapper(mapper);
           actor.setMaterial(material);
           renderer.addActor(actor);
 
           renderer.setBackgroundColor(1.0, 1.0, 1.0, 1.0);
-          var interactorStyle = ogs.vgl.trackballInteractorStyle();
+          var interactorStyle = vgl.trackballInteractorStyle();
           viewer.setInteractorStyle(interactorStyle);
 
           document.onmousedown = viewer.handleMouseDown;
@@ -46,9 +46,9 @@
           document.oncontextmenu = viewer.handleContextMenu;
           HTMLCanvasElement.prototype.relMouseCoords = viewer.relMouseCoords;
 
-          $(interactorStyle).on(ogs.vgl.command.leftButtonPressEvent, viewer.render);
-          $(interactorStyle).on(ogs.vgl.command.middleButtonPressEvent, viewer.render);
-          $(interactorStyle).on(ogs.vgl.command.rightButtonPressEvent, viewer.render);
+          $(interactorStyle).on(vgl.command.leftButtonPressEvent, viewer.render);
+          $(interactorStyle).on(vgl.command.middleButtonPressEvent, viewer.render);
+          $(interactorStyle).on(vgl.command.rightButtonPressEvent, viewer.render);
 
           renderer.resetCamera();
           viewer.render();
