@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////////
 /**
- * @module ogs.vgl
+ * @module vgl
  */
 
 /*jslint devel: true, forin: true, newcap: true, plusplus: true*/
@@ -40,7 +40,7 @@ ogs.namespace = function(ns_string) {
   return parent;
 };
 
-/** ogs.vgl namespace */
+/** vgl namespace */
 var vgl = ogs.namespace("gl");
 
 //////////////////////////////////////////////////////////////////////////////

@@ -33,7 +33,7 @@
           geoms = reader.readGJObject(data);
 
           for (i = 0; i < geoms.length; ++i) {
-            mapper = ogs.vgl.mapper();
+            mapper = vgl.mapper();
             mapper.setGeometryData(geoms[i]);
 
             material = vgl.utils.createGeometryMaterial();
@@ -51,9 +51,9 @@
           document.oncontextmenu = viewer.handleContextMenu;
           HTMLCanvasElement.prototype.relMouseCoords = viewer.relMouseCoords;
 
-          $(interactorStyle).on(ogs.vgl.command.leftButtonPressEvent, viewer.render);
-          $(interactorStyle).on(ogs.vgl.command.middleButtonPressEvent, viewer.render);
-          $(interactorStyle).on(ogs.vgl.command.rightButtonPressEvent, viewer.render);
+          $(interactorStyle).on(vgl.command.leftButtonPressEvent, viewer.render);
+          $(interactorStyle).on(vgl.command.middleButtonPressEvent, viewer.render);
+          $(interactorStyle).on(vgl.command.rightButtonPressEvent, viewer.render);
 
           renderer.setBackgroundColor(1.0, 1.0, 1.0, 1.0);
           renderer.resetCamera();

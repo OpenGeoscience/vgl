@@ -21,20 +21,34 @@
       var testDrawCube = {};
       testDrawCube.main = function() {
         var node = document.getElementById("glcanvas");
-        var reader = ogs.vgl.vtkReader();
+        var reader = vgl.vtkReader();
         var width = $(node).width(), height = $(node).height();
 
         $.when(readData("/data/vtkCube.dat"), readData("/data/vtkSceneMetadata.json") ).then(function(geom, scene) {
 
-          var vtkObject = {
-                data: geom,
-                hasTransparency: scene.hasTransparency,
-                layer: scene.layer
-          };
 
-          reader.addVtkObjectData(vtkObject);
+
+          var viewer = reader.createNewViewer(node);
           reader.setVtkScene(scene);
-          var viewer = reader.updateViewer(node);
+
+          for(idx in scene.Objects) {
+             var sceneObject = scene.Objects[idx];
+
+              //add object to the reader
+              var vtkObject = {
+                md5: sceneObject.md5,
+                part: 1,
+                vid: -1,
+                id: sceneObject.id,
+                data: geom,
+                hasTransparency: sceneObject.transparency,
+                layer: sceneObject.layer
+              };
+
+              reader.addVtkObjectData(vtkObject);
+          }
+
+          viewer = reader.updateViewer(node);
 
           renderer = viewer.renderWindow().activeRenderer();
           interactorStyle = viewer.interactorStyle();
@@ -45,9 +59,9 @@
           document.oncontextmenu = viewer.handleContextMenu;
           HTMLCanvasElement.prototype.relMouseCoords = viewer.relMouseCoords;
 
-          $(interactorStyle).on(ogs.vgl.command.leftButtonPressEvent, viewer.render);
-          $(interactorStyle).on(ogs.vgl.command.middleButtonPressEvent, viewer.render);
-          $(interactorStyle).on(ogs.vgl.command.rightButtonPressEvent, viewer.render);
+          $(interactorStyle).on(vgl.command.leftButtonPressEvent, viewer.render);
+          $(interactorStyle).on(vgl.command.middleButtonPressEvent, viewer.render);
+          $(interactorStyle).on(vgl.command.rightButtonPressEvent, viewer.render);
 
           viewer.render();
 

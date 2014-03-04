@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////////
 /**
- * @module ogs.vgl
+ * @module vgl
  */
 
 /*jslint devel: true, forin: true, newcap: true, plusplus: true*/
@@ -48,7 +48,8 @@ vgl.renderer = function() {
       m_x = 0,
       m_y = 0,
       m_width = 0,
-      m_height = 0;
+      m_height = 0,
+      m_resizable = true;
 
   m_camera.addChild(m_sceneRoot);
 
@@ -68,6 +69,24 @@ vgl.renderer = function() {
   ////////////////////////////////////////////////////////////////////////////
   this.height = function() {
     return m_height;
+  };
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
+   *
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.isResizable = function() {
+    return m_resizable;
+  };
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
+   *
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.setResizable = function(r) {
+    m_resizable = r;
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -338,11 +357,14 @@ vgl.renderer = function() {
         x, y, width, height);
     }
 
-    m_width = width;
-    m_height = height;
+    //If we're allowing this renderer to resize ...
+    if (m_resizable) {
+      m_width = width;
+      m_height = height;
 
-    m_camera.setViewAspect(m_width / m_height);
-    this.modified();
+      m_camera.setViewAspect(m_width / m_height);
+      this.modified();
+    }
   };
 
   ////////////////////////////////////////////////////////////////////////////

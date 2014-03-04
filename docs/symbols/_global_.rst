@@ -123,7 +123,7 @@ _global_ (data)
    
      
    
-     ogs.vgl namespace
+     vgl namespace
    
      
    

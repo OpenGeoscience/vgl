@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////////
 /**
- * @module ogs.vgl
+ * @module vgl
  */
 
 /*jslint devel: true, forin: true, newcap: true, plusplus: true*/
@@ -219,7 +219,7 @@ vgl.viewer = function(canvas) {
     do {
       totalOffsetX += currentElement.offsetLeft - currentElement.scrollLeft;
       totalOffsetY += currentElement.offsetTop - currentElement.scrollTop;
-    } while (currentElement === currentElement.offsetParent);
+    } while (currentElement = currentElement.offsetParent);
 
     canvasX = event.pageX - totalOffsetX;
     canvasY = event.pageY - totalOffsetY;
