@@ -220,7 +220,7 @@ vgl.vtkReader = function() {
 
     //dehexlify
 //    data = this.decode64(vtkObject.data);
-    data = atob(buffer);
+    data = atob(vtkObject.data);
     for(i = 0; i < data.length; i++) {
       ss[i] = data.charCodeAt(i) & 0xff;
     }
@@ -567,6 +567,9 @@ vgl.vtkReader = function() {
   this.updateViewer = function() {
     var renderer, objIdx, vtkObject, layer, layerList, tmpList;
 
+    if ( m_vtkScene === null ) {
+      return m_viewer;
+    }
     tmpList = this.clearVtkObjectData();
     for(layer = m_vtkScene.Renderers.length - 1; layer >= 0; layer--) {
       layerList = tmpList[layer];
@@ -660,6 +663,7 @@ vgl.vtkReader = function() {
     if (typeof layerList === 'undefined') {
       console.log("Layer list undefined for layer: " + vtkObject.layer);
     }
+
 
     for (i = 0; i < m_vtkObjHashList.length; ++i) {
       md5 = m_vtkObjHashList[i];
