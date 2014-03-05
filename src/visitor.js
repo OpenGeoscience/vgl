@@ -178,4 +178,4 @@ vgl.visitor = function() {
 
   return this;
 }
-inherit(visitor, vgl.object);
+inherit(vgl.visitor, vgl.object);
