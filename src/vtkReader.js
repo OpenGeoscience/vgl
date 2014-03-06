@@ -194,14 +194,14 @@ vgl.vtkReader = function() {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.readColorArray = function (numberOfPoints, ss, vglcolors) {
-    var i,r,g,b;
+    var i,r,g,b,idx = 0, tmp = [];
     for(i = 0; i < numberOfPoints; i++) {
-      r = ss[m_pos++]/255.0;
-      g = ss[m_pos++]/255.0;
-      b = ss[m_pos++]/255.0;
+      tmp[idx++] = ss[m_pos++]/255.0;
+      tmp[idx++] = ss[m_pos++]/255.0;
+      tmp[idx++] = ss[m_pos++]/255.0;
       m_pos++;
-      vglcolors.pushBack([r,g,b]);
     }
+    vglcolors.insert(tmp);
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -219,7 +219,8 @@ vgl.vtkReader = function() {
         actor = null, shaderProg, opacityUniform;
 
     //dehexlify
-    data = this.decode64(vtkObject.data);
+//    data = this.decode64(vtkObject.data);
+    data = atob(vtkObject.data);
     for(i = 0; i < data.length; i++) {
       ss[i] = data.charCodeAt(i) & 0xff;
     }
@@ -291,9 +292,14 @@ vgl.vtkReader = function() {
     //Getting Points
     vglpoints = new vgl.sourceDataP3fv();
     points = this.readF3Array(numberOfPoints, ss);
+
+    var p = [], idx = 0;
     for(i = 0; i < numberOfPoints; i++) {
-      vglpoints.pushBack([points[i*3/*+0*/], points[i*3+1], points[i*3+2]]);
+      p[idx++] = points[i*3/*+0*/];
+      p[idx++] = points[i*3+1];
+      p[idx++] =  points[i*3+2];
     }
+    vglpoints.insert(p);
     geom.addSource(vglpoints);
 
     //Getting Colors
@@ -340,7 +346,7 @@ vgl.vtkReader = function() {
     var vglpoints = null, vglcolors = null, vgllines = null,
         normals = null, matrix = mat4.create(), v1 = null,
         vgltriangles = null, numberOfIndex, numberOfPoints,
-    points, temp, index, size, m, i, tcoord;
+        points, temp, index, size, m, i, tcoord;
 
     numberOfPoints = this.readNumber(ss);
 
@@ -350,13 +356,16 @@ vgl.vtkReader = function() {
 
     //Getting Normals
     normals = this.readF3Array(numberOfPoints, ss);
-
+    var pn = [], idx = 0;
     for(i = 0; i < numberOfPoints; i++) {
-      v1 = new vgl.vertexDataP3N3f();
-      v1.m_position = [points[i*3/*+0*/], points[i*3+1], points[i*3+2]];
-      v1.m_normal = [normals[i*3/*+0*/], normals[i*3+1], normals[i*3+2]];
-      vglpoints.pushBack(v1);
+      pn[idx++] = points[i*3/*+0*/];
+      pn[idx++] = points[i*3+1];
+      pn[idx++] = points[i*3+2];
+      pn[idx++] = normals[i*3/*+0*/];
+      pn[idx++] = normals[i*3+1];
+      pn[idx++] = normals[i*3+2];
     }
+    vglpoints.insert(pn);
     geom.addSource(vglpoints);
 
     //Getting Colors
@@ -415,10 +424,14 @@ vgl.vtkReader = function() {
     points = this.readF3Array(numberOfPoints, ss);
 
     indices = new Uint16Array(numberOfPoints);
+    var p = [], idx = 0;
     for (i = 0; i < numberOfPoints; i++) {
       indices[i] = i;
-      vglpoints.pushBack([points[i*3/*+0*/],points[i*3+1],points[i*3+2]]);
+      p[idx++] = points[i*3/*+0*/];
+      p[idx++] = points[i*3+1];
+      p[idx++] = points[i*3+2];
     }
+    vglpoints.insert(p);
     geom.addSource(vglpoints);
 
     //Getting Colors
@@ -554,6 +567,9 @@ vgl.vtkReader = function() {
   this.updateViewer = function() {
     var renderer, objIdx, vtkObject, layer, layerList, tmpList;
 
+    if ( m_vtkScene === null ) {
+      return m_viewer;
+    }
     tmpList = this.clearVtkObjectData();
     for(layer = m_vtkScene.Renderers.length - 1; layer >= 0; layer--) {
       layerList = tmpList[layer];
@@ -647,6 +663,7 @@ vgl.vtkReader = function() {
     if (typeof layerList === 'undefined') {
       console.log("Layer list undefined for layer: " + vtkObject.layer);
     }
+
 
     for (i = 0; i < m_vtkObjHashList.length; ++i) {
       md5 = m_vtkObjHashList[i];
