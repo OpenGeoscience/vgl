@@ -292,9 +292,7 @@ vgl.floatUniform = function(name, value) {
     name = "floatUniform";
   }
 
-  if (!value) {
-    value = 1.0;
-  }
+  value = value === undefined ? 1.0 : value;
 
   vgl.uniform.call(this, gl.FLOAT, name);
 
