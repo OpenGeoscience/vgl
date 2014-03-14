@@ -194,7 +194,7 @@ vgl.vtkReader = function() {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.readColorArray = function (numberOfPoints, ss, vglcolors) {
-    var i,r,g,b,idx = 0, tmp = [];
+    var i,r,g,b,idx = 0, tmp = new Array(numberOfPoints*3);
     for(i = 0; i < numberOfPoints; i++) {
       tmp[idx++] = ss[m_pos++]/255.0;
       tmp[idx++] = ss[m_pos++]/255.0;
@@ -285,15 +285,16 @@ vgl.vtkReader = function() {
     var vglpoints = null, vglcolors = null, vgllines = null,
         matrix = mat4.create(),
         numberOfIndex, numberOfPoints, points,
-        temp, index, size, m, i;
+        temp, index, size, m, i,
+        p = null, idx = 0;
 
     numberOfPoints = this.readNumber(ss);
+    p = new Array(numberOfPoints*3);
 
     //Getting Points
     vglpoints = new vgl.sourceDataP3fv();
     points = this.readF3Array(numberOfPoints, ss);
 
-    var p = [], idx = 0;
     for(i = 0; i < numberOfPoints; i++) {
       p[idx++] = points[i*3/*+0*/];
       p[idx++] = points[i*3+1];
@@ -346,17 +347,17 @@ vgl.vtkReader = function() {
     var vglpoints = null, vglcolors = null, vgllines = null,
         normals = null, matrix = mat4.create(), v1 = null,
         vgltriangles = null, numberOfIndex, numberOfPoints,
-        points, temp, index, size, m, i, tcoord;
+        points, temp, index, size, m, i, tcoord,
+        pn = null, idx = 0;
 
     numberOfPoints = this.readNumber(ss);
-
+    pn = new Array(numberOfPoints*6);
     //Getting Points
     vglpoints = new vgl.sourceDataP3N3f();
     points = this.readF3Array(numberOfPoints, ss);
 
     //Getting Normals
     normals = this.readF3Array(numberOfPoints, ss);
-    var pn = [], idx = 0;
     for(i = 0; i < numberOfPoints; i++) {
       pn[idx++] = points[i*3/*+0*/];
       pn[idx++] = points[i*3+1];
@@ -415,16 +416,18 @@ vgl.vtkReader = function() {
   this.parsePointData = function(geom, ss) {
     var numberOfPoints, points, indices, temp, size,
         matrix = mat4.create(), vglpoints = null,
-        vglcolors = null, vglVertexes = null, m;
+        vglcolors = null, vglVertexes = null, m,
+        p = null, idx = 0;
 
     numberOfPoints = this.readNumber(ss);
+    p = new Array(numberOfPoints*3);
 
     //Getting Points and creating 1:1 connectivity
     vglpoints = new vgl.sourceDataP3fv();
     points = this.readF3Array(numberOfPoints, ss);
 
     indices = new Uint16Array(numberOfPoints);
-    var p = [], idx = 0;
+
     for (i = 0; i < numberOfPoints; i++) {
       indices[i] = i;
       p[idx++] = points[i*3/*+0*/];
