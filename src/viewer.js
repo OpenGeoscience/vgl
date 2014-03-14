@@ -33,14 +33,6 @@ vgl.viewer = function(canvas) {
       m_renderer = vgl.renderer(),
       m_renderWindow = vgl.renderWindow(m_canvas);
 
-  $(m_canvas).on('mousedown', this.handleMouseDown);
-  $(m_canvas).on('mouseup', this.handleMouseUp);
-  $(m_canvas).on('mousemove', this.handleMouseMove);
-  $(m_canvas).on('mousewheel', this.handleMouseWheel);
-  $(m_canvas).on('contextmenu', this.handleContextMenu);
-
-  m_renderWindow.addRenderer(m_renderer);
-
   ////////////////////////////////////////////////////////////////////////////
   /**
    * Get canvas of the viewer
@@ -122,7 +114,7 @@ vgl.viewer = function(canvas) {
         fixedEvent.preventDefault();
       }
       fixedEvent.state = 'down';
-      fixedEvent.type = vgl.command.mousePressEvent;
+      fixedEvent.type = vgl.event.mousePress;
       $(m_that).trigger(fixedEvent);
     }
 
@@ -142,7 +134,7 @@ vgl.viewer = function(canvas) {
       var fixedEvent = $.event.fix(event || window.event);
       fixedEvent.preventDefault();
       fixedEvent.state = 'up';
-      fixedEvent.type = vgl.command.mouseReleaseEvent;
+      fixedEvent.type = vgl.event.mouseRelease;
       $(m_that).trigger(fixedEvent);
     }
 
@@ -161,7 +153,7 @@ vgl.viewer = function(canvas) {
     if (m_ready === true) {
       var fixedEvent = $.event.fix(event || window.event);
       fixedEvent.preventDefault();
-      fixedEvent.type = vgl.command.mouseMoveEvent;
+      fixedEvent.type = vgl.event.mouseMove;
       $(m_that).trigger(fixedEvent);
     }
 
@@ -177,10 +169,10 @@ vgl.viewer = function(canvas) {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.handleMouseWheel = function(event) {
-        if (m_ready === true) {
+    if (m_ready === true) {
       var fixedEvent = $.event.fix(event || window.event);
       fixedEvent.preventDefault();
-      fixedEvent.type = vgl.command.mouseWheelEvent;
+      fixedEvent.type = vgl.event.mouseWheel;
       $(m_that).trigger(fixedEvent);
     }
 
@@ -199,7 +191,7 @@ vgl.viewer = function(canvas) {
     if (m_ready === true) {
       var fixedEvent = $.event.fix(event || window.event);
       fixedEvent.preventDefault();
-      fixedEvent.type = vgl.command.keyPressEvent;
+      fixedEvent.type = vgl.event.keyPress;
       $(m_that).trigger(fixedEvent);
     }
 
@@ -218,7 +210,7 @@ vgl.viewer = function(canvas) {
     if (m_ready === true) {
       var fixedEvent = $.event.fix(event || window.event);
       fixedEvent.preventDefault();
-      fixedEvent.type = vgl.command.contextMenuEvent;
+      fixedEvent.type = vgl.event.contextMenu;
       $(m_that).trigger(fixedEvent);
     }
 
@@ -263,6 +255,22 @@ vgl.viewer = function(canvas) {
     m_renderWindow.render();
   };
 
+  ////////////////////////////////////////////////////////////////////////////
+  /**
+   * Initialize
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this._init = function() {
+    $(m_canvas).on('mousedown', this.handleMouseDown);
+    $(m_canvas).on('mouseup', this.handleMouseUp);
+    $(m_canvas).on('mousemove', this.handleMouseMove);
+    $(m_canvas).on('mousewheel', this.handleMouseWheel);
+    $(m_canvas).on('contextmenu', this.handleContextMenu);
+
+    m_renderWindow.addRenderer(m_renderer);
+  }
+
+  this._init();
   return this;
 };
 

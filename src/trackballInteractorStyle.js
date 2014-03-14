@@ -46,7 +46,7 @@ vgl.trackballInteractorStyle = function() {
         width = m_that.viewer().renderWindow().windowSize()[0],
         height = m_that.viewer().renderWindow().windowSize()[1],
         ren = m_that.viewer().renderWindow().activeRenderer(),
-        cam = ren.camera(), coords = canvas.relMouseCoords(event),
+        cam = ren.camera(), coords = m_that.viewer().relMouseCoords(event),
         fp, fdp, fwp, dp1, dp2, wp1, wp2, coords, dx, dy, dz,
         coords, m_zTrans;
 

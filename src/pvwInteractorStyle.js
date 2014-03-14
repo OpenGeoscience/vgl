@@ -117,7 +117,7 @@ vgl.pvwInteractorStyle = function() {
 
     if (m_middleMouseButtonDown) {
       m_camera.pan(-m_dx, -m_dy, -m_dz);
-      $(m_that).trigger(vgl.command.middleButtonPressEvent);
+      $(m_that).trigger(vgl.event.middleButtonPressEvent);
     }
     if (m_leftMouseButtonDown) {
       deltaxy = [(m_mouseLastPos.x - m_currentMousePos.x),
@@ -136,7 +136,7 @@ vgl.pvwInteractorStyle = function() {
         rens[i].resetCameraClippingRange();
       }
 
-      $(m_that).trigger(vgl.command.leftButtonPressEvent);
+      $(m_that).trigger(vgl.event.leftButtonPressEvent);
     }
     if (m_rightMouseButtonDown) {
       m_zTrans = (m_currentMousePos.y - m_mouseLastPos.y) / m_height;
@@ -148,7 +148,7 @@ vgl.pvwInteractorStyle = function() {
         m_camera.zoom(1 + Math.abs(m_zTrans));
       }
       m_renderer.resetCameraClippingRange();
-      $(m_that).trigger(vgl.command.rightButtonPressEvent);
+      $(m_that).trigger(vgl.event.rightButtonPressEvent);
     }
     m_mouseLastPos.x = m_currentMousePos.x;
     m_mouseLastPos.y = m_currentMousePos.y;
