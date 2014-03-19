@@ -25,6 +25,7 @@
           })
         .done(function(data) {
 
+          data = data.replace(/[\n\r\t]/g, "")
           //add object to the reader
           var vtkObject = {
             md5: 012345,

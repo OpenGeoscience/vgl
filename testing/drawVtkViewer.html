@@ -33,6 +33,7 @@
 
           for(idx in scene.Objects) {
              var sceneObject = scene.Objects[idx];
+             geom = geom.replace(/[\n\r\t]/g, "")
 
               //add object to the reader
               var vtkObject = {
