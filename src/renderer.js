@@ -49,7 +49,8 @@ vgl.renderer = function() {
       m_y = 0,
       m_width = 0,
       m_height = 0,
-      m_resizable = true;
+      m_resizable = true,
+      m_resetScene = true;
 
   m_camera.addChild(m_sceneRoot);
 
@@ -163,6 +164,11 @@ vgl.renderer = function() {
 
     renSt = new vgl.renderState();
     children = m_sceneRoot.children();
+
+    if (children.length > 0 && m_resetScene) {
+      this.resetCamera();
+      m_resetScene = false;
+    }
 
     for ( i = 0; i < children.length; ++i) {
       actor = children[i];
@@ -411,6 +417,11 @@ vgl.renderer = function() {
   this.removeActor = function(actor) {
     if (m_sceneRoot.children().indexOf(actor) !== -1) {
       m_sceneRoot.removeChild(actor);
+
+      if (m_sceneRoot.children().length === 0) {
+        m_resetScene = true;
+      }
+
       this.modified();
       return true;
     }
