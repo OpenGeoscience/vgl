@@ -358,7 +358,8 @@ vgl.geojsonReader = function() {
         vf = null,
         vl = null,
         flip = null,
-        flipped = false;
+        flipped = false,
+        tcount = 0;
 
 
     //var time1 = new Date().getTime()
@@ -369,7 +370,6 @@ vgl.geojsonReader = function() {
 
     //preallocate with size estimate
     vglcoords.data().length = numPolys*3; //x,y,z
-
     for (j = 0; j < numPolys; j++) {
       //console.log("getting poly " + j);
 
@@ -386,7 +386,7 @@ vgl.geojsonReader = function() {
         if (coordinates[j][0][i].length>2) {
           z = coordinates[j][0][i][2];
         }
-         flipped = false;
+        flipped = false;
         if (x > 180) {
           flipped = true;
           x = x - 360;
@@ -408,9 +408,16 @@ vgl.geojsonReader = function() {
         //var timed = new Date().getTime()
 
         if (i > 1) {
-          //console.log("Cutting new triangle "+ vf + "," + vl + "," + ccount);
+          //if (vl < 50) {
+            //console.log("Cutting new triangle " + tcount + ":" + vf + "," + vl + "," + ccount);
+            //console.log(indexes);
+          //}
           if (flip[0] === flip[1] && flip[1] === flip[2]) {
-            indexes = indexes.concat([vf,vl,ccount]);
+              //indexes = indexes.concat([vf,vl,ccount]); //very slow in safari
+              indexes[tcount*3+0] = vf
+              indexes[tcount*3+1] = vl
+              indexes[tcount*3+2] = ccount
+              tcount++;
           }
           //else {
           //  //TODO: duplicate triangles that straddle boundary on either side
