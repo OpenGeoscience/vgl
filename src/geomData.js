@@ -574,7 +574,14 @@ vgl.sourceData = function() {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.insert = function(data) {
-    m_data = m_data.concat(data);
+    //m_data = m_data.concat(data); //no, slow on Safari
+    if (!data.length) {
+      m_data[m_data.length] = data;
+    } else {
+      for (i = 0; i < data.length; i++) {
+        m_data[m_data.length] = data[i];
+      }
+    }
   };
 
   this.insertAt = function(index, data) {
@@ -767,7 +774,8 @@ vgl.sourceDataSf = function() {
     if (m_min === null || value < m_min) {
       m_min = value;
     }
-    this.insert(value);
+    //this.insert(value); //no, slow on Safari
+    this.data()[this.data().length] = value;
   };
 
   this.insertAt = function(index, value) {

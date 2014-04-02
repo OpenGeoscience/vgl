@@ -58,7 +58,8 @@ vgl.geojsonReader = function() {
           array.setScalarRange(this.m_scalarRange[0],this.m_scalarRange[1]);
         }
         if (size_estimate !== undefined) {
-          array.length = size_estimate;
+          //array.length = size_estimate; //no, slow on Safari
+          array.data().length = size_estimate;
         }
         geom.addSource(array);
       }
@@ -413,7 +414,7 @@ vgl.geojsonReader = function() {
             //console.log(indexes);
           //}
           if (flip[0] === flip[1] && flip[1] === flip[2]) {
-              //indexes = indexes.concat([vf,vl,ccount]); //very slow in safari
+              //indexes = indexes.concat([vf,vl,ccount]); //no, very slow in Safari
               indexes[tcount*3+0] = vf
               indexes[tcount*3+1] = vl
               indexes[tcount*3+2] = ccount
