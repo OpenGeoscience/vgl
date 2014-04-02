@@ -363,11 +363,11 @@ vgl.geojsonReader = function() {
         tcount = 0;
 
 
-    //var time1 = new Date().getTime()
-    //var a = 0;
-    //var b = 0;
-    //var c = 0;
-    //var d = 0;
+    var time1 = new Date().getTime()
+    var a = 0;
+    var b = 0;
+    var c = 0;
+    var d = 0;
 
     //preallocate with size estimate
     vglcoords.data().length = numPolys*3; //x,y,z
@@ -379,7 +379,7 @@ vgl.geojsonReader = function() {
       vl = ccount+1;
       flip = [false,false,false];
       for (i = 0; i < thisPolyLength; i++) {
-        //var timea = new Date().getTime()
+        var timea = new Date().getTime()
 
         x = coordinates[j][0][i][0];
         y = coordinates[j][0][i][1];
@@ -397,16 +397,16 @@ vgl.geojsonReader = function() {
         } else {
           flip[1+(i-1)%2] = flipped;
         }
-        //var timeb = new Date().getTime();
+        var timeb = new Date().getTime();
         //console.log("read " + x + "," + y + "," + z);
 
         vglcoords.insertAt(pntcnt, [x,y,z]);
-        //var timec = new Date().getTime();
+        var timec = new Date().getTime();
 
         //attributes
         this.readScalars(coordinates[j][0][i], geom, estpntcnt, pntcnt);
         pntcnt++;
-        //var timed = new Date().getTime()
+        var timed = new Date().getTime()
 
         if (i > 1) {
           //if (vl < 50) {
@@ -427,24 +427,24 @@ vgl.geojsonReader = function() {
           vl = ccount;
         }
         ccount++;
-        //var timee = new Date().getTime()
-        //a = a + (timeb-timea)
-        //b = b + (timec-timeb)
-        //c = c + (timed-timec)
-        //d = d + (timee-timed)
+        var timee = new Date().getTime()
+        a = a + (timeb-timea)
+        b = b + (timec-timeb)
+        c = c + (timed-timec)
+        d = d + (timee-timed)
       }
     }
     vgltriangle.setIndices(indexes);
     geom.addPrimitive(vgltriangle);
 
-    //console.log("NUMPOLYS " + pntcnt);
-    //console.log("RMP: ", a, ",", b, ",", c, ",", d)
-    //var time2 = new Date().getTime()
+    console.log("NUMPOLYS " + pntcnt);
+    console.log("RMP: ", a, ",", b, ",", c, ",", d)
+    var time2 = new Date().getTime()
 
     geom.setName("aMultiPoly");
     geom.addSource(vglcoords);
-    //var time3 = new Date().getTime()
-    //console.log("RMP: ", time2-time1, ",", time3-time2)
+    var time3 = new Date().getTime()
+    console.log("RMP: ", time2-time1, ",", time3-time2)
 
     return geom;
   };
