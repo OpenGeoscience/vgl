@@ -574,6 +574,8 @@ vgl.sourceData = function() {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.insert = function(data) {
+    var i;
+
     //m_data = m_data.concat(data); //no, slow on Safari
     if (!data.length) {
       m_data[m_data.length] = data;
