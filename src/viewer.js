@@ -165,6 +165,25 @@ vgl.viewer = function(canvas) {
 
   ////////////////////////////////////////////////////////////////////////////
   /**
+   * Handle mouse move event
+   *
+   * @param event
+   * @returns {boolean}
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.handleMouseOut = function(event) {
+    if (m_ready === true) {
+      var fixedEvent = $.event.fix(event || window.event);
+      fixedEvent.preventDefault();
+      fixedEvent.type = vgl.command.mouseOutEvent;
+      $(m_that).trigger(fixedEvent);
+    }
+
+    return true;
+  };
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
    * Handle key press event
    *
    * @param event
