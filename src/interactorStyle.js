@@ -54,6 +54,7 @@ vgl.interactorStyle = function() {
       $(m_viewer).on(vgl.command.mousePressEvent, m_that.handleMouseDown);
       $(m_viewer).on(vgl.command.mouseReleaseEvent, m_that.handleMouseUp);
       $(m_viewer).on(vgl.command.mouseMoveEvent, m_that.handleMouseMove);
+      $(m_viewer).on(vgl.command.mouseOutEvent, m_that.handleMouseOut);
       $(m_viewer).on(vgl.command.keyPressEvent, m_that.handleKeyPress);
       $(m_viewer).on(vgl.command.mouseContextMenuEvent,
                      m_that.handleContextMenu);
@@ -94,6 +95,18 @@ vgl.interactorStyle = function() {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.handleMouseMove = function(event) {
+    return true;
+  };
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
+   * Handle mouse move event
+   *
+   * @param event
+   * @returns {boolean}
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.handleMouseOut = function(event) {
     return true;
   };
 
