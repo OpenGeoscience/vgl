@@ -71,6 +71,26 @@ vgl.material = function() {
     return m_attributes.hasOwnProperty(attr);
   };
 
+////////////////////////////////////////////////////////////////////////////
+  /**
+   * Get material attribute
+
+   * @param attr Attribute name
+   * @returns {vgl.materialAttribute}
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.attribute = function(name) {
+    if (m_attributes.hasOwnProperty(name)) {
+      return m_attributes[name];
+    }
+
+    if (m_textureAttributes.hasOwnProperty(name)) {
+      return m_textureAttributes[name];
+    }
+
+    return null;
+  };
+
   ////////////////////////////////////////////////////////////////////////////
   /**
    * Set a new attribute for the material
