@@ -51,13 +51,13 @@ vgl.interactorStyle = function() {
   this.setViewer = function(viewer) {
     if (viewer !== m_viewer) {
       m_viewer = viewer;
-      $(m_viewer).on(vgl.command.mousePressEvent, m_that.handleMouseDown);
-      $(m_viewer).on(vgl.command.mouseReleaseEvent, m_that.handleMouseUp);
-      $(m_viewer).on(vgl.command.mouseMoveEvent, m_that.handleMouseMove);
-      $(m_viewer).on(vgl.command.mouseOutEvent, m_that.handleMouseOut);
-      $(m_viewer).on(vgl.command.keyPressEvent, m_that.handleKeyPress);
-      $(m_viewer).on(vgl.command.mouseContextMenuEvent,
-                     m_that.handleContextMenu);
+      $(m_viewer).on(vgl.event.mousePress, m_that.handleMouseDown);
+      $(m_viewer).on(vgl.event.mouseRelease, m_that.handleMouseUp);
+      $(m_viewer).on(vgl.event.mouseMove, m_that.handleMouseMove);
+      $(m_viewer).on(vgl.event.mouseOut, m_that.handleMouseOut);
+      $(m_viewer).on(vgl.event.mouseWheel, m_that.handleMouseWheel);
+      $(m_viewer).on(vgl.event.keyPress, m_that.handleKeyPress);
+      $(m_viewer).on(vgl.event.mouseContextMenu, m_that.handleContextMenu);
       this.modified();
     }
   };
@@ -107,6 +107,18 @@ vgl.interactorStyle = function() {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.handleMouseOut = function(event) {
+    return true;
+  }
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
+   * Handle mouse wheel event
+   *
+   * @param event
+   * @returns {boolean}
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.handleMouseWheel = function(event) {
     return true;
   };
 

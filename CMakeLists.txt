@@ -32,7 +32,7 @@ set(_source_files
   GL.js
   timestamp.js
   object.js
-  command.js
+  event.js
   boundingObject.js
   node.js
   groupNode.js

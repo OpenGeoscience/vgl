@@ -1,14 +1,14 @@
 
 
 ===============================================
-vgl.command (class)
+vgl.event (class)
 ===============================================
 command
 
 .. contents::
    :local:
 
-.. js:class:: vgl.command ()
+.. js:class:: vgl.event ()
 
       
    
@@ -39,7 +39,7 @@ command
      
            
    
-     :rtype: vgl.command
+     :rtype: vgl.event
      
    
    
@@ -82,7 +82,7 @@ command
      
      
    
-     vgl.command
+     vgl.event
    
      Event types
    

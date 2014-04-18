@@ -60,16 +60,6 @@
             renderer2.addActor(actor2);
           }
 
-          document.onmousedown = viewer.handleMouseDown;
-          document.onmouseup = viewer.handleMouseUp;
-          document.onmousemove = viewer.handleMouseMove;
-          document.oncontextmenu = viewer.handleContextMenu;
-          HTMLCanvasElement.prototype.relMouseCoords = viewer.relMouseCoords;
-
-          $(interactorStyle).on(vgl.command.leftButtonPressEvent, viewer.render);
-          $(interactorStyle).on(vgl.command.middleButtonPressEvent, viewer.render);
-          $(interactorStyle).on(vgl.command.rightButtonPressEvent, viewer.render);
-
           renderer.setBackgroundColor(0.0, 0.0, 0.0, 1.0);
           renderer.resetCamera();
           renderer2.resetCamera();

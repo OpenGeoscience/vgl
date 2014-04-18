@@ -25,31 +25,12 @@ vgl.trackballInteractorStyle = function() {
   }
   vgl.interactorStyle.call(this);
   var m_that = this,
-      m_leftMouseButtonDown = false,
-      m_rightMouseButtonDown = false,
-      m_middleMouseButtonDown = false,
-      m_width,
-      m_height,
-      m_renderer,
-      m_camera,
+      m_leftMouseBtnDown = false,
+      m_rightMouseBtnDown = false,
+      m_midMouseBtnDown = false,
       m_outsideCanvas,
-      m_coords,
-      m_currentMousePos,
-      m_focalPoint,
-      m_focusWorldPt,
-      m_focusDisplayPt,
-      m_displayPt1,
-      m_displayPt2,
-      m_worldPt1,
-      m_worldPt2,
-      m_dx,
-      m_dy,
-      m_dz,
-      m_zTrans,
-      m_mouseLastPos = {
-        x: 0,
-        y: 0
-      };
+      m_currPos = {x: 0, y: 0},
+      m_lastPos = {x: 0, y: 0};
 
 
   /////////////////////////////////////////////////////////////////////////////
@@ -61,73 +42,74 @@ vgl.trackballInteractorStyle = function() {
    */
   /////////////////////////////////////////////////////////////////////////////
   this.handleMouseMove = function(event) {
-    var canvas = m_that.viewer().canvas();
-    m_width = m_that.viewer().renderWindow().windowSize()[0];
-    m_height = m_that.viewer().renderWindow().windowSize()[1];
-    m_renderer = m_that.viewer().renderWindow().activeRenderer();
-    m_camera = m_renderer.camera();
+    var canvas = m_that.viewer().canvas(),
+        width = m_that.viewer().renderWindow().windowSize()[0],
+        height = m_that.viewer().renderWindow().windowSize()[1],
+        ren = m_that.viewer().renderWindow().activeRenderer(),
+        cam = ren.camera(), coords = m_that.viewer().relMouseCoords(event),
+        fp, fdp, fwp, dp1, dp2, wp1, wp2, coords, dx, dy, dz,
+        coords, m_zTrans;
+
     m_outsideCanvas = false;
-    m_coords = canvas.relMouseCoords(event);
-    m_currentMousePos = {
-      x: 0,
-      y: 0
-    };
-    if ((m_coords.x < 0) || (m_coords.x > m_width)) {
-      m_currentMousePos.x = 0;
+    m_currPos = {x: 0, y: 0};
+
+    if ((coords.x < 0) || (coords.x > width)) {
+      m_currPos.x = 0;
       m_outsideCanvas = true;
     } else {
-      m_currentMousePos.x = m_coords.x;
+      m_currPos.x = coords.x;
     }
-    if ((m_coords.y < 0) || (m_coords.y > m_height)) {
-      m_currentMousePos.y = 0;
+    if ((coords.y < 0) || (coords.y > height)) {
+      m_currPos.y = 0;
       m_outsideCanvas = true;
     } else {
-      m_currentMousePos.y = m_coords.y;
+      m_currPos.y = coords.y;
     }
     if (m_outsideCanvas === true) {
       return;
     }
-    m_focalPoint = m_camera.focalPoint();
-    m_focusWorldPt = vec4.fromValues(m_focalPoint[0], m_focalPoint[1], m_focalPoint[2], 1);
-    m_focusDisplayPt = m_renderer.worldToDisplay(m_focusWorldPt, m_camera.viewMatrix(),
-      m_camera.projectionMatrix(), m_width, m_height);
-    m_displayPt1 = vec4.fromValues(
-      m_currentMousePos.x, m_currentMousePos.y, m_focusDisplayPt[2], 1.0);
-    m_displayPt2 = vec4.fromValues(
-      m_mouseLastPos.x, m_mouseLastPos.y, m_focusDisplayPt[2], 1.0);
-    m_worldPt1 = m_renderer.displayToWorld(
-      m_displayPt1, m_camera.viewMatrix(), m_camera.projectionMatrix(), m_width, m_height);
-    m_worldPt2 = m_renderer.displayToWorld(
-      m_displayPt2, m_camera.viewMatrix(), m_camera.projectionMatrix(), m_width, m_height);
 
-    m_dx = m_worldPt1[0] - m_worldPt2[0];
-    m_dy = m_worldPt1[1] - m_worldPt2[1];
-    m_dz = m_worldPt1[2] - m_worldPt2[2];
+    fp = cam.focalPoint();
+    fwp = vec4.fromValues(fp[0], fp[1], fp[2], 1);
+    fdp = ren.worldToDisplay(fwp, cam.viewMatrix(),
+                              cam.projectionMatrix(), width, height);
 
-    if (m_middleMouseButtonDown) {
-      m_camera.pan(-m_dx, -m_dy, -m_dz);
-      $(m_that).trigger(vgl.command.middleButtonPressEvent);
+    dp1 = vec4.fromValues(m_currPos.x, m_currPos.y, fdp[2], 1.0);
+    dp2 = vec4.fromValues(m_lastPos.x, m_lastPos.y, fdp[2], 1.0);
+
+    wp1 = ren.displayToWorld(dp1, cam.viewMatrix(), cam.projectionMatrix(),
+                             width, height);
+    wp2 = ren.displayToWorld(dp2, cam.viewMatrix(), cam.projectionMatrix(),
+                             width, height);
+
+    dx = wp1[0] - wp2[0];
+    dy = wp1[1] - wp2[1];
+    dz = wp1[2] - wp2[2];
+
+    if (m_midMouseBtnDown) {
+      cam.pan(-dx, -dy, -dz);
+      m_that.viewer().render();
     }
-    if (m_leftMouseButtonDown) {
-      m_camera.rotate((m_mouseLastPos.x - m_currentMousePos.x),
-      (m_mouseLastPos.y - m_currentMousePos.y));
-      m_renderer.resetCameraClippingRange();
-      $(m_that).trigger(vgl.command.leftButtonPressEvent);
+    if (m_leftMouseBtnDown) {
+      cam.rotate((m_lastPos.x - m_currPos.x),
+      (m_lastPos.y - m_currPos.y));
+      ren.resetCameraClippingRange();
+      m_that.viewer().render();
     }
-    if (m_rightMouseButtonDown) {
-      m_zTrans = (m_currentMousePos.y - m_mouseLastPos.y) / m_height;
+    if (m_rightMouseBtnDown) {
+      m_zTrans = (m_currPos.y - m_lastPos.y) / height;
 
       // Calculate zoom scale here
       if (m_zTrans > 0) {
-        m_camera.zoom(1 - Math.abs(m_zTrans));
+        cam.zoom(1 - Math.abs(m_zTrans));
       } else {
-        m_camera.zoom(1 + Math.abs(m_zTrans));
+        cam.zoom(1 + Math.abs(m_zTrans));
       }
-      m_renderer.resetCameraClippingRange();
-      $(m_that).trigger(vgl.command.rightButtonPressEvent);
+      ren.resetCameraClippingRange();
+      m_that.viewer().render();
     }
-    m_mouseLastPos.x = m_currentMousePos.x;
-    m_mouseLastPos.y = m_currentMousePos.y;
+    m_lastPos.x = m_currPos.x;
+    m_lastPos.y = m_currPos.y;
     return false;
   };
 
@@ -140,26 +122,27 @@ vgl.trackballInteractorStyle = function() {
    */
   /////////////////////////////////////////////////////////////////////////////
   this.handleMouseDown = function(event) {
-    var canvas = m_that.viewer().canvas();
+    var canvas = m_that.viewer().canvas(), coords;
+
     if (event.button === 0) {
-      m_leftMouseButtonDown = true;
+      m_leftMouseBtnDown = true;
     }
     if (event.button === 1) {
-      m_middleMouseButtonDown = true;
+      m_midMouseBtnDown = true;
     }
     if (event.button === 2) {
-      m_rightMouseButtonDown = true;
+      m_rightMouseBtnDown = true;
     }
-    m_coords = canvas.relMouseCoords(event);
-    if (m_coords.x < 0) {
-      m_mouseLastPos.x = 0;
+    coords = canvas.relMouseCoords(event);
+    if (coords.x < 0) {
+      m_lastPos.x = 0;
     } else {
-      m_mouseLastPos.x = m_coords.x;
+      m_lastPos.x = coords.x;
     }
-    if (m_coords.y < 0) {
-      m_mouseLastPos.y = 0;
+    if (coords.y < 0) {
+      m_lastPos.y = 0;
     } else {
-      m_mouseLastPos.y = m_coords.y;
+      m_lastPos.y = coords.y;
     }
     return false;
   };
@@ -175,17 +158,39 @@ vgl.trackballInteractorStyle = function() {
    */
   /////////////////////////////////////////////////////////////////////////////
   this.handleMouseUp = function(event) {
-    var canvas = m_that.viewer().canvas();
     if (event.button === 0) {
-      m_leftMouseButtonDown = false;
+      m_leftMouseBtnDown = false;
     }
     if (event.button === 1) {
-      m_middleMouseButtonDown = false;
+      m_midMouseBtnDown = false;
     }
     if (event.button === 2) {
-      m_rightMouseButtonDown = false;
+      m_rightMouseBtnDown = false;
     }
     return false;
+  };
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
+   * Handle mouse wheel event
+   *
+   * @param event
+   * @returns {boolean}
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.handleMouseWheel = function(event) {
+    var ren = m_that.viewer().renderWindow().activeRenderer(),
+        cam = ren.camera();
+
+    // TODO Compute zoom factor intelligently
+    if (event.originalEvent.wheelDelta < 0) {
+      cam.zoom(0.9);
+    } else {
+      cam.zoom(1.1);
+    }
+    ren.resetCameraClippingRange();
+    m_that.viewer().render();
+    return true;
   };
 
   return this;
