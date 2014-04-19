@@ -52,6 +52,7 @@ vgl.event.char = "vgl.event.char";
 vgl.event.disable = "vgl.event.disable";
 vgl.event.endInteraction = "vgl.event.endInteraction";
 vgl.event.mouseMove = "vgl.event.mouseMove";
+vgl.event.mouseOut = "vgl.event.mouseOut";
 vgl.event.expose = "vgl.event.expose";
 vgl.event.timer = "vgl.event.timer";
 vgl.event.leftButtonPress = "vgl.event.leftButtonPress";
