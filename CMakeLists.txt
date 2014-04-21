@@ -39,6 +39,7 @@ set(_source_files
   actor.js
   freezeObject.js
   defaultValue.js
+  asciiGridReader.js
   geojsonReader.js
   data.js
   geomData.js
