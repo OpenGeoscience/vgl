@@ -50,10 +50,58 @@ vgl.texture = function() {
    */
   /////////////////////////////////////////////////////////////////////////////
   this.setup = function(renderState) {
-    if (this.m_textureUnit === 0) {
-      gl.activeTexture(gl.TEXTURE0);
-    } else if (this.m_textureUnit === 1) {
-      gl.activeTexture(gl.TEXTURE1);
+    switch (this.m_textureUnit) {
+      case 0:
+        gl.activeTexture(gl.TEXTURE0);
+        break;
+      case 1:
+        gl.activeTexture(gl.TEXTURE1);
+        break;
+      case 2:
+        gl.activeTexture(gl.TEXTURE2);
+        break;
+      case 3:
+        gl.activeTexture(gl.TEXTURE3);
+        break;
+      case 4:
+        gl.activeTexture(gl.TEXTURE4);
+        break;
+      case 5:
+        gl.activeTexture(gl.TEXTURE5);
+        break;
+      case 6:
+        gl.activeTexture(gl.TEXTURE6);
+        break;
+      case 7:
+        gl.activeTexture(gl.TEXTURE7);
+        break;
+      case 8:
+        gl.activeTexture(gl.TEXTURE8);
+        break;
+      case 9:
+        gl.activeTexture(gl.TEXTURE9);
+        break;
+      case 10:
+        gl.activeTexture(gl.TEXTURE10);
+        break;
+      case 11:
+        gl.activeTexture(gl.TEXTURE11);
+        break;
+      case 12:
+        gl.activeTexture(gl.TEXTURE12);
+        break;
+      case 13:
+        gl.activeTexture(gl.TEXTURE13);
+        break;
+      case 14:
+        gl.activeTexture(gl.TEXTURE14);
+        break;
+      case 15:
+        gl.activeTexture(gl.TEXTURE15);
+        break;
+      default:
+        throw "[error] Texture unit "  + this.m_textureUnit +
+              " is not supported";
     }
 
     gl.deleteTexture(this.m_textureHandle);
@@ -100,7 +148,7 @@ vgl.texture = function() {
       this.setup(renderState);
     }
 
-    if (this.m_textureUnit === 0) {
+     (this.m_textureUnit === 0) {
       gl.activeTexture(gl.TEXTURE0);
     } else if (this.m_textureUnit === 1) {
       gl.activeTexture(gl.TEXTURE1);
