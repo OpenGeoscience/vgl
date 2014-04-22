@@ -122,7 +122,7 @@ vgl.trackballInteractorStyle = function() {
    */
   /////////////////////////////////////////////////////////////////////////////
   this.handleMouseDown = function(event) {
-    var canvas = m_that.viewer().canvas(), coords;
+    var coords;
 
     if (event.button === 0) {
       m_leftMouseBtnDown = true;
@@ -133,7 +133,7 @@ vgl.trackballInteractorStyle = function() {
     if (event.button === 2) {
       m_rightMouseBtnDown = true;
     }
-    coords = canvas.relMouseCoords(event);
+    coords = m_that.viewer().relMouseCoords(event);
     if (coords.x < 0) {
       m_lastPos.x = 0;
     } else {

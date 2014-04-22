@@ -42,14 +42,7 @@ vgl.texture = function() {
 
   var m_setupTimestamp = vgl.timestamp();
 
-  /////////////////////////////////////////////////////////////////////////////
-  /**
-   * Create texture, update parameters, and bind data
-   *
-   * @param renderState
-   */
-  /////////////////////////////////////////////////////////////////////////////
-  this.setup = function(renderState) {
+  function activateTextureUnit() {
     switch (this.m_textureUnit) {
       case 0:
         gl.activeTexture(gl.TEXTURE0);
@@ -103,6 +96,17 @@ vgl.texture = function() {
         throw "[error] Texture unit "  + this.m_textureUnit +
               " is not supported";
     }
+  }
+
+  /////////////////////////////////////////////////////////////////////////////
+  /**
+   * Create texture, update parameters, and bind data
+   *
+   * @param renderState
+   */
+  /////////////////////////////////////////////////////////////////////////////
+  this.setup = function(renderState) {
+    activateTextureUnit();
 
     gl.deleteTexture(this.m_textureHandle);
     this.m_textureHandle = gl.createTexture();
@@ -148,11 +152,7 @@ vgl.texture = function() {
       this.setup(renderState);
     }
 
-     (this.m_textureUnit === 0) {
-      gl.activeTexture(gl.TEXTURE0);
-    } else if (this.m_textureUnit === 1) {
-      gl.activeTexture(gl.TEXTURE1);
-    }
+    activateTextureUnit();
     gl.bindTexture(gl.TEXTURE_2D, this.m_textureHandle);
   };
 
