@@ -40,10 +40,11 @@ vgl.texture = function() {
 
   this.m_image = null;
 
-  var m_setupTimestamp = vgl.timestamp();
+  var m_setupTimestamp = vgl.timestamp(),
+      m_that = this;
 
   function activateTextureUnit() {
-    switch (this.m_textureUnit) {
+    switch (m_that.m_textureUnit) {
       case 0:
         gl.activeTexture(gl.TEXTURE0);
         break;
