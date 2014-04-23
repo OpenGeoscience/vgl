@@ -97,7 +97,8 @@ vgl.trackballInteractorStyle = function() {
       m_that.viewer().render();
     }
     if (m_rightMouseBtnDown) {
-      m_zTrans = (m_currPos.y - m_lastPos.y) / height;
+      /// 2.0 is the speed up factor
+      m_zTrans = 2.0 * (m_currPos.y - m_lastPos.y) / height;
 
       // Calculate zoom scale here
       if (m_zTrans > 0) {
