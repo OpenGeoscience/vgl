@@ -51,6 +51,10 @@ vgl.pvwInteractorStyle = function() {
         y: 0
       };
 
+  function render() {
+    m_renderer.resetCameraClippingRange();
+    m_that.viewer().render();
+  }
 
   /////////////////////////////////////////////////////////////////////////////
   /**
@@ -72,7 +76,6 @@ vgl.pvwInteractorStyle = function() {
           x: 0,
           y: 0
         };
-
 
     // Get secondary cameras
     rens = m_that.viewer().renderWindow().renderers();
@@ -116,8 +119,7 @@ vgl.pvwInteractorStyle = function() {
 
     if (m_middleMouseButtonDown) {
       m_camera.pan(-m_dx, -m_dy, -m_dz);
-      m_renderer.resetCameraClippingRange();
-      m_that.viewer().render();
+      render();
     }
     if (m_leftMouseButtonDown) {
       deltaxy = [(m_mouseLastPos.x - m_currentMousePos.x),
@@ -133,8 +135,7 @@ vgl.pvwInteractorStyle = function() {
       for (i = 0; i < rens.length; ++i) {
         rens[i].resetCameraClippingRange();
       }
-      m_renderer.resetCameraClippingRange();
-      m_that.viewer().render();
+      render();
     }
     if (m_rightMouseButtonDown) {
       m_zTrans = (m_currentMousePos.y - m_mouseLastPos.y) / m_height;
@@ -145,8 +146,7 @@ vgl.pvwInteractorStyle = function() {
       } else {
         m_camera.zoom(1 + Math.abs(m_zTrans));
       }
-      m_renderer.resetCameraClippingRange();
-      m_that.viewer().render();
+      render();
     }
     m_mouseLastPos.x = m_currentMousePos.x;
     m_mouseLastPos.y = m_currentMousePos.y;
