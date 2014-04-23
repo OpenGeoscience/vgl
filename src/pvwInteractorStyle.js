@@ -51,6 +51,10 @@ vgl.pvwInteractorStyle = function() {
         y: 0
       };
 
+  function render() {
+    m_renderer.resetCameraClippingRange();
+    m_that.viewer().render();
+  }
 
   /////////////////////////////////////////////////////////////////////////////
   /**
@@ -61,19 +65,17 @@ vgl.pvwInteractorStyle = function() {
    */
   /////////////////////////////////////////////////////////////////////////////
   this.handleMouseMove = function(event) {
-    var canvas = m_that.viewer().canvas(),
-        rens = [], i = null, secCameras = [], deltaxy = null;
-    m_width = m_that.viewer().renderWindow().windowSize()[0];
-    m_height = m_that.viewer().renderWindow().windowSize()[1];
-    m_renderer = m_that.viewer().renderWindow().activeRenderer();
-    m_camera = m_renderer.camera();
-    m_outsideCanvas = false;
-    m_coords = canvas.relMouseCoords(event);
-    m_currentMousePos = {
-      x: 0,
-      y: 0
-    };
-
+    var rens = [], i = null, secCameras = [], deltaxy = null;
+        m_width = m_that.viewer().renderWindow().windowSize()[0];
+        m_height = m_that.viewer().renderWindow().windowSize()[1];
+        m_renderer = m_that.viewer().renderWindow().activeRenderer();
+        m_camera = m_renderer.camera();
+        m_outsideCanvas = false;
+        m_coords = m_that.viewer().relMouseCoords(event);
+        m_currentMousePos = {
+          x: 0,
+          y: 0
+        };
 
     // Get secondary cameras
     rens = m_that.viewer().renderWindow().renderers();
@@ -117,7 +119,7 @@ vgl.pvwInteractorStyle = function() {
 
     if (m_middleMouseButtonDown) {
       m_camera.pan(-m_dx, -m_dy, -m_dz);
-      $(m_that).trigger(vgl.event.middleButtonPressEvent);
+      render();
     }
     if (m_leftMouseButtonDown) {
       deltaxy = [(m_mouseLastPos.x - m_currentMousePos.x),
@@ -129,17 +131,15 @@ vgl.pvwInteractorStyle = function() {
         secCameras[i].rotate(deltaxy[0], deltaxy[1]);
       }
 
-      m_renderer.resetCameraClippingRange();
-
       // Apply rotation to all other cameras
       for (i = 0; i < rens.length; ++i) {
         rens[i].resetCameraClippingRange();
       }
-
-      $(m_that).trigger(vgl.event.leftButtonPressEvent);
+      render();
     }
     if (m_rightMouseButtonDown) {
-      m_zTrans = (m_currentMousePos.y - m_mouseLastPos.y) / m_height;
+      /// 2.0 is the speed up factor.
+      m_zTrans = 2.0 * (m_currentMousePos.y - m_mouseLastPos.y) / m_height;
 
       // Calculate zoom scale here
       if (m_zTrans > 0) {
@@ -147,8 +147,7 @@ vgl.pvwInteractorStyle = function() {
       } else {
         m_camera.zoom(1 + Math.abs(m_zTrans));
       }
-      m_renderer.resetCameraClippingRange();
-      $(m_that).trigger(vgl.event.rightButtonPressEvent);
+      render();
     }
     m_mouseLastPos.x = m_currentMousePos.x;
     m_mouseLastPos.y = m_currentMousePos.y;
@@ -164,7 +163,6 @@ vgl.pvwInteractorStyle = function() {
    */
   /////////////////////////////////////////////////////////////////////////////
   this.handleMouseDown = function(event) {
-    var canvas = m_that.viewer().canvas();
     if (event.button === 0) {
       m_leftMouseButtonDown = true;
     }
@@ -174,7 +172,7 @@ vgl.pvwInteractorStyle = function() {
     if (event.button === 2) {
       m_rightMouseButtonDown = true;
     }
-    m_coords = canvas.relMouseCoords(event);
+    m_coords = m_that.viewer().relMouseCoords(event);
     if (m_coords.x < 0) {
       m_mouseLastPos.x = 0;
     } else {

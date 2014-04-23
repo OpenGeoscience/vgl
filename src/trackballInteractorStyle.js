@@ -97,7 +97,8 @@ vgl.trackballInteractorStyle = function() {
       m_that.viewer().render();
     }
     if (m_rightMouseBtnDown) {
-      m_zTrans = (m_currPos.y - m_lastPos.y) / height;
+      /// 2.0 is the speed up factor
+      m_zTrans = 2.0 * (m_currPos.y - m_lastPos.y) / height;
 
       // Calculate zoom scale here
       if (m_zTrans > 0) {
@@ -122,7 +123,7 @@ vgl.trackballInteractorStyle = function() {
    */
   /////////////////////////////////////////////////////////////////////////////
   this.handleMouseDown = function(event) {
-    var canvas = m_that.viewer().canvas(), coords;
+    var coords;
 
     if (event.button === 0) {
       m_leftMouseBtnDown = true;
@@ -133,7 +134,7 @@ vgl.trackballInteractorStyle = function() {
     if (event.button === 2) {
       m_rightMouseBtnDown = true;
     }
-    coords = canvas.relMouseCoords(event);
+    coords = m_that.view.relMouseCoords(event);
     if (coords.x < 0) {
       m_lastPos.x = 0;
     } else {

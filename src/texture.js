@@ -42,6 +42,62 @@ vgl.texture = function() {
 
   var m_setupTimestamp = vgl.timestamp();
 
+  function activateTextureUnit() {
+    switch (this.m_textureUnit) {
+      case 0:
+        gl.activeTexture(gl.TEXTURE0);
+        break;
+      case 1:
+        gl.activeTexture(gl.TEXTURE1);
+        break;
+      case 2:
+        gl.activeTexture(gl.TEXTURE2);
+        break;
+      case 3:
+        gl.activeTexture(gl.TEXTURE3);
+        break;
+      case 4:
+        gl.activeTexture(gl.TEXTURE4);
+        break;
+      case 5:
+        gl.activeTexture(gl.TEXTURE5);
+        break;
+      case 6:
+        gl.activeTexture(gl.TEXTURE6);
+        break;
+      case 7:
+        gl.activeTexture(gl.TEXTURE7);
+        break;
+      case 8:
+        gl.activeTexture(gl.TEXTURE8);
+        break;
+      case 9:
+        gl.activeTexture(gl.TEXTURE9);
+        break;
+      case 10:
+        gl.activeTexture(gl.TEXTURE10);
+        break;
+      case 11:
+        gl.activeTexture(gl.TEXTURE11);
+        break;
+      case 12:
+        gl.activeTexture(gl.TEXTURE12);
+        break;
+      case 13:
+        gl.activeTexture(gl.TEXTURE13);
+        break;
+      case 14:
+        gl.activeTexture(gl.TEXTURE14);
+        break;
+      case 15:
+        gl.activeTexture(gl.TEXTURE15);
+        break;
+      default:
+        throw "[error] Texture unit "  + this.m_textureUnit +
+              " is not supported";
+    }
+  }
+
   /////////////////////////////////////////////////////////////////////////////
   /**
    * Create texture, update parameters, and bind data
@@ -50,6 +106,8 @@ vgl.texture = function() {
    */
   /////////////////////////////////////////////////////////////////////////////
   this.setup = function(renderState) {
+    activateTextureUnit();
+
     gl.deleteTexture(this.m_textureHandle);
     this.m_textureHandle = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D, this.m_textureHandle);
@@ -94,7 +152,7 @@ vgl.texture = function() {
       this.setup(renderState);
     }
 
-    gl.activeTexture(gl.TEXTURE0);
+    activateTextureUnit();
     gl.bindTexture(gl.TEXTURE_2D, this.m_textureHandle);
   };
 
@@ -398,39 +456,39 @@ vgl.lookupTable = function() {
       m_range = [0,0];
 
   this.m_colorTable = //paraview bwr colortable
-	  [0.07514311,0.468049805,1,1,
-	   0.247872569,0.498782363,1,1,
-	   0.339526309,0.528909511,1,1,
-	   0.409505078,0.558608486,1,1,
-	   0.468487184,0.588057293,1,1,
-	   0.520796675,0.617435078,1,1,
-	   0.568724526,0.646924167,1,1,
-	   0.613686735,0.676713218,1,1,
-	   0.656658579,0.707001303,1,1,
-	   0.698372844,0.738002964,1,1,
-	   0.739424025,0.769954435,1,1,
-	   0.780330104,0.803121429,1,1,
-	   0.821573924,0.837809045,1,1,
-	   0.863634967,0.874374691,1,1,
-	   0.907017747,0.913245283,1,1,
-	   0.936129275,0.938743558,0.983038586,1,
-	   0.943467973,0.943498599,0.943398095,1,
-	   0.990146732,0.928791426,0.917447482,1,
-	   1,0.88332677,0.861943246,1,
-	   1,0.833985467,0.803839606,1,
-	   1,0.788626485,0.750707739,1,
-	   1,0.746206642,0.701389973,1,
-	   1,0.70590052,0.654994046,1,
-	   1,0.667019783,0.610806959,1,
-	   1,0.6289553,0.568237474,1,
-	   1,0.591130233,0.526775617,1,
-	   1,0.552955184,0.485962266,1,
-	   1,0.513776083,0.445364274,1,
-	   1,0.472800903,0.404551679,1,
-	   1,0.428977855,0.363073592,1,
-	   1,0.380759558,0.320428137,1,
-	   0.961891484,0.313155629,0.265499262,1,
-	   0.916482116,0.236630659,0.209939162,1].map(
+    [0.07514311,0.468049805,1,1,
+     0.247872569,0.498782363,1,1,
+     0.339526309,0.528909511,1,1,
+     0.409505078,0.558608486,1,1,
+     0.468487184,0.588057293,1,1,
+     0.520796675,0.617435078,1,1,
+     0.568724526,0.646924167,1,1,
+     0.613686735,0.676713218,1,1,
+     0.656658579,0.707001303,1,1,
+     0.698372844,0.738002964,1,1,
+     0.739424025,0.769954435,1,1,
+     0.780330104,0.803121429,1,1,
+     0.821573924,0.837809045,1,1,
+     0.863634967,0.874374691,1,1,
+     0.907017747,0.913245283,1,1,
+     0.936129275,0.938743558,0.983038586,1,
+     0.943467973,0.943498599,0.943398095,1,
+     0.990146732,0.928791426,0.917447482,1,
+     1,0.88332677,0.861943246,1,
+     1,0.833985467,0.803839606,1,
+     1,0.788626485,0.750707739,1,
+     1,0.746206642,0.701389973,1,
+     1,0.70590052,0.654994046,1,
+     1,0.667019783,0.610806959,1,
+     1,0.6289553,0.568237474,1,
+     1,0.591130233,0.526775617,1,
+     1,0.552955184,0.485962266,1,
+     1,0.513776083,0.445364274,1,
+     1,0.472800903,0.404551679,1,
+     1,0.428977855,0.363073592,1,
+     1,0.380759558,0.320428137,1,
+     0.961891484,0.313155629,0.265499262,1,
+     0.916482116,0.236630659,0.209939162,1].map(
              function(x) {return x*255;});
 
   /////////////////////////////////////////////////////////////////////////////
@@ -441,6 +499,12 @@ vgl.lookupTable = function() {
    */
   /////////////////////////////////////////////////////////////////////////////
   this.setup = function(renderState) {
+    if (this.textureUnit() === 0) {
+      gl.activeTexture(gl.TEXTURE0);
+    } else if (this.textureUnit() === 1) {
+      gl.activeTexture(gl.TEXTURE1);
+    }
+
     gl.deleteTexture(this.m_textureHandle);
     this.m_textureHandle = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D, this.m_textureHandle);
