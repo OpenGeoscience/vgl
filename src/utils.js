@@ -394,11 +394,11 @@ vgl.utils.createPointSpritesVertexShader = function(context) {
   'use strict';
   var vertexShaderSource = [
         'attribute vec3 vertexPosition;',
-        'attribute vec3 vertexColor = vec3(1.0);',
+        'attribute vec3 vertexColor;',
         'uniform mediump float pointSize;',
         'uniform mat4 modelViewMatrix;',
         'uniform mat4 projectionMatrix;',
-        'uniform float height = 0.0;',
+        'uniform float height;',
         'varying mediump vec3 iVertexColor;',
         'varying highp float iVertexScalar;',
         'void main(void)',
@@ -431,12 +431,19 @@ vgl.utils.createPointSpritesFragmentShader = function(context) {
         'uniform highp float lutMin;',
         'uniform highp float lutMax;',
         'uniform sampler2D scalarsToColors;',
-        'uniform mediump float opacity;',
+        'uniform int useScalarsToColors;',
+        'uniform int useVertexColors;',
         'uniform mediump float vertexColorWeight;',
         'void main(void) {',
         'highp float texOpacity = texture2D(opacityLookup, gl_PointCoord).w;',
-        'gl_FragColor = vec4(texture2D(scalarsToColors, vec2((iVertexScalar - lutMin)/(lutMax - lutMin), 0.0)).xyz, 0.5);',
-        '}' ].join('\n'),
+        'if (useScalarsToColors == 1) {',
+        '  gl_FragColor = vec4(texture2D(scalarsToColors, vec2((iVertexScalar - lutMin)/(lutMax - lutMin), 0.0)).xyz, texOpacity);',
+        '} else if (useVertexColors == 1) {',
+        '  gl_FragColor = vec4(iVertexColor, texOpacity);',
+        '} else {',
+        '  gl_FragColor = vec4(texture2D(opacityLookup, gl_PointCoord).xyz, texOpacity);',
+        '}}'
+    ].join('\n'),
     shader = new vgl.shader(gl.FRAGMENT_SHADER);
 
   shader.setShaderSource(fragmentShaderSource);
@@ -742,7 +749,7 @@ vgl.utils.createSolidColorMaterial = function(color) {
 //////////////////////////////////////////////////////////////////////////////
 vgl.utils.createPointSpritesMaterial = function(image, lut) {
   'use strict';
-  var scalarRange = lut.range(),
+  var scalarRange = lut === undefined ? [0, 1] : lut.range(),
       mat = new vgl.material(),
       blend = new vgl.blend(),
       prog = new vgl.shaderProgram(),
@@ -750,8 +757,7 @@ vgl.utils.createPointSpritesMaterial = function(image, lut) {
       fragmentShader = vgl.utils.createPointSpritesFragmentShader(gl),
       posVertAttr = new vgl.vertexAttribute("vertexPosition"),
       colorVertAttr = new vgl.vertexAttribute("vertexColor"),
-      pointsizeUniform = new vgl.floatUniform("pointSize", 200.0),
-      opacityUniform = new vgl.floatUniform("opacity", 1.0),
+      pointsizeUniform = new vgl.floatUniform("pointSize", 10.0),
       heightUniform = new vgl.floatUniform("height", 0.0),
       vertexColorWeightUniform =
         new vgl.floatUniform("vertexColorWeight", 0.0),
@@ -761,20 +767,25 @@ vgl.utils.createPointSpritesMaterial = function(image, lut) {
       projectionUniform = new vgl.projectionUniform("projectionMatrix"),
       samplerUniform = new vgl.uniform(gl.INT, "opacityLookup"),
       scalarsToColors = new vgl.uniform(gl.INT, "scalarsToColors"),
+      useScalarsToColors = new vgl.uniform(gl.INT, "useScalarsToColors"),
+      useVertexColors = new vgl.uniform(gl.INT, "useVertexColors"),
       texture = new vgl.texture();
 
   samplerUniform.set(0);
   scalarsToColors.set(1);
+  useScalarsToColors.set(0);
+  useVertexColors.set(0);
 
   prog.addVertexAttribute(posVertAttr, vgl.vertexAttributeKeys.Position);
   prog.addVertexAttribute(colorVertAttr, vgl.vertexAttributeKeys.Color);
   prog.addUniform(pointsizeUniform);
   prog.addUniform(heightUniform);
-  prog.addUniform(opacityUniform);
   prog.addUniform(vertexColorWeightUniform);
   prog.addUniform(modelViewUniform);
   prog.addUniform(projectionUniform);
   prog.addUniform(samplerUniform);
+  prog.addUniform(useVertexColors);
+  prog.addUniform(useScalarsToColors);
   prog.addShader(fragmentShader);
   prog.addShader(vertexShader);
   mat.addAttribute(prog);
@@ -782,6 +793,7 @@ vgl.utils.createPointSpritesMaterial = function(image, lut) {
 
   if (lut) {
     prog.addUniform(scalarsToColors);
+    useScalarsToColors.set(1);
     prog.addUniform(lutMinUniform);
     prog.addUniform(lutMaxUniform);
     lut.setTextureUnit(1);
