@@ -108,7 +108,6 @@ vgl.uniform = function(type, name) {
   this.set = function(value) {
     var i = 0;
     if (m_dataArray.length === 16) {
-      console.log('got mat4');
       for (i = 0; i < 16; ++i) {
         m_dataArray[i] = value[i];
       }
@@ -159,7 +158,6 @@ vgl.uniform = function(type, name) {
         gl.uniform1fv(location, m_dataArray);
         break;
       case gl.FLOAT_VEC2:
-        console.log(m_dataArray);
         gl.uniform2fv(location, m_dataArray);
         break;
       case gl.FLOAT_VEC3:
