@@ -60,8 +60,10 @@ vgl.uniform = function(type, name) {
 
   var m_type = type,
       m_name = name,
-      m_dataArray = [ this.getTypeNumberOfComponents(m_type) ],
+      m_dataArray = [],
       m_numberOfElements = 1;
+
+  m_dataArray.length = this.getTypeNumberOfComponents(m_type);
 
   /////////////////////////////////////////////////////////////////////////////
   /**
@@ -105,27 +107,28 @@ vgl.uniform = function(type, name) {
   /////////////////////////////////////////////////////////////////////////////
   this.set = function(value) {
     var i = 0;
-    if (value instanceof mat4.constructor) {
+    if (m_dataArray.length === 16) {
+      console.log('got mat4');
       for (i = 0; i < 16; ++i) {
         m_dataArray[i] = value[i];
       }
     }
-    else if (value instanceof mat3.constructor) {
+    else if (m_dataArray.length === 9) {
       for (i = 0; i < 9; ++i) {
         m_dataArray[i] = value[i];
       }
     }
-    else if (value instanceof vec4.constructor) {
+    else if (m_dataArray.length === 4) {
       for (i = 0; i < 4; ++i) {
         m_dataArray[i] = value[i];
       }
     }
-    else if (value instanceof vec3.constructor) {
+    else if (m_dataArray.length === 3) {
       for (i = 0; i < 3; ++i) {
         m_dataArray[i] = value[i];
       }
     }
-    else if (value instanceof vec2.constructor) {
+    else if (m_dataArray.length === 2) {
       for (i = 0; i < 2; ++i) {
         m_dataArray[i] = value[i];
       }
@@ -156,6 +159,7 @@ vgl.uniform = function(type, name) {
         gl.uniform1fv(location, m_dataArray);
         break;
       case gl.FLOAT_VEC2:
+        console.log(m_dataArray);
         gl.uniform2fv(location, m_dataArray);
         break;
       case gl.FLOAT_VEC3:

@@ -395,7 +395,7 @@ vgl.utils.createPointSpritesVertexShader = function(context) {
   var vertexShaderSource = [
         'attribute vec3 vertexPosition;',
         'attribute vec3 vertexColor;',
-        'uniform mediump float pointSize;',
+        'uniform mediump vec2 pointSize;',
         'uniform mat4 modelViewMatrix;',
         'uniform mat4 projectionMatrix;',
         'uniform float height;',
@@ -403,7 +403,10 @@ vgl.utils.createPointSpritesVertexShader = function(context) {
         'varying highp float iVertexScalar;',
         'void main(void)',
         '{',
-        'gl_PointSize = pointSize;',
+        'mediump float realPointSize = pointSize.y;',
+        'if (pointSize.x > pointSize.y) {',
+        '  realPointSize = pointSize.x;}',
+        'gl_PointSize = realPointSize ;',
         'iVertexScalar = vertexPosition.z;',
         'gl_Position = projectionMatrix * modelViewMatrix * vec4(vertexPosition.xy, height, 1.0);',
         ' iVertexColor = vertexColor;', '}' ].join('\n'),
@@ -433,15 +436,22 @@ vgl.utils.createPointSpritesFragmentShader = function(context) {
         'uniform sampler2D scalarsToColors;',
         'uniform int useScalarsToColors;',
         'uniform int useVertexColors;',
+        'uniform mediump vec2 pointSize;',
         'uniform mediump float vertexColorWeight;',
         'void main(void) {',
-        'highp float texOpacity = texture2D(opacityLookup, gl_PointCoord).w;',
+        'mediump vec2 realTexCoord;',
+        'if (pointSize.x > pointSize.y) {',
+        '  realTexCoord = vec2(1.0, pointSize.y/pointSize.x) * gl_PointCoord;',
+        '} else {',
+        '  realTexCoord = vec2(pointSize.x/pointSize.y, 1.0) * gl_PointCoord;',
+        '}',
+        'highp float texOpacity = texture2D(opacityLookup, realTexCoord).w;',
         'if (useScalarsToColors == 1) {',
         '  gl_FragColor = vec4(texture2D(scalarsToColors, vec2((iVertexScalar - lutMin)/(lutMax - lutMin), 0.0)).xyz, texOpacity);',
         '} else if (useVertexColors == 1) {',
         '  gl_FragColor = vec4(iVertexColor, texOpacity);',
         '} else {',
-        '  gl_FragColor = vec4(texture2D(opacityLookup, gl_PointCoord).xyz, texOpacity);',
+        '  gl_FragColor = vec4(texture2D(opacityLookup, realTexCoord).xyz, texOpacity);',
         '}}'
     ].join('\n'),
     shader = new vgl.shader(gl.FRAGMENT_SHADER);
@@ -757,7 +767,6 @@ vgl.utils.createPointSpritesMaterial = function(image, lut) {
       fragmentShader = vgl.utils.createPointSpritesFragmentShader(gl),
       posVertAttr = new vgl.vertexAttribute("vertexPosition"),
       colorVertAttr = new vgl.vertexAttribute("vertexColor"),
-      pointsizeUniform = new vgl.floatUniform("pointSize", 10.0),
       heightUniform = new vgl.floatUniform("height", 0.0),
       vertexColorWeightUniform =
         new vgl.floatUniform("vertexColorWeight", 0.0),
@@ -769,16 +778,17 @@ vgl.utils.createPointSpritesMaterial = function(image, lut) {
       scalarsToColors = new vgl.uniform(gl.INT, "scalarsToColors"),
       useScalarsToColors = new vgl.uniform(gl.INT, "useScalarsToColors"),
       useVertexColors = new vgl.uniform(gl.INT, "useVertexColors"),
+      pointSize = new vgl.uniform(gl.FLOAT_VEC2, "pointSize"),
       texture = new vgl.texture();
 
   samplerUniform.set(0);
   scalarsToColors.set(1);
   useScalarsToColors.set(0);
   useVertexColors.set(0);
+  pointSize.set([1.0, 1.0]);
 
   prog.addVertexAttribute(posVertAttr, vgl.vertexAttributeKeys.Position);
   prog.addVertexAttribute(colorVertAttr, vgl.vertexAttributeKeys.Color);
-  prog.addUniform(pointsizeUniform);
   prog.addUniform(heightUniform);
   prog.addUniform(vertexColorWeightUniform);
   prog.addUniform(modelViewUniform);
@@ -786,6 +796,7 @@ vgl.utils.createPointSpritesMaterial = function(image, lut) {
   prog.addUniform(samplerUniform);
   prog.addUniform(useVertexColors);
   prog.addUniform(useScalarsToColors);
+  prog.addUniform(pointSize);
   prog.addShader(fragmentShader);
   prog.addShader(vertexShader);
   mat.addAttribute(prog);
