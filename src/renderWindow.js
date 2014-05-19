@@ -136,6 +136,7 @@ vgl.renderWindow = function(canvas) {
       if (m_activeRender === null) {
         m_activeRender = ren;
       }
+      ren.camera().setClearMask(vgl.GL.DepthBufferBit);
       this.modified();
       return true;
     }
@@ -314,13 +315,15 @@ vgl.renderWindow = function(canvas) {
    * @returns {vec4}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.displayToWorld = function(x, y, focusDisplayPoint) {
-    var camera = m_activeRender.camera();
+  this.displayToWorld = function(x, y, focusDisplayPoint, ren) {
+    ren = ren === undefined ? ren = m_activeRender : ren;
+
+    var camera = ren.camera();
     if(!focusDisplayPoint) {
-      focusDisplayPoint = m_activeRender.focusDisplayPoint();
+      focusDisplayPoint = ren.focusDisplayPoint();
     }
 
-    return m_activeRender.displayToWorld(
+    return ren.displayToWorld(
       vec4.fromValues(x, y, focusDisplayPoint[2], 1.0), camera.viewMatrix(),
       camera.projectionMatrix(), m_width, m_height);
   };
