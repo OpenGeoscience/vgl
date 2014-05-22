@@ -95,17 +95,21 @@ endmacro(list_contains)
 #//
 #/////////////////////////////////////////////////////////////////////////////
 
-# Create deploy directory if it does not exists
+# Create deploy directory if it does not exist
 if(NOT DEFINED VGL_DEPLOY_LIB_DIR)
- set(VGL_DEPLOY_LIB_DIR "${VGL_DEPLOY_DIR}/web/lib")
+  set(VGL_DEPLOY_LIB_DIR "${VGL_DEPLOY_DIR}/web/lib")
   add_custom_command(OUTPUT "${VGL_DEPLOY_LIB_DIR}"
     COMMAND ${CMAKE_COMMAND} -E make_directory "${VGL_DEPLOY_LIB_DIR}"
   )
-  add_custom_target(vgl_pre_deploy ALL
-    DEPENDS
-      ${VGL_DEPLOY_LIB_DIR}
+else()
+  add_custom_command(OUTPUT "${VGL_DEPLOY_LIB_DIR}"
+    COMMAND ${CMAKE_COMMAND} -E touch "${VGL_DEPLOY_LIB_DIR}"
   )
 endif()
+add_custom_target(vgl_pre_deploy ALL
+  DEPENDS
+  ${VGL_DEPLOY_LIB_DIR}
+)
 
 set(_min_js_file ${VGL_DEPLOY_LIB_DIR}/vgl.min.js)
 set(_js_lint_files)
