@@ -156,8 +156,8 @@ foreach(m ${paths})
     )
 endforeach()
 
-# Testing
-if (BUILD_TESTING)
+# Testing --- disabled when compiling with geojs
+if (BUILD_TESTING AND NOT GEOJS_VERSION)
   include(CTest)
   enable_testing()
 
