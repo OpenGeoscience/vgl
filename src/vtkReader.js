@@ -720,20 +720,13 @@ vgl.vtkReader = function() {
 
     renderer = m_vtkRenderedList[layer];
     if (renderer === null || typeof renderer === 'undefined') {
-      if (layer === 0) {
-        console.log(
-          "Error: layer 0 redererer is active render but is missing from list");
-        renderer = m_viewer.renderWindow().activeRenderer();
-        m_vtkRenderedList[layer] = renderer;
-        return renderer;
-      }
-
       renderer = new vgl.renderer();
       m_viewer.renderWindow().addRenderer(renderer);
 
-      //We're assuming this is not layer 0.
-      //That renderer is created by default.
-      renderer.camera().setClearMask(vgl.GL.DepthBufferBit);
+      if (layer !== 0) {
+          renderer.camera().setClearMask(vgl.GL.DepthBufferBit);
+      }
+
       m_vtkRenderedList[layer] = renderer;
     }
 
