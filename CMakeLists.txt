@@ -134,8 +134,7 @@ if(MINIFY)
 
   add_custom_command(
     OUTPUT ${_min_js_file}
-    COMMAND ${UglifyJS_EXECUTABLE} -o ${_min_js_file} ${_js_file}
-            ${MANGLE_FLAG}
+    COMMAND ${UglifyJS_EXECUTABLE} ${_js_file} -c ${MANGLE_FLAG} -o ${_min_js_file}
     DEPENDS ${VGL_DEPLOY_LIB_DIR} ${_js_file}
   )
   add_custom_target(${PROJECT_NAME} ALL DEPENDS ${_min_js_file})
