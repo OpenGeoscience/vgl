@@ -4,28 +4,17 @@ project(vgl)
 
 set(VGL_CMAKE_DIR ${${PROJECT_NAME}_SOURCE_DIR}/cmake)
 
-set(MINIFY ON CACHE BOOL "Minify the JavaScript files prior to concatenating.")
-set(MANGLE ON CACHE BOOL "When minifying, also mangle non-public symbol names.")
+set(MINIFY OFF CACHE BOOL "Minify the JavaScript files prior to concatenating.")
+set(MANGLE OFF CACHE BOOL "When minifying, also mangle non-public symbol names.")
 set(VGL_DATA_DIR "" CACHE PATH  "Path to directory containing data for testing.")
 set(VGL_BASELINE_DIR "" CACHE PATH "Path to directory containing baseline images for testing.")
 set(BUILD_TESTING OFF CACHE BOOL "Enable testing")
 set(BUILD_DOCUMENTATION OFF CACHE BOOL "Enable building documentation")
 
-if(NOT ${MINIFY})
-    set(MINIFY_FLAG "-b")
-endif()
-
-if(${MINIFY} AND ${MANGLE})
-    set(MANGLE_FLAG "-m")
-endif()
-
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 # Find JSLint.
 find_package(JSLint)
-
-# Find UglifyJS.
-find_package(UglifyJS)
 
 set(_source_files
   init.js
@@ -112,6 +101,7 @@ add_custom_target(vgl_pre_deploy ALL
 )
 
 set(_min_js_file ${VGL_DEPLOY_LIB_DIR}/vgl.min.js)
+set(_js_file ${VGL_DEPLOY_LIB_DIR}/vgl.js)
 set(_js_lint_files)
 set(_js_uglify_files)
 
@@ -123,27 +113,35 @@ foreach(d ${_source_files})
   set(_js_uglify_files ${_js_uglify_files} ${CMAKE_CURRENT_SOURCE_DIR}/src/${d})
 endforeach()
 
-if (UglifyJS_EXECUTABLE)
+# Use custom command to call CMake script to cat files together
+add_custom_command(
+  OUTPUT ${_js_file}
+  COMMAND ${CMAKE_COMMAND} -DCAT_OUTPUT_FILE=${_js_file}
+          # Note the quotes so we get the ; included
+          "-DCAT_FILES=${_js_uglify_files}"
+          -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/cat.cmake
+  DEPENDS ${VGL_DEPLOY_LIB_DIR} ${_js_uglify_files}
+  VERBATIM
+)
+
+if(MINIFY)
+  # Find UglifyJS.
+  find_package(UglifyJS)
+
+  if(MANGLE)
+      set(MANGLE_FLAG "-m")
+  endif()
+
   add_custom_command(
     OUTPUT ${_min_js_file}
-    COMMAND ${UglifyJS_EXECUTABLE} -o ${_min_js_file} ${_js_uglify_files}
-            ${MINIFY_FLAG} ${MANGLE_FLAG}
-    DEPENDS ${VGL_DEPLOY_LIB_DIR} ${_js_uglify_files}
+    COMMAND ${UglifyJS_EXECUTABLE} ${_js_file} -c ${MANGLE_FLAG} -o ${_min_js_file}
+    DEPENDS ${VGL_DEPLOY_LIB_DIR} ${_js_file}
   )
+  add_custom_target(${PROJECT_NAME} ALL DEPENDS ${_min_js_file})
 else()
-  # Use custom command to call CMake script to cat files together
-  add_custom_command(
-    OUTPUT ${_min_js_file}
-    COMMAND ${CMAKE_COMMAND} -DCAT_OUTPUT_FILE=${_min_js_file}
-            # Note the quotes so we get the ; included
-            "-DCAT_FILES=${_js_uglify_files}"
-            -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/cat.cmake
-    DEPENDS ${VGL_DEPLOY_LIB_DIR} ${_js_uglify_files}
-    VERBATIM
-  )
+  add_custom_target(${PROJECT_NAME} ALL DEPENDS ${_js_file})
 endif()
 
-add_custom_target(${PROJECT_NAME} ALL DEPENDS ${_min_js_file})
 add_dependencies(${PROJECT_NAME} vgl_pre_deploy)
 
 # Copy directories / files to the deployment directory
