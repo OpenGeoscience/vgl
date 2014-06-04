@@ -136,7 +136,9 @@ vgl.renderWindow = function(canvas) {
       if (m_activeRender === null) {
         m_activeRender = ren;
       }
-      ren.camera().setClearMask(vgl.GL.DepthBufferBit);
+      if (ren.layer() !== 0) {
+        ren.camera().setClearMask(vgl.GL.DepthBufferBit);
+      }
       this.modified();
       return true;
     }

@@ -557,6 +557,7 @@ vgl.vtkReader = function() {
       bgc = sceneRenderer.Background1;
       renderer.setBackgroundColor(bgc[0], bgc[1], bgc[2], 1);
     }
+    renderer.setLayer(layer);
   };
 
   ////////////////////////////////////////////////////////////////////////////

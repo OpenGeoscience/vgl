@@ -50,7 +50,8 @@ vgl.renderer = function() {
       m_width = 0,
       m_height = 0,
       m_resizable = true,
-      m_resetScene = true;
+      m_resetScene = true,
+      m_layer = 0;
 
   m_camera.addChild(m_sceneRoot);
 
@@ -71,6 +72,15 @@ vgl.renderer = function() {
   this.height = function() {
     return m_height;
   };
+
+  this.layer = function () {
+     return m_layer;
+  }
+
+  this.setLayer = function(layerNo) {
+    m_layer = layerNo;
+    this.modified();
+  }
 
   ////////////////////////////////////////////////////////////////////////////
   /**
