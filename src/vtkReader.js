@@ -36,7 +36,7 @@ vgl.vtkReader = function() {
   m_reverseBase64Chars = [],
   m_vtkObjectList = {},
   m_vtkRenderedList = {},
-  m_vtkObjHashList = [],
+  m_vtkObjHashList = {},
   m_vtkObjectCount = 0,
   m_vtkScene = null,
   m_node = null,
@@ -657,7 +657,9 @@ vgl.vtkReader = function() {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.addVtkObjectData = function(vtkObject) {
-    var layerList, i, md5;
+    var layerList, i, key;
+
+    key = JSON.stringify({part: vtkObject.part, sceneMD5: vtkObject.sceneMD5});
 
     if ( m_vtkObjectList.hasOwnProperty(vtkObject.layer) === false ) {
       m_vtkObjectList[vtkObject.layer] = [];
@@ -668,16 +670,17 @@ vgl.vtkReader = function() {
       console.log("Layer list undefined for layer: " + vtkObject.layer);
     }
 
-
-    for (i = 0; i < m_vtkObjHashList.length; ++i) {
-      md5 = m_vtkObjHashList[i];
-      if (vtkObject.md5 === md5) {
-        return;
-      }
+    if (vtkObject.sceneMD5 in m_vtkObjHashList) {
+        if ($.inArray(vtkObject.part, m_vtkObjHashList[vtkObject.sceneMD5]) > -1) {
+            return
+        }
+    }
+    else {
+        m_vtkObjHashList[vtkObject.sceneMD5] = []
     }
 
     // Add the md5 for this object so we don't add it again.
-    m_vtkObjHashList.push(vtkObject.md5);
+    m_vtkObjHashList[vtkObject.sceneMD5].push(vtkObject.part);
     m_vtkObjectList[vtkObject.layer].push(vtkObject);
     m_vtkObjectCount++;
   };
