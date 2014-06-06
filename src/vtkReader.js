@@ -171,10 +171,10 @@ vgl.vtkReader = function() {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.readF3Array = function(numberOfPoints, ss) {
-    var test = new Int8Array(numberOfPoints*4*3),
+    var size = numberOfPoints*4*3, test = new Int8Array(size),
         points = null, i;
 
-    for(i = 0; i < numberOfPoints*4*3; i++) {
+    for(i = 0; i < size; i++) {
       test[i] = ss[m_pos++];
     }
 
