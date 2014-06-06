@@ -577,7 +577,7 @@ vgl.vtkReader = function() {
     tmpList = this.clearVtkObjectData();
     for(layer = m_vtkScene.Renderers.length - 1; layer >= 0; layer--) {
       layerList = tmpList[layer];
-      if (layerList === null || typeof layerList === 'undefined') {
+      if (layer !== 0 && (layerList === null || typeof layerList === 'undefined')) {
         continue;
       }
 
@@ -589,9 +589,11 @@ vgl.vtkReader = function() {
         renderer.setResizable(false);
       }
 
-      for(objIdx = 0; objIdx < layerList.length; objIdx++) {
-        vtkObject = layerList[objIdx];
-        this.parseObject(vtkObject, renderer);
+      if (layerList) {
+          for(objIdx = 0; objIdx < layerList.length; objIdx++) {
+            vtkObject = layerList[objIdx];
+            this.parseObject(vtkObject, renderer);
+          }
       }
     }
 
