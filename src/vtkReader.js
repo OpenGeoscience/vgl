@@ -727,6 +727,7 @@ vgl.vtkReader = function() {
     renderer = m_vtkRenderedList[layer];
     if (renderer === null || typeof renderer === 'undefined') {
       renderer = new vgl.renderer();
+      renderer.setResetScene(false);
       m_viewer.renderWindow().addRenderer(renderer);
 
       if (layer !== 0) {

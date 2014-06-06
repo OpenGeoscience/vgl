@@ -559,6 +559,30 @@ vgl.renderer = function() {
       m_camera.projectionMatrix(), m_width, m_height);
   };
 
+  ////////////////////////////////////////////////////////////////////////////
+  /**
+   * Will the sceen be reset.
+   * @returns {bool}
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.resetScene = function() {
+    return m_resetScene;
+  };
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
+   * If true the scene will be reset, otherwise the scene will not be automatically
+   * reset
+   * @param reset
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.setResetScene = function(reset) {
+     if (m_resetScene !== reset) {
+       m_resetScene = reset;
+       this.modified()
+     }
+  };
+
   return this;
 };
 
