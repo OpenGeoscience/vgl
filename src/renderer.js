@@ -489,10 +489,10 @@ vgl.renderer = function() {
       clipPt[3] = 1.0;
     }
 
-    winX = Math.round((((clipPt[0]) + 1) / 2.0) * width);
+    winX = (((clipPt[0]) + 1) / 2.0) * width;
     // We calculate -point3D.getY() because the screen Y axis is
     // oriented top->down
-    winY = Math.round(((1 - clipPt[1]) / 2.0) * height);
+    winY = ((1 - clipPt[1]) / 2.0) * height;
     winZ = clipPt[2];
     winW = clipPt[3];
 
