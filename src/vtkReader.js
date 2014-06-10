@@ -728,6 +728,7 @@ vgl.vtkReader = function() {
     if (renderer === null || typeof renderer === 'undefined') {
       renderer = new vgl.renderer();
       renderer.setResetScene(false);
+      renderer.setResetClippingRange(false);
       m_viewer.renderWindow().addRenderer(renderer);
 
       if (layer !== 0) {

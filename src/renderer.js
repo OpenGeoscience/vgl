@@ -51,7 +51,8 @@ vgl.renderer = function() {
       m_height = 0,
       m_resizable = true,
       m_resetScene = true,
-      m_layer = 0;
+      m_layer = 0,
+      m_resetClippingRange = true;
 
   m_camera.addChild(m_sceneRoot);
 
@@ -297,6 +298,10 @@ vgl.renderer = function() {
         i = null,
         j = null,
         k = null;
+
+    if (!m_resetClippingRange) {
+        return;
+    }
 
     if (typeof bounds === 'undefined') {
       m_camera.computeBounds();
@@ -561,7 +566,7 @@ vgl.renderer = function() {
 
   ////////////////////////////////////////////////////////////////////////////
   /**
-   * Will the sceen be reset.
+   * Will the scene be reset.
    * @returns {bool}
    */
   ////////////////////////////////////////////////////////////////////////////
@@ -571,14 +576,40 @@ vgl.renderer = function() {
 
   ////////////////////////////////////////////////////////////////////////////
   /**
-   * If true the scene will be reset, otherwise the scene will not be automatically
-   * reset
+   * If true the scene will be reset, otherwise the scene will not be
+   * automatically reset.
+   *
    * @param reset
    */
   ////////////////////////////////////////////////////////////////////////////
   this.setResetScene = function(reset) {
      if (m_resetScene !== reset) {
        m_resetScene = reset;
+       this.modified()
+     }
+  };
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
+   * Will the clipping range be reset
+   * @returns {bool}
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.resetClippingRange = function() {
+    return m_resetClippingRange;
+  };
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
+   * If true the camera clipping range will be reset, otherwise the scene will
+   * not be automatically reset.
+   *
+   * @param reset
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.setResetClippingRange = function(reset) {
+     if (m_resetClippingRange !== reset) {
+       m_resetClippingRange = reset;
        this.modified()
      }
   };
