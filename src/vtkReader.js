@@ -35,6 +35,7 @@ vgl.vtkReader = function() {
      '0','1','2','3','4','5','6','7','8','9','+','/'],
   m_reverseBase64Chars = [],
   m_vtkObjectList = {},
+  m_vglObjects = {},
   m_vtkRenderedList = {},
   m_vtkObjHashList = {},
   m_vtkObjectCount = 0,
@@ -211,7 +212,7 @@ vgl.vtkReader = function() {
    * @param buffer
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.parseObject = function(vtkObject, renderer) {
+  this.parseObject = function(vtkObject) {
     var geom = new vgl.geometryData(),
         mapper = vgl.mapper(),
         ss = [], type = null, data = null, size,
@@ -270,7 +271,8 @@ vgl.vtkReader = function() {
     actor.setMapper(mapper);
     actor.setMaterial(material);
     actor.setMatrix(mat4.transpose(mat4.create(), matrix));
-    renderer.addActor(actor);
+
+    return actor;
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -556,45 +558,29 @@ vgl.vtkReader = function() {
     {
       bgc = sceneRenderer.Background1;
       renderer.setBackgroundColor(bgc[0], bgc[1], bgc[2], 1);
+    } else {
+        renderer.setResizable(false);
     }
     renderer.setLayer(layer);
   };
 
   ////////////////////////////////////////////////////////////////////////////
   /**
-   * updateViewer
+   * initScene
    *
-   * @param node
    * @returns viewer
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.updateViewer = function() {
-    var renderer, objIdx, vtkObject, layer, layerList, tmpList;
+  this.initScene = function() {
+    var renderer, layer;
 
     if ( m_vtkScene === null ) {
       return m_viewer;
     }
-    tmpList = this.clearVtkObjectData();
     for(layer = m_vtkScene.Renderers.length - 1; layer >= 0; layer--) {
-      layerList = tmpList[layer];
-      if (layer !== 0 && (layerList === null || typeof layerList === 'undefined')) {
-        continue;
-      }
 
       renderer = this.getRenderer(layer);
       this.parseSceneMetadata(renderer, layer);
-
-      //We've done an initial resize, so prevent further
-      if (layer > 0) {
-        renderer.setResizable(false);
-      }
-
-      if (layerList) {
-          for(objIdx = 0; objIdx < layerList.length; objIdx++) {
-            vtkObject = layerList[objIdx];
-            this.parseObject(vtkObject, renderer);
-          }
-      }
     }
 
     return m_viewer;
@@ -602,14 +588,14 @@ vgl.vtkReader = function() {
 
   ////////////////////////////////////////////////////////////////////////////
   /**
-   * createViewer - Creates a new viewer object.
+   * createViewer - Creates a viewer object.
    *
    * @param
    *
-   * @returns void
+   * @returns viewer
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.createNewViewer = function(node) {
+  this.createViewer = function(node) {
     var interactorStyle;
 
     if(m_viewer === null) {
@@ -623,6 +609,18 @@ vgl.vtkReader = function() {
     }
 
     return m_viewer;
+  };
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
+   * deleteViewer - Deletes the viewer object associated with the reader.
+   *
+   * @returns void
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.deleteViewer = function() {
+      m_vtkRenderedList = {};
+      m_viewer = null;
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -641,52 +639,6 @@ vgl.vtkReader = function() {
     return m_viewer;
   };
 
-
-  ////////////////////////////////////////////////////////////////////////////
-  /**
-   * addVtkObjectData - Adds binary VTK geometry data to the list for parsing.
-   *
-   * @param vtkObject
-   *
-   *        vtkObject = {
-   *                      data:,
-   *                      hasTransparency:,
-   *                      layer:
-   *                    };
-   *
-   *
-   * @returns void
-   */
-  ////////////////////////////////////////////////////////////////////////////
-  this.addVtkObjectData = function(vtkObject) {
-    var layerList, i, key;
-
-    key = JSON.stringify({part: vtkObject.part, sceneMD5: vtkObject.sceneMD5});
-
-    if ( m_vtkObjectList.hasOwnProperty(vtkObject.layer) === false ) {
-      m_vtkObjectList[vtkObject.layer] = [];
-    }
-
-    layerList = m_vtkObjectList[vtkObject.layer];
-    if (typeof layerList === 'undefined') {
-      console.log("Layer list undefined for layer: " + vtkObject.layer);
-    }
-
-    if (vtkObject.sceneMD5 in m_vtkObjHashList) {
-        if ($.inArray(vtkObject.part, m_vtkObjHashList[vtkObject.sceneMD5]) > -1) {
-            return
-        }
-    }
-    else {
-        m_vtkObjHashList[vtkObject.sceneMD5] = []
-    }
-
-    // Add the md5 for this object so we don't add it again.
-    m_vtkObjHashList[vtkObject.sceneMD5].push(vtkObject.part);
-    m_vtkObjectList[vtkObject.layer].push(vtkObject);
-    m_vtkObjectCount++;
-  };
-
   ////////////////////////////////////////////////////////////////////////////
   /**
    * clearVtkObjectData - Clear out the list of VTK geometry data.
@@ -697,20 +649,6 @@ vgl.vtkReader = function() {
   ////////////////////////////////////////////////////////////////////////////
   this.numObjects = function() {
     return m_vtkObjectCount;
-  };
-
-  ////////////////////////////////////////////////////////////////////////////
-  /**
-   * clearVtkObjectData - Clear out the list of VTK geometry data.
-   *
-   * @param void
-   * @returns void
-   */
-  ////////////////////////////////////////////////////////////////////////////
-  this.clearVtkObjectData = function() {
-    var tmpList = m_vtkObjectList;
-    m_vtkObjectList = {};
-    return tmpList;
   };
 
   ////////////////////////////////////////////////////////////////////////////
