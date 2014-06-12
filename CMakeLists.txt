@@ -126,7 +126,7 @@ add_custom_command(
 
 if(MINIFY)
   # Find UglifyJS.
-  find_package(UglifyJS)
+  find_package(UglifyJS REQUIRED)
 
   if(MANGLE)
       set(MANGLE_FLAG "-m")
