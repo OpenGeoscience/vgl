@@ -50,7 +50,9 @@ vgl.renderer = function() {
       m_width = 0,
       m_height = 0,
       m_resizable = true,
-      m_resetScene = true;
+      m_resetScene = true,
+      m_layer = 0,
+      m_resetClippingRange = true;
 
   m_camera.addChild(m_sceneRoot);
 
@@ -70,6 +72,29 @@ vgl.renderer = function() {
   ////////////////////////////////////////////////////////////////////////////
   this.height = function() {
     return m_height;
+  };
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
+   * Get layer this renderer is associated with
+   *
+   * @return {Number}
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.layer = function () {
+     return m_layer;
+  };
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
+   * Set the layer this renderer is associated with.
+   *
+   * @param layerNo
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.setLayer = function(layerNo) {
+    m_layer = layerNo;
+    this.modified();
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -288,6 +313,10 @@ vgl.renderer = function() {
         j = null,
         k = null;
 
+    if (!m_resetClippingRange) {
+        return;
+    }
+
     if (typeof bounds === 'undefined') {
       m_camera.computeBounds();
       bounds = m_camera.bounds();
@@ -389,6 +418,18 @@ vgl.renderer = function() {
     }
 
     return false;
+  };
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
+   * Return true if this renderer has this actor attached, false otherwise.
+   *
+   * @param actor
+   * @returns {boolean}
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.hasActor = function(actor) {
+      return m_sceneRoot.hasChild(actor);
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -547,6 +588,56 @@ vgl.renderer = function() {
     return this.worldToDisplay(
       focusWorldPt, m_camera.viewMatrix(),
       m_camera.projectionMatrix(), m_width, m_height);
+  };
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
+   * Will the scene be reset.
+   * @returns {bool}
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.resetScene = function() {
+    return m_resetScene;
+  };
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
+   * If true the scene will be reset, otherwise the scene will not be
+   * automatically reset.
+   *
+   * @param reset
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.setResetScene = function(reset) {
+     if (m_resetScene !== reset) {
+       m_resetScene = reset;
+       this.modified()
+     }
+  };
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
+   * Will the clipping range be reset
+   * @returns {bool}
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.resetClippingRange = function() {
+    return m_resetClippingRange;
+  };
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
+   * If true the camera clipping range will be reset, otherwise the scene will
+   * not be automatically reset.
+   *
+   * @param reset
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.setResetClippingRange = function(reset) {
+     if (m_resetClippingRange !== reset) {
+       m_resetClippingRange = reset;
+       this.modified()
+     }
   };
 
   return this;

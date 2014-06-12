@@ -118,6 +118,27 @@ vgl.groupNode = function() {
 
   ////////////////////////////////////////////////////////////////////////////
   /**
+   * Return true if this group node has node as a child, false otherwise.
+   *
+   * @param node
+   * @returns {bool}
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.hasChild = function(node) {
+    var i = 0, child = false;
+
+    for (i = 0; i < m_children.length; i++) {
+      if (m_children[i] === node) {
+        child = true;
+        break;
+      }
+    }
+
+    return child;
+  };
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
    * Accept a visitor and traverse the scene tree
    *
    * @param visitor
