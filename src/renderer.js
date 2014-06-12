@@ -76,12 +76,12 @@ vgl.renderer = function() {
 
   this.layer = function () {
      return m_layer;
-  }
+  };
 
   this.setLayer = function(layerNo) {
     m_layer = layerNo;
     this.modified();
-  }
+  };
 
   ////////////////////////////////////////////////////////////////////////////
   /**

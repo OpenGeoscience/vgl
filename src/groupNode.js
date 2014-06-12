@@ -128,10 +128,10 @@ vgl.groupNode = function() {
     var i = 0, child = false;
 
     for (i = 0; i < m_children.length; i++) {
-        if (m_children[i] === node) {
-          child = true;
-          break;
-        }
+      if (m_children[i] === node) {
+        child = true;
+        break;
+      }
     }
 
     return child;
