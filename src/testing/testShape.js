@@ -1,4 +1,6 @@
  var shapeFiles = []; // 0: .shp, 1: .shx, 2: .dbf
+ var start = 0; // control which shapes to load
+ var end = 50;
  
  ////////////////////////////////////////////////////////////////////////////
 /**
@@ -62,8 +64,6 @@ function handleFileSelect(evt) {
          console.log("Missing files");
          return;
       }
-      var start = 0;
-      var end = 50;
       sfr.readFiles(shapeFiles, renderer, viewer, start, end);
    }
 }

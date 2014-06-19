@@ -62,6 +62,7 @@ vgl.shapefileReader = function() {
   var SHP_POINT = 1;
   var SHP_POLYGON = 5;
   var SHP_POLYLINE = 3;
+  var MAXIMUM_POLYGON_SIZE = 1000;
   
   // Various useful math functions
   this.scal = function(a,b) {return a[0]*b[0]+a[1]*b[1];}
@@ -978,52 +979,54 @@ vgl.shapefileReader = function() {
         var parts_start = record_offset + 44;
         var points_start = record_offset + 44 + 4 * num_parts;
 
-        var idx = {v:0};
-        var rings = [];
-        for (var i = 0; i < num_parts; i ++) {
-          idx.v = 0;
-          var start = m_that.lint32(data, parts_start + i * 4);
-          var end;
-          if (i + 1 < num_parts) {
-            end = m_that.lint32(data, parts_start + (i + 1) * 4);
+        if (num_points < MAXIMUM_POLYGON_SIZE) {
+          var idx = {v:0};
+          var rings = [];
+          for (var i = 0; i < num_parts; i ++) {
+            idx.v = 0;
+            var start = m_that.lint32(data, parts_start + i * 4);
+            var end;
+            if (i + 1 < num_parts) {
+              end = m_that.lint32(data, parts_start + (i + 1) * 4);
+            }
+            else {
+              end = num_points;
+            }
+            var ring = readRing (points_start, start, end, idx);
+            rings.push(ring);
           }
-          else {
-            end = num_points;
+          
+          // Check the BBoxes of rings to check if one part is a hole in an other one
+          var boxes = [];
+          var inside = [];
+          for (var i = 0; i < rings.length; ++i) {
+            var box = m_sfr.getBBox(rings[i][0]);
+            boxes.push(box);
+            inside.push(0);
           }
-          var ring = readRing (points_start, start, end, idx);
-          rings.push(ring);
-        }
-        
-        // Check the BBoxes of rings to check if one part is a hole in an other one
-        var boxes = [];
-        var inside = [];
-        for (var i = 0; i < rings.length; ++i) {
-          var box = m_sfr.getBBox(rings[i][0]);
-          boxes.push(box);
-          inside.push(0);
-        }
-        for (var i = 0; i < rings.length-1; ++i) {
-          for (var j = i+1; j < rings.length; ++j) {
-            if ((m_sfr.isInside(boxes[i],boxes[j])==1)&&(m_sfr.turnCCW(rings,i))) {
-              m_sfr.shiftRing(rings,i,j);
-              rings[j][0] = rings[j][0].concat(rings[i][0]);
-              rings[j][1] = rings[j][1].concat(rings[i][1]);
-              inside[i] = 1;              
-            } else if ((m_sfr.isInside(boxes[j],boxes[i])==1)&&(m_sfr.turnCCW(rings,j))) {
-              m_sfr.shiftRing(rings,j,i);
-              rings[i][0] = rings[i][0].concat(rings[j][0]);
-              rings[i][1] = rings[i][1].concat(rings[j][1]);
-              inside[j] = 1;
+          for (var i = 0; i < rings.length-1; ++i) {
+            for (var j = i+1; j < rings.length; ++j) {
+              if ((m_sfr.isInside(boxes[i],boxes[j])==1)&&(m_sfr.turnCCW(rings,i))) {
+                m_sfr.shiftRing(rings,i,j);
+                rings[j][0] = rings[j][0].concat(rings[i][0]);
+                rings[j][1] = rings[j][1].concat(rings[i][1]);
+                inside[i] = 1;              
+              } else if ((m_sfr.isInside(boxes[j],boxes[i])==1)&&(m_sfr.turnCCW(rings,j))) {
+                m_sfr.shiftRing(rings,j,i);
+                rings[i][0] = rings[i][0].concat(rings[j][0]);
+                rings[i][1] = rings[i][1].concat(rings[j][1]);
+                inside[j] = 1;
+              }
+            }
+          }
+          
+          for (var i = 0; i < rings.length; ++i) {
+            if (inside[i]==0) {
+              var geom = m_sfr.readPolygon(rings[i][0],rings[i][1]);
+              features.push(geom);
             }
           }
         }
-        
-        for (var i = 0; i < rings.length; ++i) {
-          if (inside[i]==0) {
-            var geom = m_sfr.readPolygon(rings[i][0],rings[i][1]);
-            features.push(geom);
-          }
-        }        
 
       }
       else {
