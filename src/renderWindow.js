@@ -159,7 +159,7 @@ vgl.renderWindow = function(canvas) {
       if (m_activeRender === ren) {
         m_activeRender = null;
       }
-      m_renderers = m_renderers.splice(index, 1);
+      m_renderers.splice(index, 1);
       this.modified();
       return true;
     }
@@ -293,6 +293,7 @@ vgl.renderWindow = function(canvas) {
   ////////////////////////////////////////////////////////////////////////////
   this.render = function() {
     var i;
+    m_renderers.sort(function(a, b) {return a.layer() - b.layer();});
     for (i = 0; i < m_renderers.length; ++i) {
       m_renderers[i].render();
     }

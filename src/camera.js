@@ -45,6 +45,9 @@ vgl.camera = function() {
       m_right = 1.0,
       m_top = +1.0,
       m_bottom = -1.0,
+      m_enableTranslation = true,
+      m_enableRotation = true,
+      m_enableScale = true,
       m_enableParallelProjection = false,
       m_clearColor = [1.0, 1.0, 1.0, 1.0],
       m_clearDepth = 1.0,
@@ -76,8 +79,10 @@ vgl.camera = function() {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.setViewAngle = function(a) {
-    m_viewAngle = a;
-    this.modified();
+    if (m_enableScale) {
+      m_viewAngle = a;
+      this.modified();
+    }
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -95,8 +100,10 @@ vgl.camera = function() {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.setPosition = function(x, y, z) {
-    m_position = vec4.fromValues(x, y, z, 1.0);
-    this.modified();
+    if (m_enableRotation && m_enableTranslation) {
+      m_position = vec4.fromValues(x, y, z, 1.0);
+      this.modified();
+    }
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -114,8 +121,10 @@ vgl.camera = function() {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.setFocalPoint = function(x, y, z) {
-    m_focalPoint = vec4.fromValues(x, y, z, 1.0);
-    this.modified();
+    if (m_enableRotation && m_enableTranslation) {
+      m_focalPoint = vec4.fromValues(x, y, z, 1.0);
+      this.modified();
+    }
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -197,6 +206,78 @@ vgl.camera = function() {
 
   ////////////////////////////////////////////////////////////////////////////
   /**
+   * Return active mode for scaling (enabled / disabled)
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.enableScale = function(flag) {
+    return m_enableScale;
+  };
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
+   * Enable/disable scaling
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.setEnableScale = function(flag) {
+    if (flag !== m_enableScale) {
+      m_enableScale = flag;
+      this.modified();
+      return true;
+    }
+
+    return m_enableScale;
+  };
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
+   * Return active mode for rotation (enabled / disabled)
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.enableRotation = function(f) {
+    return m_enableRotation;
+  };
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
+   * Enable / disable rotation
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.setEnableRotation = function(flag) {
+    if (flag !== m_enableRotation) {
+      m_enableRotation = flag;
+      this.modified();
+      return true;
+    }
+
+    return m_enableRotation;
+  };
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
+   * Return active mode for translation (enabled/disabled)
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.enableTranslation = function(flag) {
+    return m_enableTranslation;
+  };
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
+   * Enable / disable translation
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.setEnableTranslation = function(flag) {
+    if (flag !== m_enableTranslation) {
+      m_enableTranslation = flag;
+      this.modified();
+      return true;
+    }
+
+    return m_enableTranslation;
+  };
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
    * Return if parallel projection is enabled
    */
   ////////////////////////////////////////////////////////////////////////////
@@ -216,7 +297,16 @@ vgl.camera = function() {
       return true;
     }
 
-    return false;
+    return m_enableParallelProjection;
+  };
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
+   * Enable / disable parallel projection
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.setEnnableParallelProjection = function(flag) {
+    return enableParallelProjection();
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -381,6 +471,10 @@ vgl.camera = function() {
       return;
     }
 
+    if (!m_enableTranslation) {
+      return;
+    }
+
     d = d * vec3.distance(m_focalPoint, m_position);
     m_position[0] = m_focalPoint[0] - d * m_directionOfProjection[0];
     m_position[1] = m_focalPoint[1] - d * m_directionOfProjection[1];
@@ -397,6 +491,10 @@ vgl.camera = function() {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.pan = function(dx, dy, dz) {
+    if (!m_enableTranslation) {
+      return;
+    }
+
     m_position[0] += dx;
     m_position[1] += dy;
     m_position[2] += dz;
@@ -428,6 +526,9 @@ vgl.camera = function() {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.rotate = function(dx, dy) {
+    if (!m_enableRotation) {
+      return;
+    }
 
     // Convert degrees into radians
     dx = 0.5 * dx * (Math.PI / 180.0);
