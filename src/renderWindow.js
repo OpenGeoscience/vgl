@@ -159,7 +159,7 @@ vgl.renderWindow = function(canvas) {
       if (m_activeRender === ren) {
         m_activeRender = null;
       }
-      m_renderers = m_renderers.splice(index, 1);
+      m_renderers.splice(index, 1);
       this.modified();
       return true;
     }
