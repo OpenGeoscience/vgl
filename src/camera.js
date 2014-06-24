@@ -100,7 +100,7 @@ vgl.camera = function() {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.setPosition = function(x, y, z) {
-    if (m_enableRotation && m_enableTranslation) {
+    if (m_enableTranslation) {
       m_position = vec4.fromValues(x, y, z, 1.0);
       this.modified();
     }
@@ -170,7 +170,7 @@ vgl.camera = function() {
    * Get clipping range of the camera
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.getClippingRange = function() {
+  this.clippingRange = function() {
     return [m_near, m_far];
   };
 
@@ -572,7 +572,6 @@ vgl.camera = function() {
       mat4.lookAt(m_viewMatrix, m_position, m_focalPoint, m_viewUp);
       m_computeModelViewMatrixTime.modified();
     }
-
     return m_viewMatrix;
   };
 
