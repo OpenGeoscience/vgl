@@ -9,7 +9,8 @@ set(MANGLE OFF CACHE BOOL "When minifying, also mangle non-public symbol names."
 set(VGL_DATA_DIR "" CACHE PATH  "Path to directory containing data for testing.")
 set(VGL_BASELINE_DIR "" CACHE PATH "Path to directory containing baseline images for testing.")
 set(BUILD_TESTING OFF CACHE BOOL "Enable testing")
-set(BUILD_DOCUMENTATION OFF CACHE BOOL "Enable building documentation")
+set(REBUILD_JSDOC OFF CACHE BOOL "Enable rebuilding of docs/*.rst")
+set(BUILD_DOCUMENTATION OFF CACHE BOOL "Build documentation")
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
@@ -214,7 +215,36 @@ foreach(f ${_js_lint_files})
 endforeach()
 
 # Documentation
+
 if (BUILD_DOCUMENTATION)
+  # Find sphinx-build
+  find_program(SPHINX_EXECUTABLE NAMES sphinx-build DOC
+               "The sphinx build tool")
+  if(NOT SPHINX_EXECUTABLE)
+    message(FATAL_ERROR "Can not find sphinx build tool: sphinx-build")
+  endif()
+
+  # Copy config to the docs directory
+  add_custom_command(
+    OUTPUT "${vgl_BINARY_DIR}/docs/conf.py"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${vgl_SOURCE_DIR}/docs/conf_jsdoc.py"
+            "${vgl_BINARY_DIR}/docs/conf.py"
+  )
+  add_custom_target(vgl_copy_sphinx_config ALL DEPENDS
+                    "${vgl_BINARY_DIR}/docs/conf.py")
+
+  add_custom_command(
+    OUTPUT ${vgl_BINARY_DIR}/docs/sphinx
+    COMMAND ${SPHINX_EXECUTABLE} -b html "${vgl_SOURCE_DIR}/docs"
+            "${vgl_BINARY_DIR}/docs/sphinx"
+  )
+  add_custom_target(vgl_build_docs_sphinx ALL DEPENDS
+                    "${vgl_BINARY_DIR}/docs/sphinx")
+  add_dependencies(vgl_build_docs_sphinx vgl_copy_sphinx_config)
+  add_dependencies(${PROJECT_NAME} vgl_build_docs_sphinx)
+endif()
+
+if (REBUILD_JSDOC)
   # Find jsdoc-toolkit-rst-template
   find_package(JSDocToolkitTemplate)
 
@@ -227,39 +257,13 @@ if (BUILD_DOCUMENTATION)
     message(FATAL_ERROR "Can not find ant build tool: ant")
   endif()
 
-  # Find sphinx-build
-  find_program(SPHINX_BUILD_EXECUTABLE NAMES sphinx-build DOC
-               "The sphinx build tool")
-  if(NOT SPHINX_BUILD_EXECUTABLE)
-    message(FATAL_ERROR "Can not find sphinx build tool: sphinx-build")
-  endif()
-
   add_custom_command(
     OUTPUT ${vgl_BINARY_DIR}/docs
     COMMAND ${ANT_EXECUTABLE} -Djs.src.dir=${vgl_SOURCE_DIR}/src
-            -Djs.rst.dir=${vgl_BINARY_DIR}/docs
+            -Djs.rst.dir=${vgl_SOURCE_DIR}/docs
             -Djsdoc-toolkit.dir=${JSDOC_TOOLKIT_DIR}
     WORKING_DIRECTORY "${JSDOC_TOOLKIT_TEMPLATE_DIR}"
   )
   add_custom_target(vgl_build_docs ALL DEPENDS "${vgl_BINARY_DIR}/docs")
-
-  # Copy config to the docs directory
-  add_custom_command(
-    OUTPUT "${vgl_BINARY_DIR}/docs/conf.py"
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${vgl_SOURCE_DIR}/docs/conf_jsdoc.py"
-            "${vgl_BINARY_DIR}/docs/conf.py"
-  )
-  add_custom_target(vgl_copy_sphinx_config ALL DEPENDS
-                    "${vgl_BINARY_DIR}/docs/conf.py")
   add_dependencies(vgl_copy_sphinx_config vgl_build_docs)
-
-  add_custom_command(
-    OUTPUT ${vgl_BINARY_DIR}/docs/sphinx
-    COMMAND ${SPHINX_BUILD_EXECUTABLE} -b html "${vgl_BINARY_DIR}/docs"
-            "${vgl_BINARY_DIR}/docs/sphinx"
-  )
-  add_custom_target(vgl_build_docs_sphinx ALL DEPENDS
-                    "${vgl_BINARY_DIR}/docs/sphinx")
-  add_dependencies(vgl_build_docs_sphinx vgl_copy_sphinx_config)
-  add_dependencies(${PROJECT_NAME} vgl_build_docs_sphinx)
 endif()
