@@ -276,16 +276,37 @@ vgl.viewer = function(canvas) {
 
   ////////////////////////////////////////////////////////////////////////////
   /**
-   * Initialize
+   * Bind canvas mouse events to their default handlers
    */
   ////////////////////////////////////////////////////////////////////////////
-  this._init = function() {
+  this.bindEventHandlers = function() {
     $(m_canvas).on('mousedown', this.handleMouseDown);
     $(m_canvas).on('mouseup', this.handleMouseUp);
     $(m_canvas).on('mousemove', this.handleMouseMove);
     $(m_canvas).on('mousewheel', this.handleMouseWheel);
     $(m_canvas).on('contextmenu', this.handleContextMenu);
+  }
 
+  ////////////////////////////////////////////////////////////////////////////
+  /**
+   * Undo earlier binded  handlers for canvas mouse events
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.unbindEventHandlers = function() {
+    $(m_canvas).off('mousedown', this.handleMouseDown);
+    $(m_canvas).off('mouseup', this.handleMouseUp);
+    $(m_canvas).off('mousemove', this.handleMouseMove);
+    $(m_canvas).off('mousewheel', this.handleMouseWheel);
+    $(m_canvas).off('contextmenu', this.handleContextMenu);
+  }
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
+   * Initialize
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this._init = function() {
+    this.bindEventHandlers();
     m_renderWindow.addRenderer(m_renderer);
   }
 
