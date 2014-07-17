@@ -27,8 +27,8 @@ vgl.camera = function() {
 
   /** @private */
   var m_viewAngle = (Math.PI * 30) / 180.0,
-      m_position = vec4.fromValues(0.0, 0.0, 0.0, 1.0),
-      m_focalPoint = vec4.fromValues(0.0, 0.0, -5.0, 1.0),
+      m_position = vec4.fromValues(0.0, 0.0, 1.0, 1.0),
+      m_focalPoint = vec4.fromValues(0.0, 0.0, 0.0, 1.0),
       m_centerOfRotation = vec3.fromValues(0.0, 0.0, 0.0),
       m_viewUp = vec4.fromValues(0.0, 1.0, 0.0, 0.0),
       m_rightDir = vec4.fromValues(1.0, 0.0, 0.0, 0.0),

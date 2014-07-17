@@ -295,12 +295,35 @@ vgl.renderer = function() {
     this.resetCameraClippingRange(visibleBounds);
   };
 
+  this.hasValidBounds = function(bounds) {
+    if (bounds[0] == Number.MAX_VALUE ||
+        bounds[1] == -Number.MAX_VALUE ||
+        bounds[2] == Number.MAX_VALUE ||
+        bounds[3] == -Number.MAX_VALUE ||
+        bounds[4] == Number.MAX_VALUE ||
+        bounds[5] == -Number.MAX_VALUE)  {
+      console.log('buonds are ', bounds);
+      return false;
+    }
+
+    return true;
+  }
+
   ////////////////////////////////////////////////////////////////////////////
   /**
    * Recalculate camera's clipping range
    */
   ////////////////////////////////////////////////////////////////////////////
   this.resetCameraClippingRange = function(bounds) {
+    if (typeof bounds === 'undefined') {
+      m_camera.computeBounds();
+      bounds = m_camera.bounds();
+    }
+
+    if (!this.hasValidBounds(bounds)) {
+      return;
+    }
+
     var vn = m_camera.viewPlaneNormal(),
         position = m_camera.position(),
         a = -vn[0],
@@ -315,11 +338,6 @@ vgl.renderer = function() {
 
     if (!m_resetClippingRange) {
         return;
-    }
-
-    if (typeof bounds === 'undefined') {
-      m_camera.computeBounds();
-      bounds = m_camera.bounds();
     }
 
     // Set the max near clipping plane and the min far clipping plane

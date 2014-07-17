@@ -44,10 +44,32 @@ vgl.boundingObject = function() {
 
   ////////////////////////////////////////////////////////////////////////////
   /**
+   * Check if bounds are valid
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.hasValidBounds = function(bounds) {
+    if (bounds[0] == Number.MAX_VALUE ||
+        bounds[1] == -Number.MAX_VALUE ||
+        bounds[2] == Number.MAX_VALUE ||
+        bounds[3] == -Number.MAX_VALUE ||
+        bounds[4] == Number.MAX_VALUE ||
+        bounds[5] == -Number.MAX_VALUE)  {
+      return false;
+    }
+
+    return true;
+  }
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
    * Set current bounds of the object
    */
   ////////////////////////////////////////////////////////////////////////////
   this.setBounds = function(minX, maxX, minY, maxY, minZ, maxZ) {
+    if (!this.hasValidBounds([minX, maxX, minY, maxY, minZ, maxZ])) {
+      return;
+    }
+
     m_bounds[0] = minX;
     m_bounds[1] = maxX;
     m_bounds[2] = minY;
