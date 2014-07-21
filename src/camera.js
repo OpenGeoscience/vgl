@@ -466,7 +466,7 @@ vgl.camera = function() {
    * Move camera closer or further away from the scene
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.zoom = function(d) {
+  this.zoom = function(d, dir) {
     if (d === 0) {
       return;
     }
@@ -476,9 +476,22 @@ vgl.camera = function() {
     }
 
     d = d * vec3.distance(m_focalPoint, m_position);
-    m_position[0] = m_focalPoint[0] - d * m_directionOfProjection[0];
-    m_position[1] = m_focalPoint[1] - d * m_directionOfProjection[1];
-    m_position[2] = m_focalPoint[2] - d * m_directionOfProjection[2];
+
+    if (!dir) {
+      dir = m_directionOfProjection;
+      m_position[0] = m_focalPoint[0] - d * dir[0];
+      m_position[1] = m_focalPoint[1] - d * dir[1];
+      m_position[2] = m_focalPoint[2] - d * dir[2];
+
+    } else {
+      m_position[0] = m_position[0]  + d * dir[0];
+      m_position[1] = m_position[1]  + d * dir[1];
+      m_position[2] = m_position[2]  + d * dir[2];
+
+      /// Update the focal position as well
+      m_focalPoint[0] = m_position[0];
+      m_focalPoint[1] = m_position[1];
+    }
 
     this.modified();
     // TODO: If the distance between focal point and the camera position
