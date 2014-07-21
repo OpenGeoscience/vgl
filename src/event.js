@@ -59,3 +59,5 @@ vgl.event.leftButtonPress = "vgl.event.leftButtonPress";
 vgl.event.leave = "vgl.event.leave";
 vgl.event.rightButtonRelease = "vgl.event.rightButtonRelease";
 vgl.event.leftButtonRelease = "vgl.event.leftButtonRelease";
+vgl.event.click = "vgl.event.click";
+vgl.event.dblClick = "vgl.event.dblClick";

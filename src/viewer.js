@@ -238,6 +238,44 @@ vgl.viewer = function(canvas) {
 
   ////////////////////////////////////////////////////////////////////////////
   /**
+   * Handle click event
+   *
+   * @param event
+   * @returns {boolean}
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.handleClick = function(event) {
+   if (m_ready === true) {
+      var fixedEvent = $.event.fix(event || window.event);
+      fixedEvent.preventDefault();
+      fixedEvent.type = vgl.event.click;
+      $(m_that).trigger(fixedEvent);
+    }
+
+    return false;
+  };
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
+   * Handle double click event
+   *
+   * @param event
+   * @returns {boolean}
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.handleDoubleClick = function(event) {
+    if (m_ready === true) {
+      var fixedEvent = $.event.fix(event || window.event);
+      fixedEvent.preventDefault();
+      fixedEvent.type = vgl.event.dblClick;
+      $(m_that).trigger(fixedEvent);
+    }
+
+    return false;
+  };
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
    * Get mouse coodinates related to canvas
    *
    * @param event

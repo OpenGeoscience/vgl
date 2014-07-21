@@ -58,6 +58,8 @@ vgl.interactorStyle = function() {
       $(m_viewer).on(vgl.event.mouseWheel, m_that.handleMouseWheel);
       $(m_viewer).on(vgl.event.keyPress, m_that.handleKeyPress);
       $(m_viewer).on(vgl.event.mouseContextMenu, m_that.handleContextMenu);
+      $(m_viewer).on(vgl.event.click, m_that.handleClick);
+      $(m_viewer).on(vgl.event.dblClick, m_that.handleDoubleClick);
       this.modified();
     }
   };
@@ -119,6 +121,30 @@ vgl.interactorStyle = function() {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.handleMouseWheel = function(event) {
+    return true;
+  };
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
+   * Handle click event
+   *
+   * @param event
+   * @returns {boolean}
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.handleClick = function(event) {
+    return true;
+  };
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
+   * Handle double click event
+   *
+   * @param event
+   * @returns {boolean}
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.handleDoubleClick = function(event) {
     return true;
   };
 
