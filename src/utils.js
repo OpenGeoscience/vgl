@@ -162,6 +162,37 @@ vgl.utils.createVertexShader = function(context) {
 
 //////////////////////////////////////////////////////////////////////////////
 /**
+ * Create a new instance of default vertex shader
+ *
+ * Helper function to create default vertex shader
+ *
+ * @param context
+ * @returns {vgl.shader}
+ */
+//////////////////////////////////////////////////////////////////////////////
+vgl.utils.createPointVertexShader = function(context) {
+  'use strict';
+  var vertexShaderSource = [
+        'attribute vec3 vertexPosition;',
+        'attribute vec3 vertexColor;',
+        'attribute float vertexSize;',
+        'uniform mat4 modelViewMatrix;',
+        'uniform mat4 projectionMatrix;',
+        'varying mediump vec3 iVertexColor;',
+        'varying highp vec3 iTextureCoord;',
+        'void main(void)',
+        '{',
+        'gl_PointSize =  vertexSize;',
+        'gl_Position = projectionMatrix * modelViewMatrix * vec4(vertexPosition, 1.0);',
+        ' iVertexColor = vertexColor;', '}' ].join('\n'),
+      shader = new vgl.shader(gl.VERTEX_SHADER);
+
+  shader.setShaderSource(vertexShaderSource);
+  return shader;
+};
+
+//////////////////////////////////////////////////////////////////////////////
+/**
  * Create a new instance of vertex shader with a solid color
  *
  * Helper function to create default vertex shader
@@ -523,12 +554,14 @@ vgl.utils.createGeometryMaterial = function() {
    var mat = new vgl.material(),
        blend = new vgl.blend(),
        prog = new vgl.shaderProgram(),
+       pointSize = 5.0,
+       opacity = 1.0,
        vertexShader = vgl.utils.createVertexShader(gl),
        fragmentShader = vgl.utils.createFragmentShader(gl),
        posVertAttr = new vgl.vertexAttribute("vertexPosition"),
        colorVertAttr = new vgl.vertexAttribute("vertexColor"),
-       pointsizeUniform = new vgl.floatUniform("pointSize", 5.0),
-       opacityUniform = new vgl.floatUniform("opacity", 1.0),
+       pointsizeUniform = new vgl.floatUniform("pointSize", pointSize),
+       opacityUniform = new vgl.floatUniform("opacity", opacity),
        modelViewUniform = new vgl.modelViewUniform("modelViewMatrix"),
        projectionUniform = new vgl.projectionUniform("projectionMatrix");
 
@@ -545,6 +578,45 @@ vgl.utils.createGeometryMaterial = function() {
 
   return mat;
 };
+
+//////////////////////////////////////////////////////////////////////////////
+/**
+ * Create a new instance of geometry material
+ *
+ * Helper function to create geometry material
+ *
+ * @returns {vgl.material}
+ */
+//////////////////////////////////////////////////////////////////////////////
+vgl.utils.createPointGeometryMaterial = function(opacity) {
+  'use strict';
+   var mat = new vgl.material(),
+       blend = new vgl.blend(),
+       prog = new vgl.shaderProgram(),
+       opacity = opacity === undefined ? 1.0 : opacity,
+       vertexShader = vgl.utils.createPointVertexShader(gl),
+       fragmentShader = vgl.utils.createFragmentShader(gl),
+       posVertAttr = new vgl.vertexAttribute("vertexPosition"),
+       colorVertAttr = new vgl.vertexAttribute("vertexColor"),
+       sizeVertAttr = new vgl.vertexAttribute("vertexSize"),
+       opacityUniform = new vgl.floatUniform("opacity", opacity),
+       modelViewUniform = new vgl.modelViewUniform("modelViewMatrix"),
+       projectionUniform = new vgl.projectionUniform("projectionMatrix");
+
+  prog.addVertexAttribute(posVertAttr, vgl.vertexAttributeKeys.Position);
+  prog.addVertexAttribute(colorVertAttr, vgl.vertexAttributeKeys.Color);
+  prog.addVertexAttribute(sizeVertAttr, vgl.vertexAttributeKeys.Scalar);
+  prog.addUniform(opacityUniform);
+  prog.addUniform(modelViewUniform);
+  prog.addUniform(projectionUniform);
+  prog.addShader(fragmentShader);
+  prog.addShader(vertexShader);
+  mat.addAttribute(prog);
+  mat.addAttribute(blend);
+
+  return mat;
+};
+
 
 //////////////////////////////////////////////////////////////////////////////
 /**
@@ -889,16 +961,17 @@ vgl.utils.createTexturePlane = function(originX, originY, originZ,
  * @returns {vgl.actor}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.utils.createPoints = function(positions, colors, texcoords) {
+vgl.utils.createPoints = function(positions, size, colors, texcoords, opacity) {
   'use strict';
   if (!positions) {
     console.log("[ERROR] Cannot create points without positions");
     return null;
   }
 
-  var mapper = new vgl.mapper(),
+  var opacity = opacity === undefined ? 1.0 : opacity,
+      mapper = new vgl.mapper(),
       pointSource = new vgl.pointSource(),
-      mat = vgl.utils.createGeometryMaterial(),
+      mat = vgl.utils.createPointGeometryMaterial(opacity),
       actor = new vgl.actor();
 
   pointSource.setPositions(positions);
@@ -908,6 +981,12 @@ vgl.utils.createPoints = function(positions, colors, texcoords) {
 
   if (texcoords) {
     pointSource.setTextureCoordinates(texcoords);
+  }
+
+  if (size) {
+    pointSource.setSize(size)
+  } else {
+    pointSource.setSize(1.0);
   }
 
   mapper.setGeometryData(pointSource.create());

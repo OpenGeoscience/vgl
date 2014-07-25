@@ -25,10 +25,23 @@ vgl.pointSource = function() {
   }
   vgl.source.call(this);
 
-  var m_positions = [],
+  var m_this = this,
+      m_positions = [],
       m_colors = [],
       m_textureCoords = [],
+      m_size = [],
       m_geom = null;
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
+   * Get positions for the points
+   *
+   * @param positions
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.getPositions = function(positions) {
+    return m_positions;
+  };
 
   ////////////////////////////////////////////////////////////////////////////
   /**
@@ -45,6 +58,18 @@ vgl.pointSource = function() {
       console
           .log("[ERROR] Invalid data type for positions. Array is required.");
     }
+    m_this.modified();
+  };
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
+   * Get colors for the points
+   *
+   * @param positions
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.getColors = function(positions) {
+    return m_colors;
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -61,6 +86,31 @@ vgl.pointSource = function() {
     else {
       console.log("[ERROR] Invalid data type for colors. Array is required.");
     }
+
+    m_this.modified();
+  };
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
+   * Get colors for the points
+   *
+   * @param positions
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.getSize = function(positions) {
+    return m_size;
+  };
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
+   * Set colors for the points
+   *
+   * @param colors
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.setSize = function(size) {
+    m_size = size;
+    this.modified();
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -78,6 +128,7 @@ vgl.pointSource = function() {
       console.log("[ERROR] Invalid data type for "
                   + "texture coordinates. Array is required.");
     }
+    m_this.modified();
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -99,12 +150,24 @@ vgl.pointSource = function() {
         pointsPrimitive,
         sourcePositions,
         sourceColors,
-        sourceTexCoords;
+        sourceTexCoords,
+        sourceSize;
 
     indices.length = numPts;
     for (i = 0; i < numPts; ++i) {
       indices[i] = i;
     }
+
+    /// Generate array of size if needed
+    sourceSize = vgl.sourceDataDf();
+    if (numPts !== m_size.length) {
+      for (i = 0; i < numPts; ++i) {
+       sourceSize.pushBack(m_size);
+      }
+    } else {
+      sourceSize.setData(m_size);
+    }
+    m_geom.addSource(sourceSize);
 
     pointsPrimitive = new vgl.points();
     pointsPrimitive.setIndices(indices);
@@ -134,6 +197,7 @@ vgl.pointSource = function() {
       console
           .log("[ERROR] Number of texture coordinates are different than number of points");
     }
+
 
     m_geom.addPrimitive(pointsPrimitive);
 

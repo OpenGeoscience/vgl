@@ -331,6 +331,25 @@ vgl.renderWindow = function(canvas) {
       camera.projectionMatrix(), m_width, m_height);
   };
 
+  ////////////////////////////////////////////////////////////////////////////
+  /**
+   * Transform a point in display space to world space
+   * @param {Number} x
+   * @param {Number} y
+   * @param {vec4} focusDisplayPoint
+   * @returns {vec4}
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.worldToDisplay = function(x, y, z, ren) {
+    ren = ren === undefined ? ren = m_activeRender : ren;
+
+    var camera = ren.camera();
+
+    return ren.worldToDisplay(
+      vec4.fromValues(x, y, z, 1.0), camera.viewMatrix(),
+      camera.projectionMatrix(), m_width, m_height);
+  };
+
   return this;
 };
 

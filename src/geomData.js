@@ -385,6 +385,31 @@ vgl.sourceData = function() {
   };
 
   ////////////////////////////////////////////////////////////////////////////
+ /**
+   * Return raw data for this source
+   *
+   * @returns {Array}
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.getData = function() {
+    return data();
+  };
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
+   * Set data for this source
+   *
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.setData = function(data) {
+    if (!(data instanceof Array)) {
+      console.log("[error] Requires array");
+      return;
+    }
+    m_data = data.slice(0);
+  };
+
+  ////////////////////////////////////////////////////////////////////////////
   /**
    * Add new attribute data to the source
    */
@@ -809,6 +834,47 @@ vgl.sourceDataSf = function() {
 };
 
 inherit(vgl.sourceDataSf, vgl.sourceData);
+
+//////////////////////////////////////////////////////////////////////////////
+/**
+ * Create a new instance of class sourceDataDf meant to hold data float values
+ *
+ * This source array is the best way to pass a array of floats to the shader
+ * that has one entry for each of the vertices.
+ *
+ * @class
+ * @returns {vgl.sourceDataDf}
+ */
+//////////////////////////////////////////////////////////////////////////////
+vgl.sourceDataDf = function() {
+  'use strict';
+
+  if (!(this instanceof vgl.sourceDataDf)) {
+    return new vgl.sourceDataDf();
+  }
+
+  var m_min = null,
+      m_max = null,
+      m_fixedmin = null,
+      m_fixedmax = null;
+
+  vgl.sourceData.call(this);
+
+  this.addAttribute(vgl.vertexAttributeKeys.Scalar, gl.FLOAT,
+                    4, 0, 4, 1, false);
+
+  this.pushBack = function(value) {
+    this.data()[this.data().length] = value;
+  };
+
+  this.insertAt = function(index, value) {
+    this.data()[index] = value;
+  };
+
+  return this;
+};
+
+inherit(vgl.sourceDataDf, vgl.sourceData);
 
 //////////////////////////////////////////////////////////////////////////////
 /**
