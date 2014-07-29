@@ -283,6 +283,10 @@ vgl.viewer = function(canvas) {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.relMouseCoords = function(event) {
+    if (event.pageX === undefined || event.pageY === undefined) {
+      throw "Missing attributes pageX and pageY on the event";
+    }
+
     var totalOffsetX = 0,
         totalOffsetY = 0,
         canvasX = 0,
