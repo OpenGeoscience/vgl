@@ -475,8 +475,8 @@ vgl.camera = function() {
       return;
     }
 
+    d = d * vec3.distance(m_focalPoint, m_position);
     if (!dir) {
-      d = d * vec3.distance(m_focalPoint, m_position);
       dir = m_directionOfProjection;
       m_position[0] = m_focalPoint[0] - d * dir[0];
       m_position[1] = m_focalPoint[1] - d * dir[1];
