@@ -302,7 +302,6 @@ vgl.renderer = function() {
         bounds[3] == -Number.MAX_VALUE ||
         bounds[4] == Number.MAX_VALUE ||
         bounds[5] == -Number.MAX_VALUE)  {
-      console.log('buonds are ', bounds);
       return false;
     }
 

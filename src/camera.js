@@ -481,20 +481,13 @@ vgl.camera = function() {
       m_position[0] = m_focalPoint[0] - d * dir[0];
       m_position[1] = m_focalPoint[1] - d * dir[1];
       m_position[2] = m_focalPoint[2] - d * dir[2];
-
     } else {
       m_position[0] = m_position[0]  + d * dir[0];
       m_position[1] = m_position[1]  + d * dir[1];
       m_position[2] = m_position[2]  + d * dir[2];
-
-      /// Update the focal position as well
-      m_focalPoint[0] = m_position[0];
-      m_focalPoint[1] = m_position[1];
     }
 
     this.modified();
-    // TODO: If the distance between focal point and the camera position
-    // goes really low then we run into issues
   };
 
   ////////////////////////////////////////////////////////////////////////////
