@@ -503,8 +503,8 @@ vgl.utils.createPointSpritesFragmentShader = function(context) {
 vgl.utils.createTextureMaterial = function(isRgba) {
   'use strict';
   var mat = new vgl.material(),
-    blend = new vgl.blend(),
-    prog = new vgl.shaderProgram(),
+    blend
+     new vgl.shaderProgram(),
     vertexShader = vgl.utils.createTextureVertexShader(gl),
     fragmentShader = null,
     posVertAttr = new vgl.vertexAttribute("vertexPosition"),
@@ -900,8 +900,8 @@ vgl.utils.createPointSpritesMaterial = function(image, lut) {
  */
 //////////////////////////////////////////////////////////////////////////////
 vgl.utils.createPlane = function(originX, originY, originZ,
-                                       point1X, point1Y, point1Z,
-                                       point2X, point2Y, point2Z) {
+                                 point1X, point1Y, point1Z,
+                                 point2X, point2Y, point2Z) {
   'use strict';
   var mapper = new vgl.mapper(),
       planeSource = new vgl.planeSource(),
@@ -1343,3 +1343,22 @@ vgl.utils.create2DTexture = function(textToWrite, textSize,
 
   return texture;
 };
+
+//////////////////////////////////////////////////////////////////////////////
+/**
+ * Create textute given a buffer of data
+ *
+ * @param buffer Buffer should be unsigned char type. Buffer size should be
+ * equal to width * height.
+ * @param width Width of the texture
+ * @param height Height of the texture
+ */
+//////////////////////////////////////////////////////////////////////////////
+vgl.utils.createTexture = function(unit, width, height, buffer) {
+  var texture = vgl.texture(), buffer = new Uint8Array(buffer);
+  texture.setData(buffer);
+  texture.setWidth(width);
+  texture.setHeight(height);
+  texture.setTextureUnit(unit);
+  return texture;
+}

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+    <script type="text/javascript" src="/testing/common/js/gl-matrix.js"></script>
+    <script type="text/javascript" src="/web/lib/vgl.js"></script>
+    <script>
+    var testDrawTextures = {};
+
+    function createVertexShader (context) {
+      'use strict';
+      var vertexShaderSource = [
+            'attribute vec3 vertexPosition;',
+            'attribute vec3 textureCoord;',
+            'uniform mat4 modelViewMatrix;',
+            'uniform mat4 projectionMatrix;',
+            'varying highp vec3 iTextureCoord;',
+            'void main(void)',
+            '{',
+            'gl_Position = vec4(vertexPosition, 1.0);',
+            ' iTextureCoord = textureCoord;', '}' ].join('\n'),
+      shader = new vgl.shader(gl.VERTEX_SHADER);
+      shader.setShaderSource(vertexShaderSource);
+      return shader;
+    };
+
+    function createFragmentShader (context) {
+      'use strict';
+      var fragmentShaderSource = [
+            'varying highp vec3 iTextureCoord;',
+            'uniform sampler2D sampler2d1;',
+            'uniform sampler2D sampler2d2;',
+            'void main(void) {',
+            'gl_FragColor = vec4(texture2D(sampler2d1, vec2(iTextureCoord.s, iTextureCoord.t)).xyz * 0.5 +' +
+                                'texture2D(sampler2d2, vec2(iTextureCoord.s, iTextureCoord.t)).xyz * 0.5, 1.0);',
+            '}' ].join('\n'),
+          shader = new vgl.shader(gl.FRAGMENT_SHADER);
+
+      shader.setShaderSource(fragmentShaderSource);
+      return shader;
+    };
+
+    /// Create plane with texture coordinates and material
+    function createTexturedPlane(originX, originY, originZ,
+                                 point1X, point1Y, point1Z,
+                                 point2X, point2Y, point2Z) {
+
+      var mat = new vgl.material(),
+        prog = new vgl.shaderProgram(),
+        vertexShader = createVertexShader(gl),
+        fragmentShader = createFragmentShader(gl),
+        posVertAttr = new vgl.vertexAttribute("vertexPosition"),
+        texCoordVertAttr = new vgl.vertexAttribute("textureCoord"),
+        modelViewUniform = new vgl.modelViewUniform("modelViewMatrix"),
+        projectionUniform = new vgl.projectionUniform("projectionMatrix"),
+        samplerUniform1 = new vgl.uniform(gl.INT, "sampler2d1"),
+        samplerUniform2 = new vgl.uniform(gl.INT, "sampler2d2"),
+        mapper = new vgl.mapper(),
+        planeSource = new vgl.planeSource(),
+        actor = new vgl.actor();
+
+      planeSource.setOrigin(originX, originY, originZ);
+      planeSource.setPoint2(point1X, point1Y, point1Z);
+      planeSource.setPoint1(point2X, point2Y, point2Z);
+      mapper.setGeometryData(planeSource.create());
+
+      samplerUniform1.set(0);
+      samplerUniform2.set(1);
+
+      prog.addVertexAttribute(posVertAttr, vgl.vertexAttributeKeys.Position);
+      prog.addVertexAttribute(texCoordVertAttr, vgl.vertexAttributeKeys.TextureCoordinate);
+      prog.addUniform(modelViewUniform);
+      prog.addUniform(projectionUniform);
+      prog.addUniform(samplerUniform1);
+      prog.addUniform(samplerUniform2);
+      prog.addShader(fragmentShader);
+      prog.addShader(vertexShader);
+      mat.addAttribute(prog);
+
+      actor.setMapper(mapper);
+      actor.setMaterial(mat);
+
+      return actor;
+    }
+
+    testDrawTextures.main = function() {
+      var node = document.getElementById("glcanvas"),
+          viewer = vgl.viewer(node), renderer, actor,
+          colors1 = [1.0, 0.0, 0.0, 1.0,
+                     1.0, 0.0, 0.0, 1.0,
+                     1.0, 0.0, 0.0, 1.0,
+                     1.0, 0.0, 0.0, 1.0].map(
+                      function(x) {return x * 255;}),
+          colors2 = [0.0, 0.0, 1.0, 1.0,
+                     0.0, 0.0, 1.0, 1.0,
+                     0.0, 0.0, 1.0, 1.0,
+                     0.0, 0.0, 1.0, 1.0].map(
+                      function(x) {return x * 255;}),
+          texture1 = vgl.utils.createTexture(0, 4, 1, colors1),
+          texture2 = vgl.utils.createTexture(1, 4, 1, colors2);
+
+      viewer.init();
+      viewer.renderWindow().resize($(node).width(), $(node).height());
+      renderer = viewer.renderWindow().activeRenderer();
+      renderer.setBackgroundColor(0.0, 0.0, 0.0, 1.0);
+      actor = createTexturedPlane(-1.0, -1.0, 0.0,
+                                  -1.0, 1.0, 0.0,
+                                   1.0, -1.0, 0.0);
+      actor.material().addAttribute(texture1);
+      actor.material().addAttribute(texture2);
+      renderer.addActor(actor);
+      renderer.resetCamera();
+      viewer.render();
+    }
+  </script>
+  </head>
+  <body onload="testDrawTextures.main()">
+    <div>
+      <!-- It is important that canvas has height and width -->
+      <canvas id="glcanvas" width="500px" height="500px"></canvas>
+    </div>
+  </body>
+</html>

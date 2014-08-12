@@ -28,9 +28,9 @@
         renderer = viewer.renderWindow().activeRenderer();
 
         // Second renderer that draws on top of the first one
+        renderer2.setLayer(1);
         viewer.renderWindow().addRenderer(renderer2);
         renderer2.resize(100, 100);
-        renderer2.setLayer(1);
 
         $.getJSON("/data/countries.json", {
           format: "json"
@@ -47,7 +47,6 @@
             mapper.setColor(1.0, 0.0, 0.0);
             actor.setMapper(mapper);
             actor.setMaterial(material);
-
             renderer.addActor(actor);
 
             mapper2 = vgl.mapper();

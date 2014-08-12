@@ -295,6 +295,11 @@ vgl.renderer = function() {
     this.resetCameraClippingRange(visibleBounds);
   };
 
+  ////////////////////////////////////////////////////////////////////////////
+  /**
+   * Helper method to check if the bounds are valid
+   */
+  ////////////////////////////////////////////////////////////////////////////
   this.hasValidBounds = function(bounds) {
     if (bounds[0] == Number.MAX_VALUE ||
         bounds[1] == -Number.MAX_VALUE ||

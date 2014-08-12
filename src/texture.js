@@ -2,11 +2,6 @@
 /**
  * @module vgl
  */
-
-/*jslint devel: true, forin: true, newcap: true, plusplus: true*/
-/*jslint white: true, continue:true, indent: 2*/
-
-/*global Uint8Array, vgl, gl, ogs, vec4, inherit, $*/
 //////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -39,6 +34,7 @@ vgl.texture = function() {
   this.m_internalFormat = null;
 
   this.m_image = null;
+  this.m_data = null;
 
   var m_setupTimestamp = vgl.timestamp(),
       m_that = this;
@@ -131,6 +127,12 @@ vgl.texture = function() {
       gl.texImage2D(gl.TEXTURE_2D, 0, this.m_internalFormat,
                     this.m_pixelFormat, this.m_pixelDataType, this.m_image);
     }
+    else if (this.m_data) {
+      /// Assuming RGBA for now
+      gl.texImage2D(gl.TEXTURE_2D,
+        0, gl.RGBA, this.m_width, this.m_height, this.m_depth,
+        gl.RGBA, gl.UNSIGNED_BYTE, this.m_data);
+    }
     else {
       gl.texImage2D(gl.TEXTURE_2D, 0, this.m_internalFormat,
                     this.m_pixelFormat, this.m_pixelDataType, null);
@@ -200,6 +202,33 @@ vgl.texture = function() {
 
   /////////////////////////////////////////////////////////////////////////////
   /**
+   * Get data for the texture
+   *
+   * @param {Array} image data
+   */
+  /////////////////////////////////////////////////////////////////////////////
+  this.data = function(data) {
+    return m_data;
+  };
+
+  /////////////////////////////////////////////////////////////////////////////
+  /**
+   * Set data for the texture
+   *
+   * @param {Array} image data
+   */
+  /////////////////////////////////////////////////////////////////////////////
+  this.setData = function(data) {
+    if (data !== null) {
+      this.m_data = data;
+      this.modified();
+      return true;
+    }
+    return false;
+  };
+
+  /////////////////////////////////////////////////////////////////////////////
+  /**
    * Get texture unit of the texture
    *
    * @returns {number}
@@ -247,13 +276,34 @@ vgl.texture = function() {
    */
   /////////////////////////////////////////////////////////////////////////////
   this.setWidth = function(width) {
-    if (this.m_image === null) {
-      return false;
-    }
-
     this.m_width = width;
     this.modified();
 
+    return true;
+  };
+
+  /////////////////////////////////////////////////////////////////////////////
+  /**
+   * Get height of the texture
+   *
+   * @returns {*}
+   */
+  /////////////////////////////////////////////////////////////////////////////
+  this.height = function() {
+    return this.m_height;
+  };
+
+  /////////////////////////////////////////////////////////////////////////////
+  /**
+   * Set height of the texture
+   *
+   * @param {number} width
+   * @returns {boolean}
+   */
+  /////////////////////////////////////////////////////////////////////////////
+  this.setHeight = function(height) {
+    this.m_height = height;
+    this.modified();
     return true;
   };
 
