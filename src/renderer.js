@@ -475,11 +475,6 @@ vgl.renderer = function() {
   this.removeActor = function(actor) {
     if (m_sceneRoot.children().indexOf(actor) !== -1) {
       m_sceneRoot.removeChild(actor);
-
-      if (m_sceneRoot.children().length === 0) {
-        m_resetScene = true;
-      }
-
       this.modified();
       return true;
     }
