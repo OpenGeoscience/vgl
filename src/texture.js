@@ -21,26 +21,21 @@ vgl.texture = function() {
   vgl.materialAttribute.call(
     this, vgl.materialAttributeType.Texture);
 
-  this.m_width = 0;
-  this.m_height = 0;
-  this.m_depth = 0;
+  var m_width = 0, m_height = 0, m_depth = 0,
+      m_textureHandle = null, m_textureUnit = 0,
+      m_pixelFormat = null, m_pixelDataType = null,
+      m_internalFormat = null, m_image = null, m_data = null,
+      m_setupTimestamp = vgl.timestamp(),m_this = this;
 
-  this.m_textureHandle = null;
-  this.m_textureUnit = 0;
-
-  this.m_pixelFormat = null;
-  this.m_pixelDataType = null;
-
-  this.m_internalFormat = null;
-
-  this.m_image = null;
-  this.m_data = null;
-
-  var m_setupTimestamp = vgl.timestamp(),
-      m_that = this;
-
+  ///////////////////////////////////////////////////////////////////////////////
+  /**
+   * Activate proper texture unit
+   *
+   * @private
+   */
+  ///////////////////////////////////////////////////////////////////////////////
   function activateTextureUnit() {
-    switch (m_that.m_textureUnit) {
+    switch (m_textureUnit) {
       case 0:
         gl.activeTexture(gl.TEXTURE0);
         break;
@@ -90,7 +85,7 @@ vgl.texture = function() {
         gl.activeTexture(gl.TEXTURE15);
         break;
       default:
-        throw "[error] Texture unit "  + this.m_textureUnit +
+        throw "[error] Texture unit "  + m_textureUnit +
               " is not supported";
     }
   }
@@ -105,9 +100,9 @@ vgl.texture = function() {
   this.setup = function(renderState) {
     activateTextureUnit();
 
-    gl.deleteTexture(this.m_textureHandle);
-    this.m_textureHandle = gl.createTexture();
-    gl.bindTexture(gl.TEXTURE_2D, this.m_textureHandle);
+    gl.deleteTexture(m_textureHandle);
+    m_textureHandle = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, m_textureHandle);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
@@ -115,27 +110,23 @@ vgl.texture = function() {
     gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
 
-    if (this.m_image !== null) {
-      this.updateDimensions();
-      this.computeInternalFormatUsingImage();
-
-      // console.log("m_internalFormat " + this.m_internalFormat);
-      // console.log("m_pixelFormat " + this.m_pixelFormat);
-      // console.log("m_pixelDataType " + this.m_pixelDataType);
+    if (m_image !== null) {
+      m_this.updateDimensions();
+      m_this.computeInternalFormatUsingImage();
 
       // FOR now support only 2D textures
-      gl.texImage2D(gl.TEXTURE_2D, 0, this.m_internalFormat,
-                    this.m_pixelFormat, this.m_pixelDataType, this.m_image);
+      gl.texImage2D(gl.TEXTURE_2D, 0, m_internalFormat,
+                    m_pixelFormat, m_pixelDataType, m_image);
     }
-    else if (this.m_data) {
+    else if (m_data) {
       /// Assuming RGBA for now
       gl.texImage2D(gl.TEXTURE_2D,
-        0, gl.RGBA, this.m_width, this.m_height, this.m_depth,
-        gl.RGBA, gl.UNSIGNED_BYTE, this.m_data);
+        0, gl.RGBA, m_width, m_height, m_depth,
+        gl.RGBA, gl.UNSIGNED_BYTE, m_data);
     }
     else {
-      gl.texImage2D(gl.TEXTURE_2D, 0, this.m_internalFormat,
-                    this.m_pixelFormat, this.m_pixelDataType, null);
+      gl.texImage2D(gl.TEXTURE_2D, 0, m_internalFormat,
+                    m_pixelFormat, m_pixelDataType, null);
     }
 
     gl.bindTexture(gl.TEXTURE_2D, null);
@@ -151,12 +142,12 @@ vgl.texture = function() {
   /////////////////////////////////////////////////////////////////////////////
   this.bind = function(renderState) {
     // TODO Call setup via material setup
-    if (this.getMTime() > m_setupTimestamp.getMTime()) {
-      this.setup(renderState);
+    if (m_this.getMTime() > m_setupTimestamp.getMTime()) {
+      m_this.setup(renderState);
     }
 
     activateTextureUnit();
-    gl.bindTexture(gl.TEXTURE_2D, this.m_textureHandle);
+    gl.bindTexture(gl.TEXTURE_2D, m_textureHandle);
   };
 
   /////////////////////////////////////////////////////////////////////////////
@@ -178,7 +169,7 @@ vgl.texture = function() {
    */
   /////////////////////////////////////////////////////////////////////////////
   this.image = function() {
-    return this.m_image;
+    return m_image;
   };
 
   /////////////////////////////////////////////////////////////////////////////
@@ -191,9 +182,9 @@ vgl.texture = function() {
   /////////////////////////////////////////////////////////////////////////////
   this.setImage = function(image) {
     if (image !== null) {
-      this.m_image = image;
-      this.updateDimensions();
-      this.modified();
+      m_image = image;
+      m_this.updateDimensions();
+      m_this.modified();
       return true;
     }
 
@@ -220,8 +211,8 @@ vgl.texture = function() {
   /////////////////////////////////////////////////////////////////////////////
   this.setData = function(data) {
     if (data !== null) {
-      this.m_data = data;
-      this.modified();
+      m_data = data;
+      m_this.modified();
       return true;
     }
     return false;
@@ -235,7 +226,7 @@ vgl.texture = function() {
    */
   /////////////////////////////////////////////////////////////////////////////
   this.textureUnit = function() {
-    return this.m_textureUnit;
+    return m_textureUnit;
   };
 
   /////////////////////////////////////////////////////////////////////////////
@@ -247,12 +238,12 @@ vgl.texture = function() {
    */
   /////////////////////////////////////////////////////////////////////////////
   this.setTextureUnit = function(unit) {
-    if (this.m_textureUnit === unit) {
+    if (m_textureUnit === unit) {
       return false;
     }
 
-    this.m_textureUnit = unit;
-    this.modified();
+    m_textureUnit = unit;
+    m_this.modified();
     return true;
   };
 
@@ -264,7 +255,7 @@ vgl.texture = function() {
    */
   /////////////////////////////////////////////////////////////////////////////
   this.width = function() {
-    return this.m_width;
+    return m_width;
   };
 
   /////////////////////////////////////////////////////////////////////////////
@@ -276,8 +267,8 @@ vgl.texture = function() {
    */
   /////////////////////////////////////////////////////////////////////////////
   this.setWidth = function(width) {
-    this.m_width = width;
-    this.modified();
+    m_width = width;
+    m_this.modified();
 
     return true;
   };
@@ -302,8 +293,8 @@ vgl.texture = function() {
    */
   /////////////////////////////////////////////////////////////////////////////
   this.setHeight = function(height) {
-    this.m_height = height;
-    this.modified();
+    m_height = height;
+    m_this.modified();
     return true;
   };
 
@@ -315,7 +306,7 @@ vgl.texture = function() {
    */
   /////////////////////////////////////////////////////////////////////////////
   this.depth = function() {
-    return this.m_depth;
+    return m_depth;
   };
 
   /////////////////////////////////////////////////////////////////////////////
@@ -327,12 +318,12 @@ vgl.texture = function() {
    */
   /////////////////////////////////////////////////////////////////////////////
   this.setDepth = function(depth) {
-    if (this.m_image === null) {
+    if (m_image === null) {
       return false;
     }
 
-    this.m_depth = depth;
-    this.modified();
+    m_depth = depth;
+    m_this.modified();
     return true;
   };
 
@@ -344,7 +335,7 @@ vgl.texture = function() {
    */
   /////////////////////////////////////////////////////////////////////////////
   this.textureHandle = function() {
-    return this.m_textureHandle;
+    return m_textureHandle;
   };
 
   /////////////////////////////////////////////////////////////////////////////
@@ -355,7 +346,7 @@ vgl.texture = function() {
    */
   /////////////////////////////////////////////////////////////////////////////
   this.internalFormat = function() {
-    return this.m_internalFormat;
+    return m_internalFormat;
   };
 
   /////////////////////////////////////////////////////////////////////////////
@@ -367,9 +358,9 @@ vgl.texture = function() {
    */
   /////////////////////////////////////////////////////////////////////////////
   this.setInternalFormat = function(internalFormat) {
-    if (this.m_internalFormat !== internalFormat) {
-      this.m_internalFormat = internalFormat;
-      this.modified();
+    if (m_internalFormat !== internalFormat) {
+      m_internalFormat = internalFormat;
+      m_this.modified();
       return true;
     }
 
@@ -384,7 +375,7 @@ vgl.texture = function() {
    */
   /////////////////////////////////////////////////////////////////////////////
   this.pixelFormat = function() {
-    return this.m_pixelFormat;
+    return m_pixelFormat;
   };
 
   /////////////////////////////////////////////////////////////////////////////
@@ -396,12 +387,12 @@ vgl.texture = function() {
    */
   /////////////////////////////////////////////////////////////////////////////
   this.setPixelFormat = function(pixelFormat) {
-    if (this.m_image === null) {
+    if (m_image === null) {
       return false;
     }
 
-    this.m_pixelFormat = pixelFormat;
-    this.modified();
+    m_pixelFormat = pixelFormat;
+    m_this.modified();
     return true;
   };
 
@@ -413,7 +404,7 @@ vgl.texture = function() {
    */
   /////////////////////////////////////////////////////////////////////////////
   this.pixelDataType = function() {
-    return this.m_pixelDataType;
+    return m_pixelDataType;
   };
 
   /////////////////////////////////////////////////////////////////////////////
@@ -425,13 +416,12 @@ vgl.texture = function() {
    */
   /////////////////////////////////////////////////////////////////////////////
   this.setPixelDataType = function(pixelDataType) {
-    if (this.m_image === null) {
+    if (m_image === null) {
       return false;
     }
 
-    this.m_pixelDataType = pixelDataType;
-
-    this.modified();
+    m_pixelDataType = pixelDataType;
+    m_this.modified();
 
     return true;
   };
@@ -445,7 +435,7 @@ vgl.texture = function() {
     // Currently image does not define internal format
     // and hence it's pixel format is the only way to query
     // information on how color has been stored.
-    // switch (this.m_image.pixelFormat()) {
+    // switch (m_image.pixelFormat()) {
     // case gl.RGB:
     // this.m_internalFormat = gl.RGB;
     // break;
@@ -464,9 +454,9 @@ vgl.texture = function() {
     // };
 
     // TODO Fix this
-    this.m_internalFormat = gl.RGBA;
-    this.m_pixelFormat = gl.RGBA;
-    this.m_pixelDataType = gl.UNSIGNED_BYTE;
+    m_internalFormat = gl.RGBA;
+    m_pixelFormat = gl.RGBA;
+    m_pixelDataType = gl.UNSIGNED_BYTE;
   };
 
   /////////////////////////////////////////////////////////////////////////////
@@ -475,14 +465,14 @@ vgl.texture = function() {
    */
   /////////////////////////////////////////////////////////////////////////////
   this.updateDimensions = function() {
-    if (this.m_image !== null) {
-      this.m_width = this.m_image.width;
-      this.m_height = this.m_image.height;
-      this.m_depth = 0; // Only 2D images are supported now
+    if (m_image !== null) {
+      m_width = m_image.width;
+      m_height = m_image.height;
+      m_depth = 0; // Only 2D images are supported now
     }
   };
 
-  return this;
+  return m_this;
 };
 
 inherit(vgl.texture, vgl.materialAttribute);
@@ -503,10 +493,11 @@ vgl.lookupTable = function() {
   }
   vgl.texture.call(this);
 
-  var m_setupTimestamp = vgl.timestamp(),
+  var m_this = this,
+      m_setupTimestamp = vgl.timestamp(),
       m_range = [0,0];
 
-  this.m_colorTable = //paraview bwr colortable
+  m_this.m_colorTable = //paraview bwr colortable
     [0.07514311,0.468049805,1,1,
      0.247872569,0.498782363,1,1,
      0.339526309,0.528909511,1,1,
@@ -550,27 +541,27 @@ vgl.lookupTable = function() {
    */
   /////////////////////////////////////////////////////////////////////////////
   this.setup = function(renderState) {
-    if (this.textureUnit() === 0) {
+    if (m_this.textureUnit() === 0) {
       gl.activeTexture(gl.TEXTURE0);
-    } else if (this.textureUnit() === 1) {
+    } else if (m_this.textureUnit() === 1) {
       gl.activeTexture(gl.TEXTURE1);
     }
 
-    gl.deleteTexture(this.m_textureHandle);
-    this.m_textureHandle = gl.createTexture();
-    gl.bindTexture(gl.TEXTURE_2D, this.m_textureHandle);
+    gl.deleteTexture(m_this.textureHandle());
+    m_this.setTextureHandle(gl.createTexture());
+    gl.bindTexture(gl.TEXTURE_2D, m_this.textureHandle());
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
     gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
 
-    this.m_width = this.m_colorTable.length/4;
-    this.m_height = 1;
-    this.m_depth = 0;
+    m_this.setWidth(m_this.m_colorTable.length/4);
+    m_this.setHeight(1);
+    m_this.setDepth(0);
     gl.texImage2D(gl.TEXTURE_2D,
-                  0, gl.RGBA, this.m_width, this.m_height, this.m_depth,
-                  gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array(this.m_colorTable));
+                  0, gl.RGBA, m_this.width(), m_this.height(), m_this.depth(),
+                  gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array(m_colorTable));
 
     gl.bindTexture(gl.TEXTURE_2D, null);
     m_setupTimestamp.modified();
@@ -584,7 +575,7 @@ vgl.lookupTable = function() {
    */
   /////////////////////////////////////////////////////////////////////////////
   this.colorTable = function() {
-    return this.m_colorTable;
+    return m_colorTable;
   };
 
   /////////////////////////////////////////////////////////////////////////////
@@ -596,12 +587,12 @@ vgl.lookupTable = function() {
    */
   /////////////////////////////////////////////////////////////////////////////
   this.setColorTable = function(colors) {
-    if (this.m_colorTable === colors) {
+    if (m_colorTable === colors) {
       return false;
     }
 
-    this.m_colorTable = colors;
-    this.modified();
+    m_colorTable = colors;
+    m_this.modified();
     return true;
   };
 
@@ -629,7 +620,7 @@ vgl.lookupTable = function() {
       return false;
     }
     m_range = range;
-    this.modified();
+    m_this.modified();
     return true;
   };
 
@@ -647,12 +638,12 @@ vgl.lookupTable = function() {
 
     if (range[0] < m_range[0]) {
       m_range[0] = range[0];
-      this.modified();
+      m_this.modified();
     }
 
     if (range[1] > m_range[1]) {
       m_range[1] = range[1];
-      this.modified();
+      m_this.modified();
     }
   };
 
