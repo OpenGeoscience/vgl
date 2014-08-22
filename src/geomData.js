@@ -626,6 +626,7 @@ vgl.sourceData = function() {
   return this;
 };
 
+
 vgl.sourceDataAnyfv = function(size, key) {
   if (!(this instanceof vgl.sourceDataAnyfv)) {
       return new vgl.sourceDataAnyfv(size, key);
@@ -633,9 +634,7 @@ vgl.sourceDataAnyfv = function(size, key) {
 
     vgl.sourceData.call(this);
     this.addAttribute(key, gl.FLOAT,
-                      4, 0, 6 * 4, size, false);
-    this.addAttribute(key, gl.FLOAT,
-                      4, 12, 6 * 4, size, false);
+                      4, 0, size * 4, size, false);
 
     this.pushBack = function(value) {
       this.insert(value);
