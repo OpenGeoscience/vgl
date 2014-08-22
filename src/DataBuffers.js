@@ -1,11 +1,15 @@
-var DataBuffers = function (initial_size) {
+vgl.DataBuffers = function (initialSize) {
+    if (!(this instanceof vgl.DataBuffers)) {
+      return new vgl.DataBuffers(initialSize);
+    }
+
     var data = {};
 
     var size;
-    if (!initial_size)
+    if (!initialSize)
         size = 256;
     else
-        size = initial_size;
+        size = initialSize;
 
     var current = 0;
 
