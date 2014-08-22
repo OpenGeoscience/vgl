@@ -57,7 +57,9 @@ set(_source_files
   picker.js
   shapefileReader.js
   vtkReader.js
+  DataBuffers.js
 )
+
 
 set(paths
   modules
