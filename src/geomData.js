@@ -626,6 +626,25 @@ vgl.sourceData = function() {
   return this;
 };
 
+vgl.sourceDataAnyfv = function(size, key) {
+  if (!(this instanceof vgl.sourceDataAnyfv)) {
+      return new vgl.sourceDataAnyfv(size, key);
+    }
+
+    vgl.sourceData.call(this);
+    this.addAttribute(key, gl.FLOAT,
+                      4, 0, 6 * 4, size, false);
+    this.addAttribute(key, gl.FLOAT,
+                      4, 12, 6 * 4, size, false);
+
+    this.pushBack = function(value) {
+      this.insert(value);
+    };
+
+    return this;
+};
+inherit(vgl.sourceDataAnyfv, vgl.sourceData);
+
 //////////////////////////////////////////////////////////////////////////////
 /**
  * Create a new instance of class sourceDataP3T3f
@@ -888,7 +907,7 @@ vgl.geometryData = function() {
   'use strict';
 
   if (!(this instanceof vgl.geometryData)) {
-    return vgl.geometryData();
+    return new vgl.geometryData();
   }
   vgl.data.call(this);
 
