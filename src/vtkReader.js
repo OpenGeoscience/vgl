@@ -213,11 +213,10 @@ vgl.vtkReader = function() {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.parseObject = function(vtkObject) {
-    var geom = new vgl.geometryData(),
-        mapper = vgl.mapper(),
-        ss = [], type = null, data = null, size,
-        matrix = null, material = null,
-        actor = null, shaderProg, opacityUniform;
+    var geom = new vgl.geometryData(), mapper = vgl.mapper(), ss = [],
+        type = null, data = null, size, matrix = null, material = null,
+        actor, colorMapData, shaderProg, opacityUniform, lookupTable,
+        colorTable;
 
     //dehexlify
 //    data = this.decode64(vtkObject.data);
@@ -249,8 +248,22 @@ vgl.vtkReader = function() {
     }
     // ColorMap
     else if (type === 'C') {
-      matrix = this.parseColorMapData(geom, ss, size);
-      material = vgl.utils.createGeometryMaterial();
+      colorMapData = this.parseColorMapData(geom, ss, size);
+      colorTable = [];
+
+      for (i = 0; i < colorMapData.colors.length; i++) {
+          colorTable.push(colorMapData.colors[i][1])
+          colorTable.push(colorMapData.colors[i][2])
+          colorTable.push(colorMapData.colors[i][3])
+          colorTable.push(colorMapData.colors[i][0] * 255)
+      }
+
+      lookupTable = new vgl.lookupTable();
+      lookupTable.setColorTable(colorTable);
+
+      return vgl.utils.createColorLegend(colorMapData.title,
+          lookupTable, [600, 600, 0.0], 100,
+          100, 3, 0);
     }
     // Unknown
     else {
@@ -272,7 +285,7 @@ vgl.vtkReader = function() {
     actor.setMaterial(material);
     actor.setMatrix(mat4.transpose(mat4.create(), matrix));
 
-    return actor;
+    return [actor];
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -472,24 +485,24 @@ vgl.vtkReader = function() {
   ////////////////////////////////////////////////////////////////////////////
   this.parseColorMapData = function(geom, ss, numColors) {
 
-/******* NOTE:,
-         This code is a copy of the webgl version, not yet implemented here.
-    var tmpArray, size, xrgb, i, c;
+    var tmpArray, size, xrgb, i, c, obj = {};
 
+    // Set number of colors
+    obj.numOfColors = numColors;
 
     // Getting Position
-    size = 2 * 4;
+    size = 8;
     tmpArray = new Int8Array(size);
     for(i=0; i < size; i++) {
-      tmpArray[i] = ss[m_pos++];
+        tmpArray[i] = ss[m_pos++];
     }
     obj.position = new Float32Array(tmpArray.buffer);
 
     // Getting Size
-    size = 2 * 4;
-    tmpArray = new Int8Array(2*4);
+    size = 8;
+    tmpArray = new Int8Array(size);
     for(i=0; i < size; i++) {
-      tmpArray[i] = binaryArray[cursor++];
+        tmpArray[i] = ss[m_pos++];
     }
     obj.size = new Float32Array(tmpArray.buffer);
 
@@ -498,26 +511,26 @@ vgl.vtkReader = function() {
     for(c=0; c < obj.numOfColors; c++){
       tmpArray = new Int8Array(4);
       for(i=0; i < 4; i++) {
-        tmpArray[i] = binaryArray[cursor++];
+        tmpArray[i] = ss[m_pos++];
       }
+
       xrgb = [
         new Float32Array(tmpArray.buffer)[0],
-        binaryArray[cursor++],
-        binaryArray[cursor++],
-        binaryArray[cursor++]
+        ss[m_pos++],
+        ss[m_pos++],
+        ss[m_pos++]
       ];
       obj.colors[c] = xrgb;
     }
 
-    obj.orientation = binaryArray[cursor++];
-    obj.numOfLabels = binaryArray[cursor++];
+    obj.orientation = ss[m_pos++];
+    obj.numOfLabels = ss[m_pos++];
     obj.title = "";
-    while(cursor < binaryArray.length) {
-      obj.title += String.fromCharCode(binaryArray[cursor++]);
+    while(m_pos < ss.length) {
+      obj.title += String.fromCharCode(ss[m_pos++]);
     }
 
-*/
-    return null;
+    return obj;
   };
 
   ////////////////////////////////////////////////////////////////////////////
