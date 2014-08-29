@@ -216,7 +216,7 @@ vgl.vtkReader = function() {
     var geom = new vgl.geometryData(), mapper = vgl.mapper(), ss = [],
         type = null, data = null, size, matrix = null, material = null,
         actor, colorMapData, shaderProg, opacityUniform, lookupTable,
-        colorTable;
+        colorTable, windowSize, width, height, position;
 
     //dehexlify
 //    data = this.decode64(vtkObject.data);
@@ -261,9 +261,19 @@ vgl.vtkReader = function() {
       lookupTable = new vgl.lookupTable();
       lookupTable.setColorTable(colorTable);
 
+      windowSize = m_viewer.renderWindow().windowSize();
+      width = colorMapData.size[0]*windowSize[0];
+      height = colorMapData.size[1]*windowSize[1];
+
+      position = [colorMapData.position[0]*windowSize[0],
+                  (1-colorMapData.position[1])*windowSize[1], 0];
+      position[1] = position[1]-height;
+
+      // For now hardcode the height
+      height = 30;
+
       return vgl.utils.createColorLegend(colorMapData.title,
-          lookupTable, [600, 600, 0.0], 100,
-          100, 3, 0);
+          lookupTable, position, width, height, 3, 0);
     }
     // Unknown
     else {
