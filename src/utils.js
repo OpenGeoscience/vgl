@@ -1258,7 +1258,7 @@ vgl.utils.createColorLegend = function(varname, lookupTable, origin,
   actor = vgl.utils.createTexturePlane(
     origin[0], origin[1], origin[2],
     pt1X, pt1Y, pt1Z,
-    pt2X, pt2Y, pt2Z
+    pt2X, pt2Y, pt2Z, true
   );
 
   mat = actor.material();
