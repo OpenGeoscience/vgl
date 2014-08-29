@@ -1266,6 +1266,7 @@ vgl.utils.createColorLegend = function(varname, lookupTable, origin,
   mat.addAttribute(lookupTable);
   actor.setMaterial(mat);
   group.addChild(actor);
+  actor.material().setBinNumber(vgl.material.RenderBin.Overlay);
   actor.setReferenceFrame(vgl.boundingObject.ReferenceFrame.Absolute);
   actors.push(actor);
   actors = actors.concat(createTicksAndLabels(
