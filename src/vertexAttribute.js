@@ -24,14 +24,7 @@ vgl.vertexAttributeKeys = {
   "Normal" : 1,
   "TextureCoordinate" : 2,
   "Color" : 3,
-  "Scalar" : 4,
-  "Scalar2" : 5,
-  "Scalar3" : 6,
-  "Scalar4" : 7,
-  "Scalar5" : 8,
-  "Scalar6" : 9,
-  "Scalar7" : 10,
-  "CountAttributeIndex" : 11
+  "CountAttributeIndex" : 4
 };
 
 //////////////////////////////////////////////////////////////////////////////
