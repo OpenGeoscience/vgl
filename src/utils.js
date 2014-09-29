@@ -1233,10 +1233,11 @@ vgl.utils.createColorLegend = function(varname, lookupTable, origin,
       positions.push(pt1Z);
     }
 
-    actor = vgl.utils.createLines(positions, null);
-    actor.setReferenceFrame(vgl.boundingObject.ReferenceFrame.Absolute);
-    actor.material().setBinNumber(vgl.material.RenderBin.Overlay);
-    actors.push(actor);
+    // TODO: Fix this
+    //actor = vgl.utils.createLines(positions, null);
+    //actor.setReferenceFrame(vgl.boundingObject.ReferenceFrame.Absolute);
+    //actor.material().setBinNumber(vgl.material.RenderBin.Overlay);
+    //actors.push(actor);
 
     actors = actors.concat(createLabels(varname, positions, lut.range()));
     return actors;
@@ -1258,13 +1259,14 @@ vgl.utils.createColorLegend = function(varname, lookupTable, origin,
   actor = vgl.utils.createTexturePlane(
     origin[0], origin[1], origin[2],
     pt1X, pt1Y, pt1Z,
-    pt2X, pt2Y, pt2Z
+    pt2X, pt2Y, pt2Z, true
   );
 
   mat = actor.material();
   mat.addAttribute(lookupTable);
   actor.setMaterial(mat);
   group.addChild(actor);
+  actor.material().setBinNumber(vgl.material.RenderBin.Overlay);
   actor.setReferenceFrame(vgl.boundingObject.ReferenceFrame.Absolute);
   actors.push(actor);
   actors = actors.concat(createTicksAndLabels(
