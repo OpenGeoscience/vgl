@@ -33,10 +33,9 @@ vgl.texture = function() {
   this.m_textureHandle = null;
   this.m_textureUnit = 0;
 
-  this.m_pixelFormat = null;
-  this.m_pixelDataType = null;
-
-  this.m_internalFormat = null;
+  this.m_pixelFormat = vgl.GL.RGBA;
+  this.m_pixelDataType = vgl.GL.UNSIGNED_BYTE;
+  this.m_internalFormat = vgl.GL.RGBA4;
 
   this.m_image = null;
 
@@ -132,6 +131,7 @@ vgl.texture = function() {
                     this.m_pixelFormat, this.m_pixelDataType, this.m_image);
     }
     else {
+      console.log("this.m_internalFormat ", this.m_internalFormat);
       gl.texImage2D(gl.TEXTURE_2D, 0, this.m_internalFormat,
                     this.m_pixelFormat, this.m_pixelDataType, null);
     }
