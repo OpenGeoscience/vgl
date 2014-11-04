@@ -16,37 +16,34 @@ vgl.fbo = function() {
     gl.bindFramebuffer(gl.FRAMEBUFFER, m_handle);
 
     var colorBufferHandle, depthBufferHandle,
-        colorAttachment = m_fboAttachmentMap[vgl.COLOR_ATTACHMENT0],
-        depthAttachment = m_fboAttachmentMap[vgl.DEPTH_ATTACHMENT];
+        colorTexture = m_fboAttachmentMap[vgl.COLOR_ATTACHMENT0],
+        depthTexture = m_fboAttachmentMap[vgl.DEPTH_ATTACHMENT];
 
-    if (!colorAttachment) {
+    if (colorTexture) {
       colorBufferHandle = gl.createRenderbuffer();
       gl.bindRenderbuffer(gl.RENDERBUFFER, colorBufferHandle);
-      gl.renderbufferStorage(gl.RENDERBUFFER, gl.RGB565,
-                             m_width, m_height);
-      gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0,
-                                gl.RENDERBUFFER, colorBufferHandle);
+      gl.renderbufferStorage(gl.RENDERBUFFER, gl.RGB565, m_width, m_height);
+      gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.RENDERBUFFER, colorBufferHandle);
       m_fboAttachmentMap[vgl.COLOR_ATTACHMENT0] = colorBufferHandle;
     }
     else {
-      updateTextureDimensions(colorAttachment);
+      updateTextureDimensions(colorTexture);
       gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0,
-                              gl.TEXTURE_2D, colorAttachment.textureHandle(), 0);
+                              gl.TEXTURE_2D, colorTexture.textureHandle(), 0);
     }
 
-    if (!depthAttachment) {
+    if (!depthTexture) {
       depthBufferHandle =  gl.createRenderbuffer();
       gl.bindRenderbuffer(gl.RENDERBUFFER, depthBufferHandle);
-      gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16,
-                            m_width, m_height);
-      glFramebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT,
-                                gl.RENDERBUFFER, depthBufferHandle);
-      m_fboAttachmentMap[DepthAttachment] = depthBufferHandle;
+      gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, m_width, m_height);
+      gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT,
+                                 gl.RENDERBUFFER, depthBufferHandle);
+      m_fboAttachmentMap[vgl.DEPTH_ATTACHMENT] = depthBufferHandle;
     }
     else {
-      updateTextureDimensions(depthAttachment);
+      updateTextureDimensions(depthTexture);
       gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.TEXTURE_2D,
-        depthAttachment.textureHandle(), 0);
+        depthTexture.textureHandle(), 0);
     }
 
     m_fboCreationTime.modified();
@@ -75,14 +72,6 @@ vgl.fbo = function() {
 
     if (texture.height() != m_height) {
       texture.setHeight(m_height);
-    }
-  }
-
-  ////////////////////////////////////////////////////////////////////////////
-  this.setup = function(renderState) {
-    if (m_fboCreationTime.getMTime() < m_this.getMTime()) {
-      deleteFBO();
-      createFBO();
     }
   }
 
@@ -128,6 +117,14 @@ vgl.fbo = function() {
   this.height = function() {
     return m_height;
   };
+
+  ////////////////////////////////////////////////////////////////////////////
+  this.setup = function(renderState) {
+    if (m_fboCreationTime.getMTime() < m_this.getMTime()) {
+      deleteFBO();
+      createFBO();
+    }
+  }
 
   ////////////////////////////////////////////////////////////////////////////
   this.render = function() {
