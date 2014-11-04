@@ -51,8 +51,8 @@ vgl.camera = function() {
       m_enableParallelProjection = false,
       m_clearColor = [1.0, 1.0, 1.0, 1.0],
       m_clearDepth = 1.0,
-      m_clearMask = vgl.GL.ColorBufferBit |
-                    vgl.GL.DepthBufferBit;
+      m_clearMask = vgl.GL.COLOR_BUFFER_BIT |
+                    vgl.GL.DEPTH_BUFFER_BIT;
 
   ////////////////////////////////////////////////////////////////////////////
   /**

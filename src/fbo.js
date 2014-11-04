@@ -63,6 +63,7 @@ vgl.fbo = function() {
     }
     else {
       updateTexture(colorTexture, renderState);
+      colorTexture.bind(renderState);
       gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0,
                               gl.TEXTURE_2D, colorTexture.textureHandle(), 0);
     }
@@ -77,6 +78,7 @@ vgl.fbo = function() {
     }
     else {
       updateTexture(depthTexture, renderState);
+      depthTexture.bind(renderState);
       gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.TEXTURE_2D,
         depthTexture.textureHandle(), 0);
     }

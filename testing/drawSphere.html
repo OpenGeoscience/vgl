@@ -56,14 +56,14 @@
 
           plane.material().addAttribute(tex);
           renderer.addActor(plane);
-          renderer.setBackgroundColor(0.5, 1.0, 1.0, 1.0);
+          renderer.setBackgroundColor(0.0, 0.5, 0.1, 1.0);
           renderer.resetCamera();
 
           //pass2.renderer().addActor(plane);
           //pass2.renderer().resetCamera(plane);
           fbo.preventRenderPropagation(false);
           pass1.setRenderTarget(fbo);
-          pass1.renderer().setBackgroundColor(1.0, 1.0, 1.0, 1.0);
+          pass1.renderer().setBackgroundColor(0.5, 0.1, 0.0, 1.0);
           pass1.renderer().resetCamera();
 
           viewer.renderWindow().resize($(node).width(), $(node).height());

@@ -175,13 +175,13 @@ vgl.renderer = function() {
 
     if (m_renderPasses)  {
       for (i = 0; i < m_renderPasses.length; ++i) {
-        if (!m_renderPasses[i].render(renSt)) {
+        if (m_renderPasses[i].render(renSt)) {
           // Stop the rendering if render pass returns false
           console.log("returning");
-          //return;
-
           m_renderPasses[i].remove(renSt);
+          return;
         }
+        m_renderPasses[i].remove(renSt);
       }
     }
 

@@ -34,11 +34,15 @@ vgl.renderPass = function() {
   };
 
   this.render = function(renderState) {
+    var result = false;
+
     if (m_renderTarget) {
-      return m_renderTarget.render(renderState);
+      result = m_renderTarget.render(renderState);
     }
 
     m_renderer.render(renderState);
+
+    return result;
   };
 
   this.remove = function(renderState) {
