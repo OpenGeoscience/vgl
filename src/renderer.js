@@ -414,6 +414,8 @@ vgl.renderer = function() {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.positionAndResize = function(x, y, width, height) {
+    var i;
+
     // TODO move this code to camera
     if (x < 0 || y < 0 || width < 0 || height < 0) {
       console.log('[error] Invalid position and resize values',
@@ -427,6 +429,13 @@ vgl.renderer = function() {
 
       m_camera.setViewAspect(m_width / m_height);
       this.modified();
+    }
+
+    if (m_renderPasses) {
+      for (i = 0; i < m_renderPasses.length; ++i) {
+        m_renderPasses[i].resize(width, height);
+        m_renderPasses[i].renderer().positionAndResize(x, y, width, height);
+      }
     }
   };
 

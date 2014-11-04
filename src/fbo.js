@@ -17,6 +17,9 @@ vgl.renderTarget = function() {
     return m_preventRenderPropagation;
   }
 
+  this.resize = function(width, height) {
+  };
+
   this.setup = function(renderState) {
   };
 
@@ -44,12 +47,12 @@ vgl.fbo = function() {
 
   ////////////////////////////////////////////////////////////////////////////
   function createFBO(renderState) {
-    gl.genFramebuffers(1, m_handle);
+    m_handle = gl.createFramebuffer();
     gl.bindFramebuffer(gl.FRAMEBUFFER, m_handle);
 
     var colorBufferHandle, depthBufferHandle,
-        colorTexture = m_fboAttachmentMap[vgl.COLOR_ATTACHMENT0],
-        depthTexture = m_fboAttachmentMap[vgl.DEPTH_ATTACHMENT];
+        colorTexture = m_fboAttachmentMap[vgl.GL.COLOR_ATTACHMENT0],
+        depthTexture = m_fboAttachmentMap[vgl.GL.DEPTH_ATTACHMENT];
 
     if (colorTexture) {
       colorBufferHandle = gl.createRenderbuffer();
@@ -82,10 +85,11 @@ vgl.fbo = function() {
   }
 
   ////////////////////////////////////////////////////////////////////////////
-
-  ////////////////////////////////////////////////////////////////////////////
   function deleteFBO() {
-    m_this.unbind();
+    if (!m_handle) {
+      return;
+    }
+
     for (key in m_fboAttachmentMap) {
       gl.deleteRenderbuffer(key);
     }
@@ -111,9 +115,14 @@ vgl.fbo = function() {
   this.setTexture = function(type, texture) {
     if (type in m_fboAttachmentMap &&
         m_fboAttachmentMap.hasOwnProperty(type)) {
-      m_fboAttachmentMap[type] = texture;
-      m_this.modified();
+
+      // TODO Release it
     }
+
+    console.log(type);
+
+    m_fboAttachmentMap[type] = texture;
+    m_this.modified();
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -151,6 +160,13 @@ vgl.fbo = function() {
   };
 
   ////////////////////////////////////////////////////////////////////////////
+  this.resize = function(width, height) {
+    m_width = width;
+    m_height = height;
+    m_this.modified();
+  };
+
+  ////////////////////////////////////////////////////////////////////////////
   this.setup = function(renderState) {
     if (m_fboCreationTime.getMTime() < m_this.getMTime()) {
       deleteFBO();
@@ -159,7 +175,11 @@ vgl.fbo = function() {
   }
 
   ////////////////////////////////////////////////////////////////////////////
-  this.render = function() {
+  this.render = function(renderState) {
+    if (!m_handle) {
+      m_this.setup(renderState);
+    }
+
     var status = gl.checkFramebufferStatus(gl.FRAMEBUFFER);
     if (status == gl.FRAMEBUFFER_COMPLETE) {
       gl.bindFramebuffer(gl.FRAMEBUFFER, m_handle);

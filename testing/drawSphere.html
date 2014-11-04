@@ -15,7 +15,7 @@
         var node = document.getElementById("glcanvas"),
             viewer = vgl.viewer(node), renderer,
             reader = vgl.geojsonReader(),
-            pass1 = vgl.renderPass(), pass2 = vgl.renderPass(),
+            pass1 = vgl.renderPass(),
             fbo = vgl.fbo(), tex = vgl.texture(), geoms, i,
             mapper, material, actor, interactorStyle,
             plane = vgl.utils.createTexturePlane(0, 0, 0,
@@ -32,9 +32,9 @@
 
         renderer = viewer.renderWindow().activeRenderer();
         renderer.addRenderPass(pass1);
-        renderer.addRenderPass(pass2);
+        //renderer.addRenderPass(pass2);
 
-        $.getJSON("/data/sphere_small .json", {
+        $.getJSON("/data/sphere_small.json", {
           format: "json"
           })
         .done(function(data) {
@@ -53,18 +53,20 @@
             pass1.renderer().addActor(actor);
           }
 
-          renderer.setBackgroundColor(1.0, 1.0, 1.0, 1.0);
-          renderer.resetCamera();
-
-          pass1.renderer().setBackgroundColor(1.0, 1.0, 1.0, 1.0);
-          pass1.renderer().resetCamera();
-          pass1.setRenderTarget(fbo);
 
           plane.material().addAttribute(tex);
-          pass2.renderer().addActor(plane);
-          pass2.preventEventPropagation(true);
-          pass1.setRenderTarget(null);
+          renderer.addActor(plane);
+          renderer.setBackgroundColor(0.5, 1.0, 1.0, 1.0);
+          renderer.resetCamera();
 
+          //pass2.renderer().addActor(plane);
+          //pass2.renderer().resetCamera(plane);
+          fbo.preventRenderPropagation(false);
+          pass1.setRenderTarget(fbo);
+          pass1.renderer().setBackgroundColor(1.0, 1.0, 1.0, 1.0);
+          pass1.renderer().resetCamera();
+
+          viewer.renderWindow().resize($(node).width(), $(node).height());
           viewer.render();
         });
     }

@@ -154,7 +154,7 @@ vgl.utils.createVertexShader = function(context) {
         'gl_PointSize = pointSize;',
         'gl_Position = projectionMatrix * modelViewMatrix * vec4(vertexPosition, 1.0);',
         ' iVertexColor = vertexColor;', '}' ].join('\n'),
-      shader = new vgl.shader(vgl.vgl.GL.VERTEX_SHADER);
+      shader = new vgl.shader(vgl.GL.VERTEX_SHADER);
 
   shader.setShaderSource(vertexShaderSource);
   return shader;

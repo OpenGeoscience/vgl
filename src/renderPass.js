@@ -40,4 +40,13 @@ vgl.renderPass = function() {
 
     m_renderer.render(renderState);
   };
+
+  ////////////////////////////////////////////////////////////////////////////
+  this.resize = function(width, height) {
+    if (m_renderTarget) {
+      m_renderTarget.resize(width, height);
+    }
+  };
 };
+
+inherit(vgl.renderPass, vgl.object);
