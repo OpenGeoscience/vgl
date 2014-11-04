@@ -6,6 +6,17 @@ vgl.renderTarget = function() {
   }
   vgl.object.call(this);
 
+  var m_preventRenderPropagation = false;
+
+
+  this.preventRenderPropagation = function(val) {
+    if (val) {
+      m_preventRenderPropagation = val;
+    }
+
+    return m_preventRenderPropagation;
+  }
+
   this.setup = function(renderState) {
   };
 
@@ -155,6 +166,8 @@ vgl.fbo = function() {
     } else {
       console.log("[error] Unable to render imcomplete buffer " + status);
     }
+
+    return m_this.preventRenderPropagation();
   }
 
   ////////////////////////////////////////////////////////////////////////////

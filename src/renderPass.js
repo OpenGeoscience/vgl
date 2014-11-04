@@ -37,5 +37,7 @@ vgl.renderPass = function() {
     if (m_renderTarget) {
       return m_renderTarget.render(renderState);
     }
+
+    m_renderer.render(renderState);
   };
 };

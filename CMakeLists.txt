@@ -59,6 +59,7 @@ set(_source_files
   vtkReader.js
   dataBuffers.js
   fbo.js
+  renderPass.js
 )
 
 

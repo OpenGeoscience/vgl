@@ -169,8 +169,8 @@ vgl.triangleStrip = function() {
 
   vgl.primitive.call(this);
 
-  this.setPrimitiveType(gl.TRIANGLE_STRIP);
-  this.setIndicesValueType(gl.UNSIGNED_SHORT);
+  this.setPrimitiveType(vgl.GL.TRIANGLE_STRIP);
+  this.setIndicesValueType(vgl.GL.UNSIGNED_SHORT);
   this.setIndicesPerPrimitive(3);
 
   return this;
@@ -193,8 +193,8 @@ vgl.triangles = function() {
   }
   vgl.primitive.call(this);
 
-  this.setPrimitiveType(gl.TRIANGLES);
-  this.setIndicesValueType(gl.UNSIGNED_SHORT);
+  this.setPrimitiveType(vgl.GL.TRIANGLES);
+  this.setIndicesValueType(vgl.GL.UNSIGNED_SHORT);
   this.setIndicesPerPrimitive(3);
 
   return this;
@@ -217,8 +217,8 @@ vgl.lines = function() {
   }
   vgl.primitive.call(this);
 
-  this.setPrimitiveType(gl.LINES);
-  this.setIndicesValueType(gl.UNSIGNED_SHORT);
+  this.setPrimitiveType(vgl.GL.LINES);
+  this.setIndicesValueType(vgl.GL.UNSIGNED_SHORT);
   this.setIndicesPerPrimitive(2);
 
   return this;
@@ -240,8 +240,8 @@ vgl.lineStrip = function() {
   }
   vgl.primitive.call(this);
 
-  this.setPrimitiveType(gl.LINE_STRIP);
-  this.setIndicesValueType(gl.UNSIGNED_SHORT);
+  this.setPrimitiveType(vgl.GL.LINE_STRIP);
+  this.setIndicesValueType(vgl.GL.UNSIGNED_SHORT);
   this.setIndicesPerPrimitive(2);
 
   return this;
@@ -263,8 +263,8 @@ vgl.points = function() {
   }
   vgl.primitive.call(this);
 
-  this.setPrimitiveType(gl.POINTS);
-  this.setIndicesValueType(gl.UNSIGNED_SHORT);
+  this.setPrimitiveType(vgl.GL.POINTS);
+  this.setIndicesValueType(vgl.GL.UNSIGNED_SHORT);
   this.setIndicesPerPrimitive(1);
 
   return this;
@@ -633,7 +633,7 @@ vgl.sourceDataAnyfv = function(size, key) {
     }
 
     vgl.sourceData.call(this);
-    this.addAttribute(key, gl.FLOAT,
+    this.addAttribute(key, vgl.GL.FLOAT,
                       4, 0, size * 4, size, false);
 
     this.pushBack = function(value) {
@@ -659,9 +659,9 @@ vgl.sourceDataP3T3f = function() {
   }
   vgl.sourceData.call(this);
 
-  this.addAttribute(vgl.vertexAttributeKeys.Position, gl.FLOAT, 4, 0, 6 * 4, 3,
+  this.addAttribute(vgl.vertexAttributeKeys.Position, vgl.GL.FLOAT, 4, 0, 6 * 4, 3,
                     false);
-  this.addAttribute(vgl.vertexAttributeKeys.TextureCoordinate, gl.FLOAT, 4, 12,
+  this.addAttribute(vgl.vertexAttributeKeys.TextureCoordinate, vgl.GL.FLOAT, 4, 12,
                     6 * 4, 3, false);
 
   this.pushBack = function(value) {
@@ -690,9 +690,9 @@ vgl.sourceDataP3N3f = function() {
 
   vgl.sourceData.call(this);
 
-  this.addAttribute(vgl.vertexAttributeKeys.Position, gl.FLOAT, 4, 0, 6 * 4, 3,
+  this.addAttribute(vgl.vertexAttributeKeys.Position, vgl.GL.FLOAT, 4, 0, 6 * 4, 3,
                     false);
-  this.addAttribute(vgl.vertexAttributeKeys.Normal, gl.FLOAT, 4, 12, 6 * 4, 3,
+  this.addAttribute(vgl.vertexAttributeKeys.Normal, vgl.GL.FLOAT, 4, 12, 6 * 4, 3,
                     false);
 
   this.pushBack = function(value) {
@@ -721,7 +721,7 @@ vgl.sourceDataP3fv = function() {
 
   vgl.sourceData.call(this);
 
-  this.addAttribute(vgl.vertexAttributeKeys.Position, gl.FLOAT, 4, 0, 3 * 4, 3,
+  this.addAttribute(vgl.vertexAttributeKeys.Position, vgl.GL.FLOAT, 4, 0, 3 * 4, 3,
                     false);
 
   this.pushBack = function(value) {
@@ -749,7 +749,7 @@ vgl.sourceDataT2fv = function() {
 
   vgl.sourceData.call(this);
 
-  this.addAttribute(vgl.vertexAttributeKeys.TextureCoordinate, gl.FLOAT, 4, 0,
+  this.addAttribute(vgl.vertexAttributeKeys.TextureCoordinate, vgl.GL.FLOAT, 4, 0,
                     2 * 4, 2, false);
 
   this.pushBack = function(value) {
@@ -777,7 +777,7 @@ vgl.sourceDataC3fv = function() {
 
   vgl.sourceData.call(this);
 
-  this.addAttribute(vgl.vertexAttributeKeys.Color, gl.FLOAT, 4, 0, 3 * 4, 3, false);
+  this.addAttribute(vgl.vertexAttributeKeys.Color, vgl.GL.FLOAT, 4, 0, 3 * 4, 3, false);
 
   this.pushBack = function(value) {
     this.insert(value);
@@ -810,7 +810,7 @@ vgl.sourceDataSf = function() {
 
   vgl.sourceData.call(this);
 
-  this.addAttribute(vgl.vertexAttributeKeys.Scalar, gl.FLOAT, 4, 0, 4, 1, false);
+  this.addAttribute(vgl.vertexAttributeKeys.Scalar, vgl.GL.FLOAT, 4, 0, 4, 1, false);
 
   this.pushBack = function(value) {
     if (m_max === null || value > m_max) {
@@ -878,7 +878,7 @@ vgl.sourceDataDf = function() {
 
   vgl.sourceData.call(this);
 
-  this.addAttribute(vgl.vertexAttributeKeys.Scalar, gl.FLOAT,
+  this.addAttribute(vgl.vertexAttributeKeys.Scalar, vgl.GL.FLOAT,
                     4, 0, 4, 1, false);
 
   this.pushBack = function(value) {
