@@ -52,6 +52,7 @@ vgl.renderer = function() {
       m_resizable = true,
       m_resetScene = true,
       m_layer = 0,
+      m_renderPasses = null,
       m_resetClippingRange = true;
 
   m_camera.addChild(m_sceneRoot);
@@ -170,15 +171,26 @@ vgl.renderer = function() {
     var i, renSt, children, actor = null, sortedActors = [],
         mvMatrixInv = mat4.create(), clearColor = null;
 
+    renSt = new vgl.renderState();
+
+    if (m_renderPasses)  {
+      for (i = 0; i < m_renderPasses.length; ++i) {
+        if (!m_renderPasses[i].render(renSt)) {
+          // Stop the rendering if render pass returns false
+          return;
+        }
+      }
+    }
+
     gl.enable(gl.DEPTH_TEST);
     gl.depthFunc(gl.LEQUAL);
 
-    if (m_camera.clearMask() & vgl.GL.ColorBufferBit) {
+    if (m_camera.clearMask() & vgl.COLOR_BUFFER_BIT) {
       clearColor = m_camera.clearColor();
       gl.clearColor(clearColor[0], clearColor[1], clearColor[2], clearColor[3]);
     }
 
-    if (m_camera.clearMask() & vgl.GL.DepthBufferBit) {
+    if (m_camera.clearMask() & vgl.DEPTH_BUFFER_BIT) {
       gl.clearDepth(m_camera.clearDepth());
     }
 
@@ -187,7 +199,6 @@ vgl.renderer = function() {
     // Set the viewport for this renderer
     gl.viewport(m_x, m_y, m_width, m_height);
 
-    renSt = new vgl.renderState();
     children = m_sceneRoot.children();
 
     if (children.length > 0 && m_resetScene) {
@@ -651,6 +662,21 @@ vgl.renderer = function() {
        this.modified()
      }
   };
+
+  this.addRenderPass = function(renPass) {
+    var i;
+
+    if (!m_renderPasses) {
+      for (i = 0; i < m_renderPasses.length; ++i) {
+        if (renPass === m_renderPasses[i]) {
+          return;
+        }
+      }
+    }
+
+    m_renderPasses = [];
+    m_renderPasses.push(renPass);
+  }
 
   return this;
 };
