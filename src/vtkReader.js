@@ -286,7 +286,7 @@ vgl.vtkReader = function() {
     if (vtkObject.hasTransparency) {
       shaderProg = material.shaderProgram();
       opacityUniform = shaderProg.uniform("opacity");
-      shaderProg.addUniform(new vgl.floatUniform("opacity", 0.5));
+      opacityUniform.set(vtkObject.opacity);
       material.setBinNumber(1000);
     }
 
