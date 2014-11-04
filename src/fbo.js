@@ -1,3 +1,24 @@
+vgl.renderTarget = function() {
+  'use strict';
+
+  if (!(this instanceof vgl.fbo)) {
+    return new vgl.fbo();
+  }
+  vgl.object.call(this);
+
+  this.setup = function(renderState) {
+  };
+
+  this.render = function(renderState) {
+  };
+
+  this.remove = function(renderState) {
+  }
+};
+
+inherit(vgl.renderTarget, vgl.object);
+
+
 //////////////////////////////////////////////////////////////////////////////
 vgl.fbo = function() {
   'use strict';
@@ -5,7 +26,7 @@ vgl.fbo = function() {
   if (!(this instanceof vgl.fbo)) {
     return new vgl.fbo();
   }
-  vgl.object.call(this);
+  vgl.renderTarget.call(this);
 
   var m_width = 0, m_height = 0, m_handle = 0, m_fboAttachmentMap = {},
       m_fboCreationTime = vgl.timestamp(), m_this = this;
@@ -141,3 +162,5 @@ vgl.fbo = function() {
      gl.bindFramebuffer(gl.FRAMEBUFFER, 0);
   }
 };
+
+inherit(vgl.fbo, vgl.renderTarget);
