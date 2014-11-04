@@ -185,12 +185,12 @@ vgl.renderer = function() {
     gl.enable(gl.DEPTH_TEST);
     gl.depthFunc(gl.LEQUAL);
 
-    if (m_camera.clearMask() & vgl.COLOR_BUFFER_BIT) {
+    if (m_camera.clearMask() & vgl.GL.COLOR_BUFFER_BIT) {
       clearColor = m_camera.clearColor();
       gl.clearColor(clearColor[0], clearColor[1], clearColor[2], clearColor[3]);
     }
 
-    if (m_camera.clearMask() & vgl.DEPTH_BUFFER_BIT) {
+    if (m_camera.clearMask() & vgl.GL.DEPTH_BUFFER_BIT) {
       gl.clearDepth(m_camera.clearDepth());
     }
 
