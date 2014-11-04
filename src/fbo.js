@@ -16,8 +16,8 @@ vgl.fbo = function() {
     gl.bindFramebuffer(gl.FRAMEBUFFER, m_handle);
 
     var colorBufferHandle, depthBufferHandle,
-        colorAttachment = m_fboAttachmentMap[vgl.GL.COLOR_ATTACHMENT0],
-        depthAttachment = m_fboAttachmentMap[vgl.GL.DEPTH_ATTACHMENT];
+        colorAttachment = m_fboAttachmentMap[vgl.COLOR_ATTACHMENT0],
+        depthAttachment = m_fboAttachmentMap[vgl.DEPTH_ATTACHMENT];
 
     if (!colorAttachment) {
       colorBufferHandle = gl.createRenderbuffer();
@@ -26,7 +26,7 @@ vgl.fbo = function() {
                              m_width, m_height);
       gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0,
                                 gl.RENDERBUFFER, colorBufferHandle);
-      m_fboAttachmentMap[vgl.GL.COLOR_ATTACHMENT0] = colorBufferHandle;
+      m_fboAttachmentMap[vgl.COLOR_ATTACHMENT0] = colorBufferHandle;
     }
     else {
       updateTextureDimensions(colorAttachment);
