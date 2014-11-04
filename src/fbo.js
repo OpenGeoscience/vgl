@@ -193,7 +193,7 @@ vgl.fbo = function() {
 
   ////////////////////////////////////////////////////////////////////////////
   this.remove = function(renderState) {
-     gl.bindFramebuffer(gl.FRAMEBUFFER, 0);
+     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
   }
 };
 

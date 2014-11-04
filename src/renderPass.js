@@ -41,6 +41,12 @@ vgl.renderPass = function() {
     m_renderer.render(renderState);
   };
 
+  this.remove = function(renderState) {
+    if (m_renderTarget) {
+      return m_renderTarget.remove(renderState);
+    }
+  };
+
   ////////////////////////////////////////////////////////////////////////////
   this.resize = function(width, height) {
     if (m_renderTarget) {
