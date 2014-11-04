@@ -54,7 +54,7 @@ vgl.fbo = function() {
         colorTexture = m_fboAttachmentMap[vgl.GL.COLOR_ATTACHMENT0],
         depthTexture = m_fboAttachmentMap[vgl.GL.DEPTH_ATTACHMENT];
 
-    if (colorTexture) {
+    if (!colorTexture) {
       colorBufferHandle = gl.createRenderbuffer();
       gl.bindRenderbuffer(gl.RENDERBUFFER, colorBufferHandle);
       gl.renderbufferStorage(gl.RENDERBUFFER, gl.RGB565, m_width, m_height);
@@ -101,6 +101,9 @@ vgl.fbo = function() {
     if (!texture) {
       return;
     }
+
+    console.log('updateTextureDimensions ', m_width);
+    console.log('updateTextureDimensions ', m_height);
 
     if (texture.width() != m_width) {
       texture.setWidth(m_width);
@@ -176,9 +179,7 @@ vgl.fbo = function() {
 
   ////////////////////////////////////////////////////////////////////////////
   this.render = function(renderState) {
-    if (!m_handle) {
-      m_this.setup(renderState);
-    }
+    m_this.setup(renderState);
 
     var status = gl.checkFramebufferStatus(gl.FRAMEBUFFER);
     if (status == gl.FRAMEBUFFER_COMPLETE) {
