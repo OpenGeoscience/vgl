@@ -666,7 +666,7 @@ vgl.renderer = function() {
   this.addRenderPass = function(renPass) {
     var i;
 
-    if (!m_renderPasses) {
+    if (m_renderPasses) {
       for (i = 0; i < m_renderPasses.length; ++i) {
         if (renPass === m_renderPasses[i]) {
           return;

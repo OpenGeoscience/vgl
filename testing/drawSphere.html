@@ -31,8 +31,8 @@
         viewer.setInteractorStyle(interactorStyle);
 
         renderer = viewer.renderWindow().activeRenderer();
-        renderer.addPass(pass1);
-        renderer.addPass(pass2);
+        renderer.addRenderPass(pass1);
+        renderer.addRenderPass(pass2);
 
         $.getJSON("/data/sphere_small .json", {
           format: "json"
