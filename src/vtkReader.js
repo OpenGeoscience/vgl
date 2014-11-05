@@ -252,10 +252,10 @@ vgl.vtkReader = function() {
       colorTable = [];
 
       for (i = 0; i < colorMapData.colors.length; i++) {
-          colorTable.push(colorMapData.colors[i][1])
-          colorTable.push(colorMapData.colors[i][2])
-          colorTable.push(colorMapData.colors[i][3])
-          colorTable.push(colorMapData.colors[i][0] * 255)
+        colorTable.push(colorMapData.colors[i][1])
+        colorTable.push(colorMapData.colors[i][2])
+        colorTable.push(colorMapData.colors[i][3])
+        colorTable.push(colorMapData.colors[i][0] * 255)
       }
 
       lookupTable = new vgl.lookupTable();
