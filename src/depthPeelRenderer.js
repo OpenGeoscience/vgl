@@ -15,18 +15,61 @@ vgl.depthPeelRenderer = function() {
 
   var m_this = this, fbo = [], texID = [], depthTexID = [],
       colorBlenderTexID, colorBlenderFBOID, setupTime = vgl.timestamp(),
-      cubeShader = null, frontPeelShader = null, NUM_PASSES = 6;
+      cubeShader = null, frontPeelShader = null, NUM_PASSES = 6,
+      m_quad;
 
-  function renderScene(actors, material) {
-
+  function drawFullScreenQuad(shader) {
   }
 
-  function renderQuad() {
-
+  function initScreenQuad(renderState, width, height) {
+    m_quad = vgl.utls.createPlane(0.0, 0.0, 0.0,
+                                  width, 0.0, 0.0,
+                                  0.0, height, 0.0);
   }
 
   function initShaders(renderState, WIDTH, HEIGHT) {
+    // Load the cube shader
+    cubeShader.loadFromFile(vgl.GL.VERTEX_SHADER,   "shaders/cube_shader.vert");
+    cubeShader.loadFromFile(vgl.GL.FRAGMENT_SHADER, "shaders/cube_shader.frag");
+    // Compile and link the shader
+    cubeShader.bind();
+    cubeShader.undoBind();
 
+    // Load the front to back peeling shader
+    frontPeelShader.loadFromFile(vgl.GL.VERTEX_SHADER,   "shaders/front_peel.vert");
+    frontPeelShader.loadFromFile(vgl.GL.FRAGMENT_SHADER, "shaders/front_peel.frag");
+    // Compile and link the shader
+    frontPeelShader.bind();
+    frontPeelShader.undoBind();
+
+    //     //add attributes and uniforms
+    //     frontPeelShader.AddAttribute("vVertex");
+    //     frontPeelShader.AddUniform("MVP");
+    //     frontPeelShader.AddUniform("vColor");
+    //     frontPeelShader.AddUniform("depthTexture");
+    //     //pass constant uniforms at initialization
+    //     glUniform1i(frontPeelShader("depthTexture"), 0);
+    // frontPeelShader.UnUse();
+
+    // Load the blending shader
+    blendShader.loadFromFile(vgl.GL.VERTEX_SHADER,   "shaders/blend.vert");
+    blendShader.loadFromFile(vgl.GL.FRAGMENT_SHADER, "shaders/blend.frag");
+    // Compile and link the shader
+    blendShader.bind();
+    blendShader.undoBind();
+
+    //     //add attributes and uniforms
+    //     blendShader.AddAttribute("vVertex");
+    //     blendShader.AddUniform("tempTexture");
+    //     //pass constant uniforms at initialization
+    //     glUniform1i(blendShader("tempTexture"), 0);
+    // blendShader.UnUse();
+
+    //Load the final shader
+    finalShader.loadFromFile(vgl.GL.VERTEX_SHADER,   "shaders/blend.vert");
+    finalShader.loadFromFile(vgl.GL.FRAGMENT_SHADER, "shaders/final.frag");
+    finalShader.bind();
+    finalShader.undoBind();
   }
 
   function initFBO(renderState, WIDTH, HEIGHT) {
@@ -107,16 +150,46 @@ vgl.depthPeelRenderer = function() {
 
   function setup(renderState) {
     if (setupTime.getMTime() < m_this.getMTime()) {
+      initScreenQuad(renderState, m_this.width(), m_this.height());
       initShaders(renderState, m_this.width(), m_this.height());
       initFBO(renderState, m_this.width(), m_this.height());
     }
   }
 
-  function drawScene(renderState, shader) {
+  function drawScene(renderState, actors, shader) {
+    // TODO FIXME
+    // // Enable alpha blending with over compositing
+    // glEnable(GL_BLEND);
+    // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+    for ( i = 0; i < sortedActors.length; ++i) {
+      actor = sortedActors[i][1];
+
+      if (actor.referenceFrame() ===
+          vgl.boundingObject.ReferenceFrame.Relative) {
+        mat4.multiply(renderState.m_modelViewMatrix, m_camera.viewMatrix(),
+          actor.matrix());
+        renderState.m_projectionMatrix = m_camera.projectionMatrix();
+      } else {
+        renderState.m_modelViewMatrix = actor.matrix();
+        renderState.m_projectionMatrix = mat4.create();
+        mat4.ortho(renderState.m_projectionMatrix, 0,
+                   m_width, 0, m_height, -1, 1);
+      }
+
+      mat4.invert(mvMatrixInv, renderState.m_modelViewMatrix);
+      mat4.transpose(renderState.m_normalMatrix, mvMatrixInv);
+      renderState.m_material = actor.material();
+      renderState.m_mapper = actor.mapper();
+
+      // TODO Fix this shortcut
+      renderState.m_material.render(renderState);
+      renderState.m_mapper.render(renderState);
+      renderState.m_material.remove(renderState);
+    }
   }
 
-  function depthPeelRender(renderState) {
+  function depthPeelRender(renderState, actors) {
     var layer;
 
     // Clear colour and depth buffer
@@ -134,7 +207,7 @@ vgl.depthPeelRenderer = function() {
     // 1. In the first pass, we render normally with depth test enabled to get the nearest surface
     gl.enable(GL_DEPTH_TEST);
 
-    drawScene(renderState, cubeShader);
+    drawScene(renderState, actors, cubeShader);
 
     // 2. Depth peeling + blending pass
     var numLayers = (NUM_PASSES - 1) * 2;
@@ -164,7 +237,7 @@ vgl.depthPeelRenderer = function() {
         gl.bindTexture(vgl.GL.TEXTURE_RECTANGLE, depthTexID[prevId]);
 
         // Render scene with the front to back peeling shader
-        drawScene(renderState, frontPeelShader);
+        drawScene(renderState, actors, frontPeelShader);
 
         // Bind the colour blender FBO
         gl.bindFramebuffer(vgl.GL.FRAMEBUFFER, colorBlenderFBOID);
@@ -186,10 +259,12 @@ vgl.depthPeelRenderer = function() {
         // Bind the result from the previous iteration as texture
         gl.bindTexture(vgl.GL.TEXTURE_RECTANGLE, texID[currId]);
 
-        // Bind the blend shader and then draw a fullscreen quad
-        blendShader.Use();
-            drawFullScreenQuad();
-        blendShader.UnUse();
+        drawFullScreenQuad(blendShader);
+
+        // // Bind the blend shader and then draw a fullscreen quad
+        // blendShader.Use();
+        //     drawFullScreenQuad();
+        // blendShader.UnUse();
 
         // Disable blending
         gl.disable(vgl.GL.BLEND);
@@ -209,17 +284,20 @@ vgl.depthPeelRenderer = function() {
     // Bind the colour blender texture
     gl.bindTexture(vgl.GL.TEXTURE_RECTANGLE, colorBlenderTexID);
 
-    // Bind the final shader
-    // TODO FIXME
-    finalShader.Use();
-        // Set shader uniforms
-        // TODO FIXME
-        glUniform4fv(finalShader("vBackgroundColor"), 1, &bg.x);
+    // Draw full screen quad
+    drawFullScreenQuad(finaShader);
 
-        // Draw full screen quad
-        drawFullScreenQuad();
-    // TODO FIXME
-    finalShader.UnUse();
+    // // Bind the final shader
+    // // TODO FIXME
+    // finalShader.Use();
+    //     // Set shader uniforms
+    //     // TODO FIXME
+    //     glUniform4fv(finalShader("vBackgroundColor"), 1, &bg.x);
+
+    //     // Draw full screen quad
+    //     drawFullScreenQuad(finaShader);
+    // // TODO FIXME
+    // finalShader.UnUse();
   }
 
   ////////////////////////////////////////////////////////////////////////////
@@ -273,30 +351,32 @@ vgl.depthPeelRenderer = function() {
     // Now perform sorting
     sortedActors.sort(function(a, b) {return a[0] - b[0];});
 
-    for ( i = 0; i < sortedActors.length; ++i) {
-      actor = sortedActors[i][1];
+    depthPeelRender(renderState, sortedActors);
 
-      if (actor.referenceFrame() ===
-          vgl.boundingObject.ReferenceFrame.Relative) {
-        mat4.multiply(renSt.m_modelViewMatrix, m_camera.viewMatrix(),
-          actor.matrix());
-        renSt.m_projectionMatrix = m_camera.projectionMatrix();
-      } else {
-        renSt.m_modelViewMatrix = actor.matrix();
-        renSt.m_projectionMatrix = mat4.create();
-        mat4.ortho(renSt.m_projectionMatrix, 0, m_width, 0, m_height, -1, 1);
-      }
+    // for ( i = 0; i < sortedActors.length; ++i) {
+    //   actor = sortedActors[i][1];
 
-      mat4.invert(mvMatrixInv, renSt.m_modelViewMatrix);
-      mat4.transpose(renSt.m_normalMatrix, mvMatrixInv);
-      renSt.m_material = actor.material();
-      renSt.m_mapper = actor.mapper();
+    //   if (actor.referenceFrame() ===
+    //       vgl.boundingObject.ReferenceFrame.Relative) {
+    //     mat4.multiply(renSt.m_modelViewMatrix, m_camera.viewMatrix(),
+    //       actor.matrix());
+    //     renSt.m_projectionMatrix = m_camera.projectionMatrix();
+    //   } else {
+    //     renSt.m_modelViewMatrix = actor.matrix();
+    //     renSt.m_projectionMatrix = mat4.create();
+    //     mat4.ortho(renSt.m_projectionMatrix, 0, m_width, 0, m_height, -1, 1);
+    //   }
 
-      // TODO Fix this shortcut
-      renSt.m_material.render(renSt);
-      renSt.m_mapper.render(renSt);
-      renSt.m_material.remove(renSt);
-    }
+    //   mat4.invert(mvMatrixInv, renSt.m_modelViewMatrix);
+    //   mat4.transpose(renSt.m_normalMatrix, mvMatrixInv);
+    //   renSt.m_material = actor.material();
+    //   renSt.m_mapper = actor.mapper();
+
+    //   // TODO Fix this shortcut
+    //   renSt.m_material.render(renSt);
+    //   renSt.m_mapper.render(renSt);
+    //   renSt.m_material.remove(renSt);
+    // }
   };
 };
 
