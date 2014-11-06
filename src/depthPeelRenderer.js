@@ -238,15 +238,16 @@ vgl.depthPeelRenderer = function() {
 
       mat4.invert(mvMatrixInv, renderState.m_modelViewMatrix);
       mat4.transpose(renderState.m_normalMatrix, mvMatrixInv);
-      renderState.m_material = actor.material();
       renderState.m_mapper = actor.mapper();
 
       // TODO Fix this shortcut
       if (!material) {
+          renderState.m_material = actor.material();
           renderState.m_material.render(renderState);
           renderState.m_mapper.render(renderState);
           renderState.m_material.remove(renderState);
       } else {
+        console.log("***** using material ******", material);
         renderState.m_material = material;
         renderState.m_material.render(renderState);
         renderState.m_mapper.render(renderState);
@@ -264,11 +265,7 @@ vgl.depthPeelRenderer = function() {
     // Bind the colour blending FBO
     gl.bindFramebuffer(vgl.GL.FRAMEBUFFER, colorBlenderFBOID);
 
-    // Set the first colour attachment as the draw buffer
-    //gl.drawBuffer(vgl.GL.COLOR_ATTACHMENT0);
-
-    //clear the colour and depth buffer
-    gl.clearColor(1, 0, 0, 0);
+    // Clear the colour and depth buffer
     gl.clear(vgl.GL.COLOR_BUFFER_BIT | vgl.GL.DEPTH_BUFFER_BIT );
 
     // 1. In the first pass, we render normally with depth test enabled to get the nearest surface
@@ -286,9 +283,6 @@ vgl.depthPeelRenderer = function() {
 
         // Bind the current FBO
         gl.bindFramebuffer(vgl.GL.FRAMEBUFFER, fbo[currId]);
-
-        //set the first colour attachment as draw buffer
-        //gl.drawBuffer(vgl.GL.COLOR_ATTACHMENT0);
 
         // Set clear colour to black
         gl.clearColor(0, 0, 0, 0);
@@ -309,9 +303,6 @@ vgl.depthPeelRenderer = function() {
         // Bind the colour blender FBO
         gl.bindFramebuffer(vgl.GL.FRAMEBUFFER, colorBlenderFBOID);
 
-        // Render to its first colour attachment
-        //gl.drawBuffer(vgl.GL.COLOR_ATTACHMENT0);
-
         // Enable blending but disable depth testing
         gl.disable(vgl.GL.DEPTH_TEST);
         gl.enable(vgl.GL.BLEND);
@@ -328,11 +319,6 @@ vgl.depthPeelRenderer = function() {
 
         drawFullScreenQuad(renderState, blMaterial);
 
-        // // Bind the blend shader and then draw a fullscreen quad
-        // blendShader.Use();
-        //     drawFullScreenQuad();
-        // blendShader.UnUse();
-
         // Disable blending
         gl.disable(vgl.GL.BLEND);
     }
@@ -340,15 +326,6 @@ vgl.depthPeelRenderer = function() {
     // 3. Final render pass
     //remove the FBO
     gl.bindFramebuffer(vgl.GL.FRAMEBUFFER, null);
-
-    // Set clear colour to black
-    gl.clearColor(1, 0, 0, 0);
-
-    // Clear the colour and depth buffers
-    gl.clear(vgl.GL.COLOR_BUFFER_BIT | vgl.GL.DEPTH_BUFFER_BIT);
-
-    // Restore the default back buffer
-    //gl.drawBuffer(vgl.GL.GL_BACK_LEFT);
 
     // Disable depth testing and blending
     gl.disable(vgl.GL.DEPTH_TEST);
@@ -360,17 +337,7 @@ vgl.depthPeelRenderer = function() {
     // Draw full screen quad
     drawFullScreenQuad(renderState, fiMaterial);
 
-    // // Bind the final shader
-    // // TODO FIXME
-    // finalShader.Use();
-    //     // Set shader uniforms
-    //     // TODO FIXME
-    //     glUniform4fv(finalShader("vBackgroundColor"), 1, &bg.x);
-
-    //     // Draw full screen quad
-    //     drawFullScreenQuad(finaShader);
-    // // TODO FIXME
-    // finalShader.UnUse();
+    gl.bindTexture(vgl.GL.TEXTURE_2D, null);
   }
 
   ////////////////////////////////////////////////////////////////////////////
@@ -385,9 +352,9 @@ vgl.depthPeelRenderer = function() {
     renSt = new vgl.renderState();
 
     clearColor = m_this.m_camera.clearColor();
-    gl.clearColor(clearColor[0], clearColor[1], clearColor[2], clearColor[3]);
-    gl.clearDepth(m_this.m_camera.clearDepth());
-    gl.clear(m_this.m_camera.clearMask());
+    // gl.clearColor(clearColor[0], clearColor[1], clearColor[2], clearColor[3]);
+    // gl.clearDepth(m_this.m_camera.clearDepth());
+    // gl.clear(m_this.m_camera.clearMask());
 
     // Set the viewport for this renderer
     gl.viewport(m_this.m_x, m_this.m_y, m_this.m_width, m_this.m_height);
