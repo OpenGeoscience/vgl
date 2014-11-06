@@ -214,9 +214,13 @@ vgl.material = function() {
   this.bind = function(renderState) {
     var key = null;
 
+    m_shaderProgram.bind(renderState);
+
     for (key in m_attributes) {
       if (m_attributes.hasOwnProperty(key)) {
-        m_attributes[key].bind(renderState);
+        if (m_attributes[key] !== m_shaderProgram) {
+          m_attributes[key].bind(renderState);
+        }
       }
     }
 

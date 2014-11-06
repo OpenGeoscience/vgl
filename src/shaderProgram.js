@@ -49,6 +49,7 @@ vgl.shaderProgram = function() {
       type: "GET",
       async: false,
       success: function(result) {
+        console.log(result);
         shader = vgl.shader(type);
         shader.setShaderSource(result);
         m_this.addShader(shader);
@@ -306,8 +307,12 @@ vgl.shaderProgram = function() {
 
       this.use();
       this.bindUniforms();
+
+      console.log("using ****", this);
+      m_bindTimestamp.modified();
     }
     else {
+      console.log("using ", this);
       this.use();
     }
 

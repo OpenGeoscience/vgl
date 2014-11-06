@@ -900,8 +900,8 @@ vgl.utils.createPointSpritesMaterial = function(image, lut) {
  */
 //////////////////////////////////////////////////////////////////////////////
 vgl.utils.createPlane = function(originX, originY, originZ,
-                                       point1X, point1Y, point1Z,
-                                       point2X, point2Y, point2Z) {
+                                 point1X, point1Y, point1Z,
+                                 point2X, point2Y, point2Z) {
   'use strict';
   var mapper = new vgl.mapper(),
       planeSource = new vgl.planeSource(),

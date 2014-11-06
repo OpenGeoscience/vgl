@@ -21,16 +21,23 @@ vgl.depthPeelRenderer = function() {
 
   function drawFullScreenQuad(renderState, material) {
     m_quad.setMaterial(material);
-    material.render(renderState);
-    m_quad.mapper().render(renderState);
+
+    renderState.m_mapper = m_quad.mapper();
+    renderState.m_material = material;
+
+    renderState.m_material.render(renderState);
     renderState.m_mapper.render(renderState);
-    material.remove(renderState);
+    renderState.m_material.remove(renderState);
+
+    m_quad.setMaterial(null);
   }
 
   function initScreenQuad(renderState, width, height) {
+    console.log(width);
+    console.log(height);
     m_quad = vgl.utils.createPlane(0.0, 0.0, 0.0,
-                                  width, 0.0, 0.0,
-                                  0.0, height, 0.0);
+                                   1.0, 0.0, 0.0,
+                                   0.0, 1.0, 0.0);
   }
 
   function initShaders(renderState, WIDTH, HEIGHT) {
@@ -39,14 +46,14 @@ vgl.depthPeelRenderer = function() {
         fimv, fiproj, fivertex, fitempTex;
 
     // Load the front to back peeling shader
-    fpvertex = new vgl.vertexAttribute("vVertex");
+    fpvertex = new vgl.vertexAttribute("vertexPosition");
     fpcolor = new vgl.vertexAttribute("vColor");
     fpmv = new vgl.modelViewUniform("modelViewMatrix");
     fpproj = new vgl.projectionUniform("projectionMatrix");
     fpdepthTex = new vgl.uniform(vgl.GL.INT, "depthTexture");
     fpdepthTex.set(0);
 
-    frontPeelShader = fpMaterial.shaderProgram();
+    frontPeelShader = new vgl.shaderProgram();
     frontPeelShader.loadFromFile(vgl.GL.VERTEX_SHADER,   "shaders/front_peel.vert");
     frontPeelShader.loadFromFile(vgl.GL.FRAGMENT_SHADER, "shaders/front_peel.frag");
 
@@ -58,6 +65,7 @@ vgl.depthPeelRenderer = function() {
 
     // Compile and link the shader
     frontPeelShader.compileAndLink();
+    fpMaterial.addAttribute(frontPeelShader);
 
     //     //add attributes and uniforms
     //     frontPeelShader.AddAttribute("vVertex");
@@ -69,22 +77,19 @@ vgl.depthPeelRenderer = function() {
     // frontPeelShader.UnUse();
 
     // Load the blending shader
-    blendShader = blMaterial.shaderProgram();
+    blendShader = new vgl.shaderProgram();
     blendShader.loadFromFile(vgl.GL.VERTEX_SHADER,   "shaders/blend.vert");
     blendShader.loadFromFile(vgl.GL.FRAGMENT_SHADER, "shaders/blend.frag");
-    blmv = new vgl.modelViewUniform("modelViewMatrix");
-    blproj = new vgl.projectionUniform("projectionMatrix");
     bltempTex = new vgl.uniform(vgl.GL.INT, "tempTexture");
     bltempTex.set(0);
-    blvertex = new vgl.vertexAttribute("vVertex");
+    blvertex = new vgl.vertexAttribute("vertexPosition");
 
-    blendShader.addUniform(blmv);
-    blendShader.addUniform(blproj);
     blendShader.addUniform(bltempTex);
     blendShader.addVertexAttribute(blvertex, vgl.vertexAttributeKeys.Position);
 
     // Compile and link the shader
     blendShader.compileAndLink();
+    blMaterial.addAttribute(blendShader);
 
     //     //add attributes and uniforms
     //     blendShader.AddAttribute("vVertex");
@@ -97,18 +102,20 @@ vgl.depthPeelRenderer = function() {
     finalShader = fiMaterial.shaderProgram();
     finalShader.loadFromFile(vgl.GL.VERTEX_SHADER,   "shaders/blend.vert");
     finalShader.loadFromFile(vgl.GL.FRAGMENT_SHADER, "shaders/final.frag");
-    fimv = new vgl.modelViewUniform("modelViewMatrix");
-    fiproj = new vgl.projectionUniform("projectionMatrix");
-    fitempTex = new vgl.uniform(vgl.GL.INT, "tempTexture");
-    fitempTex.set(0);
-    fivertex = new vgl.vertexAttribute("vVertex");
 
-    finalShader.addUniform(fimv);
-    finalShader.addUniform(fiproj);
+
+    //fimv = new vgl.modelViewUniform("modelViewMatrix");
+    //fiproj = new vgl.projectionUniform("projectionMatrix");
+    fitempTex = new vgl.uniform(vgl.GL.INT, "colorTexture");
+    fitempTex.set(0);
+    fivertex = new vgl.vertexAttribute("vertexPosition");
+
+    //finalShader.addUniform(fimv);
+    //finalShader.addUniform(fiproj);
     finalShader.addUniform(fitempTex);
     finalShader.addVertexAttribute(fivertex, vgl.vertexAttributeKeys.Position);
-
     finalShader.compileAndLink();
+    fiMaterial.addAttribute(finalShader);
   }
 
   function initFBO(renderState, WIDTH, HEIGHT) {
@@ -261,6 +268,7 @@ vgl.depthPeelRenderer = function() {
     //gl.drawBuffer(vgl.GL.COLOR_ATTACHMENT0);
 
     //clear the colour and depth buffer
+    gl.clearColor(1, 0, 0, 0);
     gl.clear(vgl.GL.COLOR_BUFFER_BIT | vgl.GL.DEPTH_BUFFER_BIT );
 
     // 1. In the first pass, we render normally with depth test enabled to get the nearest surface
@@ -333,6 +341,12 @@ vgl.depthPeelRenderer = function() {
     //remove the FBO
     gl.bindFramebuffer(vgl.GL.FRAMEBUFFER, null);
 
+    // Set clear colour to black
+    gl.clearColor(1, 0, 0, 0);
+
+    // Clear the colour and depth buffers
+    gl.clear(vgl.GL.COLOR_BUFFER_BIT | vgl.GL.DEPTH_BUFFER_BIT);
+
     // Restore the default back buffer
     //gl.drawBuffer(vgl.GL.GL_BACK_LEFT);
 
@@ -370,18 +384,9 @@ vgl.depthPeelRenderer = function() {
 
     renSt = new vgl.renderState();
 
-    gl.enable(gl.DEPTH_TEST);
-    gl.depthFunc(gl.LEQUAL);
-
-    if (m_this.m_camera.clearMask() & vgl.GL.COLOR_BUFFER_BIT) {
-      clearColor = m_this.m_camera.clearColor();
-      gl.clearColor(clearColor[0], clearColor[1], clearColor[2], clearColor[3]);
-    }
-
-    if (m_this.m_camera.clearMask() & vgl.GL.DEPTH_BUFFER_BIT) {
-      gl.clearDepth(m_this.m_camera.clearDepth());
-    }
-
+    clearColor = m_this.m_camera.clearColor();
+    gl.clearColor(clearColor[0], clearColor[1], clearColor[2], clearColor[3]);
+    gl.clearDepth(m_this.m_camera.clearDepth());
     gl.clear(m_this.m_camera.clearMask());
 
     // Set the viewport for this renderer
@@ -411,31 +416,6 @@ vgl.depthPeelRenderer = function() {
     sortedActors.sort(function(a, b) {return a[0] - b[0];});
 
     depthPeelRender(renSt, sortedActors);
-
-    // for ( i = 0; i < sortedActors.length; ++i) {
-    //   actor = sortedActors[i][1];
-
-    //   if (actor.referenceFrame() ===
-    //       vgl.boundingObject.ReferenceFrame.Relative) {
-    //     mat4.multiply(renSt.m_this.m_modelViewMatrix, m_this.m_camera.viewMatrix(),
-    //       actor.matrix());
-    //     renSt.m_this.m_projectionMatrix = m_this.m_camera.projectionMatrix();
-    //   } else {
-    //     renSt.m_this.m_modelViewMatrix = actor.matrix();
-    //     renSt.m_this.m_projectionMatrix = mat4.create();
-    //     mat4.ortho(renSt.m_this.m_projectionMatrix, 0, m_this.m_width, 0, m_this.m_height, -1, 1);
-    //   }
-
-    //   mat4.invert(mvMatrixInv, renSt.m_this.m_modelViewMatrix);
-    //   mat4.transpose(renSt.m_this.m_normalMatrix, mvMatrixInv);
-    //   renSt.m_this.m_material = actor.material();
-    //   renSt.m_this.m_mapper = actor.mapper();
-
-    //   // TODO Fix this shortcut
-    //   renSt.m_this.m_material.render(renSt);
-    //   renSt.m_this.m_mapper.render(renSt);
-    //   renSt.m_this.m_material.remove(renSt);
-    // }
   };
 };
 
