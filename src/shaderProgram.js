@@ -40,10 +40,10 @@ vgl.shaderProgram = function() {
    *
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.loadFromFile(type, sourceUrl) {
+  this.loadFromFile = function(type, sourceUrl) {
     var shader;
     $.ajax({
-      url: sourceUrl
+      url: sourceUrl,
       type: "GET",
       async: false,
       success: function(result) {

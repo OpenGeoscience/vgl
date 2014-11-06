@@ -15,10 +15,16 @@ vgl.depthPeelRenderer = function() {
 
   var m_this = this, fbo = [], texID = [], depthTexID = [],
       colorBlenderTexID, colorBlenderFBOID, setupTime = vgl.timestamp(),
-      cubeShader = null, frontPeelShader = null, NUM_PASSES = 6,
+      fpMaterial = vgl.material(), blMaterial = vgl.material(),
+      fiMaterial = vgl.material(), frontPeelShader = null, NUM_PASSES = 6,
       m_quad;
 
-  function drawFullScreenQuad(shader) {
+  function drawFullScreenQuad(renderState, material) {
+    m_quad.setMaterial(material);
+    material.render(renderState);
+    m_quad.mapper().render(renderState);
+    renderState.m_mapper.render(renderState);
+    material.remove(renderState);
   }
 
   function initScreenQuad(renderState, width, height) {
@@ -28,19 +34,25 @@ vgl.depthPeelRenderer = function() {
   }
 
   function initShaders(renderState, WIDTH, HEIGHT) {
-    var fpmv, fpproj, fpvertex, fpcolor,
-        blmv, blproj, fpdepthTex, bltempTex,
+    var fpmv, fpproj, fpvertex, fpcolor, fpdepthTex,
+        blmv, blproj, blvertex, bltempTex,
+        fimv, fiproj, fivertex, fitempTex;
 
     // Load the front to back peeling shader
-    fpvertex = new vgl.vertexAttribute("vVertex"),
-    fpcolor = new vgl.vertexAttribute("vColor"),
+    fpvertex = new vgl.vertexAttribute("vVertex");
+    fpcolor = new vgl.vertexAttribute("vColor");
     fpmv = new vgl.modelViewUniform("modelViewMatrix");
     fpproj = new vgl.projectionUniform("projectionMatrix");
     fpdepthTex = new vgl.uniform(vgl.GL.INT, "depthTexture");
     fpdepthTex.set(0);
+
+    frontPeelShader = fpMaterial.shaderProgram();
     frontPeelShader.loadFromFile(vgl.GL.VERTEX_SHADER,   "shaders/front_peel.vert");
     frontPeelShader.loadFromFile(vgl.GL.FRAGMENT_SHADER, "shaders/front_peel.frag");
 
+    frontPeelShader.addUniform(fpmv);
+    frontPeelShader.addUnitorm(fpproj);
+    frontPeelShader.addUnitorm(fpdepthTex);
     frontPeelShader.addVertexAttribute(fpvertex, vgl.vertexAttributeKeys.Position);
     frontPeelShader.addVertexAttribute(fpcolor, vgl.vertexAttributeKeys.Color);
 
@@ -58,8 +70,19 @@ vgl.depthPeelRenderer = function() {
     // frontPeelShader.UnUse();
 
     // Load the blending shader
+    blendShader = blMaterial.shaderProgram();
     blendShader.loadFromFile(vgl.GL.VERTEX_SHADER,   "shaders/blend.vert");
     blendShader.loadFromFile(vgl.GL.FRAGMENT_SHADER, "shaders/blend.frag");
+    blmv = new vgl.modelViewUniform("modelViewMatrix");
+    blproj = new vgl.projectionUniform("projectionMatrix");
+    bltempTex = new vgl.uniform(vgl.GL.INT, "tempTexture");
+    bltempTex.set(0);
+    blvertex = new vgl.vertexAttribute("vVertex");
+
+    blendShader.addUniform(blmv);
+    blendShader.addUniform(blproj);
+    blendShader.addUniform(bltempTex);
+    blendShader.addVertexAttribute(blvertex, vgl.vertexAttributeKeys.Position);
 
     // Compile and link the shader
     blendShader.bind();
@@ -73,8 +96,20 @@ vgl.depthPeelRenderer = function() {
     // blendShader.UnUse();
 
     //Load the final shader
+    finalShader = fiMaterial.shaderProgram();
     finalShader.loadFromFile(vgl.GL.VERTEX_SHADER,   "shaders/blend.vert");
     finalShader.loadFromFile(vgl.GL.FRAGMENT_SHADER, "shaders/final.frag");
+    fimv = new vgl.modelViewUniform("modelViewMatrix");
+    fiproj = new vgl.projectionUniform("projectionMatrix");
+    fitempTex = new vgl.uniform(vgl.GL.INT, "tempTexture");
+    fitempTex.set(0);
+    fivertex = new vgl.vertexAttribute("vVertex");
+
+    finalShader.addUniform(fimv);
+    finalShader.addUniform(fiproj);
+    finalShader.addUniform(fitempTex);
+    finalShader.addVertexAttribute(fivertex, vgl.vertexAttributeKeys.Position);
+
     finalShader.bind();
     finalShader.undoBind();
   }
@@ -163,7 +198,7 @@ vgl.depthPeelRenderer = function() {
     }
   }
 
-  function drawScene(renderState, actors, shader) {
+  function drawScene(renderState, actors, material) {
     // TODO FIXME
     // // Enable alpha blending with over compositing
     // glEnable(GL_BLEND);
@@ -190,9 +225,16 @@ vgl.depthPeelRenderer = function() {
       renderState.m_mapper = actor.mapper();
 
       // TODO Fix this shortcut
-      renderState.m_material.render(renderState);
-      renderState.m_mapper.render(renderState);
-      renderState.m_material.remove(renderState);
+      if (!shader) {
+          renderState.m_material.render(renderState);
+          renderState.m_mapper.render(renderState);
+          renderState.m_material.remove(renderState);
+      } else {
+        renState.m_material = material;
+        renderState.m_material.render(renderState);
+        renderState.m_mapper.render(renderState);
+        renderState.m_material.remove(renderState);
+      }
     }
   }
 
@@ -214,7 +256,7 @@ vgl.depthPeelRenderer = function() {
     // 1. In the first pass, we render normally with depth test enabled to get the nearest surface
     gl.enable(GL_DEPTH_TEST);
 
-    drawScene(renderState, actors, cubeShader);
+    drawScene(renderState, actors);
 
     // 2. Depth peeling + blending pass
     var numLayers = (NUM_PASSES - 1) * 2;
@@ -244,7 +286,7 @@ vgl.depthPeelRenderer = function() {
         gl.bindTexture(vgl.GL.TEXTURE_RECTANGLE, depthTexID[prevId]);
 
         // Render scene with the front to back peeling shader
-        drawScene(renderState, actors, frontPeelShader);
+        drawScene(renderState, actors, fpMaterial);
 
         // Bind the colour blender FBO
         gl.bindFramebuffer(vgl.GL.FRAMEBUFFER, colorBlenderFBOID);
@@ -266,7 +308,7 @@ vgl.depthPeelRenderer = function() {
         // Bind the result from the previous iteration as texture
         gl.bindTexture(vgl.GL.TEXTURE_RECTANGLE, texID[currId]);
 
-        drawFullScreenQuad(blendShader);
+        drawFullScreenQuad(blMaterial);
 
         // // Bind the blend shader and then draw a fullscreen quad
         // blendShader.Use();
@@ -292,7 +334,7 @@ vgl.depthPeelRenderer = function() {
     gl.bindTexture(vgl.GL.TEXTURE_RECTANGLE, colorBlenderTexID);
 
     // Draw full screen quad
-    drawFullScreenQuad(finaShader);
+    drawFullScreenQuad(fiMaterial);
 
     // // Bind the final shader
     // // TODO FIXME
