@@ -20,10 +20,10 @@ vgl.depthPeelRenderer = function() {
       finalShader, NUM_PASSES = 6, m_quad = null;
 
   function drawFullScreenQuad(renderState, material) {
-    m_this.m_quad.setMaterial(material);
+    m_quad.setMaterial(material);
     material.render(renderState);
-    m_this.m_quad.mapper().render(renderState);
-    renderState.m_this.m_mapper.render(renderState);
+    m_quad.mapper().render(renderState);
+    renderState.m_mapper.render(renderState);
     material.remove(renderState);
   }
 
@@ -114,6 +114,17 @@ vgl.depthPeelRenderer = function() {
   function initFBO(renderState, WIDTH, HEIGHT) {
     var i;
 
+    // Or browser-appropriate prefix
+    var depthTextureExt = gl.getExtension("WEBKIT_WEBGL_depth_texture");
+    if(!depthTextureExt) {
+        console.log("depth textures are not supported");
+    }
+
+    var floatTextureExt = gl.getExtension("OES_texture_float");
+    if(!floatTextureExt) {
+        console.log("float textures are not supported");
+    }
+
     //FBO initialization function
     // Generate 2 FBO
     fbo.push(gl.createFramebuffer());
@@ -130,40 +141,40 @@ vgl.depthPeelRenderer = function() {
     // For each attachment
     for (i = 0; i < 2; i++) {
         // First initialize the depth texture
-        gl.bindTexture(vgl.GL.TEXTURE_RECTANGLE, depthTexID[i]);
-        gl.texParameteri(vgl.GL.TEXTURE_RECTANGLE , vgl.GL.TEXTURE_MAG_FILTER, vgl.GL.NEAREST);
-        gl.texParameteri(vgl.GL.TEXTURE_RECTANGLE , vgl.GL.TEXTURE_MIN_FILTER, vgl.GL.NEAREST);
-        gl.texParameteri(vgl.GL.TEXTURE_RECTANGLE , vgl.GL.TEXTURE_WRAP_S, vgl.GL.CLAMP);
-        gl.texParameteri(vgl.GL.TEXTURE_RECTANGLE , vgl.GL.TEXTURE_WRAP_T, vgl.GL.CLAMP);
-        glTexImage2D(vgl.GL.TEXTURE_RECTANGLE , 0, vgl.GL.DEPTH_COMPONENT32F,
-                     WIDTH, HEIGHT, 0, vgl.GL.DEPTH_COMPONENT, vgl.GL.FLOAT, NULL);
+        gl.bindTexture(vgl.GL.TEXTURE_2D, depthTexID[i]);
+        gl.texParameteri(vgl.GL.TEXTURE_2D , vgl.GL.TEXTURE_MAG_FILTER, vgl.GL.NEAREST);
+        gl.texParameteri(vgl.GL.TEXTURE_2D , vgl.GL.TEXTURE_MIN_FILTER, vgl.GL.NEAREST);
+        gl.texParameteri(vgl.GL.TEXTURE_2D , vgl.GL.TEXTURE_WRAP_S, vgl.GL.CLAMP_TO_EDGE);
+        gl.texParameteri(vgl.GL.TEXTURE_2D , vgl.GL.TEXTURE_WRAP_T, vgl.GL.CLAMP_TO_EDGE);
+        gl.texImage2D(vgl.GL.TEXTURE_2D , 0, vgl.GL.DEPTH_COMPONENT,
+                      WIDTH, HEIGHT, 0, vgl.GL.DEPTH_COMPONENT, vgl.GL.UNSIGNED_SHORT, null);
 
         // Second initialize the colour attachment
-        gl.bindTexture(vgl.GL.TEXTURE_RECTANGLE,texID[i]);
-        gl.texParameteri(vgl.GL.TEXTURE_RECTANGLE , vgl.GL.TEXTURE_MAG_FILTER, vgl.GL.NEAREST);
-        gl.texParameteri(vgl.GL.TEXTURE_RECTANGLE , vgl.GL.TEXTURE_MIN_FILTER, vgl.GL.NEAREST);
-        gl.texParameteri(vgl.GL.TEXTURE_RECTANGLE , vgl.GL.TEXTURE_WRAP_S, vgl.GL.CLAMP);
-        gl.texParameteri(vgl.GL.TEXTURE_RECTANGLE , vgl.GL.TEXTURE_WRAP_T, vgl.GL.CLAMP);
-        gl.texImage2D(vgl.GL.TEXTURE_RECTANGLE , 0,vgl.GL.RGBA, WIDTH, HEIGHT, 0,
-                      vgl.GL.RGBA, vgl.GL.FLOAT, NULL);
+        gl.bindTexture(vgl.GL.TEXTURE_2D,texID[i]);
+        gl.texParameteri(vgl.GL.TEXTURE_2D , vgl.GL.TEXTURE_MAG_FILTER, vgl.GL.NEAREST);
+        gl.texParameteri(vgl.GL.TEXTURE_2D , vgl.GL.TEXTURE_MIN_FILTER, vgl.GL.NEAREST);
+        gl.texParameteri(vgl.GL.TEXTURE_2D , vgl.GL.TEXTURE_WRAP_S, vgl.GL.CLAMP_TO_EDGE);
+        gl.texParameteri(vgl.GL.TEXTURE_2D , vgl.GL.TEXTURE_WRAP_T, vgl.GL.CLAMP_TO_EDGE);
+        gl.texImage2D(vgl.GL.TEXTURE_2D , 0, vgl.GL.RGBA, WIDTH, HEIGHT, 0,
+                      vgl.GL.RGBA, vgl.GL.FLOAT, null);
 
         // Bind FBO and attach the depth and colour attachments
-        glBindFramebuffer(vgl.GL.FRAMEBUFFER, fbo[i]);
-        glFramebufferTexture2D(vgl.GL.FRAMEBUFFER, vgl.GL.DEPTH_ATTACHMENT,
-                               vgl.GL.TEXTURE_RECTANGLE, depthTexID[i], 0);
-        glFramebufferTexture2D(vgl.GL.FRAMEBUFFER, vgl.GL.COLOR_ATTACHMENT0,
-                               vgl.GL.TEXTURE_RECTANGLE, texID[i], 0);
+        gl.bindFramebuffer(vgl.GL.FRAMEBUFFER, fbo[i]);
+        gl.framebufferTexture2D(vgl.GL.FRAMEBUFFER, vgl.GL.DEPTH_ATTACHMENT,
+                                vgl.GL.TEXTURE_2D, depthTexID[i], 0);
+        gl.framebufferTexture2D(vgl.GL.FRAMEBUFFER, vgl.GL.COLOR_ATTACHMENT0,
+                                vgl.GL.TEXTURE_2D, texID[i], 0);
     }
 
     // Now setup the colour attachment for colour blend FBO
     colorBlenderTexID = gl.createTexture();
-    gl.bindTexture(vgl.GL.TEXTURE_RECTANGLE, colorBlenderTexID);
-    gl.texParameteri(vgl.GL.TEXTURE_RECTANGLE, vgl.GL.TEXTURE_WRAP_S, vgl.GL.CLAMP);
-    gl.texParameteri(vgl.GL.TEXTURE_RECTANGLE, vgl.GL.TEXTURE_WRAP_T, vgl.GL.CLAMP);
-    gl.texParameteri(vgl.GL.TEXTURE_RECTANGLE, vgl.GL.TEXTURE_MIN_FILTER, vgl.GL.NEAREST);
-    gl.texParameteri(vgl.GL.TEXTURE_RECTANGLE, vgl.GL.TEXTURE_MAG_FILTER, vgl.GL.NEAREST);
-    gl.texImage2D(vgl.GL.TEXTURE_RECTANGLE, 0, vgl.GL.RGBA, WIDTH, HEIGHT,
-                  0, vgl.GL.RGBA, vgl.GL.FLOAT, 0);
+    gl.bindTexture(vgl.GL.TEXTURE_2D, colorBlenderTexID);
+    gl.texParameteri(vgl.GL.TEXTURE_2D, vgl.GL.TEXTURE_WRAP_S, vgl.GL.CLAMP_TO_EDGE);
+    gl.texParameteri(vgl.GL.TEXTURE_2D, vgl.GL.TEXTURE_WRAP_T, vgl.GL.CLAMP_TO_EDGE);
+    gl.texParameteri(vgl.GL.TEXTURE_2D, vgl.GL.TEXTURE_MIN_FILTER, vgl.GL.NEAREST);
+    gl.texParameteri(vgl.GL.TEXTURE_2D, vgl.GL.TEXTURE_MAG_FILTER, vgl.GL.NEAREST);
+    gl.texImage2D(vgl.GL.TEXTURE_2D, 0, vgl.GL.RGBA, WIDTH, HEIGHT,
+                  0, vgl.GL.RGBA, vgl.GL.FLOAT, null);
 
     // Generate the colour blend FBO ID
     colorBlenderFBOID = gl.createFramebuffer();
@@ -171,20 +182,20 @@ vgl.depthPeelRenderer = function() {
 
     // Set the depth attachment of previous FBO as depth attachment for this FBO
     gl.framebufferTexture2D(vgl.GL.FRAMEBUFFER, vgl.GL.DEPTH_ATTACHMENT,
-                            vgl.GL.TEXTURE_RECTANGLE, depthTexID[0], 0);
+                            vgl.GL.TEXTURE_2D, depthTexID[0], 0);
     // Set the colour blender texture as the FBO colour attachment
     gl.framebufferTexture2D(vgl.GL.FRAMEBUFFER, vgl.GL.COLOR_ATTACHMENT0,
-                            vgl.GL.TEXTURE_RECTANGLE, colorBlenderTexID, 0);
+                            vgl.GL.TEXTURE_2D, colorBlenderTexID, 0);
 
     // Check the FBO completeness status
     status = gl.checkFramebufferStatus(vgl.GL.FRAMEBUFFER);
     if(status == vgl.GL.FRAMEBUFFER_COMPLETE )
-        printf("FBO setup successful !!! \n");
+        console.log("FBO setup successful !!! \n");
     else
-        printf("Problem with FBO setup");
+        console.log("Problem with FBO setup");
 
     // Unbind FBO
-    gl.bindFramebuffer(vgl.GL.FRAMEBUFFER, 0);
+    gl.bindFramebuffer(vgl.GL.FRAMEBUFFER, null);
   }
 
   function setup(renderState) {
@@ -192,10 +203,12 @@ vgl.depthPeelRenderer = function() {
       initScreenQuad(renderState, m_this.width(), m_this.height());
       initShaders(renderState, m_this.width(), m_this.height());
       initFBO(renderState, m_this.width(), m_this.height());
+      setupTime.modified();
     }
   }
 
-  function drawScene(renderState, actors, material) {
+  function drawScene(renderState, sortedActors, material) {
+    var i, actor, mvMatrixInv = mat4.create();
     // TODO FIXME
     // // Enable alpha blending with over compositing
     // glEnable(GL_BLEND);
@@ -206,31 +219,31 @@ vgl.depthPeelRenderer = function() {
 
       if (actor.referenceFrame() ===
           vgl.boundingObject.ReferenceFrame.Relative) {
-        mat4.multiply(renderState.m_this.m_modelViewMatrix, m_this.m_camera.viewMatrix(),
+        mat4.multiply(renderState.m_modelViewMatrix, m_this.m_camera.viewMatrix(),
           actor.matrix());
-        renderState.m_this.m_projectionMatrix = m_this.m_camera.projectionMatrix();
+        renderState.m_projectionMatrix = m_this.m_camera.projectionMatrix();
       } else {
-        renderState.m_this.m_modelViewMatrix = actor.matrix();
-        renderState.m_this.m_projectionMatrix = mat4.create();
-        mat4.ortho(renderState.m_this.m_projectionMatrix, 0,
+        renderState.m_modelViewMatrix = actor.matrix();
+        renderState.m_projectionMatrix = mat4.create();
+        mat4.ortho(renderState.m_projectionMatrix, 0,
                    m_this.m_width, 0, m_this.m_height, -1, 1);
       }
 
-      mat4.invert(mvMatrixInv, renderState.m_this.m_modelViewMatrix);
-      mat4.transpose(renderState.m_this.m_normalMatrix, mvMatrixInv);
-      renderState.m_this.m_material = actor.material();
-      renderState.m_this.m_mapper = actor.mapper();
+      mat4.invert(mvMatrixInv, renderState.m_modelViewMatrix);
+      mat4.transpose(renderState.m_normalMatrix, mvMatrixInv);
+      renderState.m_material = actor.material();
+      renderState.m_mapper = actor.mapper();
 
       // TODO Fix this shortcut
-      if (!shader) {
-          renderState.m_this.m_material.render(renderState);
-          renderState.m_this.m_mapper.render(renderState);
-          renderState.m_this.m_material.remove(renderState);
+      if (!material) {
+          renderState.m_material.render(renderState);
+          renderState.m_mapper.render(renderState);
+          renderState.m_material.remove(renderState);
       } else {
-        renState.m_this.m_material = material;
-        renderState.m_this.m_material.render(renderState);
-        renderState.m_this.m_mapper.render(renderState);
-        renderState.m_this.m_material.remove(renderState);
+        renderState.m_material = material;
+        renderState.m_material.render(renderState);
+        renderState.m_mapper.render(renderState);
+        renderState.m_material.remove(renderState);
       }
     }
   }
@@ -245,13 +258,13 @@ vgl.depthPeelRenderer = function() {
     gl.bindFramebuffer(vgl.GL.FRAMEBUFFER, colorBlenderFBOID);
 
     // Set the first colour attachment as the draw buffer
-    gl.drawBuffer(vgl.GL.COLOR_ATTACHMENT0);
+    //gl.drawBuffer(vgl.GL.COLOR_ATTACHMENT0);
 
     //clear the colour and depth buffer
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+    gl.clear(vgl.GL.COLOR_BUFFER_BIT | vgl.GL.DEPTH_BUFFER_BIT );
 
     // 1. In the first pass, we render normally with depth test enabled to get the nearest surface
-    gl.enable(GL_DEPTH_TEST);
+    gl.enable(vgl.GL.DEPTH_TEST);
 
     drawScene(renderState, actors);
 
@@ -267,7 +280,7 @@ vgl.depthPeelRenderer = function() {
         gl.bindFramebuffer(vgl.GL.FRAMEBUFFER, fbo[currId]);
 
         //set the first colour attachment as draw buffer
-        gl.drawBuffer(vgl.GL.COLOR_ATTACHMENT0);
+        //gl.drawBuffer(vgl.GL.COLOR_ATTACHMENT0);
 
         // Set clear colour to black
         gl.clearColor(0, 0, 0, 0);
@@ -280,7 +293,7 @@ vgl.depthPeelRenderer = function() {
         gl.enable(vgl.GL.DEPTH_TEST);
 
         // Bind the depth texture from the previous step
-        gl.bindTexture(vgl.GL.TEXTURE_RECTANGLE, depthTexID[prevId]);
+        gl.bindTexture(vgl.GL.TEXTURE_2D, depthTexID[prevId]);
 
         // Render scene with the front to back peeling shader
         drawScene(renderState, actors, fpMaterial);
@@ -289,23 +302,23 @@ vgl.depthPeelRenderer = function() {
         gl.bindFramebuffer(vgl.GL.FRAMEBUFFER, colorBlenderFBOID);
 
         // Render to its first colour attachment
-        gl.drawBuffer(vgl.GL.COLOR_ATTACHMENT0);
+        //gl.drawBuffer(vgl.GL.COLOR_ATTACHMENT0);
 
         // Enable blending but disable depth testing
         gl.disable(vgl.GL.DEPTH_TEST);
         gl.enable(vgl.GL.BLEND);
 
         // Change the blending equation to add
-        gl.blendEquation(GL_FUNC_ADD);
+        gl.blendEquation(vgl.GL.FUNC_ADD);
 
         // Use separate blending function
         gl.blendFuncSeparate(vgl.GL.DST_ALPHA, vgl.GL.ONE,
                              vgl.GL.ZERO, vgl.GL.ONE_MINUS_SRC_ALPHA);
 
         // Bind the result from the previous iteration as texture
-        gl.bindTexture(vgl.GL.TEXTURE_RECTANGLE, texID[currId]);
+        gl.bindTexture(vgl.GL.TEXTURE_2D, texID[currId]);
 
-        drawFullScreenQuad(blMaterial);
+        drawFullScreenQuad(renderState, blMaterial);
 
         // // Bind the blend shader and then draw a fullscreen quad
         // blendShader.Use();
@@ -318,20 +331,20 @@ vgl.depthPeelRenderer = function() {
 
     // 3. Final render pass
     //remove the FBO
-    gl.bindFramebuffer(vgl.GL.FRAMEBUFFER, 0);
+    gl.bindFramebuffer(vgl.GL.FRAMEBUFFER, null);
 
     // Restore the default back buffer
-    gl.drawBuffer(vgl.GL.GL_BACK_LEFT);
+    //gl.drawBuffer(vgl.GL.GL_BACK_LEFT);
 
     // Disable depth testing and blending
     gl.disable(vgl.GL.DEPTH_TEST);
     gl.disable(vgl.GL.BLEND);
 
     // Bind the colour blender texture
-    gl.bindTexture(vgl.GL.TEXTURE_RECTANGLE, colorBlenderTexID);
+    gl.bindTexture(vgl.GL.TEXTURE_2D, colorBlenderTexID);
 
     // Draw full screen quad
-    drawFullScreenQuad(fiMaterial);
+    drawFullScreenQuad(renderState, fiMaterial);
 
     // // Bind the final shader
     // // TODO FIXME
@@ -397,7 +410,7 @@ vgl.depthPeelRenderer = function() {
     // Now perform sorting
     sortedActors.sort(function(a, b) {return a[0] - b[0];});
 
-    depthPeelRender(renderState, sortedActors);
+    depthPeelRender(renSt, sortedActors);
 
     // for ( i = 0; i < sortedActors.length; ++i) {
     //   actor = sortedActors[i][1];
