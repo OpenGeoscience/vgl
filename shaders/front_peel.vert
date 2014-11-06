@@ -1,12 +1,18 @@
-#version 330 core
-  
-layout(location = 0) in vec3 vVertex; //object space vertex position
+//object space vertex position
+attribute vec3 vVertex;
+attribute vec3 vColor;
+
+varying vec3 color;
 
 //uniform
-uniform mat4 MVP;  //combined modelview projection matrix
+uniform mat4 modelviewMatrix;
+uniform mat4 projectionMatrix;
 
 void main()
-{  
-	//get the clipspace vertex position
-	gl_Position = MVP*vec4(vVertex.xyz,1);
+{
+	// Get the clipspace vertex position
+	gl_Position = projectionMatrix * modelviewMatrix * vec4(vVertex.xyz, 1);
+
+    // Interpolated color to fragment
+    color = vColor;
 }

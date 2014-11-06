@@ -1,10 +1,7 @@
-#version 330 core
+// uniforms
+uniform sampler2DRect depthTexture;
 
-layout(location = 0) out vec4 vFragColor;	//fragment shader output
-
-//uniforms
-uniform vec4 vColor;						//solid colour 
-uniform sampler2DRect  depthTexture;		//depth texture 
+varying vec3 color;
 
 void main()
 {
@@ -15,7 +12,7 @@ void main()
 	//if it is less, discard the current fragment
 	if(gl_FragCoord.z <= frontDepth)
 		discard;
-	
+
 	//otherwise set the given color uniform as the final output
-	vFragColor = vColor;
+	vFragColor = color;
 }

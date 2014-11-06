@@ -37,6 +37,25 @@ vgl.shaderProgram = function() {
 
   /////////////////////////////////////////////////////////////////////////////
   /**
+   *
+   */
+  /////////////////////////////////////////////////////////////////////////////
+  this.loadFromFile(type, sourceUrl) {
+    var shader;
+    $.ajax({
+      url: sourceUrl
+      type: "GET",
+      async: false,
+      success: function(result) {
+        shader = vgl.shader(type);
+        shader.setShaderSource(result);
+        m_this.addShader(shader);
+      }
+    });
+  };
+
+  /////////////////////////////////////////////////////////////////////////////
+  /**
    * Query uniform location in the program
    *
    * @param name

@@ -28,16 +28,22 @@ vgl.depthPeelRenderer = function() {
   }
 
   function initShaders(renderState, WIDTH, HEIGHT) {
-    // Load the cube shader
-    cubeShader.loadFromFile(vgl.GL.VERTEX_SHADER,   "shaders/cube_shader.vert");
-    cubeShader.loadFromFile(vgl.GL.FRAGMENT_SHADER, "shaders/cube_shader.frag");
-    // Compile and link the shader
-    cubeShader.bind();
-    cubeShader.undoBind();
+    var fpmv, fpproj, fpvertex, fpcolor,
+        blmv, blproj, fpdepthTex, bltempTex,
 
     // Load the front to back peeling shader
+    fpvertex = new vgl.vertexAttribute("vVertex"),
+    fpcolor = new vgl.vertexAttribute("vColor"),
+    fpmv = new vgl.modelViewUniform("modelViewMatrix");
+    fpproj = new vgl.projectionUniform("projectionMatrix");
+    fpdepthTex = new vgl.uniform(vgl.GL.INT, "depthTexture");
+    fpdepthTex.set(0);
     frontPeelShader.loadFromFile(vgl.GL.VERTEX_SHADER,   "shaders/front_peel.vert");
     frontPeelShader.loadFromFile(vgl.GL.FRAGMENT_SHADER, "shaders/front_peel.frag");
+
+    frontPeelShader.addVertexAttribute(fpvertex, vgl.vertexAttributeKeys.Position);
+    frontPeelShader.addVertexAttribute(fpcolor, vgl.vertexAttributeKeys.Color);
+
     // Compile and link the shader
     frontPeelShader.bind();
     frontPeelShader.undoBind();
@@ -54,6 +60,7 @@ vgl.depthPeelRenderer = function() {
     // Load the blending shader
     blendShader.loadFromFile(vgl.GL.VERTEX_SHADER,   "shaders/blend.vert");
     blendShader.loadFromFile(vgl.GL.FRAGMENT_SHADER, "shaders/blend.frag");
+
     // Compile and link the shader
     blendShader.bind();
     blendShader.undoBind();
