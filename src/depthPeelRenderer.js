@@ -16,19 +16,19 @@ vgl.depthPeelRenderer = function() {
   var m_this = this, fbo = [], texID = [], depthTexID = [],
       colorBlenderTexID, colorBlenderFBOID, setupTime = vgl.timestamp(),
       fpMaterial = vgl.material(), blMaterial = vgl.material(),
-      fiMaterial = vgl.material(), frontPeelShader = null, NUM_PASSES = 6,
-      m_quad;
+      fiMaterial = vgl.material(), frontPeelShader = null, blendShader = null,
+      finalShader, NUM_PASSES = 6, m_quad = null;
 
   function drawFullScreenQuad(renderState, material) {
-    m_quad.setMaterial(material);
+    m_this.m_quad.setMaterial(material);
     material.render(renderState);
-    m_quad.mapper().render(renderState);
-    renderState.m_mapper.render(renderState);
+    m_this.m_quad.mapper().render(renderState);
+    renderState.m_this.m_mapper.render(renderState);
     material.remove(renderState);
   }
 
   function initScreenQuad(renderState, width, height) {
-    m_quad = vgl.utls.createPlane(0.0, 0.0, 0.0,
+    m_quad = vgl.utils.createPlane(0.0, 0.0, 0.0,
                                   width, 0.0, 0.0,
                                   0.0, height, 0.0);
   }
@@ -51,14 +51,13 @@ vgl.depthPeelRenderer = function() {
     frontPeelShader.loadFromFile(vgl.GL.FRAGMENT_SHADER, "shaders/front_peel.frag");
 
     frontPeelShader.addUniform(fpmv);
-    frontPeelShader.addUnitorm(fpproj);
-    frontPeelShader.addUnitorm(fpdepthTex);
+    frontPeelShader.addUniform(fpproj);
+    frontPeelShader.addUniform(fpdepthTex);
     frontPeelShader.addVertexAttribute(fpvertex, vgl.vertexAttributeKeys.Position);
     frontPeelShader.addVertexAttribute(fpcolor, vgl.vertexAttributeKeys.Color);
 
     // Compile and link the shader
-    frontPeelShader.bind();
-    frontPeelShader.undoBind();
+    frontPeelShader.compileAndLink();
 
     //     //add attributes and uniforms
     //     frontPeelShader.AddAttribute("vVertex");
@@ -85,8 +84,7 @@ vgl.depthPeelRenderer = function() {
     blendShader.addVertexAttribute(blvertex, vgl.vertexAttributeKeys.Position);
 
     // Compile and link the shader
-    blendShader.bind();
-    blendShader.undoBind();
+    blendShader.compileAndLink();
 
     //     //add attributes and uniforms
     //     blendShader.AddAttribute("vVertex");
@@ -110,8 +108,7 @@ vgl.depthPeelRenderer = function() {
     finalShader.addUniform(fitempTex);
     finalShader.addVertexAttribute(fivertex, vgl.vertexAttributeKeys.Position);
 
-    finalShader.bind();
-    finalShader.undoBind();
+    finalShader.compileAndLink();
   }
 
   function initFBO(renderState, WIDTH, HEIGHT) {
@@ -180,7 +177,7 @@ vgl.depthPeelRenderer = function() {
                             vgl.GL.TEXTURE_RECTANGLE, colorBlenderTexID, 0);
 
     // Check the FBO completeness status
-    GLenum status = gl.checkFramebufferStatus(vgl.GL.FRAMEBUFFER);
+    status = gl.checkFramebufferStatus(vgl.GL.FRAMEBUFFER);
     if(status == vgl.GL.FRAMEBUFFER_COMPLETE )
         printf("FBO setup successful !!! \n");
     else
@@ -209,31 +206,31 @@ vgl.depthPeelRenderer = function() {
 
       if (actor.referenceFrame() ===
           vgl.boundingObject.ReferenceFrame.Relative) {
-        mat4.multiply(renderState.m_modelViewMatrix, m_camera.viewMatrix(),
+        mat4.multiply(renderState.m_this.m_modelViewMatrix, m_this.m_camera.viewMatrix(),
           actor.matrix());
-        renderState.m_projectionMatrix = m_camera.projectionMatrix();
+        renderState.m_this.m_projectionMatrix = m_this.m_camera.projectionMatrix();
       } else {
-        renderState.m_modelViewMatrix = actor.matrix();
-        renderState.m_projectionMatrix = mat4.create();
-        mat4.ortho(renderState.m_projectionMatrix, 0,
-                   m_width, 0, m_height, -1, 1);
+        renderState.m_this.m_modelViewMatrix = actor.matrix();
+        renderState.m_this.m_projectionMatrix = mat4.create();
+        mat4.ortho(renderState.m_this.m_projectionMatrix, 0,
+                   m_this.m_width, 0, m_this.m_height, -1, 1);
       }
 
-      mat4.invert(mvMatrixInv, renderState.m_modelViewMatrix);
-      mat4.transpose(renderState.m_normalMatrix, mvMatrixInv);
-      renderState.m_material = actor.material();
-      renderState.m_mapper = actor.mapper();
+      mat4.invert(mvMatrixInv, renderState.m_this.m_modelViewMatrix);
+      mat4.transpose(renderState.m_this.m_normalMatrix, mvMatrixInv);
+      renderState.m_this.m_material = actor.material();
+      renderState.m_this.m_mapper = actor.mapper();
 
       // TODO Fix this shortcut
       if (!shader) {
-          renderState.m_material.render(renderState);
-          renderState.m_mapper.render(renderState);
-          renderState.m_material.remove(renderState);
+          renderState.m_this.m_material.render(renderState);
+          renderState.m_this.m_mapper.render(renderState);
+          renderState.m_this.m_material.remove(renderState);
       } else {
-        renState.m_material = material;
-        renderState.m_material.render(renderState);
-        renderState.m_mapper.render(renderState);
-        renderState.m_material.remove(renderState);
+        renState.m_this.m_material = material;
+        renderState.m_this.m_material.render(renderState);
+        renderState.m_this.m_mapper.render(renderState);
+        renderState.m_this.m_material.remove(renderState);
       }
     }
   }
@@ -363,28 +360,28 @@ vgl.depthPeelRenderer = function() {
     gl.enable(gl.DEPTH_TEST);
     gl.depthFunc(gl.LEQUAL);
 
-    if (m_camera.clearMask() & vgl.GL.COLOR_BUFFER_BIT) {
-      clearColor = m_camera.clearColor();
+    if (m_this.m_camera.clearMask() & vgl.GL.COLOR_BUFFER_BIT) {
+      clearColor = m_this.m_camera.clearColor();
       gl.clearColor(clearColor[0], clearColor[1], clearColor[2], clearColor[3]);
     }
 
-    if (m_camera.clearMask() & vgl.GL.DEPTH_BUFFER_BIT) {
-      gl.clearDepth(m_camera.clearDepth());
+    if (m_this.m_camera.clearMask() & vgl.GL.DEPTH_BUFFER_BIT) {
+      gl.clearDepth(m_this.m_camera.clearDepth());
     }
 
-    gl.clear(m_camera.clearMask());
+    gl.clear(m_this.m_camera.clearMask());
 
     // Set the viewport for this renderer
-    gl.viewport(m_x, m_y, m_width, m_height);
+    gl.viewport(m_this.m_x, m_this.m_y, m_this.m_width, m_this.m_height);
 
     // Check if we have initialized
-    setup(renderSt);
+    setup(renSt);
 
-    children = m_sceneRoot.children();
+    children = m_this.m_sceneRoot.children();
 
-    if (children.length > 0 && m_resetScene) {
+    if (children.length > 0 && m_this.m_resetScene) {
       this.resetCamera();
-      m_resetScene = false;
+      m_this.m_resetScene = false;
     }
 
     for ( i = 0; i < children.length; ++i) {
@@ -407,24 +404,24 @@ vgl.depthPeelRenderer = function() {
 
     //   if (actor.referenceFrame() ===
     //       vgl.boundingObject.ReferenceFrame.Relative) {
-    //     mat4.multiply(renSt.m_modelViewMatrix, m_camera.viewMatrix(),
+    //     mat4.multiply(renSt.m_this.m_modelViewMatrix, m_this.m_camera.viewMatrix(),
     //       actor.matrix());
-    //     renSt.m_projectionMatrix = m_camera.projectionMatrix();
+    //     renSt.m_this.m_projectionMatrix = m_this.m_camera.projectionMatrix();
     //   } else {
-    //     renSt.m_modelViewMatrix = actor.matrix();
-    //     renSt.m_projectionMatrix = mat4.create();
-    //     mat4.ortho(renSt.m_projectionMatrix, 0, m_width, 0, m_height, -1, 1);
+    //     renSt.m_this.m_modelViewMatrix = actor.matrix();
+    //     renSt.m_this.m_projectionMatrix = mat4.create();
+    //     mat4.ortho(renSt.m_this.m_projectionMatrix, 0, m_this.m_width, 0, m_this.m_height, -1, 1);
     //   }
 
-    //   mat4.invert(mvMatrixInv, renSt.m_modelViewMatrix);
-    //   mat4.transpose(renSt.m_normalMatrix, mvMatrixInv);
-    //   renSt.m_material = actor.material();
-    //   renSt.m_mapper = actor.mapper();
+    //   mat4.invert(mvMatrixInv, renSt.m_this.m_modelViewMatrix);
+    //   mat4.transpose(renSt.m_this.m_normalMatrix, mvMatrixInv);
+    //   renSt.m_this.m_material = actor.material();
+    //   renSt.m_this.m_mapper = actor.mapper();
 
     //   // TODO Fix this shortcut
-    //   renSt.m_material.render(renSt);
-    //   renSt.m_mapper.render(renSt);
-    //   renSt.m_material.remove(renSt);
+    //   renSt.m_this.m_material.render(renSt);
+    //   renSt.m_this.m_mapper.render(renSt);
+    //   renSt.m_this.m_material.remove(renSt);
     // }
   };
 };

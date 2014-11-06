@@ -15,14 +15,7 @@
         var node = document.getElementById("glcanvas"),
             viewer = vgl.viewer(node), renderer,
             reader = vgl.geojsonReader(),
-            pass1 = vgl.renderPass(),
-            fbo = vgl.fbo(), tex = vgl.texture(), geoms, i,
-            mapper, material, actor, interactorStyle,
-            plane = vgl.utils.createTexturePlane(0, 0, 0,
-                                                 5, 0, 0,
-                                                 0, 5, 0, false);
-
-        fbo.setTexture(vgl.GL.COLOR_ATTACHMENT0, tex);
+            geoms, i, mapper, material, actor, interactorStyle;
 
         interactorStyle = vgl.trackballInteractorStyle();
 
@@ -31,8 +24,10 @@
         viewer.setInteractorStyle(interactorStyle);
 
         renderer = viewer.renderWindow().activeRenderer();
-        renderer.addRenderPass(pass1);
-        //renderer.addRenderPass(pass2);
+        viewer.renderWindow().removeRenderer(renderer);
+
+        renderer = vgl.depthPeelRenderer();
+        viewer.renderWindow().addRenderer(renderer);
 
         $.getJSON("/data/sphere_small.json", {
           format: "json"
@@ -50,21 +45,11 @@
             actor.setMapper(mapper);
             actor.setMaterial(material);
 
-            pass1.renderer().addActor(actor);
+            renderer.addActor(actor);
           }
 
-
-          plane.material().addAttribute(tex);
-          renderer.addActor(plane);
           renderer.setBackgroundColor(0.0, 0.5, 0.1, 1.0);
           renderer.resetCamera();
-
-          //pass2.renderer().addActor(plane);
-          //pass2.renderer().resetCamera(plane);
-          fbo.preventRenderPropagation(false);
-          pass1.setRenderTarget(fbo);
-          pass1.renderer().setBackgroundColor(0.5, 0.1, 0.0, 1.0);
-          pass1.renderer().resetCamera();
 
           viewer.renderWindow().resize($(node).width(), $(node).height());
           viewer.render();

@@ -1,12 +1,17 @@
+#ifdef GL_FRAGMENT_PRECISION_HIGH
+    precision highp float;
+#else
+    precision mediump float;
+#endif
+
 // uniforms
-uniform sampler2DRect depthTexture;
+uniform sampler2D depthTexture;
 
 varying vec3 color;
 
 void main()
 {
-	//read the depth value from the depth texture
-	float frontDepth = texture(depthTexture, gl_FragCoord.xy).r;
+	float frontDepth = texture2D(depthTexture, gl_FragCoord.xy).r;
 
 	//compare the current fragment depth with the depth in the depth texture
 	//if it is less, discard the current fragment
@@ -14,5 +19,5 @@ void main()
 		discard;
 
 	//otherwise set the given color uniform as the final output
-	vFragColor = color;
+	gl_FragColor = vec4(color, 1.0);
 }

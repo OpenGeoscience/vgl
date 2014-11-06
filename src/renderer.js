@@ -42,20 +42,21 @@ vgl.renderer = function() {
   vgl.object.call(this);
 
   /** @private */
-  var m_sceneRoot = new vgl.groupNode(),
-      m_camera = new vgl.camera(),
-      m_nearClippingPlaneTolerance = null,
-      m_x = 0,
-      m_y = 0,
-      m_width = 0,
-      m_height = 0,
-      m_resizable = true,
-      m_resetScene = true,
-      m_layer = 0,
-      m_renderPasses = null,
-      m_resetClippingRange = true;
+  var m_this = this;
+  m_this.m_sceneRoot = new vgl.groupNode(),
+  m_this.m_camera = new vgl.camera(),
+  m_this.m_nearClippingPlaneTolerance = null,
+  m_this.m_x = 0,
+  m_this.m_y = 0,
+  m_this.m_width = 0,
+  m_this.m_height = 0,
+  m_this.m_resizable = true,
+  m_this.m_resetScene = true,
+  m_this.m_layer = 0,
+  m_this.m_renderPasses = null,
+  m_this.m_resetClippingRange = true;
 
-  m_camera.addChild(m_sceneRoot);
+  m_this.m_camera.addChild(m_this.m_sceneRoot);
 
   ////////////////////////////////////////////////////////////////////////////
   /**
@@ -63,7 +64,7 @@ vgl.renderer = function() {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.width = function() {
-    return m_width;
+    return m_this.m_width;
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -72,7 +73,7 @@ vgl.renderer = function() {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.height = function() {
-    return m_height;
+    return m_this.m_height;
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -83,7 +84,7 @@ vgl.renderer = function() {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.layer = function () {
-     return m_layer;
+     return m_this.m_layer;
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -94,7 +95,7 @@ vgl.renderer = function() {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.setLayer = function(layerNo) {
-    m_layer = layerNo;
+    m_this.m_layer = layerNo;
     this.modified();
   };
 
@@ -104,7 +105,7 @@ vgl.renderer = function() {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.isResizable = function() {
-    return m_resizable;
+    return m_this.m_resizable;
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -113,7 +114,7 @@ vgl.renderer = function() {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.setResizable = function(r) {
-    m_resizable = r;
+    m_this.m_resizable = r;
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -122,7 +123,7 @@ vgl.renderer = function() {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.backgroundColor = function() {
-    return m_camera.clearColor();
+    return m_this.m_camera.clearColor();
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -136,7 +137,7 @@ vgl.renderer = function() {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.setBackgroundColor = function(r, g, b, a) {
-    m_camera.setClearColor(r, g, b, a);
+    m_this.m_camera.setClearColor(r, g, b, a);
     this.modified();
   };
 
@@ -148,7 +149,7 @@ vgl.renderer = function() {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.sceneRoot = function() {
-    return m_sceneRoot;
+    return m_this.m_sceneRoot;
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -159,7 +160,7 @@ vgl.renderer = function() {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.camera = function() {
-    return m_camera;
+    return m_this.m_camera;
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -173,40 +174,40 @@ vgl.renderer = function() {
 
     renSt = new vgl.renderState();
 
-    if (m_renderPasses)  {
-      for (i = 0; i < m_renderPasses.length; ++i) {
-        if (m_renderPasses[i].render(renSt)) {
+    if (m_this.m_renderPasses)  {
+      for (i = 0; i < m_this.m_renderPasses.length; ++i) {
+        if (m_this.m_renderPasses[i].render(renSt)) {
           // Stop the rendering if render pass returns false
           console.log("returning");
-          m_renderPasses[i].remove(renSt);
+          m_this.m_renderPasses[i].remove(renSt);
           return;
         }
-        m_renderPasses[i].remove(renSt);
+        m_this.m_renderPasses[i].remove(renSt);
       }
     }
 
     gl.enable(gl.DEPTH_TEST);
     gl.depthFunc(gl.LEQUAL);
 
-    if (m_camera.clearMask() & vgl.GL.COLOR_BUFFER_BIT) {
-      clearColor = m_camera.clearColor();
+    if (m_this.m_camera.clearMask() & vgl.GL.COLOR_BUFFER_BIT) {
+      clearColor = m_this.m_camera.clearColor();
       gl.clearColor(clearColor[0], clearColor[1], clearColor[2], clearColor[3]);
     }
 
-    if (m_camera.clearMask() & vgl.GL.DEPTH_BUFFER_BIT) {
-      gl.clearDepth(m_camera.clearDepth());
+    if (m_this.m_camera.clearMask() & vgl.GL.DEPTH_BUFFER_BIT) {
+      gl.clearDepth(m_this.m_camera.clearDepth());
     }
 
-    gl.clear(m_camera.clearMask());
+    gl.clear(m_this.m_camera.clearMask());
 
     // Set the viewport for this renderer
-    gl.viewport(m_x, m_y, m_width, m_height);
+    gl.viewport(m_this.m_x, m_this.m_y, m_this.m_width, m_this.m_height);
 
-    children = m_sceneRoot.children();
+    children = m_this.m_sceneRoot.children();
 
-    if (children.length > 0 && m_resetScene) {
+    if (children.length > 0 && m_this.m_resetScene) {
       this.resetCamera();
-      m_resetScene = false;
+      m_this.m_resetScene = false;
     }
 
     for ( i = 0; i < children.length; ++i) {
@@ -227,24 +228,24 @@ vgl.renderer = function() {
 
       if (actor.referenceFrame() ===
           vgl.boundingObject.ReferenceFrame.Relative) {
-        mat4.multiply(renSt.m_modelViewMatrix, m_camera.viewMatrix(),
+        mat4.multiply(renSt.m_this.m_modelViewMatrix, m_this.m_camera.viewMatrix(),
           actor.matrix());
-        renSt.m_projectionMatrix = m_camera.projectionMatrix();
+        renSt.m_this.m_projectionMatrix = m_this.m_camera.projectionMatrix();
       } else {
-        renSt.m_modelViewMatrix = actor.matrix();
-        renSt.m_projectionMatrix = mat4.create();
-        mat4.ortho(renSt.m_projectionMatrix, 0, m_width, 0, m_height, -1, 1);
+        renSt.m_this.m_modelViewMatrix = actor.matrix();
+        renSt.m_this.m_projectionMatrix = mat4.create();
+        mat4.ortho(renSt.m_this.m_projectionMatrix, 0, m_this.m_width, 0, m_this.m_height, -1, 1);
       }
 
-      mat4.invert(mvMatrixInv, renSt.m_modelViewMatrix);
-      mat4.transpose(renSt.m_normalMatrix, mvMatrixInv);
-      renSt.m_material = actor.material();
-      renSt.m_mapper = actor.mapper();
+      mat4.invert(mvMatrixInv, renSt.m_this.m_modelViewMatrix);
+      mat4.transpose(renSt.m_this.m_normalMatrix, mvMatrixInv);
+      renSt.m_this.m_material = actor.material();
+      renSt.m_this.m_mapper = actor.mapper();
 
       // TODO Fix this shortcut
-      renSt.m_material.render(renSt);
-      renSt.m_mapper.render(renSt);
-      renSt.m_material.remove(renSt);
+      renSt.m_this.m_material.render(renSt);
+      renSt.m_this.m_mapper.render(renSt);
+      renSt.m_this.m_material.remove(renSt);
     }
   };
 
@@ -254,10 +255,10 @@ vgl.renderer = function() {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.resetCamera = function() {
-    m_camera.computeBounds();
+    m_this.m_camera.computeBounds();
 
-    var vn = m_camera.directionOfProjection(),
-        visibleBounds = m_camera.bounds(),
+    var vn = m_this.m_camera.directionOfProjection(),
+        visibleBounds = m_this.m_camera.bounds(),
         center = [
           (visibleBounds[0] + visibleBounds[1]) / 2.0,
           (visibleBounds[2] + visibleBounds[3]) / 2.0,
@@ -269,8 +270,8 @@ vgl.renderer = function() {
           visibleBounds[5] - visibleBounds[4]
         ],
         radius = 0.0,
-        aspect = m_camera.viewAspect(),
-        angle = m_camera.viewAngle(),
+        aspect = m_this.m_camera.viewAspect(),
+        angle = m_this.m_camera.viewAngle(),
         distance = null,
         vup = null;
 
@@ -296,14 +297,14 @@ vgl.renderer = function() {
     }
 
     distance = radius / Math.sin(angle * 0.5);
-    vup = m_camera.viewUpDirection();
+    vup = m_this.m_camera.viewUpDirection();
 
     if (Math.abs(vec3.dot(vup, vn)) > 0.999) {
-      m_camera.setViewUpDirection(-vup[2], vup[0], vup[1]);
+      m_this.m_camera.setViewUpDirection(-vup[2], vup[0], vup[1]);
     }
 
-    m_camera.setFocalPoint(center[0], center[1], center[2]);
-    m_camera.setPosition(center[0] + distance * -vn[0],
+    m_this.m_camera.setFocalPoint(center[0], center[1], center[2]);
+    m_this.m_camera.setPosition(center[0] + distance * -vn[0],
       center[1] + distance * -vn[1], center[2] + distance * -vn[2]);
 
     this.resetCameraClippingRange(visibleBounds);
@@ -329,16 +330,16 @@ vgl.renderer = function() {
   ////////////////////////////////////////////////////////////////////////////
   this.resetCameraClippingRange = function(bounds) {
     if (typeof bounds === 'undefined') {
-      m_camera.computeBounds();
-      bounds = m_camera.bounds();
+      m_this.m_camera.computeBounds();
+      bounds = m_this.m_camera.bounds();
     }
 
     if (!this.hasValidBounds(bounds)) {
       return;
     }
 
-    var vn = m_camera.viewPlaneNormal(),
-        position = m_camera.position(),
+    var vn = m_this.m_camera.viewPlaneNormal(),
+        position = m_this.m_camera.position(),
         a = -vn[0],
         b = -vn[1],
         c = -vn[2],
@@ -349,7 +350,7 @@ vgl.renderer = function() {
         j = null,
         k = null;
 
-    if (!m_resetClippingRange) {
+    if (!m_this.m_resetClippingRange) {
         return;
     }
 
@@ -383,22 +384,22 @@ vgl.renderer = function() {
     // Make sure near is at least some fraction of far - this prevents near
     // from being behind the camera or too close in front. How close is too
     // close depends on the resolution of the depth buffer.
-    if (!m_nearClippingPlaneTolerance) {
-      m_nearClippingPlaneTolerance = 0.01;
+    if (!m_this.m_nearClippingPlaneTolerance) {
+      m_this.m_nearClippingPlaneTolerance = 0.01;
 
       if (gl !== null && gl.getParameter(gl.DEPTH_BITS) > 16) {
-        m_nearClippingPlaneTolerance = 0.001;
+        m_this.m_nearClippingPlaneTolerance = 0.001;
       }
     }
 
     // make sure the front clipping range is not too far from the far clippnig
     // range, this is to make sure that the zbuffer resolution is effectively
     // used.
-    if (range[0] < m_nearClippingPlaneTolerance*range[1]) {
-       range[0] = m_nearClippingPlaneTolerance*range[1];
+    if (range[0] < m_this.m_nearClippingPlaneTolerance*range[1]) {
+       range[0] = m_this.m_nearClippingPlaneTolerance*range[1];
     }
 
-    m_camera.setClippingRange(range[0], range[1]);
+    m_this.m_camera.setClippingRange(range[0], range[1]);
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -407,8 +408,8 @@ vgl.renderer = function() {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.resize = function(width, height) {
-    // @note: where do m_x and m_y come from?
-    this.positionAndResize(m_x, m_y, width, height);
+    // @note: where do m_this.m_x and m_this.m_y come from?
+    this.positionAndResize(m_this.m_x, m_this.m_y, width, height);
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -426,18 +427,18 @@ vgl.renderer = function() {
     }
 
     //If we're allowing this renderer to resize ...
-    if (m_resizable) {
-      m_width = width;
-      m_height = height;
+    if (m_this.m_resizable) {
+      m_this.m_width = width;
+      m_this.m_height = height;
 
-      m_camera.setViewAspect(m_width / m_height);
+      m_this.m_camera.setViewAspect(m_this.m_width / m_this.m_height);
       this.modified();
     }
 
-    if (m_renderPasses) {
-      for (i = 0; i < m_renderPasses.length; ++i) {
-        m_renderPasses[i].resize(width, height);
-        m_renderPasses[i].renderer().positionAndResize(x, y, width, height);
+    if (m_this.m_renderPasses) {
+      for (i = 0; i < m_this.m_renderPasses.length; ++i) {
+        m_this.m_renderPasses[i].resize(width, height);
+        m_this.m_renderPasses[i].renderer().positionAndResize(x, y, width, height);
       }
     }
   };
@@ -452,7 +453,7 @@ vgl.renderer = function() {
   ////////////////////////////////////////////////////////////////////////////
   this.addActor = function(actor) {
     if (actor instanceof vgl.actor) {
-      m_sceneRoot.addChild(actor);
+      m_this.m_sceneRoot.addChild(actor);
       this.modified();
       return true;
     }
@@ -469,7 +470,7 @@ vgl.renderer = function() {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.hasActor = function(actor) {
-      return m_sceneRoot.hasChild(actor);
+      return m_this.m_sceneRoot.hasChild(actor);
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -481,7 +482,7 @@ vgl.renderer = function() {
     var i = null;
     if (actors instanceof Array) {
       for (i = 0; i < actors.length; ++i) {
-        m_sceneRoot.addChild(actors[i]);
+        m_this.m_sceneRoot.addChild(actors[i]);
       }
       this.modified();
     }
@@ -496,8 +497,8 @@ vgl.renderer = function() {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.removeActor = function(actor) {
-    if (m_sceneRoot.children().indexOf(actor) !== -1) {
-      m_sceneRoot.removeChild(actor);
+    if (m_this.m_sceneRoot.children().indexOf(actor) !== -1) {
+      m_this.m_sceneRoot.removeChild(actor);
       this.modified();
       return true;
     }
@@ -520,7 +521,7 @@ vgl.renderer = function() {
 
     var i;
     for (i = 0; i < actors.length; ++i) {
-      m_sceneRoot.removeChild(actors[i]);
+      m_this.m_sceneRoot.removeChild(actors[i]);
     }
     this.modified();
     return true;
@@ -534,7 +535,7 @@ vgl.renderer = function() {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.removeAllActors = function() {
-    return m_sceneRoot.removeChildren();
+    return m_this.m_sceneRoot.removeChildren();
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -616,13 +617,13 @@ vgl.renderer = function() {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.focusDisplayPoint = function() {
-    var focalPoint = m_camera.focalPoint(),
+    var focalPoint = m_this.m_camera.focalPoint(),
       focusWorldPt = vec4.fromValues(
         focalPoint[0], focalPoint[1], focalPoint[2], 1);
 
     return this.worldToDisplay(
-      focusWorldPt, m_camera.viewMatrix(),
-      m_camera.projectionMatrix(), m_width, m_height);
+      focusWorldPt, m_this.m_camera.viewMatrix(),
+      m_this.m_camera.projectionMatrix(), m_this.m_width, m_this.m_height);
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -632,7 +633,7 @@ vgl.renderer = function() {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.resetScene = function() {
-    return m_resetScene;
+    return m_this.m_resetScene;
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -644,8 +645,8 @@ vgl.renderer = function() {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.setResetScene = function(reset) {
-     if (m_resetScene !== reset) {
-       m_resetScene = reset;
+     if (m_this.m_resetScene !== reset) {
+       m_this.m_resetScene = reset;
        this.modified()
      }
   };
@@ -657,7 +658,7 @@ vgl.renderer = function() {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.resetClippingRange = function() {
-    return m_resetClippingRange;
+    return m_this.m_resetClippingRange;
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -669,8 +670,8 @@ vgl.renderer = function() {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.setResetClippingRange = function(reset) {
-     if (m_resetClippingRange !== reset) {
-       m_resetClippingRange = reset;
+     if (m_this.m_resetClippingRange !== reset) {
+       m_this.m_resetClippingRange = reset;
        this.modified()
      }
   };
@@ -683,16 +684,16 @@ vgl.renderer = function() {
   this.addRenderPass = function(renPass) {
     var i;
 
-    if (m_renderPasses) {
-      for (i = 0; i < m_renderPasses.length; ++i) {
-        if (renPass === m_renderPasses[i]) {
+    if (m_this.m_renderPasses) {
+      for (i = 0; i < m_this.m_renderPasses.length; ++i) {
+        if (renPass === m_this.m_renderPasses[i]) {
           return;
         }
       }
     }
 
-    m_renderPasses = [];
-    m_renderPasses.push(renPass);
+    m_this.m_renderPasses = [];
+    m_this.m_renderPasses.push(renPass);
   };
 
   ////////////////////////////////////////////////////////////////////////////

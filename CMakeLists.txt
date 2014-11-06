@@ -60,6 +60,7 @@ set(_source_files
   dataBuffers.js
   fbo.js
   renderPass.js
+  depthPeelRenderer.js
 )
 
 

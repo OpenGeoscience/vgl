@@ -27,8 +27,10 @@ vgl.shaderProgram = function() {
     this, vgl.materialAttributeType.ShaderProgram);
 
   /** @private */
-  var m_programHandle = 0,
+  var m_this = this,
+      m_programHandle = 0,
       m_compileTimestamp = vgl.timestamp(),
+      m_bindTimestamp = vgl.timestamp(),
       m_shaders = [],
       m_uniforms = [],
       m_vertexAttributes = {},
@@ -258,6 +260,34 @@ vgl.shaderProgram = function() {
     }
   };
 
+  this.compileAndLink = function(renderState) {
+    var i;
+
+    if (m_programHandle === 0) {
+      m_programHandle = gl.createProgram();
+    }
+
+    if (m_compileTimestamp.getMTime() >= this.getMTime()) {
+      return;
+    }
+
+    // Compile shaders
+    for (i = 0; i < m_shaders.length; ++i) {
+      m_shaders[i].compile();
+      m_shaders[i].attachShader(m_programHandle);
+    }
+
+    this.bindAttributes();
+
+    // link program
+    if (!this.link()) {
+      console.log("[ERROR] Failed to link Program");
+      this.cleanUp();
+    }
+
+    m_compileTimestamp.modified();
+  }
+
   /////////////////////////////////////////////////////////////////////////////
   /**
    * Bind the program with its shaders
@@ -269,32 +299,13 @@ vgl.shaderProgram = function() {
   this.bind = function(renderState) {
     var i = 0;
 
-    if (m_programHandle === 0
-        || (m_compileTimestamp.getMTime() < this.getMTime())) {
-      m_programHandle = gl.createProgram();
-
-      if (m_programHandle === 0) {
-        console.log("[ERROR] Cannot create Program Object");
-        return false;
-      }
+    if (m_bindTimestamp.getMTime() < m_this.getMTime()) {
 
       // Compile shaders
-      for (i = 0; i < m_shaders.length; ++i) {
-        m_shaders[i].compile();
-        m_shaders[i].attachShader(m_programHandle);
-      }
-
-      this.bindAttributes();
-
-      // link program
-      if (!this.link()) {
-        console.log("[ERROR] Failed to link Program");
-        this.cleanUp();
-      }
+      m_this.compileAndLink();
 
       this.use();
       this.bindUniforms();
-      m_compileTimestamp.modified();
     }
     else {
       this.use();

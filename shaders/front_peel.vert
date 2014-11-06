@@ -1,3 +1,9 @@
+#ifdef GL_FRAGMENT_PRECISION_HIGH
+    precision highp float;
+#else
+    precision mediump float;
+#endif
+
 //object space vertex position
 attribute vec3 vVertex;
 attribute vec3 vColor;
