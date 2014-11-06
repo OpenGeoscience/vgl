@@ -261,6 +261,7 @@ vgl.depthPeelRenderer = function() {
 
     // Clear colour and depth buffer
     gl.clear(vgl.GL.OLOR_BUFFER_BIT | vgl.GL.DEPTH_BUFFER_BIT);
+    gl.clearColor(0.0, 0.0, 0.0, 1.0);
 
     // Bind the colour blending FBO
     gl.bindFramebuffer(vgl.GL.FRAMEBUFFER, colorBlenderFBOID);

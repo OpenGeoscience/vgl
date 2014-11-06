@@ -11,7 +11,7 @@ varying vec3 color;
 
 void main()
 {
-	float frontDepth = texture2D(depthTexture, gl_FragCoord.xy).r;
+	float frontDepth = texture2D(depthTexture, gl_FragCoord.xy/400.0).r;
 
 	//compare the current fragment depth with the depth in the depth texture
 	//if it is less, discard the current fragment
@@ -19,5 +19,5 @@ void main()
 		discard;
 
 	//otherwise set the given color uniform as the final output
-	gl_FragColor = vec4(color, 1.0);
+	gl_FragColor = vec4(color, 0.5);
 }
