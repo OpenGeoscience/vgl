@@ -57,7 +57,8 @@ vgl.mapper = function() {
   function createVertexBufferObjects() {
     if (m_geomData) {
       var numberOfSources = m_geomData.numberOfSources(),
-          i, j, k, bufferId = null, keys, ks, numberOfPrimitives;
+          i, j, k, bufferId = null, keys, ks, numberOfPrimitives,
+          primitive = null;
 
       for (i = 0; i < numberOfSources; ++i) {
         bufferId = gl.createBuffer();
@@ -79,9 +80,20 @@ vgl.mapper = function() {
       numberOfPrimitives = m_geomData.numberOfPrimitives();
       for (k = 0; k < numberOfPrimitives; ++k) {
         bufferId = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, bufferId);
-        gl.bufferData(gl.ARRAY_BUFFER, m_geomData.primitive(k)
-            .indices(), gl.STATIC_DRAW);
+        primitive = m_geomData.primitive(k);
+        switch(primitive.primitiveType()) {
+          case gl.LINES:
+          case gl.LINE_STRIP:
+          case gl.TRIANGLE_STRIP:
+            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, bufferId);
+            gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,
+              m_geomData.primitive(k).indices(), gl.STATIC_DRAW);
+            break;
+          default:
+            gl.bindBuffer(gl.ARRAY_BUFFER, bufferId);
+            gl.bufferData(gl.ARRAY_BUFFER, m_geomData.primitive(k)
+                          .indices(), gl.STATIC_DRAW);
+        }
         m_buffers[i++] = bufferId;
       }
 
@@ -225,23 +237,23 @@ vgl.mapper = function() {
 
     noOfPrimitives = m_geomData.numberOfPrimitives();
     for (j = 0; j < noOfPrimitives; ++j) {
-      gl.bindBuffer(gl.ARRAY_BUFFER, m_buffers[bufferIndex++]);
       primitive = m_geomData.primitive(j);
       switch(primitive.primitiveType()) {
-        case gl.POINTS:
-          gl.drawArrays (gl.TRIANGLES, 0, primitive.numberOfIndices());
-          break;
         case gl.LINES:
-          gl.drawArrays (gl.LINES, 0, primitive.numberOfIndices());
-          break;
         case gl.LINE_STRIP:
-          gl.drawArrays (gl.LINE_STRIP, 0, primitive.numberOfIndices());
+        case gl.TRIANGLE_STRIP:
+          gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, m_buffers[bufferIndex++]);
+          primitive = m_geomData.primitive(j);//
+          gl.drawElements(primitive.primitiveType(), primitive.numberOfIndices(),
+                          primitive.indicesValueType(), 0);
+          break;
+        case gl.POINTS:
+          gl.bindBuffer(gl.ARRAY_BUFFER, m_buffers[bufferIndex++]);
+          gl.drawArrays (gl.POINTS, 0, primitive.numberOfIndices());
           break;
         case gl.TRIANGLES:
+          gl.bindBuffer(gl.ARRAY_BUFFER, m_buffers[bufferIndex++]);
           gl.drawArrays (gl.TRIANGLES, 0, primitive.numberOfIndices());
-          break;
-        case gl.TRIANGLE_STRIP:
-          gl.drawArrays (gl.TRIANGLE_STRIP, 0, primitive.numberOfIndices());
           break;
       }
       gl.bindBuffer (gl.ARRAY_BUFFER, null);
