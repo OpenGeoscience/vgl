@@ -6,18 +6,44 @@
 
 // uniforms
 uniform sampler2D depthTexture;
+uniform float width;
+uniform float height;
+uniform float opacity;
 
-varying vec3 color;
+varying vec3 varNormal;
+varying vec4 varPosition;
+varying mediump vec3 varVertexColor;
+
+const vec3 lightPos = vec3(0.0, 0.0,10000.0);
+const vec3 ambientColor = vec3(0.01, 0.01, 0.01);
+const vec3 specColor = vec3(0.0, 0.0, 0.0);
 
 void main()
 {
-	float frontDepth = texture2D(depthTexture, gl_FragCoord.xy/400.0).r;
+  float frontDepth = texture2D(depthTexture, vec2(gl_FragCoord.x/width, gl_FragCoord.y/height)).r;
 
-	//compare the current fragment depth with the depth in the depth texture
-	//if it is less, discard the current fragment
-	if(gl_FragCoord.z <= frontDepth)
-		discard;
+  if(gl_FragCoord.z <= frontDepth) {
+    discard;
+  }
 
-	//otherwise set the given color uniform as the final output
-	gl_FragColor = vec4(color * 0.1, 0.1);
+  vec3 normal = normalize(varNormal);
+  vec3 lightDir = normalize(lightPos);
+  vec3 reflectDir = -reflect(lightDir, normal);
+  vec3 viewDir = normalize(-varPosition.xyz);
+
+  float lambertian = max(dot(lightDir, normal), 0.0);
+  vec3 color = vec3(0.0);
+  if(lambertian > 0.0) {
+    color = lambertian * varVertexColor;
+  }
+  lambertian = max(dot(lightDir, -normal), 0.0);
+  if(lambertian > 0.0) {
+    color = lambertian * varVertexColor;
+  }
+  //vec3 color = lambertian * varVertexColor;
+  //lambertian = max(dot(lightDir, -normal), 0.0);
+  //color += vec3(0.0, 1.0, 0.0) * lambertian;
+  //gl_FragColor = vec4(color, opacity);
+
+  gl_FragColor = vec4(color * opacity, opacity);
 }

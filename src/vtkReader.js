@@ -286,6 +286,7 @@ vgl.vtkReader = function() {
     if (vtkObject.hasTransparency) {
       shaderProg = material.shaderProgram();
       opacityUniform = shaderProg.uniform("opacity");
+      console.log("opacity ", vtkObject.opacity);
       opacityUniform.set(vtkObject.opacity);
       material.setBinNumber(1000);
     }
@@ -625,6 +626,8 @@ vgl.vtkReader = function() {
       m_node = node;
       m_viewer = vgl.viewer(node);
       m_viewer.init();
+      m_viewer.renderWindow().removeRenderer(m_viewer.renderWindow().activeRenderer());
+      m_viewer.renderWindow().addRenderer(new vgl.depthPeelRenderer());
       m_vtkRenderedList[0] = m_viewer.renderWindow().activeRenderer();
       m_viewer.renderWindow().resize(node.width, node.height);
       interactorStyle = vgl.pvwInteractorStyle();

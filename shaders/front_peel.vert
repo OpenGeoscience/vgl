@@ -4,21 +4,22 @@
     precision mediump float;
 #endif
 
-//object space vertex position
 attribute vec3 vertexPosition;
-attribute vec3 vColor;
+attribute vec3 vertexNormal;
+attribute vec3 vertexColor;
 
-varying vec3 color;
-
-//uniform
+uniform highp mat4 projectionMatrix;
 uniform mat4 modelViewMatrix;
-uniform mat4 projectionMatrix;
+uniform mat4 normalMatrix;
+
+varying vec4 varPosition;
+varying vec3 varNormal;
+varying vec3 varVertexColor;
 
 void main()
 {
-	// Get the clipspace vertex position
-	gl_Position = projectionMatrix * modelViewMatrix * vec4(vertexPosition.xyz, 1);
-
-    // Interpolated color to fragment
-    color = vColor;
+  varPosition = modelViewMatrix * vec4(vertexPosition, 1.0);
+  gl_Position = projectionMatrix * varPosition;
+  varNormal = vec3(normalMatrix * vec4(vertexNormal, 0.0));
+  varVertexColor = vertexColor;
 }
