@@ -8,6 +8,7 @@
 uniform sampler2D depthTexture;
 uniform float width;
 uniform float height;
+uniform mediump float opacity;
 
 varying vec3 color;
 
@@ -22,5 +23,5 @@ void main()
 		discard;
 
 	//otherwise set the given color uniform as the final output
-	gl_FragColor = vec4(color * 0.1, 0.1);
+	gl_FragColor = vec4(color * opacity, opacity);
 }

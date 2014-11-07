@@ -18,7 +18,7 @@ vgl.depthPeelRenderer = function() {
       fpMaterial = vgl.material(), blMaterial = vgl.material(),
       fiMaterial = vgl.material(), frontPeelShader = null, blendShader = null,
       finalShader, NUM_PASSES = 6, m_quad = null, fpwidth, fpheight, blwidth, blheight,
-      fiwidth, fiheight;
+      fiwidth, fiheight, fpopacity;
 
 
   function drawFullScreenQuad(renderState, material) {
@@ -54,6 +54,7 @@ vgl.depthPeelRenderer = function() {
     fpproj = new vgl.projectionUniform("projectionMatrix");
     fpwidth = new vgl.floatUniform("width");
     fpheight = new vgl.floatUniform("height");
+    fpopacity = new vgl.floatUniform("opacity");
     fpdepthTex = new vgl.uniform(vgl.GL.INT, "depthTexture");
     fpdepthTex.set(0);
 
@@ -64,6 +65,7 @@ vgl.depthPeelRenderer = function() {
     frontPeelShader.addUniform(fpmv);
     frontPeelShader.addUniform(fpproj);
     frontPeelShader.addUniform(fpdepthTex);
+    frontPeelShader.addUniform(fpopacity);
     frontPeelShader.addUniform(fpwidth);
     frontPeelShader.addUniform(fpheight);
     frontPeelShader.addVertexAttribute(fpvertex, vgl.vertexAttributeKeys.Position);
@@ -262,10 +264,17 @@ vgl.depthPeelRenderer = function() {
           renderState.m_material.remove(renderState);
       } else {
         console.log("***** using material ******", material);
+        var ou = actor.material().shaderProgram().uniform("opacity");
+        if (ou) {
+          fpopacity.set(1.0);
+          console.log("ou.get() ", ou.get()[0]);
+          fpopacity.set(ou.get()[0]);
+        }
         renderState.m_material = material;
         renderState.m_material.render(renderState);
         renderState.m_mapper.render(renderState);
         renderState.m_material.remove(renderState);
+        fpopacity.set(1.0);
       }
     }
   }

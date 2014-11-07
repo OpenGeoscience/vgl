@@ -339,7 +339,7 @@ vgl.utils.createPhongFragmentShader = function(context) {
     'varying mediump vec3 iVertexColor;',
     'const vec3 lightPos = vec3(0.0, 0.0,10000.0);',
     'const vec3 ambientColor = vec3(0.01, 0.01, 0.01);',
-    'const vec3 specColor = vec3(1.0, 1.0, 1.0);',
+    'const vec3 specColor = vec3(0.4, 0.4, 0.4);',
 
     'void main() {',
     'vec3 normal = normalize(varNormal);',
@@ -354,9 +354,9 @@ vgl.utils.createPhongFragmentShader = function(context) {
     'float specAngle = max(dot(reflectDir, viewDir), 0.0);',
     'specular = pow(specAngle, 64.0);',
     '}',
-    'gl_FragColor = vec4(ambientColor +',
-    'lambertian*iVertexColor +',
-    'specular*specColor, 0.5);',
+    'gl_FragColor = vec4((ambientColor +',
+    'lambertian*iVertexColor*0.5 +',
+    'specular*specColor) * opacity, opacity);',
     '}' ].join('\n'),
     shader = new vgl.shader(vgl.GL.FRAGMENT_SHADER);
 
@@ -555,7 +555,7 @@ vgl.utils.createGeometryMaterial = function() {
    var mat = new vgl.material(),
        prog = new vgl.shaderProgram(),
        pointSize = 5.0,
-       opacity = 0.1,
+       opacity = 1.0,
        vertexShader = vgl.utils.createVertexShader(gl),
        fragmentShader = vgl.utils.createFragmentShader(gl),
        posVertAttr = new vgl.vertexAttribute("vertexPosition"),
