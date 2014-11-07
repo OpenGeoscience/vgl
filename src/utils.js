@@ -332,6 +332,7 @@ vgl.utils.createPhongVertexShader = function(context) {
 vgl.utils.createPhongFragmentShader = function(context) {
   'use strict';
   var fragmentShaderSource = [
+    'uniform mediump float opacity;',
     'precision mediump float;',
     'varying vec3 varNormal;',
     'varying vec4 varPosition;',
@@ -355,7 +356,7 @@ vgl.utils.createPhongFragmentShader = function(context) {
     '}',
     'gl_FragColor = vec4(ambientColor +',
     'lambertian*iVertexColor +',
-    'specular*specColor, 1.0);',
+    'specular*specColor, 0.5);',
     '}' ].join('\n'),
     shader = new vgl.shader(vgl.GL.FRAGMENT_SHADER);
 

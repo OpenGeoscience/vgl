@@ -6,12 +6,15 @@
 
 // uniforms
 uniform sampler2D depthTexture;
+uniform float width;
+uniform float height;
 
 varying vec3 color;
 
 void main()
 {
-	float frontDepth = texture2D(depthTexture, gl_FragCoord.xy/400.0).r;
+	float frontDepth = texture2D(depthTexture,
+      vec2(gl_FragCoord.x/width, gl_FragCoord.y/height)).r;
 
 	//compare the current fragment depth with the depth in the depth texture
 	//if it is less, discard the current fragment

@@ -8,11 +8,13 @@
 uniform sampler2D colorTexture;	// colour texture from previous pass
 //uniform vec4 vBackgroundColor;	// background colour
 
+uniform float width;
+uniform float height;
 
 void main()
 {
 	//get the colour from the colour buffer
-	vec4 color = texture2D(colorTexture, gl_FragCoord.xy/400.0);
+	vec4 color = texture2D(colorTexture, vec2(gl_FragCoord.x/width, gl_FragCoord.y/height));
 
 	//combine the colour read from the colour texture with the background colour
 	//by multiplying the colour alpha with the background colour and adding the

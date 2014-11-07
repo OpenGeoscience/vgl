@@ -17,7 +17,9 @@ vgl.depthPeelRenderer = function() {
       colorBlenderTexID, colorBlenderFBOID, setupTime = vgl.timestamp(),
       fpMaterial = vgl.material(), blMaterial = vgl.material(),
       fiMaterial = vgl.material(), frontPeelShader = null, blendShader = null,
-      finalShader, NUM_PASSES = 6, m_quad = null;
+      finalShader, NUM_PASSES = 6, m_quad = null, fpwidth, fpheight, blwidth, blheight,
+      fiwidth, fiheight;
+
 
   function drawFullScreenQuad(renderState, material) {
     m_quad.setMaterial(material);
@@ -50,6 +52,8 @@ vgl.depthPeelRenderer = function() {
     fpcolor = new vgl.vertexAttribute("vColor");
     fpmv = new vgl.modelViewUniform("modelViewMatrix");
     fpproj = new vgl.projectionUniform("projectionMatrix");
+    fpwidth = new vgl.floatUniform("width");
+    fpheight = new vgl.floatUniform("height");
     fpdepthTex = new vgl.uniform(vgl.GL.INT, "depthTexture");
     fpdepthTex.set(0);
 
@@ -60,6 +64,8 @@ vgl.depthPeelRenderer = function() {
     frontPeelShader.addUniform(fpmv);
     frontPeelShader.addUniform(fpproj);
     frontPeelShader.addUniform(fpdepthTex);
+    frontPeelShader.addUniform(fpwidth);
+    frontPeelShader.addUniform(fpheight);
     frontPeelShader.addVertexAttribute(fpvertex, vgl.vertexAttributeKeys.Position);
     frontPeelShader.addVertexAttribute(fpcolor, vgl.vertexAttributeKeys.Color);
 
@@ -81,10 +87,14 @@ vgl.depthPeelRenderer = function() {
     blendShader.loadFromFile(vgl.GL.VERTEX_SHADER,   "shaders/blend.vert");
     blendShader.loadFromFile(vgl.GL.FRAGMENT_SHADER, "shaders/blend.frag");
     bltempTex = new vgl.uniform(vgl.GL.INT, "tempTexture");
+    blwidth = new vgl.floatUniform("width");
+    blheight = new vgl.floatUniform("height");
     bltempTex.set(0);
     blvertex = new vgl.vertexAttribute("vertexPosition");
 
     blendShader.addUniform(bltempTex);
+    blendShader.addUniform(blwidth);
+    blendShader.addUniform(blheight);
     blendShader.addVertexAttribute(blvertex, vgl.vertexAttributeKeys.Position);
 
     // Compile and link the shader
@@ -99,7 +109,7 @@ vgl.depthPeelRenderer = function() {
     // blendShader.UnUse();
 
     //Load the final shader
-    finalShader = fiMaterial.shaderProgram();
+    finalShader = new vgl.shaderProgram();
     finalShader.loadFromFile(vgl.GL.VERTEX_SHADER,   "shaders/blend.vert");
     finalShader.loadFromFile(vgl.GL.FRAGMENT_SHADER, "shaders/final.frag");
 
@@ -107,12 +117,16 @@ vgl.depthPeelRenderer = function() {
     //fimv = new vgl.modelViewUniform("modelViewMatrix");
     //fiproj = new vgl.projectionUniform("projectionMatrix");
     fitempTex = new vgl.uniform(vgl.GL.INT, "colorTexture");
+    fiwidth = new vgl.floatUniform("width");
+    fiheight = new vgl.floatUniform("height");
     fitempTex.set(0);
     fivertex = new vgl.vertexAttribute("vertexPosition");
 
     //finalShader.addUniform(fimv);
     //finalShader.addUniform(fiproj);
     finalShader.addUniform(fitempTex);
+    finalShader.addUniform(fiwidth);
+    finalShader.addUniform(fiheight);
     finalShader.addVertexAttribute(fivertex, vgl.vertexAttributeKeys.Position);
     finalShader.compileAndLink();
     fiMaterial.addAttribute(finalShader);
@@ -258,6 +272,13 @@ vgl.depthPeelRenderer = function() {
 
   function depthPeelRender(renderState, actors) {
     var layer;
+
+    fpwidth.set(m_this.width());
+    fpheight.set(m_this.height());
+    blwidth.set(m_this.width());
+    blheight.set(m_this.height());
+    fiwidth.set(m_this.width());
+    fiheight.set(m_this.height());
 
     // Clear colour and depth buffer
     gl.clear(vgl.GL.OLOR_BUFFER_BIT | vgl.GL.DEPTH_BUFFER_BIT);
