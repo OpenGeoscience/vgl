@@ -85,14 +85,10 @@ vgl.mapper = function() {
           case gl.LINES:
           case gl.LINE_STRIP:
           case gl.TRIANGLE_STRIP:
+          default:
             gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, bufferId);
             gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,
               m_geomData.primitive(k).indices(), gl.STATIC_DRAW);
-            break;
-          default:
-            gl.bindBuffer(gl.ARRAY_BUFFER, bufferId);
-            gl.bufferData(gl.ARRAY_BUFFER, m_geomData.primitive(k)
-                          .indices(), gl.STATIC_DRAW);
         }
         m_buffers[i++] = bufferId;
       }
@@ -242,18 +238,11 @@ vgl.mapper = function() {
         case gl.LINES:
         case gl.LINE_STRIP:
         case gl.TRIANGLE_STRIP:
+        default:
           gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, m_buffers[bufferIndex++]);
           primitive = m_geomData.primitive(j);//
           gl.drawElements(primitive.primitiveType(), primitive.numberOfIndices(),
                           primitive.indicesValueType(), 0);
-          break;
-        case gl.POINTS:
-          gl.bindBuffer(gl.ARRAY_BUFFER, m_buffers[bufferIndex++]);
-          gl.drawArrays (gl.POINTS, 0, primitive.numberOfIndices());
-          break;
-        case gl.TRIANGLES:
-          gl.bindBuffer(gl.ARRAY_BUFFER, m_buffers[bufferIndex++]);
-          gl.drawArrays (gl.TRIANGLES, 0, primitive.numberOfIndices());
           break;
       }
       gl.bindBuffer (gl.ARRAY_BUFFER, null);
