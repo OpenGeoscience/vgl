@@ -228,24 +228,24 @@ vgl.renderer = function() {
 
       if (actor.referenceFrame() ===
           vgl.boundingObject.ReferenceFrame.Relative) {
-        mat4.multiply(renSt.m_this.m_modelViewMatrix, m_this.m_camera.viewMatrix(),
+        mat4.multiply(renSt.m_modelViewMatrix, m_this.m_camera.viewMatrix(),
           actor.matrix());
-        renSt.m_this.m_projectionMatrix = m_this.m_camera.projectionMatrix();
+        renSt.m_projectionMatrix = m_this.m_camera.projectionMatrix();
       } else {
-        renSt.m_this.m_modelViewMatrix = actor.matrix();
-        renSt.m_this.m_projectionMatrix = mat4.create();
-        mat4.ortho(renSt.m_this.m_projectionMatrix, 0, m_this.m_width, 0, m_this.m_height, -1, 1);
+        renSt.m_modelViewMatrix = actor.matrix();
+        renSt.m_projectionMatrix = mat4.create();
+        mat4.ortho(renSt.m_projectionMatrix, 0, m_this.m_width, 0, m_this.m_height, -1, 1);
       }
 
-      mat4.invert(mvMatrixInv, renSt.m_this.m_modelViewMatrix);
-      mat4.transpose(renSt.m_this.m_normalMatrix, mvMatrixInv);
-      renSt.m_this.m_material = actor.material();
-      renSt.m_this.m_mapper = actor.mapper();
+      mat4.invert(mvMatrixInv, renSt.m_modelViewMatrix);
+      mat4.transpose(renSt.m_normalMatrix, mvMatrixInv);
+      renSt.m_material = actor.material();
+      renSt.m_mapper = actor.mapper();
 
       // TODO Fix this shortcut
-      renSt.m_this.m_material.render(renSt);
-      renSt.m_this.m_mapper.render(renSt);
-      renSt.m_this.m_material.remove(renSt);
+      renSt.m_material.render(renSt);
+      renSt.m_mapper.render(renSt);
+      renSt.m_material.remove(renSt);
     }
   };
 

@@ -268,7 +268,7 @@ vgl.utils.createFragmentShader = function(context) {
   var fragmentShaderSource = [ 'varying mediump vec3 iVertexColor;',
                               'uniform mediump float opacity;',
                               'void main(void) {',
-                              'gl_FragColor = vec4(iVertexColor, opacity);',
+                              'gl_FragColor = vec4(iVertexColor * opacity, opacity);',
                               '}' ].join('\n'),
       shader = new vgl.shader(vgl.GL.FRAGMENT_SHADER);
 
@@ -552,7 +552,6 @@ vgl.utils.createTextureMaterial = function(isRgba) {
 vgl.utils.createGeometryMaterial = function() {
   'use strict';
    var mat = new vgl.material(),
-       blend = new vgl.blend(),
        prog = new vgl.shaderProgram(),
        pointSize = 5.0,
        opacity = 0.1,
@@ -574,7 +573,6 @@ vgl.utils.createGeometryMaterial = function() {
   prog.addShader(fragmentShader);
   prog.addShader(vertexShader);
   mat.addAttribute(prog);
-  mat.addAttribute(blend);
 
   return mat;
 };

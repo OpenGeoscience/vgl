@@ -261,12 +261,12 @@ vgl.depthPeelRenderer = function() {
 
     // Clear colour and depth buffer
     gl.clear(vgl.GL.OLOR_BUFFER_BIT | vgl.GL.DEPTH_BUFFER_BIT);
-    gl.clearColor(0.0, 0.0, 0.0, 1.0);
 
     // Bind the colour blending FBO
     gl.bindFramebuffer(vgl.GL.FRAMEBUFFER, colorBlenderFBOID);
 
     // Clear the colour and depth buffer
+    gl.clearColor(0.0, 0.0, 0.0, 1.0);
     gl.clear(vgl.GL.COLOR_BUFFER_BIT | vgl.GL.DEPTH_BUFFER_BIT );
 
     // 1. In the first pass, we render normally with depth test enabled to get the nearest surface
