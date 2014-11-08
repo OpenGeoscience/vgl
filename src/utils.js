@@ -555,7 +555,7 @@ vgl.utils.createGeometryMaterial = function() {
    var mat = new vgl.material(),
        prog = new vgl.shaderProgram(),
        pointSize = 5.0,
-       opacity = 0.1,
+       opacity = 1.0,
        vertexShader = vgl.utils.createVertexShader(gl),
        fragmentShader = vgl.utils.createFragmentShader(gl),
        posVertAttr = new vgl.vertexAttribute("vertexPosition"),
@@ -651,7 +651,6 @@ vgl.utils.createPhongMaterial = function() {
   prog.addShader(fragmentShader);
   prog.addShader(vertexShader);
   mat.addAttribute(prog);
-  mat.addAttribute(blend);
 
   return mat;
 };
