@@ -356,7 +356,7 @@ vgl.utils.createPhongFragmentShader = function(context) {
     '}',
     'gl_FragColor = vec4(ambientColor +',
     'lambertian*iVertexColor +',
-    'specular*specColor, 0.5);',
+    'specular*specColor, opacity);',
     '}' ].join('\n'),
     shader = new vgl.shader(vgl.GL.FRAGMENT_SHADER);
 
