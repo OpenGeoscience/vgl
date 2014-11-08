@@ -21,7 +21,6 @@ void main()
 	//product to the given colour uniform
 	//vFragColor = color + vBackgroundColor*color.a;
 
-    color.rgb = color.rgb + vec3(0.0, 0.0, 0.0) * color.a;
-    color.a = 1.0;
+    color = color + vec4(0.0, 0.0, 0.0, 1.0) * color.a;
     gl_FragColor = color;
 }

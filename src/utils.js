@@ -354,9 +354,8 @@ vgl.utils.createPhongFragmentShader = function(context) {
     'float specAngle = max(dot(reflectDir, viewDir), 0.0);',
     'specular = pow(specAngle, 64.0);',
     '}',
-    'gl_FragColor = vec4((ambientColor +',
-    'lambertian*iVertexColor*0.5 +',
-    'specular*specColor) * opacity, opacity);',
+    'gl_FragColor = vec4((lambertian*iVertexColor +',
+    'specular*specColor), opacity);',
     '}' ].join('\n'),
     shader = new vgl.shader(vgl.GL.FRAGMENT_SHADER);
 
