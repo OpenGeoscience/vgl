@@ -45,9 +45,10 @@ vgl.depthPeelRenderer = function() {
   function initShaders(renderState, WIDTH, HEIGHT) {
     var fpmv, fpproj, fpvertex, fpcolor, fpdepthTex,
         blmv, blproj, blvertex, bltempTex,
-        fimv, fiproj, fivertex, fitempTex;
+        fimv, fiproj, fivertex, fitempTex, fpnorm;
 
     // Load the front to back peeling shader
+    fpnorm = new vgl.vertexAttribute("vertexNormal"),
     fpvertex = new vgl.vertexAttribute("vertexPosition");
     fpcolor = new vgl.vertexAttribute("vColor");
     fpmv = new vgl.modelViewUniform("modelViewMatrix");
@@ -69,6 +70,7 @@ vgl.depthPeelRenderer = function() {
     frontPeelShader.addUniform(fpwidth);
     frontPeelShader.addUniform(fpheight);
     frontPeelShader.addVertexAttribute(fpvertex, vgl.vertexAttributeKeys.Position);
+    frontPeelShader.addVertexAttribute(fpnorm, vgl.vertexAttributeKeys.Normal);
     frontPeelShader.addVertexAttribute(fpcolor, vgl.vertexAttributeKeys.Color);
 
     // Compile and link the shader
