@@ -339,7 +339,7 @@ vgl.utils.createPhongFragmentShader = function(context) {
     'varying mediump vec3 iVertexColor;',
     'const vec3 lightPos = vec3(0.0, 0.0,10000.0);',
     'const vec3 ambientColor = vec3(0.01, 0.01, 0.01);',
-    'const vec3 specColor = vec3(0.4, 0.4, 0.4);',
+    'const vec3 specColor = vec3(0.0, 0.0, 0.0);',
 
     'void main() {',
     'vec3 normal = normalize(varNormal);',
@@ -348,6 +348,7 @@ vgl.utils.createPhongFragmentShader = function(context) {
     'vec3 viewDir = normalize(-varPosition.xyz);',
 
     'float lambertian = max(dot(lightDir,normal), 0.0);',
+    'lambertian += max(dot(lightDir, -normal), 0.0);',
     'float specular = 0.0;',
 
     'if(lambertian > 0.0) {',
@@ -355,7 +356,7 @@ vgl.utils.createPhongFragmentShader = function(context) {
     'specular = pow(specAngle, 64.0);',
     '}',
     'gl_FragColor = vec4((lambertian*iVertexColor +',
-    'specular*specColor), opacity);',
+    'specular*specColor),  1.0);',
     '}' ].join('\n'),
     shader = new vgl.shader(vgl.GL.FRAGMENT_SHADER);
 

@@ -307,12 +307,9 @@ vgl.shaderProgram = function() {
 
       this.use();
       this.bindUniforms();
-
-      console.log("using ****", this);
       m_bindTimestamp.modified();
     }
     else {
-      console.log("using ", this);
       this.use();
     }
 

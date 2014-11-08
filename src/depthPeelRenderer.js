@@ -265,11 +265,10 @@ vgl.depthPeelRenderer = function() {
           renderState.m_mapper.render(renderState);
           renderState.m_material.remove(renderState);
       } else {
-        console.log("***** using material ******", material);
         var ou = actor.material().shaderProgram().uniform("opacity");
         if (ou) {
           fpopacity.set(1.0);
-          console.log("ou.get() ", ou.get()[0]);
+          //console.log("ou.get() ", ou.get()[0]);
           fpopacity.set(ou.get()[0]);
         }
         renderState.m_material = material;
