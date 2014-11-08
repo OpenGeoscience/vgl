@@ -300,14 +300,14 @@ vgl.utils.createPhongVertexShader = function(context) {
 
       'varying highp vec4 varPosition;',
       'varying mediump vec3 varNormal;',
-      'varying mediump vec3 iVertexColor;',
+      'varying mediump vec3 varVertexColor;',
 
       'void main(void)',
       '{',
       'varPosition = modelViewMatrix * vec4(vertexPosition, 1.0);',
       'gl_Position = projectionMatrix * varPosition;',
       'varNormal = vec3(normalMatrix * vec4(vertexNormal, 0.0));',
-      'iVertexColor = vertexColor;',
+      'varVertexColor = vertexColor;',
       '}' ].join('\n'),
 
       shader = new vgl.shader(vgl.GL.VERTEX_SHADER);
@@ -336,10 +336,10 @@ vgl.utils.createPhongFragmentShader = function(context) {
     'precision mediump float;',
     'varying vec3 varNormal;',
     'varying vec4 varPosition;',
-    'varying mediump vec3 iVertexColor;',
+    'varying mediump vec3 varVertexColor;',
     'const vec3 lightPos = vec3(0.0, 0.0,10000.0);',
     'const vec3 ambientColor = vec3(0.01, 0.01, 0.01);',
-    'const vec3 specColor = vec3(1.0, 1.0, 1.0);',
+    'const vec3 specColor = vec3(0.0, 0.0, 0.0);',
 
     'void main() {',
     'vec3 normal = normalize(varNormal);',
@@ -347,16 +347,12 @@ vgl.utils.createPhongFragmentShader = function(context) {
     'vec3 reflectDir = -reflect(lightDir, normal);',
     'vec3 viewDir = normalize(-varPosition.xyz);',
 
-    'float lambertian = max(dot(lightDir,normal), 0.0);',
-    'float specular = 0.0;',
-
+    'float lambertian = max(dot(lightDir, normal), 0.0);',
+    'vec3 color = vec3(0.0);',
     'if(lambertian > 0.0) {',
-    'float specAngle = max(dot(reflectDir, viewDir), 0.0);',
-    'specular = pow(specAngle, 64.0);',
+    '  color = lambertian * varVertexColor;',
     '}',
-    'gl_FragColor = vec4(ambientColor +',
-    'lambertian*iVertexColor +',
-    'specular*specColor, opacity);',
+    'gl_FragColor = vec4(color, opacity);',
     '}' ].join('\n'),
     shader = new vgl.shader(vgl.GL.FRAGMENT_SHADER);
 
@@ -629,8 +625,8 @@ vgl.utils.createPointGeometryMaterial = function(opacity) {
 vgl.utils.createPhongMaterial = function() {
   'use strict';
    var mat = new vgl.material(),
-       blend = new vgl.blend(),
        prog = new vgl.shaderProgram(),
+       blend = new vgl.blend(),
        vertexShader = vgl.utils.createPhongVertexShader(gl),
        fragmentShader = vgl.utils.createPhongFragmentShader(gl),
        posVertAttr = new vgl.vertexAttribute("vertexPosition"),
@@ -650,6 +646,7 @@ vgl.utils.createPhongMaterial = function() {
   prog.addUniform(normalUniform);
   prog.addShader(fragmentShader);
   prog.addShader(vertexShader);
+  mat.addAttribute(blend);
   mat.addAttribute(prog);
 
   return mat;
@@ -675,7 +672,7 @@ vgl.utils.createColorMaterial = function() {
       texCoordVertAttr = new vgl.vertexAttribute("textureCoord"),
       colorVertAttr = new vgl.vertexAttribute("vertexColor"),
       pointsizeUniform = new vgl.floatUniform("pointSize", 5.0),
-      opacityUniform = new vgl.floatUniform("opacity", 0.5),
+      opacityUniform = new vgl.floatUniform("opacity", 1.0),
       modelViewUniform = new vgl.modelViewUniform("modelViewMatrix"),
       projectionUniform = new vgl.projectionUniform("projectionMatrix");
 
@@ -720,7 +717,7 @@ vgl.utils.createColorMappedMaterial = function(lut) {
       posVertAttr = new vgl.vertexAttribute("vertexPosition"),
       scalarVertAttr = new vgl.vertexAttribute("vertexScalar"),
       pointsizeUniform = new vgl.floatUniform("pointSize", 5.0),
-      opacityUniform = new vgl.floatUniform("opacity", 0.5),
+      opacityUniform = new vgl.floatUniform("opacity", 1.0),
       lutMinUniform = new vgl.floatUniform("lutMin", scalarRange[0]),
       lutMaxUniform = new vgl.floatUniform("lutMax", scalarRange[1]),
       modelViewUniform = new vgl.modelViewUniform("modelViewMatrix"),

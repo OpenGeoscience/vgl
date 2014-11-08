@@ -43,14 +43,16 @@ vgl.depthPeelRenderer = function() {
   }
 
   function initShaders(renderState, WIDTH, HEIGHT) {
-    var fpmv, fpproj, fpvertex, fpcolor, fpdepthTex,
+    var fpmv, fpproj, fpvertex, fpcolor, fpdepthTex, fpnormal, fpnr,
         blmv, blproj, blvertex, bltempTex,
         fimv, fiproj, fivertex, fitempTex;
 
     // Load the front to back peeling shader
     fpvertex = new vgl.vertexAttribute("vertexPosition");
-    fpcolor = new vgl.vertexAttribute("vColor");
+    fpnormal = new vgl.vertexAttribute("vertexNormal");
+    fpcolor = new vgl.vertexAttribute("vertexColor");
     fpmv = new vgl.modelViewUniform("modelViewMatrix");
+    fpnr = new vgl.modelViewUniform("normalMatrix");
     fpproj = new vgl.projectionUniform("projectionMatrix");
     fpwidth = new vgl.floatUniform("width");
     fpheight = new vgl.floatUniform("height");
@@ -64,12 +66,14 @@ vgl.depthPeelRenderer = function() {
     frontPeelShader.loadFromFile(vgl.GL.FRAGMENT_SHADER, "shaders/front_peel.frag");
 
     frontPeelShader.addUniform(fpmv);
+    frontPeelShader.addUniform(fpnr);
     frontPeelShader.addUniform(fpproj);
     frontPeelShader.addUniform(fpdepthTex);
     frontPeelShader.addUniform(fpwidth);
     frontPeelShader.addUniform(fpheight);
     frontPeelShader.addUniform(fpopacity);
     frontPeelShader.addVertexAttribute(fpvertex, vgl.vertexAttributeKeys.Position);
+    frontPeelShader.addVertexAttribute(fpnormal, vgl.vertexAttributeKeys.Normal);
     frontPeelShader.addVertexAttribute(fpcolor, vgl.vertexAttributeKeys.Color);
 
     // Compile and link the shader
@@ -232,6 +236,7 @@ vgl.depthPeelRenderer = function() {
   }
 
   function drawScene(renderState, sortedActors, material) {
+
     var i, actor, mvMatrixInv = mat4.create();
     // TODO FIXME
     // // Enable alpha blending with over compositing
@@ -291,19 +296,26 @@ vgl.depthPeelRenderer = function() {
     fiheight.set(m_this.height());
 
     // Clear colour and depth buffer
+  //gl.clearColor(0.0, 0.0, 0.0, 1.0);
     gl.clear(vgl.GL.OLOR_BUFFER_BIT | vgl.GL.DEPTH_BUFFER_BIT);
 
     // Bind the colour blending FBO
     gl.bindFramebuffer(vgl.GL.FRAMEBUFFER, colorBlenderFBOID);
 
-    // Clear the colour and depth buffer
-    gl.clearColor(0.0, 0.0, 0.0, 1.0);
-    gl.clear(vgl.GL.COLOR_BUFFER_BIT | vgl.GL.DEPTH_BUFFER_BIT );
-
     // 1. In the first pass, we render normally with depth test enabled to get the nearest surface
     gl.enable(vgl.GL.DEPTH_TEST);
+    gl.disable(vgl.GL.BLEND);
+
+  // For debugging
+  // gl.bindFramebuffer(vgl.GL.FRAMEBUFFER, null);
+  // gl.disable(vgl.GL.BLEND);
+
+    //gl.clearColor(0.0, 0.0, 0.0, 1.0);
+    gl.clear(vgl.GL.COLOR_BUFFER_BIT | vgl.GL.DEPTH_BUFFER_BIT );
 
     drawScene(renderState, actors);
+
+  // return;
 
     // 2. Depth peeling + blending pass
     var numLayers = (NUM_PASSES - 1) * 2;
@@ -316,12 +328,6 @@ vgl.depthPeelRenderer = function() {
         // Bind the current FBO
         gl.bindFramebuffer(vgl.GL.FRAMEBUFFER, fbo[currId]);
 
-        // Set clear colour to black
-        gl.clearColor(0, 0, 0, 0);
-
-        // Clear the colour and depth buffers
-        gl.clear(vgl.GL.COLOR_BUFFER_BIT | vgl.GL.DEPTH_BUFFER_BIT);
-
         // Disbale blending and depth testing
         gl.disable(vgl.GL.BLEND);
         gl.enable(vgl.GL.DEPTH_TEST);
@@ -329,11 +335,29 @@ vgl.depthPeelRenderer = function() {
         // Bind the depth texture from the previous step
         gl.bindTexture(vgl.GL.TEXTURE_2D, depthTexID[prevId]);
 
+      // For debugging
+      // gl.bindFramebuffer(vgl.GL.FRAMEBUFFER, null);
+      // gl.disable(vgl.GL.DEPTH_TEST);
+      // gl.disable(vgl.GL.BLEND);
+
+        // Set clear colour to black
+        gl.clearColor(0., 0., 0., 1.0);
+
+        // Clear the colour and depth buffers
+        gl.clear(vgl.GL.COLOR_BUFFER_BIT | vgl.GL.DEPTH_BUFFER_BIT);
+
         // Render scene with the front to back peeling shader
         drawScene(renderState, actors, fpMaterial);
 
+      // return;
+
         // Bind the colour blender FBO
         gl.bindFramebuffer(vgl.GL.FRAMEBUFFER, colorBlenderFBOID);
+
+      // For debugging
+      // gl.bindFramebuffer(vgl.GL.FRAMEBUFFER, null);
+      // gl.clearColor(0., 0., 0., 1.0);
+      // gl.clear(vgl.GL.COLOR_BUFFER_BIT | vgl.GL.DEPTH_BUFFER_BIT);
 
         // Enable blending but disable depth testing
         gl.disable(vgl.GL.DEPTH_TEST);
@@ -347,9 +371,12 @@ vgl.depthPeelRenderer = function() {
                              vgl.GL.ZERO, vgl.GL.ONE_MINUS_SRC_ALPHA);
 
         // Bind the result from the previous iteration as texture
-        gl.bindTexture(vgl.GL.TEXTURE_2D, texID[currId]);
+        gl.bindTexture(vgl.GL.TEXTURE_2D, texID[prevId]);
+
 
         drawFullScreenQuad(renderState, blMaterial);
+
+      // return;
 
         // Disable blending
         gl.disable(vgl.GL.BLEND);
