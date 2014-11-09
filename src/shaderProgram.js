@@ -102,7 +102,7 @@ vgl.shaderProgram = function() {
     }
 
     m_shaders.push(shader);
-    this.modified();
+    m_this.modified();
     return true;
   };
 
@@ -120,7 +120,7 @@ vgl.shaderProgram = function() {
     }
 
     m_uniforms.push(uniform);
-    this.modified();
+    m_this.modified();
   };
 
   /////////////////////////////////////////////////////////////////////////////
@@ -133,8 +133,7 @@ vgl.shaderProgram = function() {
   /////////////////////////////////////////////////////////////////////////////
   this.addVertexAttribute = function(attr, key) {
     m_vertexAttributes[key] = attr;
-
-    this.modified();
+    m_this.modified();
   };
 
   /////////////////////////////////////////////////////////////////////////////
@@ -246,8 +245,8 @@ vgl.shaderProgram = function() {
    */
   /////////////////////////////////////////////////////////////////////////////
   this._cleanup = function(renderState) {
-    this.deleteVertexAndFragment();
-    this.deleteProgram();
+    m_this.deleteVertexAndFragment();
+    m_this.deleteProgram();
   };
 
   /////////////////////////////////////////////////////////////////////////////
@@ -284,7 +283,7 @@ vgl.shaderProgram = function() {
       return;
     }
 
-    this._setup(renderState);
+    m_this._setup(renderState);
 
     // Compile shaders
     for (i = 0; i < m_shaders.length; ++i) {
@@ -292,12 +291,12 @@ vgl.shaderProgram = function() {
       m_shaders[i].attachShader(m_programHandle);
     }
 
-    this.bindAttributes();
+    m_this.bindAttributes();
 
     // link program
-    if (!this.link()) {
+    if (!m_this.link()) {
       console.log("[ERROR] Failed to link Program");
-      this._cleanup();
+      m_this._cleanup();
     }
 
     m_compileTimestamp.modified();
@@ -319,24 +318,21 @@ vgl.shaderProgram = function() {
       // Compile shaders
       m_this.compileAndLink();
 
-      this.use();
-      this.bindUniforms();
-
-      console.log("using ****", this);
+      m_this.use();
+      m_this.bindUniforms();
       m_bindTimestamp.modified();
     }
     else {
-      console.log("using ", this);
-      this.use();
+      m_this.use();
     }
 
     // Call update callback.
     for (i = 0; i < m_uniforms.length; ++i) {
-      m_uniforms[i].update(renderState, this);
+      m_uniforms[i].update(renderState, m_this);
     }
 
     // Now update values to GL.
-    this.updateUniforms();
+    m_this.updateUniforms();
   };
 
   /////////////////////////////////////////////////////////////////////////////
@@ -409,7 +405,7 @@ vgl.shaderProgram = function() {
     }
   };
 
-  return this;
+  return m_this;
 };
 
 inherit(vgl.shaderProgram, vgl.materialAttribute);

@@ -35,7 +35,8 @@ vgl.materialAttribute = function(type) {
   vgl.graphicsObject.call(this);
 
   /** @private */
-  var m_type = type,
+  var m_this = this,
+      m_type = type,
       m_enabled = true;
 
   ////////////////////////////////////////////////////////////////////////////
@@ -86,7 +87,7 @@ vgl.materialAttribute = function(type) {
     return false;
   };
 
-  return this;
+  return m_this;
 };
 
 inherit(vgl.materialAttribute, vgl.graphicsObject);
