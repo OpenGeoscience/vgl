@@ -27,9 +27,9 @@ vgl.depthPeelRenderer = function() {
     renderState.m_mapper = m_quad.mapper();
     renderState.m_material = material;
 
-    renderState.m_material.render(renderState);
+    renderState.m_material.bind(renderState);
     renderState.m_mapper.render(renderState);
-    renderState.m_material.remove(renderState);
+    renderState.m_material.undoBind(renderState);
 
     m_quad.setMaterial(null);
   }
@@ -281,9 +281,9 @@ vgl.depthPeelRenderer = function() {
       // TODO Fix this shortcut
       if (!material) {
           renderState.m_material = actor.material();
-          renderState.m_material.render(renderState);
+          renderState.m_material.bind(renderState);
           renderState.m_mapper.render(renderState);
-          renderState.m_material.remove(renderState);
+          renderState.m_material.undoBind(renderState);
       } else {
 
         var ou = actor.material().shaderProgram().uniform("opacity");
@@ -293,9 +293,9 @@ vgl.depthPeelRenderer = function() {
           fpopacity.set(1.0);
         }
         renderState.m_material = material;
-        renderState.m_material.render(renderState);
+        renderState.m_material.bind(renderState);
         renderState.m_mapper.render(renderState);
-        renderState.m_material.remove(renderState);
+        renderState.m_material.undoBind(renderState);
       }
     }
   }
