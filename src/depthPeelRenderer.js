@@ -78,6 +78,7 @@ vgl.depthPeelRenderer = function() {
 
     // Compile and link the shader
     frontPeelShader.compileAndLink();
+    //fpMaterial.addAttribute(fpblend);
     fpMaterial.addAttribute(frontPeelShader);
 
     //     //add attributes and uniforms
