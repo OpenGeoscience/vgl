@@ -43,7 +43,7 @@ vgl.depthPeelRenderer = function() {
   }
 
   function initShaders(renderState, WIDTH, HEIGHT) {
-    var fpmv, fpproj, fpvertex, fpcolor, fpdepthTex, fpnormal, fpnr,
+    var fpmv, fpproj, fpvertex, fpcolor, fpdepthTex, fpnormal, fpnr, fpblend,
         blmv, blproj, blvertex, bltempTex,
         fimv, fiproj, fivertex, fitempTex;
 
@@ -56,10 +56,10 @@ vgl.depthPeelRenderer = function() {
     fpproj = new vgl.projectionUniform("projectionMatrix");
     fpwidth = new vgl.floatUniform("width");
     fpheight = new vgl.floatUniform("height");
-    fpopacity = new vgl.floatUniform("opacity");
+    fpopacity = new vgl.floatUniform("opacity", 1.0);
     fpdepthTex = new vgl.uniform(vgl.GL.INT, "depthTexture");
+    fpblend = new vgl.blend();
     fpdepthTex.set(0);
-    fpopacity.set(0.0);
 
     frontPeelShader = new vgl.shaderProgram();
     frontPeelShader.loadFromFile(vgl.GL.VERTEX_SHADER,   "shaders/front_peel.vert");
@@ -238,10 +238,10 @@ vgl.depthPeelRenderer = function() {
   function drawScene(renderState, sortedActors, material) {
 
     var i, actor, mvMatrixInv = mat4.create();
-    // TODO FIXME
+
     // // Enable alpha blending with over compositing
-    // glEnable(GL_BLEND);
-    // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    // gl.enable(vgl.GL.BLEND);
+    // gl.blendFunc(vgl.GL.SRC_ALPHA, vgl.GL.ONE_MINUS_SRC_ALPHA);
 
     for ( i = 0; i < sortedActors.length; ++i) {
       actor = sortedActors[i][1];
@@ -296,7 +296,7 @@ vgl.depthPeelRenderer = function() {
     fiheight.set(m_this.height());
 
     // Clear colour and depth buffer
-  //gl.clearColor(0.0, 0.0, 0.0, 1.0);
+    gl.clearColor(0.0, 0.0, 0.0, 0.0);
     gl.clear(vgl.GL.OLOR_BUFFER_BIT | vgl.GL.DEPTH_BUFFER_BIT);
 
     // Bind the colour blending FBO
@@ -310,7 +310,7 @@ vgl.depthPeelRenderer = function() {
   // gl.bindFramebuffer(vgl.GL.FRAMEBUFFER, null);
   // gl.disable(vgl.GL.BLEND);
 
-    //gl.clearColor(0.0, 0.0, 0.0, 1.0);
+    gl.clearColor(0.0, 0.0, 0.0, 0.0);
     gl.clear(vgl.GL.COLOR_BUFFER_BIT | vgl.GL.DEPTH_BUFFER_BIT );
 
     drawScene(renderState, actors);
@@ -341,7 +341,7 @@ vgl.depthPeelRenderer = function() {
       // gl.disable(vgl.GL.BLEND);
 
         // Set clear colour to black
-        gl.clearColor(0., 0., 0., 1.0);
+        gl.clearColor(0., 0., 0., 0.0);
 
         // Clear the colour and depth buffers
         gl.clear(vgl.GL.COLOR_BUFFER_BIT | vgl.GL.DEPTH_BUFFER_BIT);
@@ -371,8 +371,7 @@ vgl.depthPeelRenderer = function() {
                              vgl.GL.ZERO, vgl.GL.ONE_MINUS_SRC_ALPHA);
 
         // Bind the result from the previous iteration as texture
-        gl.bindTexture(vgl.GL.TEXTURE_2D, texID[prevId]);
-
+        gl.bindTexture(vgl.GL.TEXTURE_2D, texID[currId]);
 
         drawFullScreenQuad(renderState, blMaterial);
 

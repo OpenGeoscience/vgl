@@ -352,7 +352,7 @@ vgl.utils.createPhongFragmentShader = function(context) {
     'if(lambertian > 0.0) {',
     '  color = lambertian * varVertexColor;',
     '}',
-    'gl_FragColor = vec4(color, opacity);',
+    'gl_FragColor = vec4(color * opacity, 1.0 - opacity);',
     '}' ].join('\n'),
     shader = new vgl.shader(vgl.GL.FRAGMENT_SHADER);
 
@@ -646,7 +646,7 @@ vgl.utils.createPhongMaterial = function() {
   prog.addUniform(normalUniform);
   prog.addShader(fragmentShader);
   prog.addShader(vertexShader);
-  mat.addAttribute(blend);
+  //mat.addAttribute(blend);
   mat.addAttribute(prog);
 
   return mat;
