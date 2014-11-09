@@ -74,6 +74,18 @@ vgl.materialAttribute = function(type) {
 
   ////////////////////////////////////////////////////////////////////////////
   /**
+   * Remove any resources acquired before deletion
+   *
+   * @param renderState
+   * @returns {boolean}
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.cleanUp = function(renderState) {
+    return false;
+  };
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
    * Bind and activate the material attribute
    *
    * @param renderState
@@ -93,19 +105,6 @@ vgl.materialAttribute = function(type) {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.undoBind = function(renderState) {
-    return false;
-  };
-
-  ////////////////////////////////////////////////////////////////////////////
-  /**
-   * Initialize vertex data for the material attribute
-   *
-   * @param renderState
-   * @param key
-   * @returns {boolean}
-   */
-  ////////////////////////////////////////////////////////////////////////////
-  this.setupVertexData = function(renderState, key) {
     return false;
   };
 

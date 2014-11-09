@@ -257,10 +257,16 @@ vgl.shaderProgram = function() {
   this.deleteVertexAndFragment = function() {
     var i;
     for (i = 0; i < m_shaders.length; ++i) {
+      gl.detachShader(m_shaders[i].shaderHandle());
       gl.deleteShader(m_shaders[i].shaderHandle());
     }
   };
 
+  /////////////////////////////////////////////////////////////////////////////
+  /**
+   * Compile and link a shader
+   */
+  /////////////////////////////////////////////////////////////////////////////
   this.compileAndLink = function(renderState) {
     var i;
 
@@ -333,7 +339,11 @@ vgl.shaderProgram = function() {
    */
   /////////////////////////////////////////////////////////////////////////////
   this.undoBind = function(renderState) {
-    // Do nothing
+    // REF https://www.khronos.org/opengles/sdk/docs/man/xhtml/glUseProgram.xml
+    // If program is 0, then the current rendering state refers to an invalid
+    // program object, and the results of vertex and fragment shader execution
+    // due to any glDrawArrays or glDrawElements commands are undefined
+    gl.useProgram(0);
   };
 
   /////////////////////////////////////////////////////////////////////////////
