@@ -18,7 +18,7 @@ vgl.depthPeelRenderer = function() {
       fpMaterial = vgl.material(), blMaterial = vgl.material(),
       fiMaterial = vgl.material(), frontPeelShader = null, blendShader = null,
       finalShader, NUM_PASSES = 6, m_quad = null, fpwidth, fpheight, blwidth, blheight,
-      fiwidth, fiheight, fpopacity;
+      fiwidth, fiheight, fpopacity, fibackgroundColor;
 
 
   function drawFullScreenQuad(renderState, material) {
@@ -126,6 +126,7 @@ vgl.depthPeelRenderer = function() {
     fitempTex = new vgl.uniform(vgl.GL.INT, "colorTexture");
     fiwidth = new vgl.floatUniform("width");
     fiheight = new vgl.floatUniform("height");
+    fibackgroundColor = new vgl.uniform(vgl.GL.FLOAT_VEC3, "backgroundColor");
     fitempTex.set(0);
     fivertex = new vgl.vertexAttribute("vertexPosition");
 
@@ -134,6 +135,7 @@ vgl.depthPeelRenderer = function() {
     finalShader.addUniform(fitempTex);
     finalShader.addUniform(fiwidth);
     finalShader.addUniform(fiheight);
+    finalShader.addUniform(fibackgroundColor);
     finalShader.addVertexAttribute(fivertex, vgl.vertexAttributeKeys.Position);
     finalShader.compileAndLink();
     fiMaterial.addAttribute(finalShader);
@@ -391,6 +393,8 @@ vgl.depthPeelRenderer = function() {
 
     // Bind the colour blender texture
     gl.bindTexture(vgl.GL.TEXTURE_2D, colorBlenderTexID);
+
+    fibackgroundColor.set(m_this.m_camera.clearColor());
 
     // Draw full screen quad
     drawFullScreenQuad(renderState, fiMaterial);

@@ -6,7 +6,7 @@
 
 //uniforms
 uniform sampler2D colorTexture;	// colour texture from previous pass
-//uniform vec4 vBackgroundColor;	// background colour
+uniform vec3 backgroundColor;	// background colour
 
 uniform float width;
 uniform float height;
@@ -21,7 +21,7 @@ void main()
 	//product to the given colour uniform
 	//vFragColor = color + vBackgroundColor*color.a;
 
-    color = color + vec4(0.0, 0.0, 0.0, 1.0) * color.a;
+    color.rgb = color.rgb + backgroundColor * color.a;
     color.a = 1.0;
     gl_FragColor = color;
 }
