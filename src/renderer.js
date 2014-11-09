@@ -39,7 +39,7 @@ vgl.renderer = function() {
   if (!(this instanceof vgl.renderer)) {
     return new vgl.renderer();
   }
-  vgl.object.call(this);
+  vgl.graphicsObject.call(this);
 
   /** @private */
   var m_this = this;
@@ -710,7 +710,23 @@ vgl.renderer = function() {
     // TODO Implement this
   };
 
+  ////////////////////////////////////////////////////////////////////////////
+  /**
+   *
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this._cleanup = function(renderState) {
+    var children = m_this.m_sceneRoot.children();
+    for ( i = 0; i < children.length; ++i) {
+      actor = children[i];
+      actor.material()._cleanup(renderState);
+      actor.mapper()._cleanup(renderState);
+    }
+
+    m_this.m_sceneRoot.removeChildren();
+  };
+
   return m_this;
 };
 
-inherit(vgl.renderer, vgl.object);
+inherit(vgl.renderer, vgl.graphicsObject);
