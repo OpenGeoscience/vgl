@@ -32,7 +32,7 @@ vgl.materialAttribute = function(type) {
   if (!(this instanceof vgl.materialAttribute)) {
     return new vgl.materialAttribute();
   }
-  vgl.object.call(this);
+  vgl.graphicsObject.call(this);
 
   /** @private */
   var m_type = type,
@@ -58,54 +58,6 @@ vgl.materialAttribute = function(type) {
   ////////////////////////////////////////////////////////////////////////////
   this.enabled = function() {
     return m_enabled;
-  };
-
-  ////////////////////////////////////////////////////////////////////////////
-  /**
-   * Setup (initialize) the material attribute
-   *
-   * @param renderState
-   * @returns {boolean}
-   */
-  ////////////////////////////////////////////////////////////////////////////
-  this.setup = function(renderState) {
-    return false;
-  };
-
-  ////////////////////////////////////////////////////////////////////////////
-  /**
-   * Remove any resources acquired before deletion
-   *
-   * @param renderState
-   * @returns {boolean}
-   */
-  ////////////////////////////////////////////////////////////////////////////
-  this.cleanUp = function(renderState) {
-    return false;
-  };
-
-  ////////////////////////////////////////////////////////////////////////////
-  /**
-   * Bind and activate the material attribute
-   *
-   * @param renderState
-   * @returns {boolean}
-   */
-  ////////////////////////////////////////////////////////////////////////////
-  this.bind = function(renderState) {
-    return false;
-  };
-
-  ////////////////////////////////////////////////////////////////////////////
-  /**
-   * Undo bind and deactivate the material
-   *
-   * @param renderState
-   * @returns {boolean}
-   */
-  ////////////////////////////////////////////////////////////////////////////
-  this.undoBind = function(renderState) {
-    return false;
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -137,4 +89,4 @@ vgl.materialAttribute = function(type) {
   return this;
 };
 
-inherit(vgl.materialAttribute, vgl.object);
+inherit(vgl.materialAttribute, vgl.graphicsObject);

@@ -343,7 +343,7 @@ vgl.shaderProgram = function() {
     // If program is 0, then the current rendering state refers to an invalid
     // program object, and the results of vertex and fragment shader execution
     // due to any glDrawArrays or glDrawElements commands are undefined
-    gl.useProgram(0);
+    gl.useProgram(null);
   };
 
   /////////////////////////////////////////////////////////////////////////////

@@ -23,7 +23,7 @@ vgl.material = function() {
   if (!(this instanceof vgl.material)) {
     return new vgl.material();
   }
-  vgl.object.call(this);
+  vgl.graphicsObject.call(this);
 
   // / Private member variables
   var m_shaderProgram = new vgl.shaderProgram(),
@@ -300,4 +300,4 @@ vgl.material.RenderBin = {
   "Overlay" : 10000
 };
 
-inherit(vgl.material, vgl.object);
+inherit(vgl.material, vgl.graphicsObject);
