@@ -65,7 +65,21 @@ vgl.viewer = function(canvas) {
   ////////////////////////////////////////////////////////////////////////////
   this.init = function() {
     if (m_renderWindow !== null) {
-      m_renderWindow.createWindow();
+      m_renderWindow._setup();
+    }
+    else {
+      console.log("[ERROR] No render window attached");
+    }
+  };
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
+   *  Remove the viewer
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.exit = function() {
+    if (m_renderWindow !== null) {
+      m_renderWindow._cleanup(renderState);
     }
     else {
       console.log("[ERROR] No render window attached");

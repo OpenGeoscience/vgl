@@ -26,7 +26,7 @@ vgl.renderWindow = function(canvas) {
   if (!(this instanceof vgl.renderWindow)) {
     return new vgl.renderWindow(canvas);
   }
-  vgl.object.call(this);
+  vgl.graphicsObject.call(this);
 
   /** @private */
   var m_this = this,
@@ -245,7 +245,7 @@ vgl.renderWindow = function(canvas) {
    * @returns {boolean}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.createWindow = function() {
+  this._setup = function(renderState) {
     // Initialize the global variable gl to null.
     gl = null;
 
@@ -283,8 +283,11 @@ vgl.renderWindow = function(canvas) {
    * Delete this window and release any graphics resources
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.deleteWindow = function() {
-    // TODO
+  this._cleanup = function(renderState) {
+    var i;
+    for (i = 0; i < m_renderers.length; ++i) {
+      m_renderers[i]._cleanup(renderState);
+    }
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -352,4 +355,4 @@ vgl.renderWindow = function(canvas) {
   return m_this;
 };
 
-inherit(vgl.renderWindow, vgl.object);
+inherit(vgl.renderWindow, vgl.graphicsObject);
