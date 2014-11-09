@@ -43,18 +43,18 @@ vgl.renderer = function() {
 
   /** @private */
   var m_this = this;
-  m_this.m_sceneRoot = new vgl.groupNode(),
-  m_this.m_camera = new vgl.camera(),
-  m_this.m_nearClippingPlaneTolerance = null,
-  m_this.m_x = 0,
-  m_this.m_y = 0,
-  m_this.m_width = 0,
-  m_this.m_height = 0,
-  m_this.m_resizable = true,
-  m_this.m_resetScene = true,
-  m_this.m_layer = 0,
-  m_this.m_renderPasses = null,
-  m_this.m_resetClippingRange = true;
+      m_this.m_sceneRoot = new vgl.groupNode(),
+      m_this.m_camera = new vgl.camera(),
+      m_this.m_nearClippingPlaneTolerance = null,
+      m_this.m_x = 0,
+      m_this.m_y = 0,
+      m_this.m_width = 0,
+      m_this.m_height = 0,
+      m_this.m_resizable = true,
+      m_this.m_resetScene = true,
+      m_this.m_layer = 0,
+      m_this.m_renderPasses = null,
+      m_this.m_resetClippingRange = true;
 
   m_this.m_camera.addChild(m_this.m_sceneRoot);
 
@@ -96,7 +96,7 @@ vgl.renderer = function() {
   ////////////////////////////////////////////////////////////////////////////
   this.setLayer = function(layerNo) {
     m_this.m_layer = layerNo;
-    this.modified();
+    m_this.modified();
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -138,7 +138,7 @@ vgl.renderer = function() {
   ////////////////////////////////////////////////////////////////////////////
   this.setBackgroundColor = function(r, g, b, a) {
     m_this.m_camera.setClearColor(r, g, b, a);
-    this.modified();
+    m_this.modified();
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -206,7 +206,7 @@ vgl.renderer = function() {
     children = m_this.m_sceneRoot.children();
 
     if (children.length > 0 && m_this.m_resetScene) {
-      this.resetCamera();
+      m_this.resetCamera();
       m_this.m_resetScene = false;
     }
 
@@ -307,9 +307,14 @@ vgl.renderer = function() {
     m_this.m_camera.setPosition(center[0] + distance * -vn[0],
       center[1] + distance * -vn[1], center[2] + distance * -vn[2]);
 
-    this.resetCameraClippingRange(visibleBounds);
+    m_this.resetCameraClippingRange(visibleBounds);
   };
 
+  ////////////////////////////////////////////////////////////////////////////
+  /**
+  * Check whether or not whether or not the bounds are valid
+  */
+  ////////////////////////////////////////////////////////////////////////////
   this.hasValidBounds = function(bounds) {
     if (bounds[0] == Number.MAX_VALUE ||
         bounds[1] == -Number.MAX_VALUE ||
@@ -334,7 +339,7 @@ vgl.renderer = function() {
       bounds = m_this.m_camera.bounds();
     }
 
-    if (!this.hasValidBounds(bounds)) {
+    if (!m_this.hasValidBounds(bounds)) {
       return;
     }
 
@@ -409,7 +414,7 @@ vgl.renderer = function() {
   ////////////////////////////////////////////////////////////////////////////
   this.resize = function(width, height) {
     // @note: where do m_this.m_x and m_this.m_y come from?
-    this.positionAndResize(m_this.m_x, m_this.m_y, width, height);
+    m_this.positionAndResize(m_this.m_x, m_this.m_y, width, height);
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -432,7 +437,7 @@ vgl.renderer = function() {
       m_this.m_height = height;
 
       m_this.m_camera.setViewAspect(m_this.m_width / m_this.m_height);
-      this.modified();
+      m_this.modified();
     }
 
     if (m_this.m_renderPasses) {
@@ -454,7 +459,7 @@ vgl.renderer = function() {
   this.addActor = function(actor) {
     if (actor instanceof vgl.actor) {
       m_this.m_sceneRoot.addChild(actor);
-      this.modified();
+      m_this.modified();
       return true;
     }
 
@@ -484,7 +489,7 @@ vgl.renderer = function() {
       for (i = 0; i < actors.length; ++i) {
         m_this.m_sceneRoot.addChild(actors[i]);
       }
-      this.modified();
+      m_this.modified();
     }
   };
 
@@ -499,7 +504,7 @@ vgl.renderer = function() {
   this.removeActor = function(actor) {
     if (m_this.m_sceneRoot.children().indexOf(actor) !== -1) {
       m_this.m_sceneRoot.removeChild(actor);
-      this.modified();
+      m_this.modified();
       return true;
     }
 
@@ -523,7 +528,7 @@ vgl.renderer = function() {
     for (i = 0; i < actors.length; ++i) {
       m_this.m_sceneRoot.removeChild(actors[i]);
     }
-    this.modified();
+    m_this.modified();
     return true;
   };
 
@@ -621,7 +626,7 @@ vgl.renderer = function() {
       focusWorldPt = vec4.fromValues(
         focalPoint[0], focalPoint[1], focalPoint[2], 1);
 
-    return this.worldToDisplay(
+    return m_this.worldToDisplay(
       focusWorldPt, m_this.m_camera.viewMatrix(),
       m_this.m_camera.projectionMatrix(), m_this.m_width, m_this.m_height);
   };
@@ -647,7 +652,7 @@ vgl.renderer = function() {
   this.setResetScene = function(reset) {
      if (m_this.m_resetScene !== reset) {
        m_this.m_resetScene = reset;
-       this.modified()
+       m_this.modified()
      }
   };
 
@@ -672,7 +677,7 @@ vgl.renderer = function() {
   this.setResetClippingRange = function(reset) {
      if (m_this.m_resetClippingRange !== reset) {
        m_this.m_resetClippingRange = reset;
-       this.modified()
+       m_this.modified()
      }
   };
 
@@ -705,7 +710,7 @@ vgl.renderer = function() {
     // TODO Implement this
   };
 
-  return this;
+  return m_this;
 };
 
 inherit(vgl.renderer, vgl.object);
