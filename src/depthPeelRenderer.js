@@ -246,7 +246,7 @@ vgl.depthPeelRenderer = function() {
     // gl.blendFunc(vgl.GL.SRC_ALPHA, vgl.GL.ONE_MINUS_SRC_ALPHA);
 
     for ( i = 0; i < sortedActors.length; ++i) {
-      actor = sortedActors[i][1];
+      actor = sortedActors[i][2];
 
       if (actor.referenceFrame() ===
           vgl.boundingObject.ReferenceFrame.Relative) {
@@ -282,7 +282,6 @@ vgl.depthPeelRenderer = function() {
         renderState.m_material.render(renderState);
         renderState.m_mapper.render(renderState);
         renderState.m_material.remove(renderState);
-        fpopacity.set(1.0);
       }
     }
   }
@@ -312,7 +311,12 @@ vgl.depthPeelRenderer = function() {
   // gl.bindFramebuffer(vgl.GL.FRAMEBUFFER, null);
   // gl.disable(vgl.GL.BLEND);
 
-    gl.clearColor(0.0, 0.0, 0.0, 0.0);
+    var clearColor = m_this.m_camera.clearColor();
+
+    //if (m_this.m_camera.clearMask() & vgl.GL.COLOR_BUFFER_BIT) {
+    gl.clearColor(0.0, 0.0, 0.0, 1.0);
+    //}
+    //gl.clear(m_this.m_camera.clearMask());
     gl.clear(vgl.GL.COLOR_BUFFER_BIT | vgl.GL.DEPTH_BUFFER_BIT );
 
     drawScene(renderState, actors);
@@ -343,6 +347,8 @@ vgl.depthPeelRenderer = function() {
       // gl.disable(vgl.GL.BLEND);
 
         // Set clear colour to black
+
+        // gl.clearColor(clearColor[0], clearColor[1], clearColor[2], clearColor[3]);
         gl.clearColor(0., 0., 0., 0.0);
 
         // Clear the colour and depth buffers
@@ -438,11 +444,12 @@ vgl.depthPeelRenderer = function() {
         continue;
       }
 
-      sortedActors.push([actor.material().binNumber(), actor]);
+      sortedActors.push([actor.material().binNumber(), actor.material().shaderProgram().uniform("opacity").get()[0], actor]);
     }
 
     // Now perform sorting
     sortedActors.sort(function(a, b) {return a[0] - b[0];});
+    sortedActors.sort(function(a, b) {return b[1] - a[1];});
 
     depthPeelRender(renSt, sortedActors);
   };

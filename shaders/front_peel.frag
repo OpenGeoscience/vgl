@@ -22,8 +22,9 @@ void main()
 {
   float frontDepth = texture2D(depthTexture, vec2(gl_FragCoord.x/width, gl_FragCoord.y/height)).r;
 
-  if(gl_FragCoord.z <= frontDepth)
+  if(gl_FragCoord.z <= frontDepth) {
     discard;
+  }
 
   vec3 normal = normalize(varNormal);
   vec3 lightDir = normalize(lightPos);
@@ -35,11 +36,10 @@ void main()
   if(lambertian > 0.0) {
     color = lambertian * varVertexColor;
   }
-  lambertian += max(dot(lightDir, -normal), 0.0);
+  lambertian = max(dot(lightDir, -normal), 0.0);
   if(lambertian > 0.0) {
-    color += lambertian * varVertexColor;
+    color = lambertian * varVertexColor;
   }
-
   //vec3 color = lambertian * varVertexColor;
   //lambertian = max(dot(lightDir, -normal), 0.0);
   //color += vec3(0.0, 1.0, 0.0) * lambertian;
