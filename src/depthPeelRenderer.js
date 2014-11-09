@@ -17,7 +17,7 @@ vgl.depthPeelRenderer = function() {
       colorBlenderTexID, colorBlenderFBOID, setupTime = vgl.timestamp(),
       fpMaterial = vgl.material(), blMaterial = vgl.material(),
       fiMaterial = vgl.material(), frontPeelShader = null, blendShader = null,
-      finalShader, NUM_PASSES = 6, m_quad = null, fpwidth, fpheight, blwidth, blheight,
+      finalShader, NUM_PASSES = 3, m_quad = null, fpwidth, fpheight, blwidth, blheight,
       fiwidth, fiheight, fpopacity, fibackgroundColor;
 
 
@@ -314,7 +314,7 @@ vgl.depthPeelRenderer = function() {
     var clearColor = m_this.m_camera.clearColor();
 
     //if (m_this.m_camera.clearMask() & vgl.GL.COLOR_BUFFER_BIT) {
-    gl.clearColor(0.0, 0.0, 0.0, 1.0);
+    gl.clearColor(0.0, 0.0, 0.0, 0.0);
     //}
     //gl.clear(m_this.m_camera.clearMask());
     gl.clear(vgl.GL.COLOR_BUFFER_BIT | vgl.GL.DEPTH_BUFFER_BIT );

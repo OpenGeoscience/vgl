@@ -45,5 +45,5 @@ void main()
   //color += vec3(0.0, 1.0, 0.0) * lambertian;
   //gl_FragColor = vec4(color, opacity);
 
-  gl_FragColor = vec4(color * opacity, 1.0 - opacity);
+  gl_FragColor = vec4(color, opacity);
 }
