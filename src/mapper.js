@@ -26,7 +26,8 @@ vgl.mapper = function() {
   vgl.boundingObject.call(this);
 
   /** @private */
-  var m_dirty = true,
+  var m_this = this,
+      m_dirty = true,
       m_color = [ 0.0, 1.0, 1.0 ],
       m_geomData = null,
       m_buffers = [],
@@ -136,18 +137,18 @@ vgl.mapper = function() {
   ////////////////////////////////////////////////////////////////////////////
   this.computeBounds = function() {
     if (m_geomData === null || typeof m_geomData === 'undefined') {
-      this.resetBounds();
+      m_this.resetBounds();
       return;
     }
 
-    var computeBoundsTimestamp = this.computeBoundsTimestamp(),
-        boundsDirtyTimestamp = this.boundsDirtyTimestamp(),
+    var computeBoundsTimestamp = m_this.computeBoundsTimestamp(),
+        boundsDirtyTimestamp = m_this.boundsDirtyTimestamp(),
         geomBounds = null;
 
     if (boundsDirtyTimestamp.getMTime() > computeBoundsTimestamp.getMTime()) {
       geomBounds = m_geomData.bounds();
 
-      this.setBounds(geomBounds[0], geomBounds[1], geomBounds[2],
+      m_this.setBounds(geomBounds[0], geomBounds[1], geomBounds[2],
         geomBounds[3], geomBounds[4], geomBounds[5]) ;
 
       computeBoundsTimestamp.modified();
@@ -177,7 +178,7 @@ vgl.mapper = function() {
     m_color[1] = g;
     m_color[2] = b;
 
-    this.modified();
+    m_this.modified();
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -198,8 +199,8 @@ vgl.mapper = function() {
     if (m_geomData !== geom) {
       m_geomData = geom;
 
-      this.modified();
-      this.boundsDirtyTimestamp().modified();
+      m_this.modified();
+      m_this.boundsDirtyTimestamp().modified();
     }
   };
 
@@ -209,7 +210,7 @@ vgl.mapper = function() {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.render = function(renderState) {
-    if (this.getMTime() > m_glCompileTimestamp.getMTime()) {
+    if (m_this.getMTime() > m_glCompileTimestamp.getMTime()) {
       setupDrawObjects(renderState);
     }
 
@@ -249,7 +250,7 @@ vgl.mapper = function() {
     }
   };
 
-  return this;
+  return m_this;
 };
 
 inherit(vgl.mapper, vgl.boundingObject);

@@ -26,7 +26,8 @@ vgl.material = function() {
   vgl.graphicsObject.call(this);
 
   // / Private member variables
-  var m_shaderProgram = new vgl.shaderProgram(),
+  var m_this = this,
+      m_shaderProgram = new vgl.shaderProgram(),
       m_binNumber = 100,
       m_textureAttributes = {},
       m_attributes = {};
@@ -52,7 +53,7 @@ vgl.material = function() {
   ////////////////////////////////////////////////////////////////////////////
   this.setBinNumber = function(binNo) {
     m_binNumber = binNo;
-    this.modified();
+    m_this.modified();
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -122,7 +123,7 @@ vgl.material = function() {
     if (attr.type() === vgl.materialAttributeType.Texture &&
         m_textureAttributes[attr.textureUnit()] !== attr) {
       m_textureAttributes[attr.textureUnit()] = attr;
-      this.modified();
+      m_this.modified();
       return true;
     }
 
@@ -136,7 +137,7 @@ vgl.material = function() {
     }
 
     m_attributes[attr.type()] = attr;
-    this.modified();
+    m_this.modified();
     return true;
   };
 
@@ -149,7 +150,7 @@ vgl.material = function() {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.addAttribute = function(attr) {
-    if (this.exists(attr)) {
+    if (m_this.exists(attr)) {
       return false;
     }
 
@@ -157,7 +158,7 @@ vgl.material = function() {
       // TODO Currently we don't check if we are replacing or not.
       // It would be nice to have a flag for it.
       m_textureAttributes[attr.textureUnit()] = attr;
-      this.modified();
+      m_this.modified();
       return true;
     }
 
@@ -167,7 +168,7 @@ vgl.material = function() {
     }
 
     m_attributes[attr.type()] = attr;
-    this.modified();
+    m_this.modified();
     return true;
   };
 
@@ -301,7 +302,7 @@ vgl.material = function() {
     }
   };
 
-  return this;
+  return m_this;
 };
 
 vgl.material.RenderBin = {
