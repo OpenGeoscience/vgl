@@ -155,6 +155,19 @@ vgl.depthPeelRenderer = function() {
         console.log("float textures are not supported");
     }
 
+    gl.getExtension("OES_texture_float");
+    gl.getExtension("OES_texture_float_linear");
+    var extDepth = gl.getExtension("WEBGL_depth_texture");
+
+    if(!extDepth){
+        console.log("Extension Depth texture is not working");
+        alert(":( Sorry, Your browser doesn't support depth texture extension. Please browse to webglreport.com to see more information.");
+        return;
+    }
+
+    var ext = gl.getExtension("WEBGL_draw_buffers");
+
+
     //FBO initialization function
     // Generate 2 FBO
     fbo.push(gl.createFramebuffer());
@@ -192,7 +205,7 @@ vgl.depthPeelRenderer = function() {
         gl.bindFramebuffer(vgl.GL.FRAMEBUFFER, fbo[i]);
         gl.framebufferTexture2D(vgl.GL.FRAMEBUFFER, vgl.GL.DEPTH_ATTACHMENT,
                                 vgl.GL.TEXTURE_2D, depthTexID[i], 0);
-        gl.framebufferTexture2D(vgl.GL.FRAMEBUFFER, vgl.GL.COLOR_ATTACHMENT0,
+        gl.framebufferTexture2D(vgl.GL.FRAMEBUFFER, ext.COLOR_ATTACHMENT0_WEBGL,
                                 vgl.GL.TEXTURE_2D, texID[i], 0);
     }
 
@@ -214,7 +227,7 @@ vgl.depthPeelRenderer = function() {
     gl.framebufferTexture2D(vgl.GL.FRAMEBUFFER, vgl.GL.DEPTH_ATTACHMENT,
                             vgl.GL.TEXTURE_2D, depthTexID[0], 0);
     // Set the colour blender texture as the FBO colour attachment
-    gl.framebufferTexture2D(vgl.GL.FRAMEBUFFER, vgl.GL.COLOR_ATTACHMENT0,
+    gl.framebufferTexture2D(vgl.GL.FRAMEBUFFER, ext.COLOR_ATTACHMENT0_WEBGL,
                             vgl.GL.TEXTURE_2D, colorBlenderTexID, 0);
 
     // Check the FBO completeness status
