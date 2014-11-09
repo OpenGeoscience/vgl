@@ -39,7 +39,7 @@ vgl.shaderProgram = function() {
 
   /////////////////////////////////////////////////////////////////////////////
   /**
-   *
+   * Create a particular shader type using GLSL shader strings from a file
    */
   /////////////////////////////////////////////////////////////////////////////
   this.loadFromFile = function(type, sourceUrl) {
@@ -102,7 +102,6 @@ vgl.shaderProgram = function() {
     }
 
     m_shaders.push(shader);
-
     this.modified();
     return true;
   };
@@ -232,10 +231,21 @@ vgl.shaderProgram = function() {
 
   /////////////////////////////////////////////////////////////////////////////
   /**
+   * Peform any initialization required
+   */
+  /////////////////////////////////////////////////////////////////////////////
+  this._setup = function(renderState) {
+    if (m_programHandle === 0) {
+      m_programHandle = gl.createProgram();
+    }
+  };
+
+  /////////////////////////////////////////////////////////////////////////////
+  /**
    * Peform any clean up required when the program gets deleted
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.cleanUp = function() {
+  this._cleanup = function(renderState) {
     this.deleteVertexAndFragment();
     this.deleteProgram();
   };
@@ -270,13 +280,11 @@ vgl.shaderProgram = function() {
   this.compileAndLink = function(renderState) {
     var i;
 
-    if (m_programHandle === 0) {
-      m_programHandle = gl.createProgram();
-    }
-
     if (m_compileTimestamp.getMTime() >= this.getMTime()) {
       return;
     }
+
+    this._setup(renderState);
 
     // Compile shaders
     for (i = 0; i < m_shaders.length; ++i) {
@@ -289,7 +297,7 @@ vgl.shaderProgram = function() {
     // link program
     if (!this.link()) {
       console.log("[ERROR] Failed to link Program");
-      this.cleanUp();
+      this._cleanup();
     }
 
     m_compileTimestamp.modified();

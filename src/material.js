@@ -184,6 +184,40 @@ vgl.material = function() {
 
   ////////////////////////////////////////////////////////////////////////////
   /**
+   * Setup (initialize) the material attribute
+   *
+   * @param renderState
+   * @returns {boolean}
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this._setup = function(renderState) {
+    return false;
+  };
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
+   * Remove any resources acquired before deletion
+   *
+   * @param renderState
+   * @returns {boolean}
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this._cleanup = function(renderState) {
+    for (key in m_attributes) {
+      if (m_attributes.hasOwnProperty(key)) {
+          m_attributes[key]._cleanup(renderState);
+      }
+    }
+
+    for (key in m_textureAttributes) {
+      if (m_textureAttributes.hasOwnProperty(key)) {
+        m_textureAttributes[key]._cleanup(renderState);
+      }
+    }
+  };
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
    * Bind and activate material states
    *
    * @param renderState
