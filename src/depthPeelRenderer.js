@@ -321,21 +321,11 @@ vgl.depthPeelRenderer = function() {
     gl.enable(vgl.GL.DEPTH_TEST);
     gl.disable(vgl.GL.BLEND);
 
-  // For debugging
-  // gl.bindFramebuffer(vgl.GL.FRAMEBUFFER, null);
-  // gl.disable(vgl.GL.BLEND);
-
     var clearColor = m_this.m_camera.clearColor();
-
-    //if (m_this.m_camera.clearMask() & vgl.GL.COLOR_BUFFER_BIT) {
-    gl.clearColor(0.0, 0.0, 0.0, 0.0);
-    //}
-    //gl.clear(m_this.m_camera.clearMask());
+    gl.clearColor(clearColor[0], clearColor[1], clearColor[2], 0.0);
     gl.clear(vgl.GL.COLOR_BUFFER_BIT | vgl.GL.DEPTH_BUFFER_BIT );
 
     drawScene(renderState, actors);
-
-  // return;
 
     // 2. Depth peeling + blending pass
     var numLayers = (NUM_PASSES - 1) * 2;
