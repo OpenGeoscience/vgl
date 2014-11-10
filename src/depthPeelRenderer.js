@@ -403,14 +403,9 @@ vgl.depthPeelRenderer = function() {
   ////////////////////////////////////////////////////////////////////////////
   this.render = function() {
     var i, renSt, children, actor = null, sortedActors = [],
-        mvMatrixInv = mat4.create(), clearColor = null;
+        mvMatrixInv = mat4.create();
 
     renSt = new vgl.renderState();
-
-    clearColor = m_this.m_camera.clearColor();
-    // gl.clearColor(clearColor[0], clearColor[1], clearColor[2], clearColor[3]);
-    // gl.clearDepth(m_this.m_camera.clearDepth());
-    // gl.clear(m_this.m_camera.clearMask());
 
     // Set the viewport for this renderer
     gl.viewport(m_this.m_x, m_this.m_y, m_this.m_width, m_this.m_height);
@@ -432,7 +427,8 @@ vgl.depthPeelRenderer = function() {
         continue;
       }
 
-      sortedActors.push([actor.material().binNumber(), actor.material().shaderProgram().uniform("opacity").get()[0], actor]);
+      sortedActors.push([actor.material().binNumber(),
+        actor.material().shaderProgram().uniform("opacity").get()[0], actor]);
     }
 
     // Now perform sorting
