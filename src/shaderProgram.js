@@ -17,6 +17,18 @@
  * @returns {vgl.shaderProgram}
  */
 //////////////////////////////////////////////////////////////////////////////
+
+var getBaseUrl = (function() {
+  var scripts = document.getElementsByTagName('script');
+  var index = scripts.length - 1;
+  var vglScript = scripts[index];
+  var index = vglScript.src.lastIndexOf('/')
+  var baseUrl = vglScript.src.substring(0, index)
+
+  return function() { return baseUrl; };
+})();
+
+
 vgl.shaderProgram = function() {
   'use strict';
 
@@ -56,6 +68,16 @@ vgl.shaderProgram = function() {
       }
     });
   };
+
+  /////////////////////////////////////////////////////////////////////////////
+  /**
+   * Create a particular shader type using GLSL shader strings from a file
+   * relative to VGL load URL.
+   */
+  /////////////////////////////////////////////////////////////////////////////
+  this.loadShader = function(type, file) {
+    this.loadFromFile(type, getBaseUrl() + '/shaders/' + file)
+  }
 
   /////////////////////////////////////////////////////////////////////////////
   /**

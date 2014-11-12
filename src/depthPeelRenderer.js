@@ -62,8 +62,8 @@ vgl.depthPeelRenderer = function() {
     fpdepthTex.set(0);
 
     frontPeelShader = new vgl.shaderProgram();
-    frontPeelShader.loadFromFile(vgl.GL.VERTEX_SHADER,   "shaders/front_peel.vert");
-    frontPeelShader.loadFromFile(vgl.GL.FRAGMENT_SHADER, "shaders/front_peel.frag");
+    frontPeelShader.loadShader(vgl.GL.VERTEX_SHADER, "front_peel.vert");
+    frontPeelShader.loadShader(vgl.GL.FRAGMENT_SHADER, "front_peel.frag");
 
     frontPeelShader.addUniform(fpmv);
     frontPeelShader.addUniform(fpnr);
@@ -92,8 +92,8 @@ vgl.depthPeelRenderer = function() {
 
     // Load the blending shader
     blendShader = new vgl.shaderProgram();
-    blendShader.loadFromFile(vgl.GL.VERTEX_SHADER,   "shaders/blend.vert");
-    blendShader.loadFromFile(vgl.GL.FRAGMENT_SHADER, "shaders/blend.frag");
+    blendShader.loadShader(vgl.GL.VERTEX_SHADER,   "blend.vert");
+    blendShader.loadShader(vgl.GL.FRAGMENT_SHADER, "blend.frag");
     bltempTex = new vgl.uniform(vgl.GL.INT, "tempTexture");
     blwidth = new vgl.floatUniform("width");
     blheight = new vgl.floatUniform("height");
@@ -118,8 +118,8 @@ vgl.depthPeelRenderer = function() {
 
     //Load the final shader
     finalShader = new vgl.shaderProgram();
-    finalShader.loadFromFile(vgl.GL.VERTEX_SHADER,   "shaders/blend.vert");
-    finalShader.loadFromFile(vgl.GL.FRAGMENT_SHADER, "shaders/final.frag");
+    finalShader.loadShader(vgl.GL.VERTEX_SHADER,   "blend.vert");
+    finalShader.loadShader(vgl.GL.FRAGMENT_SHADER, "final.frag");
 
 
     //fimv = new vgl.modelViewUniform("modelViewMatrix");
