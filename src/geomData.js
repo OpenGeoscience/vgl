@@ -350,6 +350,7 @@ vgl.sourceData = function() {
 
   var m_attributesMap = {},
       m_data = [],
+      m_name = "",
 
       ////////////////////////////////////////////////////////////////////////////
       /**
@@ -622,6 +623,25 @@ vgl.sourceData = function() {
       }
     }
   };
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
+   * Return name of the source data
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.name = function() {
+    return m_name;
+  };
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
+   * Set name of the source data
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.setName = function(name) {
+    m_name = name;
+  };
+
 
   return this;
 };
@@ -950,9 +970,12 @@ vgl.geometryData = function() {
    * Add new source
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.addSource = function(source) {
+  this.addSource = function(source, sourceName) {
     // @todo Check if the incoming source has duplicate keys
 
+    if (sourceName !== undefined) {
+        source.setName(sourceName);
+    }
     // NOTE This might not work on IE8 or lower
     if (m_sources.indexOf(source) === -1) {
       m_sources.push(source);

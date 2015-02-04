@@ -17,7 +17,7 @@
  * @returns {vgl.mapper}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.mapper = function() {
+vgl.mapper = function(arg) {
   'use strict';
 
   if (!(this instanceof vgl.mapper)) {
@@ -26,11 +26,14 @@ vgl.mapper = function() {
   vgl.boundingObject.call(this);
 
   /** @private */
+  arg = arg || {};
+
   var m_dirty = true,
       m_color = [ 0.0, 1.0, 1.0 ],
       m_geomData = null,
       m_buffers = [],
       m_bufferVertexAttributeMap = {},
+      m_dynamicDraw = arg.dynamicDraw === undefined ? false : arg.dynamicDraw,
       m_glCompileTimestamp = vgl.timestamp();
 
   ////////////////////////////////////////////////////////////////////////////
@@ -63,7 +66,8 @@ vgl.mapper = function() {
         bufferId = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, bufferId);
         gl.bufferData(gl.ARRAY_BUFFER,
-          new Float32Array(m_geomData.source(i).data()), gl.STATIC_DRAW);
+          new Float32Array(m_geomData.source(i).data()),
+                           m_dynamicDraw ? gl.DYNAMIC_DRAW : gl.STATIC_DRAW);
 
         keys = m_geomData.source(i).keys();
         ks = [];
@@ -193,6 +197,34 @@ vgl.mapper = function() {
       this.modified();
       this.boundsDirtyTimestamp().modified();
     }
+  };
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
+   * Update the buffer used for a named source.
+   *
+   * @param {String} sourceName The name of the source to update.
+   * @param {Object[] or Float32Array} vakues The values to use for the source.
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.updateSourceBuffer = function (sourceName, values) {
+    var bufferIndex = -1;
+    for (var i = 0; i < m_geomData.numberOfSources(); i += 1) {
+      if (m_geomData.source(i).name() === sourceName) {
+        bufferIndex = i;
+        break;
+      }
+    }
+    if (bufferIndex < 0 || bufferIndex >= m_buffers.lengh) {
+        return false;
+    }
+    gl.bindBuffer(gl.ARRAY_BUFFER, m_buffers[bufferIndex]);
+    if (Object.prototype.toString.call(values) === "[object Float32Array]") {
+        gl.bufferSubData(gl.ARRAY_BUFFER, 0, values);
+    } else {
+        gl.bufferSubData(gl.ARRAY_BUFFER, 0, new Float32Array(values));
+    }
+    return true;
   };
 
   ////////////////////////////////////////////////////////////////////////////
