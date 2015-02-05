@@ -351,7 +351,7 @@ vgl.sourceData = function(arg) {
   arg = arg || {};
   var m_attributesMap = {},
       m_data = [],
-      m_name = arg.name || "Source " + (new Date).toISOString(),
+      m_name = arg.name || "Source " + new Date().toISOString(),
 
       ////////////////////////////////////////////////////////////////////////////
       /**
