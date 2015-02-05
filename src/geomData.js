@@ -341,15 +341,17 @@ vgl.vertexDataP3T3f = function() {
  * @returns {vgl.sourceData}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.sourceData = function() {
+vgl.sourceData = function(arg) {
   'use strict';
 
   if (!(this instanceof vgl.sourceData)) {
-    return new vgl.sourceData();
+    return new vgl.sourceData(arg);
   }
 
+  arg = arg || {};
   var m_attributesMap = {},
       m_data = [],
+      m_name = arg.name || "Source " + new Date().toISOString(),
 
       ////////////////////////////////////////////////////////////////////////////
       /**
@@ -623,16 +625,35 @@ vgl.sourceData = function() {
     }
   };
 
+  ////////////////////////////////////////////////////////////////////////////
+  /**
+   * Return name of the source data
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.name = function() {
+    return m_name;
+  };
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
+   * Set name of the source data
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.setName = function(name) {
+    m_name = name;
+  };
+
+
   return this;
 };
 
 
-vgl.sourceDataAnyfv = function(size, key) {
+vgl.sourceDataAnyfv = function(size, key, arg) {
   if (!(this instanceof vgl.sourceDataAnyfv)) {
-      return new vgl.sourceDataAnyfv(size, key);
+      return new vgl.sourceDataAnyfv(size, key, arg);
     }
 
-    vgl.sourceData.call(this);
+    vgl.sourceData.call(this, arg);
     this.addAttribute(key, gl.FLOAT,
                       4, 0, size * 4, size, false);
 
@@ -651,13 +672,13 @@ inherit(vgl.sourceDataAnyfv, vgl.sourceData);
  * @returns {vgl.sourceDataP3T3f}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.sourceDataP3T3f = function() {
+vgl.sourceDataP3T3f = function(arg) {
   'use strict';
 
   if (!(this instanceof vgl.sourceDataP3T3f)) {
-    return new vgl.sourceDataP3T3f();
+    return new vgl.sourceDataP3T3f(arg);
   }
-  vgl.sourceData.call(this);
+  vgl.sourceData.call(this, arg);
 
   this.addAttribute(vgl.vertexAttributeKeys.Position, gl.FLOAT, 4, 0, 6 * 4, 3,
                     false);
@@ -681,14 +702,14 @@ inherit(vgl.sourceDataP3T3f, vgl.sourceData);
  * @returns {vgl.sourceDataP3N3f}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.sourceDataP3N3f = function() {
+vgl.sourceDataP3N3f = function(arg) {
   'use strict';
 
   if (!(this instanceof vgl.sourceDataP3N3f)) {
-    return new vgl.sourceDataP3N3f();
+    return new vgl.sourceDataP3N3f(arg);
   }
 
-  vgl.sourceData.call(this);
+  vgl.sourceData.call(this, arg);
 
   this.addAttribute(vgl.vertexAttributeKeys.Position, gl.FLOAT, 4, 0, 6 * 4, 3,
                     false);
@@ -712,14 +733,14 @@ inherit(vgl.sourceDataP3N3f, vgl.sourceData);
  * @returns {vgl.sourceDataP3fv}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.sourceDataP3fv = function() {
+vgl.sourceDataP3fv = function(arg) {
   'use strict';
 
   if (!(this instanceof vgl.sourceDataP3fv)) {
-    return new vgl.sourceDataP3fv();
+    return new vgl.sourceDataP3fv(arg);
   }
 
-  vgl.sourceData.call(this);
+  vgl.sourceData.call(this, arg);
 
   this.addAttribute(vgl.vertexAttributeKeys.Position, gl.FLOAT, 4, 0, 3 * 4, 3,
                     false);
@@ -740,14 +761,14 @@ inherit(vgl.sourceDataP3fv, vgl.sourceData);
  * @returns {vgl.sourceDataT2fv}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.sourceDataT2fv = function() {
+vgl.sourceDataT2fv = function(arg) {
   'use strict';
 
   if (!(this instanceof vgl.sourceDataT2fv)) {
-    return new vgl.sourceDataT2fv();
+    return new vgl.sourceDataT2fv(arg);
   }
 
-  vgl.sourceData.call(this);
+  vgl.sourceData.call(this, arg);
 
   this.addAttribute(vgl.vertexAttributeKeys.TextureCoordinate, gl.FLOAT, 4, 0,
                     2 * 4, 2, false);
@@ -768,14 +789,14 @@ inherit(vgl.sourceDataT2fv, vgl.sourceData);
  * @returns {vgl.sourceDataC3fv}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.sourceDataC3fv = function() {
+vgl.sourceDataC3fv = function(arg) {
   'use strict';
 
   if (!(this instanceof vgl.sourceDataC3fv)) {
-    return new vgl.sourceDataC3fv();
+    return new vgl.sourceDataC3fv(arg);
   }
 
-  vgl.sourceData.call(this);
+  vgl.sourceData.call(this, arg);
 
   this.addAttribute(vgl.vertexAttributeKeys.Color, gl.FLOAT, 4, 0, 3 * 4, 3, false);
 
@@ -796,11 +817,11 @@ inherit(vgl.sourceDataC3fv, vgl.sourceData);
  * @returns {vgl.sourceDataSf}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.sourceDataSf = function() {
+vgl.sourceDataSf = function(arg) {
   'use strict';
 
   if (!(this instanceof vgl.sourceDataSf)) {
-    return new vgl.sourceDataSf();
+    return new vgl.sourceDataSf(arg);
   }
 
   var m_min = null,
@@ -808,7 +829,7 @@ vgl.sourceDataSf = function() {
       m_fixedmin = null,
       m_fixedmax = null;
 
-  vgl.sourceData.call(this);
+  vgl.sourceData.call(this, arg);
 
   this.addAttribute(vgl.vertexAttributeKeys.Scalar, gl.FLOAT, 4, 0, 4, 1, false);
 
@@ -864,11 +885,11 @@ inherit(vgl.sourceDataSf, vgl.sourceData);
  * @returns {vgl.sourceDataDf}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.sourceDataDf = function() {
+vgl.sourceDataDf = function(arg) {
   'use strict';
 
   if (!(this instanceof vgl.sourceDataDf)) {
-    return new vgl.sourceDataDf();
+    return new vgl.sourceDataDf(arg);
   }
 
   var m_min = null,
@@ -876,7 +897,7 @@ vgl.sourceDataDf = function() {
       m_fixedmin = null,
       m_fixedmax = null;
 
-  vgl.sourceData.call(this);
+  vgl.sourceData.call(this, arg);
 
   this.addAttribute(vgl.vertexAttributeKeys.Scalar, gl.FLOAT,
                     4, 0, 4, 1, false);
@@ -950,9 +971,12 @@ vgl.geometryData = function() {
    * Add new source
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.addSource = function(source) {
+  this.addSource = function(source, sourceName) {
     // @todo Check if the incoming source has duplicate keys
 
+    if (sourceName !== undefined) {
+        source.setName(sourceName);
+    }
     // NOTE This might not work on IE8 or lower
     if (m_sources.indexOf(source) === -1) {
       m_sources.push(source);
