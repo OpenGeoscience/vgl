@@ -21,7 +21,7 @@ vgl.mapper = function(arg) {
   'use strict';
 
   if (!(this instanceof vgl.mapper)) {
-    return new vgl.mapper();
+    return new vgl.mapper(arg);
   }
   vgl.boundingObject.call(this);
 
