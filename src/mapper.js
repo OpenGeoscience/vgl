@@ -66,7 +66,7 @@ vgl.mapper = function(arg) {
         bufferId = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, bufferId);
         data = m_geomData.source(i).data();
-        if (Object.prototype.toString.call(data) !== '[object Float32Array]') {
+        if (!(data instanceof Float32Array)) {
           data = new Float32Array(data);
         }
         gl.bufferData(gl.ARRAY_BUFFER, data,
@@ -226,7 +226,7 @@ vgl.mapper = function(arg) {
       values = m_geomData.source(i).dataToFloat32Array();
     }
     gl.bindBuffer(gl.ARRAY_BUFFER, m_buffers[bufferIndex]);
-    if (Object.prototype.toString.call(values) === '[object Float32Array]') {
+    if (values instanceof Float32Array) {
       gl.bufferSubData(gl.ARRAY_BUFFER, 0, values);
     } else {
       gl.bufferSubData(gl.ARRAY_BUFFER, 0, new Float32Array(values));

@@ -406,7 +406,7 @@ vgl.sourceData = function(arg) {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.dataToFloat32Array = function () {
-    if (Object.prototype.toString.call(m_data) !== "[object Float32Array]") {
+    if (!(m_data instanceof Float32Array)) {
       m_data = new Float32Array(m_data);
     }
     return m_data;
@@ -620,9 +620,8 @@ vgl.sourceData = function(arg) {
 
     //m_data = m_data.concat(data); //no, slow on Safari
     /* If we will are given a Float32Array and don't have any other data, use
-     * it directly */
-    if (!m_data.length && data.length &&
-        Object.prototype.toString.call(data) === "[object Float32Array]") {
+     * it directly. */
+    if (!m_data.length && data.length && data instanceof Float32Array) {
       m_data = data;
       return;
     }
