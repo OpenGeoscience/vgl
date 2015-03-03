@@ -379,7 +379,7 @@ vgl.sourceData = function(arg) {
   /**
    * Return raw data for this source
    *
-   * @returns {Array}
+   * @returns {Array or Float32Array}
    */
   ////////////////////////////////////////////////////////////////////////////
   this.data = function() {
@@ -390,11 +390,26 @@ vgl.sourceData = function(arg) {
  /**
    * Return raw data for this source
    *
-   * @returns {Array}
+   * @returns {Array or Float32Array}
    */
   ////////////////////////////////////////////////////////////////////////////
   this.getData = function() {
     return data();
+  };
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
+   * If the raw data is not a Float32Array, convert it to one.  Then, return
+   * raw data for this source
+   *
+   * @returns {Float32Array}
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.dataToFloat32Array = function () {
+    if (!(m_data instanceof Float32Array)) {
+      m_data = new Float32Array(m_data);
+    }
+    return m_data;
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -604,11 +619,29 @@ vgl.sourceData = function(arg) {
     var i;
 
     //m_data = m_data.concat(data); //no, slow on Safari
+    /* If we will are given a Float32Array and don't have any other data, use
+     * it directly. */
+    if (!m_data.length && data.length && data instanceof Float32Array) {
+      m_data = data;
+      return;
+    }
+    /* If our internal array is immutable and we will need to change it, create
+     * a regular mutable array from it. */
+    if (!m_data.slice && (m_data.length || !data.slice)) {
+      m_data = Array.prototype.slice.call(m_data);
+    }
     if (!data.length) {
+      /* data is a singular value, so append it to our array */
       m_data[m_data.length] = data;
     } else {
-      for (i = 0; i < data.length; i++) {
-        m_data[m_data.length] = data[i];
+      /* We don't have any data currently, so it is faster to copy the data
+       * using slice. */
+      if (!m_data.length && data.slice) {
+        m_data = data.slice(0);
+      } else {
+        for (i = 0; i < data.length; i++) {
+          m_data[m_data.length] = data[i];
+        }
       }
     }
   };

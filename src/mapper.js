@@ -60,14 +60,17 @@ vgl.mapper = function(arg) {
   function createVertexBufferObjects() {
     if (m_geomData) {
       var numberOfSources = m_geomData.numberOfSources(),
-          i, j, k, bufferId = null, keys, ks, numberOfPrimitives;
+          i, j, k, bufferId = null, keys, ks, numberOfPrimitives, data;
 
       for (i = 0; i < numberOfSources; ++i) {
         bufferId = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, bufferId);
-        gl.bufferData(gl.ARRAY_BUFFER,
-          new Float32Array(m_geomData.source(i).data()),
-                           m_dynamicDraw ? gl.DYNAMIC_DRAW : gl.STATIC_DRAW);
+        data = m_geomData.source(i).data();
+        if (!(data instanceof Float32Array)) {
+          data = new Float32Array(data);
+        }
+        gl.bufferData(gl.ARRAY_BUFFER, data,
+                      m_dynamicDraw ? gl.DYNAMIC_DRAW : gl.STATIC_DRAW);
 
         keys = m_geomData.source(i).keys();
         ks = [];
@@ -204,7 +207,8 @@ vgl.mapper = function(arg) {
    * Update the buffer used for a named source.
    *
    * @param {String} sourceName The name of the source to update.
-   * @param {Object[] or Float32Array} vakues The values to use for the source.
+   * @param {Object[] or Float32Array} values The values to use for the source.
+   *    If not specified, use the source's own buffer.
    */
   ////////////////////////////////////////////////////////////////////////////
   this.updateSourceBuffer = function (sourceName, values) {
@@ -215,16 +219,44 @@ vgl.mapper = function(arg) {
         break;
       }
     }
-    if (bufferIndex < 0 || bufferIndex >= m_buffers.lengh) {
-        return false;
+    if (bufferIndex < 0 || bufferIndex >= m_buffers.length) {
+      return false;
+    }
+    if (!values) {
+      values = m_geomData.source(i).dataToFloat32Array();
     }
     gl.bindBuffer(gl.ARRAY_BUFFER, m_buffers[bufferIndex]);
-    if (Object.prototype.toString.call(values) === "[object Float32Array]") {
-        gl.bufferSubData(gl.ARRAY_BUFFER, 0, values);
+    if (values instanceof Float32Array) {
+      gl.bufferSubData(gl.ARRAY_BUFFER, 0, values);
     } else {
-        gl.bufferSubData(gl.ARRAY_BUFFER, 0, new Float32Array(values));
+      gl.bufferSubData(gl.ARRAY_BUFFER, 0, new Float32Array(values));
     }
     return true;
+  };
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
+   * Get the buffer used for a named source.  If the current buffer isn't a
+   * Float32Array, it is converted to one.  This array can then be modified
+   * directly, after which updateSourceBuffer can be called to update the
+   * GL array.
+   *
+   * @param {String} sourceName The name of the source to update.
+   * @returns {Float32Array} An array used for this source.
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.getSourceBuffer = function (sourceName) {
+    var bufferIndex = -1;
+    for (var i = 0; i < m_geomData.numberOfSources(); i += 1) {
+      if (m_geomData.source(i).name() === sourceName) {
+        bufferIndex = i;
+        break;
+      }
+    }
+    if (bufferIndex < 0 || bufferIndex >= m_buffers.length) {
+      return new Float32Array();
+    }
+    return m_geomData.source(i).dataToFloat32Array();
   };
 
   ////////////////////////////////////////////////////////////////////////////
