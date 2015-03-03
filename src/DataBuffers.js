@@ -27,6 +27,12 @@ vgl.DataBuffers = function (initialSize) {
 
     var resize = function (min_expand) {
         var new_size = size;
+        /* If the array would increase substantially, don't just double its
+         * size.  If the array has been increasing gradually, double it as the
+         * expectation is that it will increase again. */
+        if (new_size * 2 < min_expand) {
+            new_size = min_expand;
+        }
         while (new_size < min_expand)
             new_size *= 2;
         size = new_size;
