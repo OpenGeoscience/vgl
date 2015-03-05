@@ -1151,11 +1151,9 @@ vgl.geometryData = function() {
           offset = sourceData.attributeOffset(attr),
           sizeOfDataType = sourceData.sizeOfAttributeDataType(attr),
           count = data.length,
-          ib = 0,
-          jb = 0,
+          j, ib, jb, maxv, minv,
           value = null,
-          vertexIndex,
-          j;
+          vertexIndex;
 
       // We advance by index, not by byte
       stride /= sizeOfDataType;
@@ -1163,24 +1161,25 @@ vgl.geometryData = function() {
 
       this.resetBounds();
 
-      for (vertexIndex = offset; vertexIndex < count; vertexIndex += stride) {
-        for (j = 0; j < numberOfComponents; ++j) {
-          value = data[vertexIndex + j];
-          ib = j * 2;
-          jb = j * 2 + 1;
-
-          if (vertexIndex === offset) {
-            m_bounds[ib] = value;
-            m_bounds[jb] = value;
-          } else {
-            if (value > m_bounds[jb]) {
-              m_bounds[jb] = value;
-            }
-            if (value < m_bounds[ib]) {
-              m_bounds[ib] = value;
-            }
+      for (j = 0; j < numberOfComponents; ++j) {
+        ib = j * 2;
+        jb = j * 2 + 1;
+        if (count) {
+          maxv = minv = m_bounds[jb] = data[offset];
+        } else {
+          maxv = minv = 0;
+        }
+        for (vertexIndex = offset + stride + j; vertexIndex < count;
+             vertexIndex += stride) {
+          value = data[vertexIndex];
+          if (value > maxv) {
+            maxv = value;
+          }
+          if (value < minv) {
+            minv = value;
           }
         }
+        m_bounds[ib] = minv;  m_bounds[jb] = maxv;
       }
 
       m_computeBoundsTimestamp.modified();
