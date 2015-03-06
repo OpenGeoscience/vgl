@@ -418,12 +418,16 @@ vgl.sourceData = function(arg) {
    *
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.setData = function(data) {
-    if (!(data instanceof Array)) {
+  this.setData = function (data) {
+    if (!(data instanceof Array) && !(data instanceof Float32Array)) {
       console.log("[error] Requires array");
       return;
     }
-    m_data = data.slice(0);
+    if (data instanceof Float32Array) {
+      m_data = data;
+    } else {
+      m_data = data.slice(0);
+    }
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -1038,6 +1042,20 @@ vgl.geometryData = function() {
 
   ////////////////////////////////////////////////////////////////////////////
   /**
+   * Return source with a specified name.  Returns 0 if not found.
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.sourceByName = function (sourceName) {
+    for (var i = 0; i < m_sources.length; i += 1) {
+      if (m_sources[i].name() === sourceName) {
+        return m_sources[i];
+      }
+    }
+    return 0;
+  }
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
    * Return number of sources
    */
   ////////////////////////////////////////////////////////////////////////////
@@ -1102,6 +1120,21 @@ vgl.geometryData = function() {
       this.computeBounds();
     }
     return m_bounds;
+  };
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
+   * Check if bounds are dirty or mark them as such.
+   *
+   * @param dirty: true to set bounds as dirty.
+   * Return true if bounds are dirty.
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.boundsDirty = function (dirty) {
+    if (dirty) {
+      m_boundsDirtyTimestamp.modified();
+    }
+    return m_boundsDirtyTimestamp.getMTime() > m_computeBoundsTimestamp.getMTime();
   };
 
   ////////////////////////////////////////////////////////////////////////////
