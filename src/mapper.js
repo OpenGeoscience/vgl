@@ -246,17 +246,11 @@ vgl.mapper = function(arg) {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.getSourceBuffer = function (sourceName) {
-    var bufferIndex = -1;
-    for (var i = 0; i < m_geomData.numberOfSources(); i += 1) {
-      if (m_geomData.source(i).name() === sourceName) {
-        bufferIndex = i;
-        break;
-      }
-    }
-    if (bufferIndex < 0 || bufferIndex >= m_buffers.length) {
+    var source = m_geomData.sourceByName(sourceName);
+    if (!source) {
       return new Float32Array();
     }
-    return m_geomData.source(i).dataToFloat32Array();
+    return source.dataToFloat32Array();
   };
 
   ////////////////////////////////////////////////////////////////////////////

@@ -418,12 +418,16 @@ vgl.sourceData = function(arg) {
    *
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.setData = function(data) {
-    if (!(data instanceof Array)) {
+  this.setData = function (data) {
+    if (!(data instanceof Array) && !(data instanceof Float32Array)) {
       console.log("[error] Requires array");
       return;
     }
-    m_data = data.slice(0);
+    if (data instanceof Float32Array) {
+      m_data = data;
+    } else {
+      m_data = data.slice(0);
+    }
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -1038,6 +1042,20 @@ vgl.geometryData = function() {
 
   ////////////////////////////////////////////////////////////////////////////
   /**
+   * Return source with a specified name.  Returns 0 if not found.
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.sourceByName = function (sourceName) {
+    for (var i = 0; i < m_sources.length; i += 1) {
+      if (m_sources[i].name() === sourceName) {
+        return m_sources[i];
+      }
+    }
+    return 0;
+  }
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
    * Return number of sources
    */
   ////////////////////////////////////////////////////////////////////////////
@@ -1106,6 +1124,21 @@ vgl.geometryData = function() {
 
   ////////////////////////////////////////////////////////////////////////////
   /**
+   * Check if bounds are dirty or mark them as such.
+   *
+   * @param dirty: true to set bounds as dirty.
+   * Return true if bounds are dirty.
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.boundsDirty = function (dirty) {
+    if (dirty) {
+      m_boundsDirtyTimestamp.modified();
+    }
+    return m_boundsDirtyTimestamp.getMTime() > m_computeBoundsTimestamp.getMTime();
+  };
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
    * Reset bounds
    */
   ////////////////////////////////////////////////////////////////////////////
@@ -1151,11 +1184,9 @@ vgl.geometryData = function() {
           offset = sourceData.attributeOffset(attr),
           sizeOfDataType = sourceData.sizeOfAttributeDataType(attr),
           count = data.length,
-          ib = 0,
-          jb = 0,
+          j, ib, jb, maxv, minv,
           value = null,
-          vertexIndex,
-          j;
+          vertexIndex;
 
       // We advance by index, not by byte
       stride /= sizeOfDataType;
@@ -1163,24 +1194,25 @@ vgl.geometryData = function() {
 
       this.resetBounds();
 
-      for (vertexIndex = offset; vertexIndex < count; vertexIndex += stride) {
-        for (j = 0; j < numberOfComponents; ++j) {
-          value = data[vertexIndex + j];
-          ib = j * 2;
-          jb = j * 2 + 1;
-
-          if (vertexIndex === offset) {
-            m_bounds[ib] = value;
-            m_bounds[jb] = value;
-          } else {
-            if (value > m_bounds[jb]) {
-              m_bounds[jb] = value;
-            }
-            if (value < m_bounds[ib]) {
-              m_bounds[ib] = value;
-            }
+      for (j = 0; j < numberOfComponents; ++j) {
+        ib = j * 2;
+        jb = j * 2 + 1;
+        if (count) {
+          maxv = minv = m_bounds[jb] = data[offset];
+        } else {
+          maxv = minv = 0;
+        }
+        for (vertexIndex = offset + stride + j; vertexIndex < count;
+             vertexIndex += stride) {
+          value = data[vertexIndex];
+          if (value > maxv) {
+            maxv = value;
+          }
+          if (value < minv) {
+            minv = value;
           }
         }
+        m_bounds[ib] = minv;  m_bounds[jb] = maxv;
       }
 
       m_computeBoundsTimestamp.modified();

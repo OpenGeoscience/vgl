@@ -6,7 +6,7 @@ vgl.DataBuffers = function (initialSize) {
     var data = {};
 
     var size;
-    if (!initialSize)
+    if (!initialSize && initialSize !== 0)
         size = 256;
     else
         size = initialSize;
@@ -54,6 +54,7 @@ vgl.DataBuffers = function (initialSize) {
             len: len,
             dirty: false
         };
+        return data[name].array;
     };
 
     this.alloc = function (num) {
