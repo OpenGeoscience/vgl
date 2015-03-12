@@ -1198,7 +1198,7 @@ vgl.geometryData = function() {
         ib = j * 2;
         jb = j * 2 + 1;
         if (count) {
-          maxv = minv = m_bounds[jb] = data[offset];
+          maxv = minv = m_bounds[jb] = data[offset + j];
         } else {
           maxv = minv = 0;
         }
