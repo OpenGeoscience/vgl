@@ -287,7 +287,7 @@ vgl.mapper = function(arg) {
       primitive = m_geomData.primitive(j);
       switch(primitive.primitiveType()) {
         case gl.POINTS:
-          gl.drawArrays (gl.TRIANGLES, 0, primitive.numberOfIndices());
+          gl.drawArrays (gl.POINTS, 0, primitive.numberOfIndices());
           break;
         case gl.LINES:
           gl.drawArrays (gl.LINES, 0, primitive.numberOfIndices());
