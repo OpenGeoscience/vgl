@@ -97,7 +97,7 @@ vgl.utils.createTextureFragmentShader = function(context) {
         'uniform sampler2D sampler2d;',
         'uniform mediump float opacity;',
         'void main(void) {',
-        'gl_FragColor = vec4(texture2D(sampler2d, vec2(iTextureCoord.s, iTextureCoord.t)).xyz, opacity);',
+        'gl_FragColor = vec4(texture2D(sampler2d, vec2(iTextureCoord.s, iTextureCoord.t)).xyz * opacity, opacity);',
         '}' ].join('\n'),
       shader = new vgl.shader(gl.FRAGMENT_SHADER);
 
@@ -123,8 +123,7 @@ vgl.utils.createRgbaTextureFragmentShader = function (context) {
         'uniform mediump float opacity;',
         'void main(void) {',
         '  mediump vec4 color = vec4(texture2D(sampler2d, vec2(iTextureCoord.s, iTextureCoord.t)).xyzw);',
-        '  color.w *= opacity;',
-        '  gl_FragColor = color;',
+        '  gl_FragColor = vec4(color.rgb * color.a, color.a) * opacity;',
         '}'
       ].join('\n'),
       shader = new vgl.shader(gl.FRAGMENT_SHADER);
@@ -272,7 +271,7 @@ vgl.utils.createFragmentShader = function(context) {
   var fragmentShaderSource = [ 'varying mediump vec3 iVertexColor;',
                               'uniform mediump float opacity;',
                               'void main(void) {',
-                              'gl_FragColor = vec4(iVertexColor, opacity);',
+                              'gl_FragColor = vec4(iVertexColor * opacity, opacity);',
                               '}' ].join('\n'),
       shader = new vgl.shader(gl.FRAGMENT_SHADER);
 
@@ -382,7 +381,7 @@ vgl.utils.createFragmentShaderSolidColor = function(context, color) {
   'use strict';
   var fragmentShaderSource = ['uniform mediump float opacity;',
                               'void main(void) {',
-                              'gl_FragColor = vec4(' + color[0] + ',' + color[1] + ',' + color[2] + ', opacity);',
+                              'gl_FragColor = vec4(vec3(' + color[0] + ',' + color[1] + ',' + color[2] + ') * opacity, opacity);',
                               '}' ].join('\n'),
       shader = new vgl.shader(gl.FRAGMENT_SHADER);
 
@@ -407,7 +406,7 @@ vgl.utils.createFragmentShaderColorMap = function(context) {
         'uniform sampler2D sampler2d;',
         'uniform mediump float opacity;',
         'void main(void) {',
-        'gl_FragColor = vec4(texture2D(sampler2d, vec2(iVertexScalar, 0.0)).xyz, opacity);',
+        'gl_FragColor = vec4(texture2D(sampler2d, vec2(iVertexScalar, 0.0)).xyz * opacity, opacity);',
         '}' ].join('\n'),
       shader = new vgl.shader(gl.FRAGMENT_SHADER);
 
@@ -482,11 +481,11 @@ vgl.utils.createPointSpritesFragmentShader = function(context) {
         '}',
         'highp float texOpacity = texture2D(opacityLookup, realTexCoord).w;',
         'if (useScalarsToColors == 1) {',
-        '  gl_FragColor = vec4(texture2D(scalarsToColors, vec2((iVertexScalar - lutMin)/(lutMax - lutMin), 0.0)).xyz, texOpacity);',
+        '  gl_FragColor = vec4(texture2D(scalarsToColors, vec2((iVertexScalar - lutMin)/(lutMax - lutMin), 0.0)).xyz * texOpacity, texOpacity);',
         '} else if (useVertexColors == 1) {',
-        '  gl_FragColor = vec4(iVertexColor, texOpacity);',
+        '  gl_FragColor = vec4(iVertexColor * texOpacity, texOpacity);',
         '} else {',
-        '  gl_FragColor = vec4(texture2D(opacityLookup, realTexCoord).xyz, texOpacity);',
+        '  gl_FragColor = vec4(texture2D(opacityLookup, realTexCoord).xyz * texOpacity, texOpacity);',
         '}}'
     ].join('\n'),
     shader = new vgl.shader(gl.FRAGMENT_SHADER);

@@ -6,7 +6,7 @@
 /*jslint devel: true, forin: true, newcap: true, plusplus: true*/
 /*jslint white: true, continue:true, indent: 2*/
 
-/*global vgl, gl, ogs, vec4, inherit, $*/
+/*global vgl, gl, inherit */
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
@@ -19,7 +19,7 @@
  * @returns {vgl.blendFunction}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.blendFunction = function(source, destination) {
+vgl.blendFunction = function (source, destination) {
   'use strict';
 
   if (!(this instanceof vgl.blendFunction)) {
@@ -37,8 +37,13 @@ vgl.blendFunction = function(source, destination) {
    * @param {vgl.renderState}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.apply = function(renderState) {
-    gl.blendFuncSeparate(m_source, m_destination, gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+  this.apply = function (renderState) {
+    /* For post-blending alpha, use the blendFuncSeparate call.  However, some
+     * comptuers (notably MacBook Pros) don't accelerate blendFuncSeparate,
+     * so it is often faster to use pre-blended alpha.
+     * gl.blendFuncSeparate(m_source, m_destination, gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+     */
+    gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
   };
 
   return this;
@@ -51,7 +56,7 @@ vgl.blendFunction = function(source, destination) {
  * @returns {vgl.blend}
  */
 ////////////////////////////////////////////////////////////////////////////
-vgl.blend = function() {
+vgl.blend = function () {
   'use strict';
 
   if (!(this instanceof vgl.blend)) {
@@ -72,14 +77,13 @@ vgl.blend = function() {
    * @param {vgl.renderState}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.bind = function(renderState) {
+  this.bind = function (renderState) {
     m_wasEnabled = gl.isEnabled(gl.BLEND);
 
     if (this.enabled()) {
       gl.enable(gl.BLEND);
       m_blendFunction.apply(renderState);
-    }
-    else {
+    } else {
       gl.disable(gl.BLEND);
     }
 
@@ -93,11 +97,10 @@ vgl.blend = function() {
    * @param {vgl.renderState}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.undoBind = function(renderState) {
+  this.undoBind = function (renderState) {
     if (m_wasEnabled) {
       gl.enable(gl.BLEND);
-    }
-    else {
+    } else {
       gl.disable(gl.BLEND);
     }
 
