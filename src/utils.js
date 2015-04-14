@@ -115,14 +115,18 @@ vgl.utils.createTextureFragmentShader = function(context) {
  * @returns {vgl.shader}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.utils.createRgbaTextureFragmentShader = function(context) {
+vgl.utils.createRgbaTextureFragmentShader = function (context) {
   'use strict';
   var fragmentShaderSource = [
         'varying highp vec3 iTextureCoord;',
         'uniform sampler2D sampler2d;',
+        'uniform mediump float opacity;',
         'void main(void) {',
-        'gl_FragColor = vec4(texture2D(sampler2d, vec2(iTextureCoord.s, iTextureCoord.t)).xyzw);',
-        '}' ].join('\n'),
+        '  mediump vec4 color = vec4(texture2D(sampler2d, vec2(iTextureCoord.s, iTextureCoord.t)).xyzw);',
+        '  color.w *= opacity;',
+        '  gl_FragColor = color;',
+        '}'
+      ].join('\n'),
       shader = new vgl.shader(vgl.GL.FRAGMENT_SHADER);
 
   shader.setShaderSource(fragmentShaderSource);
@@ -525,9 +529,9 @@ vgl.utils.createTextureMaterial = function(isRgba) {
     fragmentShader = vgl.utils.createRgbaTextureFragmentShader(gl);
   } else {
     fragmentShader = vgl.utils.createTextureFragmentShader(gl);
-    opacityUniform = new vgl.floatUniform("opacity", 1.0);
-    prog.addUniform(opacityUniform);
   }
+  opacityUniform = new vgl.floatUniform('opacity', 1.0);
+  prog.addUniform(opacityUniform);
 
   prog.addShader(fragmentShader);
   prog.addShader(vertexShader);

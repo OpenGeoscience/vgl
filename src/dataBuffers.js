@@ -6,7 +6,7 @@ vgl.DataBuffers = function (initialSize) {
     var data = {};
 
     var size;
-    if (!initialSize)
+    if (!initialSize && initialSize !== 0)
         size = 256;
     else
         size = initialSize;
@@ -27,6 +27,12 @@ vgl.DataBuffers = function (initialSize) {
 
     var resize = function (min_expand) {
         var new_size = size;
+        /* If the array would increase substantially, don't just double its
+         * size.  If the array has been increasing gradually, double it as the
+         * expectation is that it will increase again. */
+        if (new_size * 2 < min_expand) {
+            new_size = min_expand;
+        }
         while (new_size < min_expand)
             new_size *= 2;
         size = new_size;
@@ -48,6 +54,7 @@ vgl.DataBuffers = function (initialSize) {
             len: len,
             dirty: false
         };
+        return data[name].array;
     };
 
     this.alloc = function (num) {

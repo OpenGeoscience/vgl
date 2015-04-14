@@ -341,15 +341,17 @@ vgl.vertexDataP3T3f = function() {
  * @returns {vgl.sourceData}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.sourceData = function() {
+vgl.sourceData = function(arg) {
   'use strict';
 
   if (!(this instanceof vgl.sourceData)) {
-    return new vgl.sourceData();
+    return new vgl.sourceData(arg);
   }
 
+  arg = arg || {};
   var m_attributesMap = {},
       m_data = [],
+      m_name = arg.name || "Source " + new Date().toISOString(),
 
       ////////////////////////////////////////////////////////////////////////////
       /**
@@ -377,7 +379,7 @@ vgl.sourceData = function() {
   /**
    * Return raw data for this source
    *
-   * @returns {Array}
+   * @returns {Array or Float32Array}
    */
   ////////////////////////////////////////////////////////////////////////////
   this.data = function() {
@@ -388,7 +390,7 @@ vgl.sourceData = function() {
  /**
    * Return raw data for this source
    *
-   * @returns {Array}
+   * @returns {Array or Float32Array}
    */
   ////////////////////////////////////////////////////////////////////////////
   this.getData = function() {
@@ -397,16 +399,35 @@ vgl.sourceData = function() {
 
   ////////////////////////////////////////////////////////////////////////////
   /**
+   * If the raw data is not a Float32Array, convert it to one.  Then, return
+   * raw data for this source
+   *
+   * @returns {Float32Array}
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.dataToFloat32Array = function () {
+    if (!(m_data instanceof Float32Array)) {
+      m_data = new Float32Array(m_data);
+    }
+    return m_data;
+  };
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
    * Set data for this source
    *
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.setData = function(data) {
-    if (!(data instanceof Array)) {
+  this.setData = function (data) {
+    if (!(data instanceof Array) && !(data instanceof Float32Array)) {
       console.log("[error] Requires array");
       return;
     }
-    m_data = data.slice(0);
+    if (data instanceof Float32Array) {
+      m_data = data;
+    } else {
+      m_data = data.slice(0);
+    }
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -602,11 +623,29 @@ vgl.sourceData = function() {
     var i;
 
     //m_data = m_data.concat(data); //no, slow on Safari
+    /* If we will are given a Float32Array and don't have any other data, use
+     * it directly. */
+    if (!m_data.length && data.length && data instanceof Float32Array) {
+      m_data = data;
+      return;
+    }
+    /* If our internal array is immutable and we will need to change it, create
+     * a regular mutable array from it. */
+    if (!m_data.slice && (m_data.length || !data.slice)) {
+      m_data = Array.prototype.slice.call(m_data);
+    }
     if (!data.length) {
+      /* data is a singular value, so append it to our array */
       m_data[m_data.length] = data;
     } else {
-      for (i = 0; i < data.length; i++) {
-        m_data[m_data.length] = data[i];
+      /* We don't have any data currently, so it is faster to copy the data
+       * using slice. */
+      if (!m_data.length && data.slice) {
+        m_data = data.slice(0);
+      } else {
+        for (i = 0; i < data.length; i++) {
+          m_data[m_data.length] = data[i];
+        }
       }
     }
   };
@@ -623,16 +662,35 @@ vgl.sourceData = function() {
     }
   };
 
+  ////////////////////////////////////////////////////////////////////////////
+  /**
+   * Return name of the source data
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.name = function() {
+    return m_name;
+  };
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
+   * Set name of the source data
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.setName = function(name) {
+    m_name = name;
+  };
+
+
   return this;
 };
 
 
-vgl.sourceDataAnyfv = function(size, key) {
+vgl.sourceDataAnyfv = function(size, key, arg) {
   if (!(this instanceof vgl.sourceDataAnyfv)) {
-      return new vgl.sourceDataAnyfv(size, key);
+      return new vgl.sourceDataAnyfv(size, key, arg);
     }
 
-    vgl.sourceData.call(this);
+    vgl.sourceData.call(this, arg);
     this.addAttribute(key, vgl.GL.FLOAT,
                       4, 0, size * 4, size, false);
 
@@ -651,13 +709,13 @@ inherit(vgl.sourceDataAnyfv, vgl.sourceData);
  * @returns {vgl.sourceDataP3T3f}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.sourceDataP3T3f = function() {
+vgl.sourceDataP3T3f = function(arg) {
   'use strict';
 
   if (!(this instanceof vgl.sourceDataP3T3f)) {
-    return new vgl.sourceDataP3T3f();
+    return new vgl.sourceDataP3T3f(arg);
   }
-  vgl.sourceData.call(this);
+  vgl.sourceData.call(this, arg);
 
   this.addAttribute(vgl.vertexAttributeKeys.Position, vgl.GL.FLOAT, 4, 0, 6 * 4, 3,
                     false);
@@ -681,14 +739,14 @@ inherit(vgl.sourceDataP3T3f, vgl.sourceData);
  * @returns {vgl.sourceDataP3N3f}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.sourceDataP3N3f = function() {
+vgl.sourceDataP3N3f = function(arg) {
   'use strict';
 
   if (!(this instanceof vgl.sourceDataP3N3f)) {
-    return new vgl.sourceDataP3N3f();
+    return new vgl.sourceDataP3N3f(arg);
   }
 
-  vgl.sourceData.call(this);
+  vgl.sourceData.call(this, arg);
 
   this.addAttribute(vgl.vertexAttributeKeys.Position, vgl.GL.FLOAT, 4, 0, 6 * 4, 3,
                     false);
@@ -712,14 +770,14 @@ inherit(vgl.sourceDataP3N3f, vgl.sourceData);
  * @returns {vgl.sourceDataP3fv}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.sourceDataP3fv = function() {
+vgl.sourceDataP3fv = function(arg) {
   'use strict';
 
   if (!(this instanceof vgl.sourceDataP3fv)) {
-    return new vgl.sourceDataP3fv();
+    return new vgl.sourceDataP3fv(arg);
   }
 
-  vgl.sourceData.call(this);
+  vgl.sourceData.call(this, arg);
 
   this.addAttribute(vgl.vertexAttributeKeys.Position, vgl.GL.FLOAT, 4, 0, 3 * 4, 3,
                     false);
@@ -740,14 +798,14 @@ inherit(vgl.sourceDataP3fv, vgl.sourceData);
  * @returns {vgl.sourceDataT2fv}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.sourceDataT2fv = function() {
+vgl.sourceDataT2fv = function(arg) {
   'use strict';
 
   if (!(this instanceof vgl.sourceDataT2fv)) {
-    return new vgl.sourceDataT2fv();
+    return new vgl.sourceDataT2fv(arg);
   }
 
-  vgl.sourceData.call(this);
+  vgl.sourceData.call(this, arg);
 
   this.addAttribute(vgl.vertexAttributeKeys.TextureCoordinate, vgl.GL.FLOAT, 4, 0,
                     2 * 4, 2, false);
@@ -768,14 +826,14 @@ inherit(vgl.sourceDataT2fv, vgl.sourceData);
  * @returns {vgl.sourceDataC3fv}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.sourceDataC3fv = function() {
+vgl.sourceDataC3fv = function(arg) {
   'use strict';
 
   if (!(this instanceof vgl.sourceDataC3fv)) {
-    return new vgl.sourceDataC3fv();
+    return new vgl.sourceDataC3fv(arg);
   }
 
-  vgl.sourceData.call(this);
+  vgl.sourceData.call(this, arg);
 
   this.addAttribute(vgl.vertexAttributeKeys.Color, vgl.GL.FLOAT, 4, 0, 3 * 4, 3, false);
 
@@ -796,11 +854,11 @@ inherit(vgl.sourceDataC3fv, vgl.sourceData);
  * @returns {vgl.sourceDataSf}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.sourceDataSf = function() {
+vgl.sourceDataSf = function(arg) {
   'use strict';
 
   if (!(this instanceof vgl.sourceDataSf)) {
-    return new vgl.sourceDataSf();
+    return new vgl.sourceDataSf(arg);
   }
 
   var m_min = null,
@@ -808,7 +866,7 @@ vgl.sourceDataSf = function() {
       m_fixedmin = null,
       m_fixedmax = null;
 
-  vgl.sourceData.call(this);
+  vgl.sourceData.call(this, arg);
 
   this.addAttribute(vgl.vertexAttributeKeys.Scalar, vgl.GL.FLOAT, 4, 0, 4, 1, false);
 
@@ -864,11 +922,11 @@ inherit(vgl.sourceDataSf, vgl.sourceData);
  * @returns {vgl.sourceDataDf}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.sourceDataDf = function() {
+vgl.sourceDataDf = function(arg) {
   'use strict';
 
   if (!(this instanceof vgl.sourceDataDf)) {
-    return new vgl.sourceDataDf();
+    return new vgl.sourceDataDf(arg);
   }
 
   var m_min = null,
@@ -876,7 +934,7 @@ vgl.sourceDataDf = function() {
       m_fixedmin = null,
       m_fixedmax = null;
 
-  vgl.sourceData.call(this);
+  vgl.sourceData.call(this, arg);
 
   this.addAttribute(vgl.vertexAttributeKeys.Scalar, vgl.GL.FLOAT,
                     4, 0, 4, 1, false);
@@ -950,9 +1008,12 @@ vgl.geometryData = function() {
    * Add new source
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.addSource = function(source) {
+  this.addSource = function(source, sourceName) {
     // @todo Check if the incoming source has duplicate keys
 
+    if (sourceName !== undefined) {
+        source.setName(sourceName);
+    }
     // NOTE This might not work on IE8 or lower
     if (m_sources.indexOf(source) === -1) {
       m_sources.push(source);
@@ -978,6 +1039,20 @@ vgl.geometryData = function() {
 
     return 0;
   };
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
+   * Return source with a specified name.  Returns 0 if not found.
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.sourceByName = function (sourceName) {
+    for (var i = 0; i < m_sources.length; i += 1) {
+      if (m_sources[i].name() === sourceName) {
+        return m_sources[i];
+      }
+    }
+    return 0;
+  }
 
   ////////////////////////////////////////////////////////////////////////////
   /**
@@ -1049,6 +1124,21 @@ vgl.geometryData = function() {
 
   ////////////////////////////////////////////////////////////////////////////
   /**
+   * Check if bounds are dirty or mark them as such.
+   *
+   * @param dirty: true to set bounds as dirty.
+   * Return true if bounds are dirty.
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.boundsDirty = function (dirty) {
+    if (dirty) {
+      m_boundsDirtyTimestamp.modified();
+    }
+    return m_boundsDirtyTimestamp.getMTime() > m_computeBoundsTimestamp.getMTime();
+  };
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
    * Reset bounds
    */
   ////////////////////////////////////////////////////////////////////////////
@@ -1094,11 +1184,9 @@ vgl.geometryData = function() {
           offset = sourceData.attributeOffset(attr),
           sizeOfDataType = sourceData.sizeOfAttributeDataType(attr),
           count = data.length,
-          ib = 0,
-          jb = 0,
+          j, ib, jb, maxv, minv,
           value = null,
-          vertexIndex,
-          j;
+          vertexIndex;
 
       // We advance by index, not by byte
       stride /= sizeOfDataType;
@@ -1106,24 +1194,25 @@ vgl.geometryData = function() {
 
       this.resetBounds();
 
-      for (vertexIndex = offset; vertexIndex < count; vertexIndex += stride) {
-        for (j = 0; j < numberOfComponents; ++j) {
-          value = data[vertexIndex + j];
-          ib = j * 2;
-          jb = j * 2 + 1;
-
-          if (vertexIndex === offset) {
-            m_bounds[ib] = value;
-            m_bounds[jb] = value;
-          } else {
-            if (value > m_bounds[jb]) {
-              m_bounds[jb] = value;
-            }
-            if (value < m_bounds[ib]) {
-              m_bounds[ib] = value;
-            }
+      for (j = 0; j < numberOfComponents; ++j) {
+        ib = j * 2;
+        jb = j * 2 + 1;
+        if (count) {
+          maxv = minv = m_bounds[jb] = data[offset + j];
+        } else {
+          maxv = minv = 0;
+        }
+        for (vertexIndex = offset + stride + j; vertexIndex < count;
+             vertexIndex += stride) {
+          value = data[vertexIndex];
+          if (value > maxv) {
+            maxv = value;
+          }
+          if (value < minv) {
+            minv = value;
           }
         }
+        m_bounds[ib] = minv;  m_bounds[jb] = maxv;
       }
 
       m_computeBoundsTimestamp.modified();

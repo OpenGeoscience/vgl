@@ -212,8 +212,13 @@ vgl.renderer = function() {
 
     for ( i = 0; i < children.length; ++i) {
       actor = children[i];
+
+      // Compute the bounds even if the actor is not visible
       actor.computeBounds();
-      if (!actor.visible()) {
+
+      // If bin number is < 0, then don't even bother
+      // rendering the data
+      if (!actor.visible() || actor.material().binNumber() < 0) {
         continue;
       }
 
@@ -225,7 +230,6 @@ vgl.renderer = function() {
 
     for ( i = 0; i < sortedActors.length; ++i) {
       actor = sortedActors[i][1];
-
       if (actor.referenceFrame() ===
           vgl.boundingObject.ReferenceFrame.Relative) {
         mat4.multiply(renSt.m_modelViewMatrix, m_this.m_camera.viewMatrix(),
