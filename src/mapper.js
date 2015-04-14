@@ -87,16 +87,9 @@ vgl.mapper = function(arg) {
       numberOfPrimitives = m_geomData.numberOfPrimitives();
       for (k = 0; k < numberOfPrimitives; ++k) {
         bufferId = gl.createBuffer();
-        primitive = m_geomData.primitive(k);
-        switch(primitive.primitiveType()) {
-          case gl.LINES:
-          case gl.LINE_STRIP:
-          case gl.TRIANGLE_STRIP:
-          default:
-            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, bufferId);
-            gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,
-              m_geomData.primitive(k).indices(), gl.STATIC_DRAW);
-        }
+        gl.bindBuffer(gl.ARRAY_BUFFER, bufferId);
+        gl.bufferData(gl.ARRAY_BUFFER, m_geomData.primitive(k)
+            .indices(), gl.STATIC_DRAW);
         m_buffers[i++] = bufferId;
       }
 
