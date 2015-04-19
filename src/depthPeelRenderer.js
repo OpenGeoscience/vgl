@@ -168,7 +168,6 @@ vgl.depthPeelRenderer = function() {
 
     var ext = gl.getExtension("WEBGL_draw_buffers");
 
-
     //FBO initialization function
     // Generate 2 FBO
     fbo.push(gl.createFramebuffer());
@@ -193,7 +192,7 @@ vgl.depthPeelRenderer = function() {
         gl.texImage2D(vgl.GL.TEXTURE_2D , 0, vgl.GL.DEPTH_COMPONENT,
                       WIDTH, HEIGHT, 0, vgl.GL.DEPTH_COMPONENT, vgl.GL.UNSIGNED_SHORT, null);
 
-        // Second initialize the colour attachment
+        // Second initialize the color attachment
         gl.bindTexture(vgl.GL.TEXTURE_2D,texID[i]);
         gl.texParameteri(vgl.GL.TEXTURE_2D , vgl.GL.TEXTURE_MAG_FILTER, vgl.GL.NEAREST);
         gl.texParameteri(vgl.GL.TEXTURE_2D , vgl.GL.TEXTURE_MIN_FILTER, vgl.GL.NEAREST);
@@ -202,15 +201,15 @@ vgl.depthPeelRenderer = function() {
         gl.texImage2D(vgl.GL.TEXTURE_2D , 0, vgl.GL.RGBA, WIDTH, HEIGHT, 0,
                       vgl.GL.RGBA, vgl.GL.FLOAT, null);
 
-        // Bind FBO and attach the depth and colour attachments
+        // Bind FBO and attach the depth and color attachments
         gl.bindFramebuffer(vgl.GL.FRAMEBUFFER, fbo[i]);
         gl.framebufferTexture2D(vgl.GL.FRAMEBUFFER, vgl.GL.DEPTH_ATTACHMENT,
                                 vgl.GL.TEXTURE_2D, depthTexID[i], 0);
-        gl.framebufferTexture2D(vgl.GL.FRAMEBUFFER, ext.COLOR_ATTACHMENT0_WEBGL,
+        gl.framebufferTexture2D(vgl.GL.FRAMEBUFFER, vgl.GL.COLOR_ATTACHMENT0,
                                 vgl.GL.TEXTURE_2D, texID[i], 0);
     }
 
-    // Now setup the colour attachment for colour blend FBO
+    // Now setup the color attachment for color blend FBO
     colorBlenderTexID = gl.createTexture();
     gl.bindTexture(vgl.GL.TEXTURE_2D, colorBlenderTexID);
     gl.texParameteri(vgl.GL.TEXTURE_2D, vgl.GL.TEXTURE_WRAP_S, vgl.GL.CLAMP_TO_EDGE);
@@ -220,15 +219,16 @@ vgl.depthPeelRenderer = function() {
     gl.texImage2D(vgl.GL.TEXTURE_2D, 0, vgl.GL.RGBA, WIDTH, HEIGHT,
                   0, vgl.GL.RGBA, vgl.GL.FLOAT, null);
 
-    // Generate the colour blend FBO ID
+    // Generate the color blend FBO ID
     colorBlenderFBOID = gl.createFramebuffer();
     gl.bindFramebuffer(vgl.GL.FRAMEBUFFER, colorBlenderFBOID);
 
     // Set the depth attachment of previous FBO as depth attachment for this FBO
     gl.framebufferTexture2D(vgl.GL.FRAMEBUFFER, vgl.GL.DEPTH_ATTACHMENT,
                             vgl.GL.TEXTURE_2D, depthTexID[0], 0);
-    // Set the colour blender texture as the FBO colour attachment
-    gl.framebufferTexture2D(vgl.GL.FRAMEBUFFER, ext.COLOR_ATTACHMENT0_WEBGL,
+
+    // Set the color blender texture as the FBO color attachment
+    gl.framebufferTexture2D(vgl.GL.FRAMEBUFFER, vgl.GL.COLOR_ATTACHMENT0,
                             vgl.GL.TEXTURE_2D, colorBlenderTexID, 0);
 
     // Check the FBO completeness status
@@ -310,11 +310,11 @@ vgl.depthPeelRenderer = function() {
     fiwidth.set(m_this.width());
     fiheight.set(m_this.height());
 
-    // Clear colour and depth buffer
+    // Clear color and depth buffer
     gl.clearColor(0.0, 0.0, 0.0, 0.0);
     gl.clear(vgl.GL.OLOR_BUFFER_BIT | vgl.GL.DEPTH_BUFFER_BIT);
 
-    // Bind the colour blending FBO
+    // Bind the color blending FBO
     gl.bindFramebuffer(vgl.GL.FRAMEBUFFER, colorBlenderFBOID);
 
     // 1. In the first pass, we render normally with depth test enabled to get the nearest surface
@@ -345,16 +345,16 @@ vgl.depthPeelRenderer = function() {
         // Bind the depth texture from the previous step
         gl.bindTexture(vgl.GL.TEXTURE_2D, depthTexID[prevId]);
 
-        // Set clear colour to black
+        // Set clear color to black
         gl.clearColor(0., 0., 0., 0.0);
 
-        // Clear the colour and depth buffers
+        // Clear the color and depth buffers
         gl.clear(vgl.GL.COLOR_BUFFER_BIT | vgl.GL.DEPTH_BUFFER_BIT);
 
         // Render scene with the front to back peeling shader
         drawScene(renderState, actors, fpMaterial);
 
-        // Bind the colour blender FBO
+        // Bind the color blender FBO
         gl.bindFramebuffer(vgl.GL.FRAMEBUFFER, colorBlenderFBOID);
 
         // Enable blending but disable depth testing
@@ -385,7 +385,7 @@ vgl.depthPeelRenderer = function() {
     gl.disable(vgl.GL.DEPTH_TEST);
     gl.disable(vgl.GL.BLEND);
 
-    // Bind the colour blender texture
+    // Bind the color blender texture
     gl.bindTexture(vgl.GL.TEXTURE_2D, colorBlenderTexID);
 
     fibackgroundColor.set(m_this.m_camera.clearColor());
