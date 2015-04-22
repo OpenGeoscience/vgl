@@ -45,10 +45,10 @@
                 layer: sceneObject.layer
               };
 
-              reader.addVtkObjectData(vtkObject);
+              reader.parseObject(vtkObject);
           }
 
-          viewer = reader.updateViewer(node);
+          viewer = reader.updateCanvas(node);
 
           renderer = viewer.renderWindow().activeRenderer();
           interactorStyle = viewer.interactorStyle();
