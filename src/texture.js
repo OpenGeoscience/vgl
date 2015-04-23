@@ -33,10 +33,9 @@ vgl.texture = function() {
   this.m_textureHandle = null;
   this.m_textureUnit = 0;
 
-  this.m_pixelFormat = null;
-  this.m_pixelDataType = null;
-
-  this.m_internalFormat = null;
+  this.m_pixelFormat = vgl.GL.RGBA;
+  this.m_pixelDataType = vgl.GL.UNSIGNED_BYTE;
+  this.m_internalFormat = vgl.GL.RGBA;
 
   this.m_image = null;
 
@@ -116,10 +115,11 @@ vgl.texture = function() {
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-    gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
-    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
 
     if (this.m_image !== null) {
+      gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
+      gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+
       this.updateDimensions();
       this.computeInternalFormatUsingImage();
 
@@ -133,7 +133,7 @@ vgl.texture = function() {
     }
     else {
       gl.texImage2D(gl.TEXTURE_2D, 0, this.m_internalFormat,
-                    this.m_pixelFormat, this.m_pixelDataType, null);
+        this.m_width, this.m_height, 0, this.m_pixelFormat, this.m_pixelDataType, null);
     }
 
     gl.bindTexture(gl.TEXTURE_2D, null);
@@ -247,14 +247,42 @@ vgl.texture = function() {
    */
   /////////////////////////////////////////////////////////////////////////////
   this.setWidth = function(width) {
-    if (this.m_image === null) {
-      return false;
+    if (m_that.m_width !== width) {
+      m_that.m_width = width;
+      m_that.modified();
+      return true;
     }
 
-    this.m_width = width;
-    this.modified();
+    return false;
+  };
 
-    return true;
+  /////////////////////////////////////////////////////////////////////////////
+  /**
+   * Get width of the texture
+   *
+   * @returns {*}
+   */
+  /////////////////////////////////////////////////////////////////////////////
+  this.height = function() {
+    return m_that.m_height;
+  };
+
+  /////////////////////////////////////////////////////////////////////////////
+  /**
+   * Set height of the texture
+   *
+   * @param {number} height
+   * @returns {vgl.texture}
+   */
+  /////////////////////////////////////////////////////////////////////////////
+  this.setHeight = function(height) {
+    if (m_that.m_height !== height) {
+      m_that.m_height = height;
+      m_that.modified();
+      return true;
+    }
+
+    return false;
   };
 
   /////////////////////////////////////////////////////////////////////////////

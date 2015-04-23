@@ -26,10 +26,11 @@ vgl.renderWindow = function(canvas) {
   if (!(this instanceof vgl.renderWindow)) {
     return new vgl.renderWindow(canvas);
   }
-  vgl.object.call(this);
+  vgl.graphicsObject.call(this);
 
   /** @private */
-  var m_x = 0,
+  var m_this = this,
+      m_x = 0,
       m_y = 0,
       m_width = 400,
       m_height = 400,
@@ -63,7 +64,7 @@ vgl.renderWindow = function(canvas) {
       m_width = width;
       m_height = height;
 
-      this.modified();
+      m_this.modified();
 
       return true;
     }
@@ -95,7 +96,7 @@ vgl.renderWindow = function(canvas) {
     if ((m_x !== x) || (m_y !== y)) {
       m_x = x;
       m_y = y;
-      this.modified();
+      m_this.modified();
       return true;
     }
     return false;
@@ -131,7 +132,7 @@ vgl.renderWindow = function(canvas) {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.addRenderer = function(ren) {
-    if (this.hasRenderer(ren) === false) {
+    if (m_this.hasRenderer(ren) === false) {
       m_renderers.push(ren);
       if (m_activeRender === null) {
         m_activeRender = ren;
@@ -139,7 +140,7 @@ vgl.renderWindow = function(canvas) {
       if (ren.layer() !== 0) {
         ren.camera().setClearMask(vgl.GL.DepthBufferBit);
       }
-      this.modified();
+      m_this.modified();
       return true;
     }
     return false;
@@ -160,7 +161,7 @@ vgl.renderWindow = function(canvas) {
         m_activeRender = null;
       }
       m_renderers.splice(index, 1);
-      this.modified();
+      m_this.modified();
       return true;
     }
     return false;
@@ -211,8 +212,8 @@ vgl.renderWindow = function(canvas) {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.resize = function(width, height) {
-    this.positionAndResize(m_x, m_y, width, height);
-    this.modified();
+    m_this.positionAndResize(m_x, m_y, width, height);
+    m_this.modified();
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -234,7 +235,7 @@ vgl.renderWindow = function(canvas) {
     for (i = 0; i < m_renderers.length; ++i) {
       m_renderers[i].positionAndResize(m_x, m_y, m_width, m_height);
     }
-    this.modified();
+    m_this.modified();
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -244,7 +245,7 @@ vgl.renderWindow = function(canvas) {
    * @returns {boolean}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.createWindow = function() {
+  this._setup = function(renderState) {
     // Initialize the global variable gl to null.
     gl = null;
 
@@ -282,8 +283,11 @@ vgl.renderWindow = function(canvas) {
    * Delete this window and release any graphics resources
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.deleteWindow = function() {
-    // TODO
+  this._cleanup = function(renderState) {
+    var i;
+    for (i = 0; i < m_renderers.length; ++i) {
+      m_renderers[i]._cleanup(renderState);
+    }
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -342,15 +346,13 @@ vgl.renderWindow = function(canvas) {
   ////////////////////////////////////////////////////////////////////////////
   this.worldToDisplay = function(x, y, z, ren) {
     ren = ren === undefined ? ren = m_activeRender : ren;
-
     var camera = ren.camera();
-
     return ren.worldToDisplay(
       vec4.fromValues(x, y, z, 1.0), camera.viewMatrix(),
       camera.projectionMatrix(), m_width, m_height);
   };
 
-  return this;
+  return m_this;
 };
 
-inherit(vgl.renderWindow, vgl.object);
+inherit(vgl.renderWindow, vgl.graphicsObject);

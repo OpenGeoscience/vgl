@@ -17,23 +17,21 @@
  * @returns {vgl.mapper}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.mapper = function(arg) {
+vgl.mapper = function() {
   'use strict';
 
   if (!(this instanceof vgl.mapper)) {
-    return new vgl.mapper(arg);
+    return new vgl.mapper();
   }
   vgl.boundingObject.call(this);
 
   /** @private */
-  arg = arg || {};
-
-  var m_dirty = true,
+  var m_this = this,
+      m_dirty = true,
       m_color = [ 0.0, 1.0, 1.0 ],
       m_geomData = null,
       m_buffers = [],
       m_bufferVertexAttributeMap = {},
-      m_dynamicDraw = arg.dynamicDraw === undefined ? false : arg.dynamicDraw,
       m_glCompileTimestamp = vgl.timestamp();
 
   ////////////////////////////////////////////////////////////////////////////
@@ -60,17 +58,14 @@ vgl.mapper = function(arg) {
   function createVertexBufferObjects() {
     if (m_geomData) {
       var numberOfSources = m_geomData.numberOfSources(),
-          i, j, k, bufferId = null, keys, ks, numberOfPrimitives, data;
+          i, j, k, bufferId = null, keys, ks, numberOfPrimitives,
+          primitive = null;
 
       for (i = 0; i < numberOfSources; ++i) {
         bufferId = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, bufferId);
-        data = m_geomData.source(i).data();
-        if (!(data instanceof Float32Array)) {
-          data = new Float32Array(data);
-        }
-        gl.bufferData(gl.ARRAY_BUFFER, data,
-                      m_dynamicDraw ? gl.DYNAMIC_DRAW : gl.STATIC_DRAW);
+        gl.bufferData(gl.ARRAY_BUFFER,
+          new Float32Array(m_geomData.source(i).data()), gl.STATIC_DRAW);
 
         keys = m_geomData.source(i).keys();
         ks = [];
@@ -86,9 +81,16 @@ vgl.mapper = function(arg) {
       numberOfPrimitives = m_geomData.numberOfPrimitives();
       for (k = 0; k < numberOfPrimitives; ++k) {
         bufferId = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, bufferId);
-        gl.bufferData(gl.ARRAY_BUFFER, m_geomData.primitive(k)
-            .indices(), gl.STATIC_DRAW);
+        primitive = m_geomData.primitive(k);
+        switch(primitive.primitiveType()) {
+          case gl.LINES:
+          case gl.LINE_STRIP:
+          case gl.TRIANGLE_STRIP:
+          default:
+            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, bufferId);
+            gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,
+              m_geomData.primitive(k).indices(), gl.STATIC_DRAW);
+        }
         m_buffers[i++] = bufferId;
       }
 
@@ -135,18 +137,18 @@ vgl.mapper = function(arg) {
   ////////////////////////////////////////////////////////////////////////////
   this.computeBounds = function() {
     if (m_geomData === null || typeof m_geomData === 'undefined') {
-      this.resetBounds();
+      m_this.resetBounds();
       return;
     }
 
-    var computeBoundsTimestamp = this.computeBoundsTimestamp(),
-        boundsDirtyTimestamp = this.boundsDirtyTimestamp(),
+    var computeBoundsTimestamp = m_this.computeBoundsTimestamp(),
+        boundsDirtyTimestamp = m_this.boundsDirtyTimestamp(),
         geomBounds = null;
 
     if (boundsDirtyTimestamp.getMTime() > computeBoundsTimestamp.getMTime()) {
       geomBounds = m_geomData.bounds();
 
-      this.setBounds(geomBounds[0], geomBounds[1], geomBounds[2],
+      m_this.setBounds(geomBounds[0], geomBounds[1], geomBounds[2],
         geomBounds[3], geomBounds[4], geomBounds[5]) ;
 
       computeBoundsTimestamp.modified();
@@ -176,7 +178,7 @@ vgl.mapper = function(arg) {
     m_color[1] = g;
     m_color[2] = b;
 
-    this.modified();
+    m_this.modified();
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -197,60 +199,9 @@ vgl.mapper = function(arg) {
     if (m_geomData !== geom) {
       m_geomData = geom;
 
-      this.modified();
-      this.boundsDirtyTimestamp().modified();
+      m_this.modified();
+      m_this.boundsDirtyTimestamp().modified();
     }
-  };
-
-  ////////////////////////////////////////////////////////////////////////////
-  /**
-   * Update the buffer used for a named source.
-   *
-   * @param {String} sourceName The name of the source to update.
-   * @param {Object[] or Float32Array} values The values to use for the source.
-   *    If not specified, use the source's own buffer.
-   */
-  ////////////////////////////////////////////////////////////////////////////
-  this.updateSourceBuffer = function (sourceName, values) {
-    var bufferIndex = -1;
-    for (var i = 0; i < m_geomData.numberOfSources(); i += 1) {
-      if (m_geomData.source(i).name() === sourceName) {
-        bufferIndex = i;
-        break;
-      }
-    }
-    if (bufferIndex < 0 || bufferIndex >= m_buffers.length) {
-      return false;
-    }
-    if (!values) {
-      values = m_geomData.source(i).dataToFloat32Array();
-    }
-    gl.bindBuffer(gl.ARRAY_BUFFER, m_buffers[bufferIndex]);
-    if (values instanceof Float32Array) {
-      gl.bufferSubData(gl.ARRAY_BUFFER, 0, values);
-    } else {
-      gl.bufferSubData(gl.ARRAY_BUFFER, 0, new Float32Array(values));
-    }
-    return true;
-  };
-
-  ////////////////////////////////////////////////////////////////////////////
-  /**
-   * Get the buffer used for a named source.  If the current buffer isn't a
-   * Float32Array, it is converted to one.  This array can then be modified
-   * directly, after which updateSourceBuffer can be called to update the
-   * GL array.
-   *
-   * @param {String} sourceName The name of the source to update.
-   * @returns {Float32Array} An array used for this source.
-   */
-  ////////////////////////////////////////////////////////////////////////////
-  this.getSourceBuffer = function (sourceName) {
-    var source = m_geomData.sourceByName(sourceName);
-    if (!source) {
-      return new Float32Array();
-    }
-    return source.dataToFloat32Array();
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -259,7 +210,7 @@ vgl.mapper = function(arg) {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.render = function(renderState) {
-    if (this.getMTime() > m_glCompileTimestamp.getMTime()) {
+    if (m_this.getMTime() > m_glCompileTimestamp.getMTime()) {
       setupDrawObjects(renderState);
     }
 
@@ -283,30 +234,23 @@ vgl.mapper = function(arg) {
 
     noOfPrimitives = m_geomData.numberOfPrimitives();
     for (j = 0; j < noOfPrimitives; ++j) {
-      gl.bindBuffer(gl.ARRAY_BUFFER, m_buffers[bufferIndex++]);
       primitive = m_geomData.primitive(j);
       switch(primitive.primitiveType()) {
-        case gl.POINTS:
-          gl.drawArrays (gl.POINTS, 0, primitive.numberOfIndices());
-          break;
         case gl.LINES:
-          gl.drawArrays (gl.LINES, 0, primitive.numberOfIndices());
-          break;
         case gl.LINE_STRIP:
-          gl.drawArrays (gl.LINE_STRIP, 0, primitive.numberOfIndices());
-          break;
-        case gl.TRIANGLES:
-          gl.drawArrays (gl.TRIANGLES, 0, primitive.numberOfIndices());
-          break;
         case gl.TRIANGLE_STRIP:
-          gl.drawArrays (gl.TRIANGLE_STRIP, 0, primitive.numberOfIndices());
+        default:
+          gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, m_buffers[bufferIndex++]);
+          primitive = m_geomData.primitive(j);//
+          gl.drawElements(primitive.primitiveType(), primitive.numberOfIndices(),
+                          primitive.indicesValueType(), 0);
           break;
       }
       gl.bindBuffer (gl.ARRAY_BUFFER, null);
     }
   };
 
-  return this;
+  return m_this;
 };
 
 inherit(vgl.mapper, vgl.boundingObject);

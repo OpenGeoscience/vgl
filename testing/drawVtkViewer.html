@@ -30,6 +30,7 @@
 
           var viewer = reader.createViewer(node);
           reader.setVtkScene(scene);
+          renderer = viewer.renderWindow().activeRenderer();
 
           for(idx in scene.Objects) {
              var sceneObject = scene.Objects[idx];
@@ -41,16 +42,17 @@
                 vid: -1,
                 id: sceneObject.id,
                 data: geom,
+                opacity: 1.0,
                 hasTransparency: sceneObject.transparency,
                 layer: sceneObject.layer
               };
 
-              reader.addVtkObjectData(vtkObject);
+              renderer.addActor(reader.parseObject(vtkObject)[0]);
           }
 
-          viewer = reader.updateViewer(node);
+          viewer = reader.updateCanvas(node);
 
-          renderer = viewer.renderWindow().activeRenderer();
+
           interactorStyle = viewer.interactorStyle();
           viewer.render();
         });

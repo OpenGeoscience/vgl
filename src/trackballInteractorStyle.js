@@ -134,7 +134,7 @@ vgl.trackballInteractorStyle = function() {
     if (event.button === 2) {
       m_rightMouseBtnDown = true;
     }
-    coords = m_that.view.relMouseCoords(event);
+    coords = m_that.viewer().relMouseCoords(event);
     if (coords.x < 0) {
       m_lastPos.x = 0;
     } else {
