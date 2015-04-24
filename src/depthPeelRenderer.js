@@ -148,7 +148,11 @@ vgl.depthPeelRenderer = function() {
     // Or browser-appropriate prefix
     var depthTextureExt = gl.getExtension("WEBKIT_WEBGL_depth_texture");
     if(!depthTextureExt) {
-        console.log("depth textures are not supported");
+        depthTextureExt = gl.getExtension("WEBGL_depth_texture");
+
+        if(!depthTextureExt) {
+            console.log("Depth textures are not supported");
+        }
     }
 
     var floatTextureExt = gl.getExtension("OES_texture_float");
