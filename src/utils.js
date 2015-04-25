@@ -272,7 +272,7 @@ vgl.utils.createFragmentShader = function(context) {
   var fragmentShaderSource = [ 'varying mediump vec3 iVertexColor;',
                               'uniform mediump float opacity;',
                               'void main(void) {',
-                              'gl_FragColor = vec4(iVertexColor * opacity, opacity);',
+                              'gl_FragColor = vec4(iVertexColor, opacity);',
                               '}' ].join('\n'),
       shader = new vgl.shader(vgl.GL.FRAGMENT_SHADER);
 
