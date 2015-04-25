@@ -143,7 +143,7 @@ vgl.depthPeelRenderer = function() {
   }
 
   function initFBO(renderState, WIDTH, HEIGHT) {
-    var i;
+    var i, textureFloatExt, textureFloatLinearExt, depthTextureExt, filtering;
 
     // Or browser-appropriate prefix
     var depthTextureExt = gl.getExtension("WEBKIT_WEBGL_depth_texture");
@@ -160,17 +160,17 @@ vgl.depthPeelRenderer = function() {
         console.log("float textures are not supported");
     }
 
-    gl.getExtension("OES_texture_float");
-    gl.getExtension("OES_texture_float_linear");
-    var extDepth = gl.getExtension("WEBGL_depth_texture");
+    textureFloatExt = gl.getExtension("OES_texture_float");
+    textureFloatLinearExt = gl.getExtension("OES_texture_float_linear");
+    depthTextureExt = gl.getExtension("WEBGL_depth_texture");
 
-    if(!extDepth){
+    if(!depthTextureExt){
         console.log("Extension Depth texture is not working");
-        alert(":( Sorry, Your browser doesn't support depth texture extension. Please browse to webglreport.com to see more information.");
+        alert(":( Sorry, Your browser doesn't support depth texture extension.");
         return;
     }
 
-    var ext = gl.getExtension("WEBGL_draw_buffers");
+    filtering = textureFloatLinearExt ? vgl.GL.LINEAR : vgl.GL.NEAREST;
 
     //FBO initialization function
     // Generate 2 FBO
@@ -198,8 +198,8 @@ vgl.depthPeelRenderer = function() {
 
         // Second initialize the color attachment
         gl.bindTexture(vgl.GL.TEXTURE_2D,texID[i]);
-        gl.texParameteri(vgl.GL.TEXTURE_2D , vgl.GL.TEXTURE_MAG_FILTER, vgl.GL.NEAREST);
-        gl.texParameteri(vgl.GL.TEXTURE_2D , vgl.GL.TEXTURE_MIN_FILTER, vgl.GL.NEAREST);
+        gl.texParameteri(vgl.GL.TEXTURE_2D , vgl.GL.TEXTURE_MAG_FILTER, filtering);
+        gl.texParameteri(vgl.GL.TEXTURE_2D , vgl.GL.TEXTURE_MIN_FILTER, filtering);
         gl.texParameteri(vgl.GL.TEXTURE_2D , vgl.GL.TEXTURE_WRAP_S, vgl.GL.CLAMP_TO_EDGE);
         gl.texParameteri(vgl.GL.TEXTURE_2D , vgl.GL.TEXTURE_WRAP_T, vgl.GL.CLAMP_TO_EDGE);
         gl.texImage2D(vgl.GL.TEXTURE_2D , 0, vgl.GL.RGBA, WIDTH, HEIGHT, 0,
