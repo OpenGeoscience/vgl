@@ -17,7 +17,7 @@ vgl.depthPeelRenderer = function() {
       colorBlenderTexID, colorBlenderFBOID, setupTime = vgl.timestamp(),
       fpMaterial = vgl.material(), blMaterial = vgl.material(),
       fiMaterial = vgl.material(), frontPeelShader = null, blendShader = null,
-      finalShader, NUM_PASSES = 3, m_quad = null, fpwidth, fpheight, blwidth, blheight,
+      finalShader, NUM_PASSES = 10, m_quad = null, fpwidth, fpheight, blwidth, blheight,
       fiwidth, fiheight, fpopacity, fibackgroundColor;
 
 
