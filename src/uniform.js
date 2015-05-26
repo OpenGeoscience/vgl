@@ -39,7 +39,7 @@ vgl.uniform = function(type, name) {
 
       case gl.FLOAT_VEC3:
       case gl.INT_VEC3:
-      case gl.BOOLT_VEC3:
+      case gl.BOOL_VEC3:
         return 3;
 
       case gl.FLOAT_VEC4:
