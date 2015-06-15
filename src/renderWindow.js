@@ -36,7 +36,8 @@ vgl.renderWindow = function(canvas) {
       m_height = 400,
       m_canvas = canvas,
       m_activeRender = null,
-      m_renderers = [];
+      m_renderers = [],
+      m_context = null;
 
   ////////////////////////////////////////////////////////////////////////////
   /**
@@ -247,12 +248,12 @@ vgl.renderWindow = function(canvas) {
   ////////////////////////////////////////////////////////////////////////////
   this._setup = function(renderState) {
     // Initialize the global variable gl to null.
-    gl = null;
+    m_context = null;
 
     try {
       // Try to grab the standard context. If it fails, fallback to
       // experimental.
-      gl = m_canvas.getContext("webgl")
+      m_context = m_canvas.getContext("webgl")
            || m_canvas.getContext("experimental-webgl");
 
       // Set width and height of renderers if not set already
@@ -271,7 +272,7 @@ vgl.renderWindow = function(canvas) {
     }
 
     // If we don't have a GL context, give up now
-    if (!gl) {
+    if (!m_context) {
       console("[ERROR] Unable to initialize WebGL. Your browser may not support it.");
     }
 

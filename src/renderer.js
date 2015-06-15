@@ -19,6 +19,7 @@
 vgl.renderState = function() {
   'use strict';
 
+  this.m_context = null;
   this.m_modelViewMatrix = mat4.create();
   this.m_normalMatrix = mat4.create();
   this.m_projectionMatrix = null;
@@ -42,7 +43,8 @@ vgl.renderer = function() {
   vgl.graphicsObject.call(this);
 
   /** @private */
-  var m_this = this;
+  var m_this = this,
+      m_renderWindow = null,
       m_this.m_sceneRoot = new vgl.groupNode(),
       m_this.m_camera = new vgl.camera(),
       m_this.m_nearClippingPlaneTolerance = null,
@@ -117,6 +119,29 @@ vgl.renderer = function() {
     m_this.m_resizable = r;
   };
 
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
+   * Return render window (owner) of the renderer
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.renderWindow = function() {
+    return m_this.m_context;
+  };
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
+   * Set render window for the renderer
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.setRenderWindow = function(renWin) {
+    if (m_this.m_renderWindow !== renWin) {
+      m_this.m_renderWindow.removeRenderer(this);
+      m_this.m_renderWindow = renWin;
+      m_this.modified();
+    }
+  };
+
   ////////////////////////////////////////////////////////////////////////////
   /**
    * Get background color
@@ -140,6 +165,8 @@ vgl.renderer = function() {
     m_this.m_camera.setClearColor(r, g, b, a);
     m_this.modified();
   };
+
+  this
 
   ////////////////////////////////////////////////////////////////////////////
   /**
@@ -173,6 +200,8 @@ vgl.renderer = function() {
         mvMatrixInv = mat4.create(), clearColor = null;
 
     renSt = new vgl.renderState();
+    renSt.m_renderer = m_this;
+    renSt.m_context = m_this.renderWindow().context();
 
     if (m_this.m_renderPasses)  {
       for (i = 0; i < m_this.m_renderPasses.length; ++i) {

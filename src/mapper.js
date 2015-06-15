@@ -57,14 +57,14 @@ vgl.mapper = function(arg) {
    * @private
    */
   ////////////////////////////////////////////////////////////////////////////
-  function createVertexBufferObjects() {
+  function createVertexBufferObjects(renderState) {
     if (m_geomData) {
       var numberOfSources = m_geomData.numberOfSources(),
           i, j, k, bufferId = null, keys, ks, numberOfPrimitives, data;
 
       for (i = 0; i < numberOfSources; ++i) {
         bufferId = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, bufferId);
+        renderState.m_context.bindBuffer(gl.ARRAY_BUFFER, bufferId);
         data = m_geomData.source(i).data();
         if (!(data instanceof Float32Array)) {
           data = new Float32Array(data);
