@@ -47,39 +47,41 @@ vgl.fbo = function() {
 
   ////////////////////////////////////////////////////////////////////////////
   function createFBO(renderState) {
-    m_handle = gl.createFramebuffer();
-    gl.bindFramebuffer(gl.FRAMEBUFFER, m_handle);
+    m_handle = renderState.m_context.createFramebuffer();
+    renderState.m_context.bindFramebuffer(vgl.GL.FRAMEBUFFER, m_handle);
 
     var colorBufferHandle, depthBufferHandle,
         colorTexture = m_fboAttachmentMap[vgl.GL.COLOR_ATTACHMENT0],
         depthTexture = m_fboAttachmentMap[vgl.GL.DEPTH_ATTACHMENT];
 
     if (!colorTexture) {
-      colorBufferHandle = gl.createRenderbuffer();
-      gl.bindRenderbuffer(gl.RENDERBUFFER, colorBufferHandle);
-      gl.renderbufferStorage(gl.RENDERBUFFER, gl.RGB565, m_width, m_height);
-      gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.RENDERBUFFER, colorBufferHandle);
+      colorBufferHandle = renderState.m_context.createRenderbuffer();
+      renderState.m_context.bindRenderbuffer(vgl.GL.RENDERBUFFER, colorBufferHandle);
+      renderState.m_context.renderbufferStorage(vgl.GL.RENDERBUFFER,
+        vgl.GL.RGB565, m_width, m_height);
+      renderState.m_context.framebufferRenderbuffer(vgl.GL.FRAMEBUFFER,
+        vgl.GL.COLOR_ATTACHMENT0, vgl.GL.RENDERBUFFER, colorBufferHandle);
       m_fboAttachmentMap[vgl.COLOR_ATTACHMENT0] = colorBufferHandle;
     }
     else {
       updateTexture(colorTexture, renderState);
       colorTexture.bind(renderState);
-      gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0,
-                              gl.TEXTURE_2D, colorTexture.textureHandle(), 0);
+      renderState.m_context.framebufferTexture2D(vgl.GL.FRAMEBUFFER, vgl.GL.COLOR_ATTACHMENT0,
+                              vgl.GL.TEXTURE_2D, colorTexture.textureHandle(), 0);
     }
 
     if (!depthTexture) {
-      depthBufferHandle =  gl.createRenderbuffer();
-      gl.bindRenderbuffer(gl.RENDERBUFFER, depthBufferHandle);
-      gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, m_width, m_height);
-      gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT,
-                                 gl.RENDERBUFFER, depthBufferHandle);
+      depthBufferHandle =  vgl.GL.createRenderbuffer();
+      renderState.m_context.bindRenderbuffer(vgl.GL.RENDERBUFFER, depthBufferHandle);
+      renderState.m_context.renderbufferStorage(vgl.GL.RENDERBUFFER, vgl.GL.DEPTH_COMPONENT16, m_width, m_height);
+      renderState.m_context.framebufferRenderbuffer(vgl.GL.FRAMEBUFFER, vgl.GL.DEPTH_ATTACHMENT,
+                                 vgl.GL.RENDERBUFFER, depthBufferHandle);
       m_fboAttachmentMap[vgl.DEPTH_ATTACHMENT] = depthBufferHandle;
     }
     else {
       updateTexture(depthTexture, renderState);
       depthTexture.bind(renderState);
-      gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.TEXTURE_2D,
+      renderState.m_context.framebufferTexture2D(vgl.GL.FRAMEBUFFER, vgl.GL.DEPTH_ATTACHMENT, vgl.GL.TEXTURE_2D,
         depthTexture.textureHandle(), 0);
     }
 
@@ -87,15 +89,15 @@ vgl.fbo = function() {
   }
 
   ////////////////////////////////////////////////////////////////////////////
-  function deleteFBO() {
+  function deleteFBO(renderState) {
     if (!m_handle) {
       return;
     }
 
     for (key in m_fboAttachmentMap) {
-      gl.deleteRenderbuffer(key);
+      renderState.m_context.deleteRenderbuffer(key);
     }
-    gl.deleteFramebuffer(m_handle);
+    renderState.m_context.deleteFramebuffer(m_handle);
   }
 
   ////////////////////////////////////////////////////////////////////////////
@@ -175,9 +177,10 @@ vgl.fbo = function() {
 
   ////////////////////////////////////////////////////////////////////////////
   this.setup = function(renderState) {
-    if (m_fboCreationTime.getMTime() < m_this.getMTime()) {
-      deleteFBO();
-      createFBO();
+    if (m_fboCreationTime.getMTime() < m_this.getMTime() ||
+        renderState.m_contextChanged) {
+      deleteFBO(renderState);
+      createFBO(renderState);
     }
   }
 
@@ -185,9 +188,9 @@ vgl.fbo = function() {
   this.render = function(renderState) {
     m_this.setup(renderState);
 
-    var status = gl.checkFramebufferStatus(gl.FRAMEBUFFER);
-    if (status == gl.FRAMEBUFFER_COMPLETE) {
-      gl.bindFramebuffer(gl.FRAMEBUFFER, m_handle);
+    var status = renderState.m_context.checkFramebufferStatus(vgl.GL.FRAMEBUFFER);
+    if (status == vgl.GL.FRAMEBUFFER_COMPLETE) {
+      renderState.m_context.bindFramebuffer(vgl.GL.FRAMEBUFFER, m_handle);
     } else {
       console.log("[error] Unable to render imcomplete buffer " + status);
     }
@@ -197,7 +200,7 @@ vgl.fbo = function() {
 
   ////////////////////////////////////////////////////////////////////////////
   this.remove = function(renderState) {
-     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+     renderState.m_context.bindFramebuffer(vgl.GL.FRAMEBUFFER, null);
   }
 };
 
