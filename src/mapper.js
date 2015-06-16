@@ -43,10 +43,10 @@ vgl.mapper = function(arg) {
    * @private
    */
   ////////////////////////////////////////////////////////////////////////////
-  function deleteVertexBufferObjects() {
+  function deleteVertexBufferObjects(renderState) {
     var i;
     for (i = 0; i < m_buffers.length; ++i) {
-      gl.deleteBuffer(m_buffers[i]);
+      renderState.m_context.deleteBuffer(m_buffers[i]);
     }
   }
 
@@ -63,14 +63,15 @@ vgl.mapper = function(arg) {
           i, j, k, bufferId = null, keys, ks, numberOfPrimitives, data;
 
       for (i = 0; i < numberOfSources; ++i) {
-        bufferId = gl.createBuffer();
-        renderState.m_context.bindBuffer(gl.ARRAY_BUFFER, bufferId);
+        bufferId = renderState.m_context.createBuffer();
+        renderState.m_context.bindBuffer(vgl.GL.ARRAY_BUFFER, bufferId);
         data = m_geomData.source(i).data();
         if (!(data instanceof Float32Array)) {
           data = new Float32Array(data);
         }
-        gl.bufferData(gl.ARRAY_BUFFER, data,
-                      m_dynamicDraw ? gl.DYNAMIC_DRAW : gl.STATIC_DRAW);
+        renderState.m_context.bufferData(vgl.GL.ARRAY_BUFFER, data,
+                      m_dynamicDraw ? vgl.DYNAMIC_DRAW :
+                      vgl.STATIC_DRAW);
 
         keys = m_geomData.source(i).keys();
         ks = [];
@@ -85,10 +86,10 @@ vgl.mapper = function(arg) {
 
       numberOfPrimitives = m_geomData.numberOfPrimitives();
       for (k = 0; k < numberOfPrimitives; ++k) {
-        bufferId = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, bufferId);
-        gl.bufferData(gl.ARRAY_BUFFER, m_geomData.primitive(k)
-            .indices(), gl.STATIC_DRAW);
+        bufferId = renderState.m_context.createBuffer();
+        renderState.m_context.bindBuffer(vgl.GL.ARRAY_BUFFER, bufferId);
+        renderState.m_context.bufferData(vgl.GL.ARRAY_BUFFER,
+          m_geomData.primitive(k).indices(), vgl.STATIC_DRAW);
         m_buffers[i++] = bufferId;
       }
 
@@ -115,15 +116,15 @@ vgl.mapper = function(arg) {
    * @private
    */
   ////////////////////////////////////////////////////////////////////////////
-  function setupDrawObjects() {
+  function setupDrawObjects(renderState) {
     // Delete buffer objects from past if any.
-    deleteVertexBufferObjects();
+    deleteVertexBufferObjects(renderState);
 
     // Clear any cache related to buffers
-    cleanUpDrawObjects();
+    cleanUpDrawObjects(renderState);
 
     // Now construct the new ones.
-    createVertexBufferObjects();
+    createVertexBufferObjects(renderState);
 
     m_dirty = false;
   }
@@ -211,7 +212,7 @@ vgl.mapper = function(arg) {
    *    If not specified, use the source's own buffer.
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.updateSourceBuffer = function (sourceName, values) {
+  this.updateSourceBuffer = function (renderState, sourceName, values) {
     var bufferIndex = -1;
     for (var i = 0; i < m_geomData.numberOfSources(); i += 1) {
       if (m_geomData.source(i).name() === sourceName) {
@@ -225,11 +226,13 @@ vgl.mapper = function(arg) {
     if (!values) {
       values = m_geomData.source(i).dataToFloat32Array();
     }
-    gl.bindBuffer(gl.ARRAY_BUFFER, m_buffers[bufferIndex]);
+    renderState.m_context.bindBuffer(vgl.GL.ARRAY_BUFFER,
+      m_buffers[bufferIndex]);
     if (values instanceof Float32Array) {
-      gl.bufferSubData(gl.ARRAY_BUFFER, 0, values);
+      renderState.m_context.bufferSubData(vgl.GL.ARRAY_BUFFER, 0, values);
     } else {
-      gl.bufferSubData(gl.ARRAY_BUFFER, 0, new Float32Array(values));
+      renderState.m_context.bufferSubData(vgl.GL.ARRAY_BUFFER, 0,
+        new Float32Array(values));
     }
     return true;
   };
@@ -259,12 +262,13 @@ vgl.mapper = function(arg) {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.render = function(renderState) {
-    if (this.getMTime() > m_glCompileTimestamp.getMTime()) {
+    if (this.getMTime() > m_glCompileTimestamp.getMTime() |
+        renderState.m_contextChanged) {
       setupDrawObjects(renderState);
     }
 
     // Fixed vertex color
-    gl.vertexAttrib3fv(vgl.vertexAttributeKeys.Color, this.color());
+    renderState.m_context.vertexAttrib3fv(vgl.vertexAttributeKeys.Color, this.color());
 
     // TODO Use renderState
     var bufferIndex = 0,
@@ -272,7 +276,8 @@ vgl.mapper = function(arg) {
 
     for (i in m_bufferVertexAttributeMap) {
       if (m_bufferVertexAttributeMap.hasOwnProperty(i)) {
-        gl.bindBuffer(gl.ARRAY_BUFFER, m_buffers[bufferIndex]);
+        renderState.m_context.bindBuffer(vgl.GL.ARRAY_BUFFER,
+                                         m_buffers[bufferIndex]);
         for (j = 0; j < m_bufferVertexAttributeMap[i].length; ++j) {
           renderState.m_material
               .bindVertexData(renderState, m_bufferVertexAttributeMap[i][j]);
@@ -283,26 +288,27 @@ vgl.mapper = function(arg) {
 
     noOfPrimitives = m_geomData.numberOfPrimitives();
     for (j = 0; j < noOfPrimitives; ++j) {
-      gl.bindBuffer(gl.ARRAY_BUFFER, m_buffers[bufferIndex++]);
+      renderState.m_context.bindBuffer(vgl.GL.ARRAY_BUFFER,
+                                       m_buffers[bufferIndex++]);
       primitive = m_geomData.primitive(j);
       switch(primitive.primitiveType()) {
-        case gl.POINTS:
-          gl.drawArrays (gl.POINTS, 0, primitive.numberOfIndices());
+        case vgl.GL.POINTS:
+          renderState.m_context.drawArrays (vgl.GL.POINTS, 0, primitive.numberOfIndices());
           break;
-        case gl.LINES:
-          gl.drawArrays (gl.LINES, 0, primitive.numberOfIndices());
+        case vgl.GL.LINES:
+          renderState.m_context.drawArrays (vgl.GL.LINES, 0, primitive.numberOfIndices());
           break;
-        case gl.LINE_STRIP:
-          gl.drawArrays (gl.LINE_STRIP, 0, primitive.numberOfIndices());
+        case vgl.GL.LINE_STRIP:
+          renderState.m_context.drawArrays (vgl.GL.LINE_STRIP, 0, primitive.numberOfIndices());
           break;
-        case gl.TRIANGLES:
-          gl.drawArrays (gl.TRIANGLES, 0, primitive.numberOfIndices());
+        case vgl.GL.TRIANGLES:
+          renderState.m_context.drawArrays (vgl.GL.TRIANGLES, 0, primitive.numberOfIndices());
           break;
-        case gl.TRIANGLE_STRIP:
-          gl.drawArrays (gl.TRIANGLE_STRIP, 0, primitive.numberOfIndices());
+        case vgl.GL.TRIANGLE_STRIP:
+          renderState.m_context.drawArrays (vgl.GL.TRIANGLE_STRIP, 0, primitive.numberOfIndices());
           break;
       }
-      gl.bindBuffer (gl.ARRAY_BUFFER, null);
+      renderState.m_context.bindBuffer (vgl.GL.ARRAY_BUFFER, null);
     }
   };
 

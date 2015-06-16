@@ -346,7 +346,7 @@ vgl.vtkReader = function() {
 
     index = new Uint16Array(temp.buffer);
     vgllines.setIndices(index);
-    vgllines.setPrimitiveType(gl.LINES);
+    vgllines.setPrimitiveType(vgl.GL.LINES);
 
     //Getting Matrix
     size = 16*4;

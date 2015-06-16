@@ -135,6 +135,7 @@ vgl.renderWindow = function(canvas) {
   this.addRenderer = function(ren) {
     if (m_this.hasRenderer(ren) === false) {
       m_renderers.push(ren);
+      ren.setRenderWindow(m_this);
       if (m_activeRender === null) {
         m_activeRender = ren;
       }
@@ -277,6 +278,15 @@ vgl.renderWindow = function(canvas) {
     }
 
     return false;
+  };
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
+   * Return current GL context
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.context = function() {
+    return m_context;
   };
 
   ////////////////////////////////////////////////////////////////////////////
