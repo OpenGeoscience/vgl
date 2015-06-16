@@ -70,8 +70,8 @@ vgl.mapper = function(arg) {
           data = new Float32Array(data);
         }
         renderState.m_context.bufferData(vgl.GL.ARRAY_BUFFER, data,
-                      m_dynamicDraw ? vgl.DYNAMIC_DRAW :
-                      vgl.STATIC_DRAW);
+                      m_dynamicDraw ? vgl.GL.DYNAMIC_DRAW :
+                      vgl.GL.STATIC_DRAW);
 
         keys = m_geomData.source(i).keys();
         ks = [];
@@ -89,7 +89,7 @@ vgl.mapper = function(arg) {
         bufferId = renderState.m_context.createBuffer();
         renderState.m_context.bindBuffer(vgl.GL.ARRAY_BUFFER, bufferId);
         renderState.m_context.bufferData(vgl.GL.ARRAY_BUFFER,
-          m_geomData.primitive(k).indices(), vgl.STATIC_DRAW);
+          m_geomData.primitive(k).indices(), vgl.GL.STATIC_DRAW);
         m_buffers[i++] = bufferId;
       }
 
@@ -104,7 +104,7 @@ vgl.mapper = function(arg) {
    * @private
    */
   ////////////////////////////////////////////////////////////////////////////
-  function cleanUpDrawObjects() {
+  function cleanUpDrawObjects(renderState) {
     m_bufferVertexAttributeMap = {};
     m_buffers = [];
   }

@@ -214,11 +214,11 @@ vgl.shaderProgram = function() {
    * This method should be used directly unless required
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.updateUniforms = function() {
+  this.updateUniforms = function(renderState) {
     var i;
 
     for (i = 0; i < m_uniforms.length; ++i) {
-      m_uniforms[i].callGL(m_uniformNameToLocation[m_uniforms[i].name()]);
+      m_uniforms[i].callGL(renderState, m_uniformNameToLocation[m_uniforms[i].name()]);
     }
   };
 
@@ -268,8 +268,8 @@ vgl.shaderProgram = function() {
    */
   /////////////////////////////////////////////////////////////////////////////
   this._cleanup = function(renderState) {
-    m_this.deleteVertexAndFragment();
-    m_this.deleteProgram();
+    m_this.deleteVertexAndFragment(renderState);
+    m_this.deleteProgram(renderState);
   };
 
   /////////////////////////////////////////////////////////////////////////////
@@ -310,16 +310,16 @@ vgl.shaderProgram = function() {
 
     // Compile shaders
     for (i = 0; i < m_shaders.length; ++i) {
-      m_shaders[i].compile();
-      m_shaders[i].attachShader(m_programHandle);
+      m_shaders[i].compile(renderState);
+      m_shaders[i].attachShader(renderState, m_programHandle);
     }
 
-    m_this.bindAttributes();
+    m_this.bindAttributes(renderState);
 
     // link program
-    if (!m_this.link()) {
+    if (!m_this.link(renderState)) {
       console.log("[ERROR] Failed to link Program");
-      m_this._cleanup();
+      m_this._cleanup(renderState);
     }
 
     m_compileTimestamp.modified();
@@ -406,11 +406,11 @@ vgl.shaderProgram = function() {
    * Bind uniforms
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.bindUniforms = function() {
+  this.bindUniforms = function(renderState) {
     var i;
     for (i = 0; i < m_uniforms.length; ++i) {
       m_uniformNameToLocation[m_uniforms[i].name()] = this
-          .queryUniformLocation(m_uniforms[i].name());
+          .queryUniformLocation(renderState, m_uniforms[i].name());
     }
   };
 

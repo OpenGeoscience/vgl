@@ -81,13 +81,13 @@ vgl.vertexAttribute = function(name) {
         sourceData = geometryData.sourceData(key),
         program = renderState.m_material.shaderProgram();
 
-    gl.vertexAttribPointer(program.attributeLocation(m_name), sourceData
+    renderState.m_context.vertexAttribPointer(program.attributeLocation(m_name), sourceData
         .attributeNumberOfComponents(key), sourceData.attributeDataType(key),
                            sourceData.normalized(key), sourceData
                                .attributeStride(key), sourceData
                                .attributeOffset(key));
 
-    gl.enableVertexAttribArray(program.attributeLocation(m_name));
+    renderState.m_context.enableVertexAttribArray(program.attributeLocation(m_name));
   };
 
   //////////////////////////////////////////////////////////////////////////////
@@ -101,6 +101,6 @@ vgl.vertexAttribute = function(name) {
   this.undoBindVertexData = function(renderState, key) {
     var program = renderState.m_material.shaderProgram();
 
-    gl.disableVertexAttribArray(program.attributeLocation(m_name));
+    renderState.m_context.disableVertexAttribArray(program.attributeLocation(m_name));
   };
 };
