@@ -218,7 +218,8 @@ vgl.shaderProgram = function() {
     var i;
 
     for (i = 0; i < m_uniforms.length; ++i) {
-      m_uniforms[i].callGL(renderState, m_uniformNameToLocation[m_uniforms[i].name()]);
+      m_uniforms[i].callGL(renderState,
+        m_uniformNameToLocation[m_uniforms[i].name()]);
     }
   };
 
