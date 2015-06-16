@@ -77,7 +77,8 @@ vgl.depthPeelRenderer = function() {
     frontPeelShader.addVertexAttribute(fpcolor, vgl.vertexAttributeKeys.Color);
 
     // Compile and link the shader
-    frontPeelShader.compileAndLink();
+    frontPeelShader.compileAndLink(renderState);
+
     //fpMaterial.addAttribute(fpblend);
     fpMaterial.addAttribute(frontPeelShader);
 
@@ -115,7 +116,7 @@ vgl.depthPeelRenderer = function() {
       vgl.vertexAttributeKeys.Position);
 
     // Compile and link the shader
-    blendShader.compileAndLink();
+    blendShader.compileAndLink(renderState);
     blMaterial.addAttribute(blendShader);
 
     //     //add attributes and uniforms
@@ -147,7 +148,7 @@ vgl.depthPeelRenderer = function() {
     finalShader.addUniform(fiheight);
     finalShader.addUniform(fibackgroundColor);
     finalShader.addVertexAttribute(fivertex, vgl.vertexAttributeKeys.Position);
-    finalShader.compileAndLink();
+    finalShader.compileAndLink(renderState);
     fiMaterial.addAttribute(finalShader);
   }
 
@@ -428,9 +429,12 @@ vgl.depthPeelRenderer = function() {
         mvMatrixInv = mat4.create();
 
     renSt = new vgl.renderState();
+    renSt.m_renderer = m_this;
+    renSt.m_context = m_this.renderWindow().context();
+    renSt.m_contextChanged = m_this.m_contextChanged;
 
     // Set the viewport for this renderer
-    renderState.m_context.viewport(m_this.m_x, m_this.m_y, m_this.m_width, m_this.m_height);
+    renSt.m_context.viewport(m_this.m_x, m_this.m_y, m_this.m_width, m_this.m_height);
 
     // Check if we have initialized
     setup(renSt);
