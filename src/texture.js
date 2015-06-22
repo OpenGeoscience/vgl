@@ -45,7 +45,7 @@ vgl.texture = function() {
   function activateTextureUnit(renderState) {
     switch (m_that.m_textureUnit) {
       case 0:
-        renderState.m_context.activeTexture(gl.TEXTURE0);
+        renderState.m_context.activeTexture(vgl.GL.TEXTURE0);
         break;
       case 1:
         renderState.m_context.activeTexture(vgl.GL.TEXTURE1);

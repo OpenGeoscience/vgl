@@ -38,7 +38,7 @@ vgl.blendFunction = function(source, destination) {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.apply = function(renderState) {
-    gl.blendFuncSeparate(m_source, m_destination,
+    renderState.m_context.blendFuncSeparate(m_source, m_destination,
                          vgl.GL.ONE, vgl.GL.ONE_MINUS_SRC_ALPHA);
   };
 
@@ -74,14 +74,14 @@ vgl.blend = function() {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.bind = function(renderState) {
-    m_wasEnabled = gl.isEnabled(vgl.GL.BLEND);
+    m_wasEnabled = renderState.m_context.isEnabled(vgl.GL.BLEND);
 
     if (this.enabled()) {
-      gl.enable(vgl.GL.BLEND);
+      renderState.m_context.enable(vgl.GL.BLEND);
       m_blendFunction.apply(renderState);
     }
     else {
-      gl.disable(vgl.GL.BLEND);
+      renderState.m_context.disable(vgl.GL.BLEND);
     }
 
     return true;
@@ -96,10 +96,10 @@ vgl.blend = function() {
   ////////////////////////////////////////////////////////////////////////////
   this.undoBind = function(renderState) {
     if (m_wasEnabled) {
-      gl.enable(vgl.GL.BLEND);
+      renderState.m_context.enable(vgl.GL.BLEND);
     }
     else {
-      gl.disable(vgl.GL.BLEND);
+      renderState.m_context.disable(vgl.GL.BLEND);
     }
 
     return true;
