@@ -288,6 +288,7 @@ vgl.renderer = function() {
       renSt.m_material.undoBind(renSt);
     }
 
+    renSt.m_context.finish();
     m_this.m_contextChanged = false;
   };
 
