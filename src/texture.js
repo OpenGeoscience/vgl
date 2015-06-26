@@ -33,65 +33,64 @@ vgl.texture = function() {
   this.m_textureHandle = null;
   this.m_textureUnit = 0;
 
-  this.m_pixelFormat = null;
-  this.m_pixelDataType = null;
-
-  this.m_internalFormat = null;
+  this.m_pixelFormat = vgl.GL.RGBA;
+  this.m_pixelDataType = vgl.GL.UNSIGNED_BYTE;
+  this.m_internalFormat = vgl.GL.RGBA;
 
   this.m_image = null;
 
   var m_setupTimestamp = vgl.timestamp(),
       m_that = this;
 
-  function activateTextureUnit() {
+  function activateTextureUnit(renderState) {
     switch (m_that.m_textureUnit) {
       case 0:
-        gl.activeTexture(gl.TEXTURE0);
+        renderState.m_context.activeTexture(vgl.GL.TEXTURE0);
         break;
       case 1:
-        gl.activeTexture(gl.TEXTURE1);
+        renderState.m_context.activeTexture(vgl.GL.TEXTURE1);
         break;
       case 2:
-        gl.activeTexture(gl.TEXTURE2);
+        gl.activeTexture(vgl.GL.TEXTURE2);
         break;
       case 3:
-        gl.activeTexture(gl.TEXTURE3);
+        renderState.m_context.activeTexture(vgl.GL.TEXTURE3);
         break;
       case 4:
-        gl.activeTexture(gl.TEXTURE4);
+        renderState.m_context.activeTexture(vgl.GL.TEXTURE4);
         break;
       case 5:
-        gl.activeTexture(gl.TEXTURE5);
+        renderState.m_context.activeTexture(vgl.GL.TEXTURE5);
         break;
       case 6:
-        gl.activeTexture(gl.TEXTURE6);
+        renderState.m_context.activeTexture(vgl.GL.TEXTURE6);
         break;
       case 7:
-        gl.activeTexture(gl.TEXTURE7);
+        renderState.m_context.activeTexture(vgl.GL.TEXTURE7);
         break;
       case 8:
-        gl.activeTexture(gl.TEXTURE8);
+        renderState.m_context.activeTexture(vgl.GL.TEXTURE8);
         break;
       case 9:
-        gl.activeTexture(gl.TEXTURE9);
+        renderState.m_context.activeTexture(vgl.GL.TEXTURE9);
         break;
       case 10:
-        gl.activeTexture(gl.TEXTURE10);
+        renderState.m_context.activeTexture(vgl.GL.TEXTURE10);
         break;
       case 11:
-        gl.activeTexture(gl.TEXTURE11);
+        renderState.m_context.activeTexture(vgl.GL.TEXTURE11);
         break;
       case 12:
-        gl.activeTexture(gl.TEXTURE12);
+        renderState.m_context.activeTexture(vgl.GL.TEXTURE12);
         break;
       case 13:
-        gl.activeTexture(gl.TEXTURE13);
+        renderState.m_context.activeTexture(vgl.GL.TEXTURE13);
         break;
       case 14:
-        gl.activeTexture(gl.TEXTURE14);
+        renderState.m_context.activeTexture(vgl.GL.TEXTURE14);
         break;
       case 15:
-        gl.activeTexture(gl.TEXTURE15);
+        renderState.m_context.activeTexture(vgl.GL.TEXTURE15);
         break;
       default:
         throw "[error] Texture unit "  + this.m_textureUnit +
@@ -107,19 +106,21 @@ vgl.texture = function() {
    */
   /////////////////////////////////////////////////////////////////////////////
   this.setup = function(renderState) {
-    activateTextureUnit();
+    // Activate the texture unit first
+    activateTextureUnit(renderState);
 
-    gl.deleteTexture(this.m_textureHandle);
-    this.m_textureHandle = gl.createTexture();
-    gl.bindTexture(gl.TEXTURE_2D, this.m_textureHandle);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-    gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
-    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+    renderState.m_context.deleteTexture(this.m_textureHandle);
+    this.m_textureHandle = renderState.m_context.createTexture();
+    renderState.m_context.bindTexture(vgl.GL.TEXTURE_2D, this.m_textureHandle);
+    renderState.m_context.texParameteri(vgl.GL.TEXTURE_2D, vgl.GL.TEXTURE_MIN_FILTER, vgl.GL.LINEAR);
+    renderState.m_context.texParameteri(vgl.GL.TEXTURE_2D, vgl.GL.TEXTURE_MAG_FILTER, vgl.GL.LINEAR);
+    renderState.m_context.texParameteri(vgl.GL.TEXTURE_2D, vgl.GL.TEXTURE_WRAP_S, vgl.GL.CLAMP_TO_EDGE);
+    renderState.m_context.texParameteri(vgl.GL.TEXTURE_2D, vgl.GL.TEXTURE_WRAP_T, vgl.GL.CLAMP_TO_EDGE);
 
     if (this.m_image !== null) {
+      renderState.m_context.pixelStorei(vgl.GL.UNPACK_ALIGNMENT, 1);
+      renderState.m_context.pixelStorei(vgl.GL.UNPACK_FLIP_Y_WEBGL, true);
+
       this.updateDimensions();
       this.computeInternalFormatUsingImage();
 
@@ -128,15 +129,15 @@ vgl.texture = function() {
       // console.log("m_pixelDataType " + this.m_pixelDataType);
 
       // FOR now support only 2D textures
-      gl.texImage2D(gl.TEXTURE_2D, 0, this.m_internalFormat,
-                    this.m_pixelFormat, this.m_pixelDataType, this.m_image);
+      renderState.m_context.texImage2D(vgl.GL.TEXTURE_2D, 0, this.m_internalFormat,
+        this.m_pixelFormat, this.m_pixelDataType, this.m_image);
     }
     else {
-      gl.texImage2D(gl.TEXTURE_2D, 0, this.m_internalFormat,
-                    this.m_pixelFormat, this.m_pixelDataType, null);
+      renderState.m_context.texImage2D(vgl.GL.TEXTURE_2D, 0, this.m_internalFormat,
+        this.m_width, this.m_height, 0, this.m_pixelFormat, this.m_pixelDataType, null);
     }
 
-    gl.bindTexture(gl.TEXTURE_2D, null);
+    renderState.m_context.bindTexture(vgl.GL.TEXTURE_2D, null);
     m_setupTimestamp.modified();
   };
 
@@ -153,8 +154,8 @@ vgl.texture = function() {
       this.setup(renderState);
     }
 
-    activateTextureUnit();
-    gl.bindTexture(gl.TEXTURE_2D, this.m_textureHandle);
+    activateTextureUnit(renderState);
+    renderState.m_context.bindTexture(vgl.GL.TEXTURE_2D, this.m_textureHandle);
   };
 
   /////////////////////////////////////////////////////////////////////////////
@@ -165,7 +166,7 @@ vgl.texture = function() {
    */
   /////////////////////////////////////////////////////////////////////////////
   this.undoBind = function(renderState) {
-    gl.bindTexture(gl.TEXTURE_2D, null);
+    renderState.m_context.bindTexture(vgl.GL.TEXTURE_2D, null);
   };
 
   /////////////////////////////////////////////////////////////////////////////
@@ -247,14 +248,42 @@ vgl.texture = function() {
    */
   /////////////////////////////////////////////////////////////////////////////
   this.setWidth = function(width) {
-    if (this.m_image === null) {
-      return false;
+    if (m_that.m_width !== width) {
+      m_that.m_width = width;
+      m_that.modified();
+      return true;
     }
 
-    this.m_width = width;
-    this.modified();
+    return false;
+  };
 
-    return true;
+  /////////////////////////////////////////////////////////////////////////////
+  /**
+   * Get width of the texture
+   *
+   * @returns {*}
+   */
+  /////////////////////////////////////////////////////////////////////////////
+  this.height = function() {
+    return m_that.m_height;
+  };
+
+  /////////////////////////////////////////////////////////////////////////////
+  /**
+   * Set height of the texture
+   *
+   * @param {number} height
+   * @returns {vgl.texture}
+   */
+  /////////////////////////////////////////////////////////////////////////////
+  this.setHeight = function(height) {
+    if (m_that.m_height !== height) {
+      m_that.m_height = height;
+      m_that.modified();
+      return true;
+    }
+
+    return false;
   };
 
   /////////////////////////////////////////////////////////////////////////////
@@ -396,17 +425,17 @@ vgl.texture = function() {
     // and hence it's pixel format is the only way to query
     // information on how color has been stored.
     // switch (this.m_image.pixelFormat()) {
-    // case gl.RGB:
-    // this.m_internalFormat = gl.RGB;
+    // case vgl.GL.RGB:
+    // this.m_internalFormat = vgl.GL.RGB;
     // break;
-    // case gl.RGBA:
-    // this.m_internalFormat = gl.RGBA;
+    // case vgl.GL.RGBA:
+    // this.m_internalFormat = vgl.GL.RGBA;
     // break;
-    // case gl.Luminance:
-    // this.m_internalFormat = gl.Luminance;
+    // case vgl.GL.Luminance:
+    // this.m_internalFormat = vgl.GL.Luminance;
     // break;
-    // case gl.LuminanceAlpha:
-    // this.m_internalFormat = gl.LuminanceAlpha;
+    // case vgl.GL.LuminanceAlpha:
+    // this.m_internalFormat = vgl.GL.LuminanceAlpha;
     // break;
     // // Do nothing when image pixel format is none or undefined.
     // default:
@@ -414,9 +443,9 @@ vgl.texture = function() {
     // };
 
     // TODO Fix this
-    this.m_internalFormat = gl.RGBA;
-    this.m_pixelFormat = gl.RGBA;
-    this.m_pixelDataType = gl.UNSIGNED_BYTE;
+    this.m_internalFormat = vgl.GL.RGBA;
+    this.m_pixelFormat = vgl.GL.RGBA;
+    this.m_pixelDataType = vgl.GL.UNSIGNED_BYTE;
   };
 
   /////////////////////////////////////////////////////////////////////////////
@@ -501,28 +530,28 @@ vgl.lookupTable = function() {
   /////////////////////////////////////////////////////////////////////////////
   this.setup = function(renderState) {
     if (this.textureUnit() === 0) {
-      gl.activeTexture(gl.TEXTURE0);
+      renderState.m_context.activeTexture(vgl.GL.TEXTURE0);
     } else if (this.textureUnit() === 1) {
-      gl.activeTexture(gl.TEXTURE1);
+      renderState.m_context.activeTexture(vgl.GL.TEXTURE1);
     }
 
-    gl.deleteTexture(this.m_textureHandle);
-    this.m_textureHandle = gl.createTexture();
-    gl.bindTexture(gl.TEXTURE_2D, this.m_textureHandle);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-    gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
+    renderState.m_context.deleteTexture(this.m_textureHandle);
+    this.m_textureHandle = renderState.m_context.createTexture();
+    renderState.m_context.bindTexture(vgl.GL.TEXTURE_2D, this.m_textureHandle);
+    renderState.m_context.texParameteri(vgl.GL.TEXTURE_2D, vgl.GL.TEXTURE_MIN_FILTER, vgl.GL.LINEAR);
+    renderState.m_context.texParameteri(vgl.GL.TEXTURE_2D, vgl.GL.TEXTURE_MAG_FILTER, vgl.GL.LINEAR);
+    renderState.m_context.texParameteri(vgl.GL.TEXTURE_2D, vgl.GL.TEXTURE_WRAP_S, vgl.GL.CLAMP_TO_EDGE);
+    renderState.m_context.texParameteri(vgl.GL.TEXTURE_2D, vgl.GL.TEXTURE_WRAP_T, vgl.GL.CLAMP_TO_EDGE);
+    renderState.m_context.pixelStorei(vgl.GL.UNPACK_ALIGNMENT, 1);
 
     this.m_width = this.m_colorTable.length/4;
     this.m_height = 1;
     this.m_depth = 0;
-    gl.texImage2D(gl.TEXTURE_2D,
-                  0, gl.RGBA, this.m_width, this.m_height, this.m_depth,
-                  gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array(this.m_colorTable));
+    renderState.m_context.texImage2D(vgl.GL.TEXTURE_2D,
+        0, vgl.GL.RGBA, this.m_width, this.m_height, this.m_depth,
+        vgl.GL.RGBA, vgl.GL.UNSIGNED_BYTE, new Uint8Array(this.m_colorTable));
 
-    gl.bindTexture(gl.TEXTURE_2D, null);
+    renderState.m_context.bindTexture(vgl.GL.TEXTURE_2D, null);
     m_setupTimestamp.modified();
   };
 

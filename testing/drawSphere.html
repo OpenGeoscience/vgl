@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+    <script src="http://code.jquery.com/ui/1.10.1/jquery-ui.js"></script>
+    <script type="text/javascript" src="/testing/common/js/bootstrap.js"></script>
+    <script type="text/javascript" src="/testing/common/js/gl-matrix.js"></script>
+    <script type="text/javascript" src="/testing/common/js/select2.min.js"></script>
+    <script type="text/javascript" src="/web/lib/vgl.js"></script>
+    <script>
+      var data = {};
+
+      var testDrawCountries = {};
+      testDrawCountries.main = function() {
+        var node = document.getElementById("glcanvas"),
+            viewer = vgl.viewer(node), renderer,
+            reader = vgl.geojsonReader(),
+            geoms, i, mapper, material, actor, interactorStyle;
+
+        interactorStyle = vgl.trackballInteractorStyle();
+
+        viewer.init();
+        viewer.renderWindow().resize($(node).width(), $(node).height());
+        viewer.setInteractorStyle(interactorStyle);
+
+        renderer = viewer.renderWindow().activeRenderer();
+        viewer.renderWindow().removeRenderer(renderer);
+
+        renderer = vgl.depthPeelRenderer();
+        viewer.renderWindow().addRenderer(renderer);
+
+        $.getJSON("/data/sphere_small.json", {
+          format: "json"
+          })
+        .done(function(data) {
+          geoms = reader.readGJObject(data);
+
+          for (i = 0; i < geoms.length; ++i) {
+            mapper = vgl.mapper();
+            mapper.setGeometryData(geoms[i]);
+
+            material = vgl.utils.createGeometryMaterial();
+
+            actor = vgl.actor();
+            actor.setMapper(mapper);
+            actor.setMaterial(material);
+
+            renderer.addActor(actor);
+          }
+
+          renderer.setBackgroundColor(0.0, 0.1, 0.1, 1.0);
+          renderer.resetCamera();
+
+          viewer.renderWindow().resize($(node).width(), $(node).height());
+          viewer.render();
+        });
+    }
+   </script>
+  </head>
+  <body onload="testDrawCountries.main()">
+    <div>
+      <!-- It is important that canvas has height and width -->
+      <canvas id="glcanvas" width="400px" height="400px"></canvas>
+    </div>
+  </body>
+</html>

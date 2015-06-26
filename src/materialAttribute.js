@@ -32,10 +32,11 @@ vgl.materialAttribute = function(type) {
   if (!(this instanceof vgl.materialAttribute)) {
     return new vgl.materialAttribute();
   }
-  vgl.object.call(this);
+  vgl.graphicsObject.call(this);
 
   /** @private */
-  var m_type = type,
+  var m_this = this,
+      m_type = type,
       m_enabled = true;
 
   ////////////////////////////////////////////////////////////////////////////
@@ -58,55 +59,6 @@ vgl.materialAttribute = function(type) {
   ////////////////////////////////////////////////////////////////////////////
   this.enabled = function() {
     return m_enabled;
-  };
-
-  ////////////////////////////////////////////////////////////////////////////
-  /**
-   * Setup (initialize) the material attribute
-   *
-   * @param renderState
-   * @returns {boolean}
-   */
-  ////////////////////////////////////////////////////////////////////////////
-  this.setup = function(renderState) {
-    return false;
-  };
-
-  ////////////////////////////////////////////////////////////////////////////
-  /**
-   * Bind and activate the material attribute
-   *
-   * @param renderState
-   * @returns {boolean}
-   */
-  ////////////////////////////////////////////////////////////////////////////
-  this.bind = function(renderState) {
-    return false;
-  };
-
-  ////////////////////////////////////////////////////////////////////////////
-  /**
-   * Undo bind and deactivate the material
-   *
-   * @param renderState
-   * @returns {boolean}
-   */
-  ////////////////////////////////////////////////////////////////////////////
-  this.undoBind = function(renderState) {
-    return false;
-  };
-
-  ////////////////////////////////////////////////////////////////////////////
-  /**
-   * Initialize vertex data for the material attribute
-   *
-   * @param renderState
-   * @param key
-   * @returns {boolean}
-   */
-  ////////////////////////////////////////////////////////////////////////////
-  this.setupVertexData = function(renderState, key) {
-    return false;
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -135,7 +87,7 @@ vgl.materialAttribute = function(type) {
     return false;
   };
 
-  return this;
+  return m_this;
 };
 
-inherit(vgl.materialAttribute, vgl.object);
+inherit(vgl.materialAttribute, vgl.graphicsObject);

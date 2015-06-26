@@ -80,22 +80,22 @@ vgl.shader = function(type) {
    * @returns {null}
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.compile = function() {
+  this.compile = function(renderState) {
     if (this.getMTime() < m_compileTimestamp.getMTime()) {
       return m_shaderHandle;
     }
 
-    gl.deleteShader(m_shaderHandle);
-    m_shaderHandle = gl.createShader(m_shaderType);
-    gl.shaderSource(m_shaderHandle, m_shaderSource);
-    gl.compileShader(m_shaderHandle);
+    renderState.m_context.deleteShader(m_shaderHandle);
+    m_shaderHandle = renderState.m_context.createShader(m_shaderType);
+    renderState.m_context.shaderSource(m_shaderHandle, m_shaderSource);
+    renderState.m_context.compileShader(m_shaderHandle);
 
     // See if it compiled successfully
-    if (!gl.getShaderParameter(m_shaderHandle, gl.COMPILE_STATUS)) {
+    if (!renderState.m_context.getShaderParameter(m_shaderHandle, vgl.GL.COMPILE_STATUS)) {
       console.log("[ERROR] An error occurred compiling the shaders: "
-                  + gl.getShaderInfoLog(m_shaderHandle));
+                  + renderState.m_context.getShaderInfoLog(m_shaderHandle));
       console.log(m_shaderSource);
-      gl.deleteShader(m_shaderHandle);
+      renderState.m_context.deleteShader(m_shaderHandle);
       return null;
     }
 
@@ -111,8 +111,8 @@ vgl.shader = function(type) {
    * @param programHandle
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.attachShader = function(programHandle) {
-    gl.attachShader(programHandle, m_shaderHandle);
+  this.attachShader = function(renderState, programHandle) {
+    renderState.m_context.attachShader(programHandle, m_shaderHandle);
   };
 };
 

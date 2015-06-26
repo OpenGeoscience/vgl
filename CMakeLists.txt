@@ -22,6 +22,7 @@ set(_source_files
   GL.js
   timestamp.js
   object.js
+  graphicsObject.js
   event.js
   boundingObject.js
   node.js
@@ -57,7 +58,10 @@ set(_source_files
   picker.js
   shapefileReader.js
   vtkReader.js
-  DataBuffers.js
+  dataBuffers.js
+  fbo.js
+  renderPass.js
+  depthPeelRenderer.js
 )
 
 

@@ -23,10 +23,11 @@ vgl.material = function() {
   if (!(this instanceof vgl.material)) {
     return new vgl.material();
   }
-  vgl.object.call(this);
+  vgl.graphicsObject.call(this);
 
   // / Private member variables
-  var m_shaderProgram = new vgl.shaderProgram(),
+  var m_this = this,
+      m_shaderProgram = new vgl.shaderProgram(),
       m_binNumber = 100,
       m_textureAttributes = {},
       m_attributes = {};
@@ -52,7 +53,7 @@ vgl.material = function() {
   ////////////////////////////////////////////////////////////////////////////
   this.setBinNumber = function(binNo) {
     m_binNumber = binNo;
-    this.modified();
+    m_this.modified();
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -122,7 +123,7 @@ vgl.material = function() {
     if (attr.type() === vgl.materialAttributeType.Texture &&
         m_textureAttributes[attr.textureUnit()] !== attr) {
       m_textureAttributes[attr.textureUnit()] = attr;
-      this.modified();
+      m_this.modified();
       return true;
     }
 
@@ -136,7 +137,7 @@ vgl.material = function() {
     }
 
     m_attributes[attr.type()] = attr;
-    this.modified();
+    m_this.modified();
     return true;
   };
 
@@ -149,7 +150,7 @@ vgl.material = function() {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.addAttribute = function(attr) {
-    if (this.exists(attr)) {
+    if (m_this.exists(attr)) {
       return false;
     }
 
@@ -157,7 +158,7 @@ vgl.material = function() {
       // TODO Currently we don't check if we are replacing or not.
       // It would be nice to have a flag for it.
       m_textureAttributes[attr.textureUnit()] = attr;
-      this.modified();
+      m_this.modified();
       return true;
     }
 
@@ -167,7 +168,7 @@ vgl.material = function() {
     }
 
     m_attributes[attr.type()] = attr;
-    this.modified();
+    m_this.modified();
     return true;
   };
 
@@ -184,24 +185,36 @@ vgl.material = function() {
 
   ////////////////////////////////////////////////////////////////////////////
   /**
-   * Activate the material
+   * Setup (initialize) the material attribute
    *
    * @param renderState
+   * @returns {boolean}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.render = function(renderState) {
-    this.bind(renderState);
+  this._setup = function(renderState) {
+    return false;
   };
 
   ////////////////////////////////////////////////////////////////////////////
   /**
-   * Deactivate the material
+   * Remove any resources acquired before deletion
    *
    * @param renderState
+   * @returns {boolean}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.remove = function(renderState) {
-    this.undoBind(renderState);
+  this._cleanup = function(renderState) {
+    for (key in m_attributes) {
+      if (m_attributes.hasOwnProperty(key)) {
+          m_attributes[key]._cleanup(renderState);
+      }
+    }
+
+    for (key in m_textureAttributes) {
+      if (m_textureAttributes.hasOwnProperty(key)) {
+        m_textureAttributes[key]._cleanup(renderState);
+      }
+    }
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -214,9 +227,13 @@ vgl.material = function() {
   this.bind = function(renderState) {
     var key = null;
 
+    m_shaderProgram.bind(renderState);
+
     for (key in m_attributes) {
       if (m_attributes.hasOwnProperty(key)) {
-        m_attributes[key].bind(renderState);
+        if (m_attributes[key] !== m_shaderProgram) {
+          m_attributes[key].bind(renderState);
+        }
       }
     }
 
@@ -285,7 +302,7 @@ vgl.material = function() {
     }
   };
 
-  return this;
+  return m_this;
 };
 
 vgl.material.RenderBin = {
@@ -296,4 +313,4 @@ vgl.material.RenderBin = {
   "Overlay" : 10000
 };
 
-inherit(vgl.material, vgl.object);
+inherit(vgl.material, vgl.graphicsObject);

@@ -26,7 +26,8 @@ vgl.actor = function() {
   vgl.node.call(this);
 
   /** @private */
-  var m_transformMatrix = mat4.create(),
+  var m_this = this,
+      m_transformMatrix = mat4.create(),
       m_referenceFrame = vgl.boundingObject.ReferenceFrame.Relative,
       m_mapper = null;
 
@@ -51,7 +52,7 @@ vgl.actor = function() {
   this.setMatrix = function(tmatrix) {
     if (tmatrix !== m_transformMatrix) {
       m_transformMatrix = tmatrix;
-      this.modified();
+      m_this.modified();
     }
   };
 
@@ -77,7 +78,7 @@ vgl.actor = function() {
   this.setReferenceFrame = function(referenceFrame) {
     if (referenceFrame !== m_referenceFrame) {
       m_referenceFrame = referenceFrame;
-      this.modified();
+      m_this.modified();
       return true;
     }
     return false;
@@ -104,7 +105,7 @@ vgl.actor = function() {
   this.setMapper = function(mapper) {
     if (mapper !== m_mapper) {
       m_mapper = mapper;
-      this.boundsModified();
+      m_this.boundsModified();
     }
   };
 
@@ -149,14 +150,14 @@ vgl.actor = function() {
   ////////////////////////////////////////////////////////////////////////////
   this.computeBounds = function() {
     if (m_mapper === null || m_mapper === undefined) {
-      this.resetBounds();
+      m_this.resetBounds();
       return;
     }
 
-    var computeBoundsTimestamp = this.computeBoundsTimestamp(),
+    var computeBoundsTimestamp = m_this.computeBoundsTimestamp(),
         mapperBounds, minPt, maxPt, actorMatrix, newBounds;
 
-    if (this.boundsDirtyTimestamp().getMTime() > computeBoundsTimestamp.getMTime() ||
+    if (m_this.boundsDirtyTimestamp().getMTime() > computeBoundsTimestamp.getMTime() ||
       m_mapper.boundsDirtyTimestamp().getMTime() > computeBoundsTimestamp.getMTime()) {
 
       m_mapper.computeBounds();
@@ -177,7 +178,7 @@ vgl.actor = function() {
         minPt[2] > maxPt[2] ? minPt[2] : maxPt[2]
       ];
 
-      this.setBounds(newBounds[0], newBounds[1],
+      m_this.setBounds(newBounds[0], newBounds[1],
                      newBounds[2], newBounds[3],
                      newBounds[4], newBounds[5]);
 
@@ -185,7 +186,7 @@ vgl.actor = function() {
     }
   };
 
-  return this;
+  return m_this;
 };
 
 inherit(vgl.actor, vgl.node);

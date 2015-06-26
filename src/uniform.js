@@ -27,30 +27,30 @@ vgl.uniform = function(type, name) {
 
   this.getTypeNumberOfComponents = function(type) {
     switch (type) {
-      case gl.FLOAT:
-      case gl.INT:
-      case gl.BOOL:
+      case vgl.GL.FLOAT:
+      case vgl.GL.INT:
+      case vgl.GL.BOOL:
         return 1;
 
-      case gl.FLOAT_VEC2:
-      case gl.INT_VEC2:
-      case gl.BOOL_VEC2:
+      case vgl.GL.FLOAT_VEC2:
+      case vgl.GL.INT_VEC2:
+      case vgl.GL.BOOL_VEC2:
         return 2;
 
-      case gl.FLOAT_VEC3:
-      case gl.INT_VEC3:
-      case gl.BOOL_VEC3:
+      case vgl.GL.FLOAT_VEC3:
+      case vgl.GL.INT_VEC3:
+      case vgl.GL.BOOL_VEC3:
         return 3;
 
-      case gl.FLOAT_VEC4:
-      case gl.INT_VEC4:
-      case gl.BOOL_VEC4:
+      case vgl.GL.FLOAT_VEC4:
+      case vgl.GL.INT_VEC4:
+      case vgl.GL.BOOL_VEC4:
         return 4;
 
-      case gl.FLOAT_MAT3:
+      case vgl.GL.FLOAT_MAT3:
         return 9;
 
-      case gl.FLOAT_MAT4:
+      case vgl.GL.FLOAT_MAT4:
         return 16;
 
       default:
@@ -144,33 +144,33 @@ vgl.uniform = function(type, name) {
    * @param location
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.callGL = function(location) {
+  this.callGL = function(renderState, location) {
     if (this.m_numberElements < 1) {
       return;
     }
 
     switch (m_type) {
-      case gl.BOOL:
-      case gl.INT:
-        gl.uniform1iv(location, m_dataArray);
+      case vgl.GL.BOOL:
+      case vgl.GL.INT:
+        renderState.m_context.uniform1iv(location, m_dataArray);
         break;
-      case gl.FLOAT:
-        gl.uniform1fv(location, m_dataArray);
+      case vgl.GL.FLOAT:
+        renderState.m_context.uniform1fv(location, m_dataArray);
         break;
-      case gl.FLOAT_VEC2:
-        gl.uniform2fv(location, m_dataArray);
+      case vgl.GL.FLOAT_VEC2:
+        renderState.m_context.uniform2fv(location, m_dataArray);
         break;
-      case gl.FLOAT_VEC3:
-        gl.uniform3fv(location, m_dataArray);
+      case vgl.GL.FLOAT_VEC3:
+        renderState.m_context.uniform3fv(location, m_dataArray);
         break;
-      case gl.FLOAT_VEC4:
-        gl.uniform4fv(location, m_dataArray);
+      case vgl.GL.FLOAT_VEC4:
+        renderState.m_context.uniform4fv(location, m_dataArray);
         break;
-      case gl.FLOAT_MAT3:
-        gl.uniformMatrix3fv(location, gl.FALSE, m_dataArray);
+      case vgl.GL.FLOAT_MAT3:
+        renderState.m_context.uniformMatrix3fv(location, vgl.GL.FALSE, m_dataArray);
         break;
-      case gl.FLOAT_MAT4:
-        gl.uniformMatrix4fv(location, gl.FALSE, m_dataArray);
+      case vgl.GL.FLOAT_MAT4:
+        renderState.m_context.uniformMatrix4fv(location, vgl.GL.FALSE, m_dataArray);
         break;
       default:
         break;
@@ -213,7 +213,7 @@ vgl.modelViewUniform = function(name) {
     name = "modelViewMatrix";
   }
 
-  vgl.uniform.call(this, gl.FLOAT_MAT4, name);
+  vgl.uniform.call(this, vgl.GL.FLOAT_MAT4, name);
 
   this.set(mat4.create());
 
@@ -253,7 +253,7 @@ vgl.projectionUniform = function(name) {
     name = "projectionMatrix";
   }
 
-  vgl.uniform.call(this, gl.FLOAT_MAT4, name);
+  vgl.uniform.call(this, vgl.GL.FLOAT_MAT4, name);
 
   this.set(mat4.create());
 
@@ -296,7 +296,7 @@ vgl.floatUniform = function(name, value) {
 
   value = value === undefined ? 1.0 : value;
 
-  vgl.uniform.call(this, gl.FLOAT, name);
+  vgl.uniform.call(this, vgl.GL.FLOAT, name);
 
   this.set(value);
 };
@@ -323,7 +323,7 @@ vgl.normalMatrixUniform = function(name) {
     name = "normalMatrix";
   }
 
-  vgl.uniform.call(this, gl.FLOAT_MAT4, name);
+  vgl.uniform.call(this, vgl.GL.FLOAT_MAT4, name);
 
   this.set(mat4.create());
 
