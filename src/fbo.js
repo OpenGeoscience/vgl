@@ -1,4 +1,4 @@
-vgl.renderTarget = function() {
+vgl.renderTarget = function () {
   'use strict';
 
   if (!(this instanceof vgl.fbo)) {
@@ -9,32 +9,37 @@ vgl.renderTarget = function() {
   var m_preventRenderPropagation = false;
 
 
-  this.preventRenderPropagation = function(val) {
+  this.preventRenderPropagation = function (val) {
     if (val) {
       m_preventRenderPropagation = val;
     }
 
     return m_preventRenderPropagation;
-  }
-
-  this.resize = function(width, height) {
   };
 
-  this.setup = function(renderState) {
+  this.resize = function (width, height) {
+    width = width; /* unused parameter */
+    height = height; /* unused parameter */
   };
 
-  this.render = function(renderState) {
+  this.setup = function (renderState) {
+    renderState = renderState; /* unused parameter */
   };
 
-  this.remove = function(renderState) {
-  }
+  this.render = function (renderState) {
+    renderState = renderState; /* unused parameter */
+  };
+
+  this.remove = function (renderState) {
+    renderState = renderState; /* unused parameter */
+  };
 };
 
 inherit(vgl.renderTarget, vgl.object);
 
 
 //////////////////////////////////////////////////////////////////////////////
-vgl.fbo = function() {
+vgl.fbo = function () {
   'use strict';
 
   if (!(this instanceof vgl.fbo)) {
@@ -62,26 +67,27 @@ vgl.fbo = function() {
       renderState.m_context.framebufferRenderbuffer(vgl.GL.FRAMEBUFFER,
         vgl.GL.COLOR_ATTACHMENT0, vgl.GL.RENDERBUFFER, colorBufferHandle);
       m_fboAttachmentMap[vgl.COLOR_ATTACHMENT0] = colorBufferHandle;
-    }
-    else {
+    } else {
       updateTexture(colorTexture, renderState);
       colorTexture.bind(renderState);
-      renderState.m_context.framebufferTexture2D(vgl.GL.FRAMEBUFFER, vgl.GL.COLOR_ATTACHMENT0,
-                              vgl.GL.TEXTURE_2D, colorTexture.textureHandle(), 0);
+      renderState.m_context.framebufferTexture2D(vgl.GL.FRAMEBUFFER,
+        vgl.GL.COLOR_ATTACHMENT0, vgl.GL.TEXTURE_2D,
+        colorTexture.textureHandle(), 0);
     }
 
     if (!depthTexture) {
       depthBufferHandle =  vgl.GL.createRenderbuffer();
       renderState.m_context.bindRenderbuffer(vgl.GL.RENDERBUFFER, depthBufferHandle);
-      renderState.m_context.renderbufferStorage(vgl.GL.RENDERBUFFER, vgl.GL.DEPTH_COMPONENT16, m_width, m_height);
-      renderState.m_context.framebufferRenderbuffer(vgl.GL.FRAMEBUFFER, vgl.GL.DEPTH_ATTACHMENT,
-                                 vgl.GL.RENDERBUFFER, depthBufferHandle);
+      renderState.m_context.renderbufferStorage(vgl.GL.RENDERBUFFER,
+        vgl.GL.DEPTH_COMPONENT16, m_width, m_height);
+      renderState.m_context.framebufferRenderbuffer(vgl.GL.FRAMEBUFFER,
+        vgl.GL.DEPTH_ATTACHMENT, vgl.GL.RENDERBUFFER, depthBufferHandle);
       m_fboAttachmentMap[vgl.DEPTH_ATTACHMENT] = depthBufferHandle;
-    }
-    else {
+    } else {
       updateTexture(depthTexture, renderState);
       depthTexture.bind(renderState);
-      renderState.m_context.framebufferTexture2D(vgl.GL.FRAMEBUFFER, vgl.GL.DEPTH_ATTACHMENT, vgl.GL.TEXTURE_2D,
+      renderState.m_context.framebufferTexture2D(vgl.GL.FRAMEBUFFER,
+        vgl.GL.DEPTH_ATTACHMENT, vgl.GL.TEXTURE_2D,
         depthTexture.textureHandle(), 0);
     }
 
@@ -94,8 +100,10 @@ vgl.fbo = function() {
       return;
     }
 
-    for (key in m_fboAttachmentMap) {
-      renderState.m_context.deleteRenderbuffer(key);
+    for (var key in m_fboAttachmentMap) {
+      if (m_fboAttachmentMap.hasOwnProperty(key)) {
+        renderState.m_context.deleteRenderbuffer(key);
+      }
     }
     renderState.m_context.deleteFramebuffer(m_handle);
   }
@@ -109,11 +117,11 @@ vgl.fbo = function() {
     console.log('updateTexture ', m_width);
     console.log('updateTexture ', m_height);
 
-    if (texture.width() != m_width) {
+    if (texture.width() !== m_width) {
       texture.setWidth(m_width);
     }
 
-    if (texture.height() != m_height) {
+    if (texture.height() !== m_height) {
       texture.setHeight(m_height);
     }
 
@@ -121,12 +129,13 @@ vgl.fbo = function() {
   }
 
   ////////////////////////////////////////////////////////////////////////////
-  this.setTexture = function(type, texture) {
+  this.setTexture = function (type, texture) {
+    //jscs:disable disallowEmptyBlocks
     if (type in m_fboAttachmentMap &&
         m_fboAttachmentMap.hasOwnProperty(type)) {
-
       // TODO Release it
     }
+    //jscs:enable disallowEmptyBlocks
 
     console.log(type);
 
@@ -135,7 +144,7 @@ vgl.fbo = function() {
   };
 
   ////////////////////////////////////////////////////////////////////////////
-  this.texture = function(type) {
+  this.texture = function (type) {
     if (type in m_fboAttachmentMap &&
         m_fboAttachmentMap.hasOwnProperty(type)) {
       return m_fboAttachmentMap[type];
@@ -143,7 +152,7 @@ vgl.fbo = function() {
   };
 
   ////////////////////////////////////////////////////////////////////////////
-  this.setWidth = function(width) {
+  this.setWidth = function (width) {
     if (m_width !== width) {
       m_width = width;
       m_this.modified();
@@ -151,12 +160,12 @@ vgl.fbo = function() {
   };
 
   ////////////////////////////////////////////////////////////////////////////
-  this.width = function() {
+  this.width = function () {
     return m_width;
   };
 
   ////////////////////////////////////////////////////////////////////////////
-  this.setHeight = function(height) {
+  this.setHeight = function (height) {
     if (m_height !== height) {
       m_height = height;
       m_this.modified();
@@ -164,44 +173,44 @@ vgl.fbo = function() {
   };
 
   ////////////////////////////////////////////////////////////////////////////
-  this.height = function() {
+  this.height = function () {
     return m_height;
   };
 
   ////////////////////////////////////////////////////////////////////////////
-  this.resize = function(width, height) {
+  this.resize = function (width, height) {
     m_width = width;
     m_height = height;
     m_this.modified();
   };
 
   ////////////////////////////////////////////////////////////////////////////
-  this.setup = function(renderState) {
+  this.setup = function (renderState) {
     if (m_fboCreationTime.getMTime() < m_this.getMTime() ||
         renderState.m_contextChanged) {
       deleteFBO(renderState);
       createFBO(renderState);
     }
-  }
+  };
 
   ////////////////////////////////////////////////////////////////////////////
-  this.render = function(renderState) {
+  this.render = function (renderState) {
     m_this.setup(renderState);
 
     var status = renderState.m_context.checkFramebufferStatus(vgl.GL.FRAMEBUFFER);
-    if (status == vgl.GL.FRAMEBUFFER_COMPLETE) {
+    if (status === vgl.GL.FRAMEBUFFER_COMPLETE) {
       renderState.m_context.bindFramebuffer(vgl.GL.FRAMEBUFFER, m_handle);
     } else {
-      console.log("[error] Unable to render imcomplete buffer " + status);
+      console.log('[error] Unable to render imcomplete buffer ' + status);
     }
 
     return m_this.preventRenderPropagation();
-  }
+  };
 
   ////////////////////////////////////////////////////////////////////////////
-  this.remove = function(renderState) {
-     renderState.m_context.bindFramebuffer(vgl.GL.FRAMEBUFFER, null);
-  }
+  this.remove = function (renderState) {
+    renderState.m_context.bindFramebuffer(vgl.GL.FRAMEBUFFER, null);
+  };
 };
 
 inherit(vgl.fbo, vgl.renderTarget);

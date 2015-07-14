@@ -3,10 +3,7 @@
  * @module vgl
  */
 
-/*jslint devel: true, forin: true, newcap: true, plusplus: true*/
-/*jslint white: true, continue:true, indent: 2*/
-
-/*global vgl, ogs, vec4, inherit, $*/
+/*global vgl, inherit*/
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
@@ -17,7 +14,7 @@
  * @returns {vgl.pointSource}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.pointSource = function() {
+vgl.pointSource = function () {
   'use strict';
 
   if (!(this instanceof vgl.pointSource)) {
@@ -35,11 +32,9 @@ vgl.pointSource = function() {
   ////////////////////////////////////////////////////////////////////////////
   /**
    * Get positions for the points
-   *
-   * @param positions
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.getPositions = function(positions) {
+  this.getPositions = function () {
     return m_positions;
   };
 
@@ -50,13 +45,12 @@ vgl.pointSource = function() {
    * @param positions
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.setPositions = function(positions) {
+  this.setPositions = function (positions) {
     if (positions instanceof Array) {
       m_positions = positions;
-    }
-    else {
+    } else {
       console
-          .log("[ERROR] Invalid data type for positions. Array is required.");
+          .log('[ERROR] Invalid data type for positions. Array is required.');
     }
     m_this.modified();
   };
@@ -64,11 +58,9 @@ vgl.pointSource = function() {
   ////////////////////////////////////////////////////////////////////////////
   /**
    * Get colors for the points
-   *
-   * @param positions
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.getColors = function(positions) {
+  this.getColors = function () {
     return m_colors;
   };
 
@@ -79,12 +71,11 @@ vgl.pointSource = function() {
    * @param colors
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.setColors = function(colors) {
+  this.setColors = function (colors) {
     if (colors instanceof Array) {
       m_colors = colors;
-    }
-    else {
-      console.log("[ERROR] Invalid data type for colors. Array is required.");
+    } else {
+      console.log('[ERROR] Invalid data type for colors. Array is required.');
     }
 
     m_this.modified();
@@ -92,12 +83,10 @@ vgl.pointSource = function() {
 
   ////////////////////////////////////////////////////////////////////////////
   /**
-   * Get colors for the points
-   *
-   * @param positions
+   * Get size for the points
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.getSize = function(positions) {
+  this.getSize = function () {
     return m_size;
   };
 
@@ -108,7 +97,7 @@ vgl.pointSource = function() {
    * @param colors
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.setSize = function(size) {
+  this.setSize = function (size) {
     m_size = size;
     this.modified();
   };
@@ -120,13 +109,12 @@ vgl.pointSource = function() {
    * @param texcoords
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.setTextureCoordinates = function(texcoords) {
+  this.setTextureCoordinates = function (texcoords) {
     if (texcoords instanceof Array) {
       m_textureCoords = texcoords;
-    }
-    else {
-      console.log("[ERROR] Invalid data type for "
-                  + "texture coordinates. Array is required.");
+    } else {
+      console.log('[ERROR] Invalid data type for ' +
+                  'texture coordinates. Array is required.');
     }
     m_this.modified();
   };
@@ -136,11 +124,11 @@ vgl.pointSource = function() {
    * Create a point geometry given input parameters
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.create = function() {
+  this.create = function () {
     m_geom = new vgl.geometryData();
 
     if (m_positions.length % 3 !== 0) {
-      console.log("[ERROR] Invalid length of the points array");
+      console.log('[ERROR] Invalid length of the points array');
       return;
     }
 
@@ -154,15 +142,15 @@ vgl.pointSource = function() {
         sourceSize;
 
     indices.length = numPts;
-    for (i = 0; i < numPts; ++i) {
+    for (i = 0; i < numPts; i += 1) {
       indices[i] = i;
     }
 
     /// Generate array of size if needed
     sourceSize = vgl.sourceDataDf();
     if (numPts !== m_size.length) {
-      for (i = 0; i < numPts; ++i) {
-       sourceSize.pushBack(m_size);
+      for (i = 0; i < numPts; i += 1) {
+        sourceSize.pushBack(m_size);
       }
     } else {
       sourceSize.setData(m_size);
@@ -180,22 +168,21 @@ vgl.pointSource = function() {
       sourceColors = vgl.sourceDataC3fv();
       sourceColors.pushBack(m_colors);
       m_geom.addSource(sourceColors);
-    }
-    else if ((m_colors.length > 0) && m_colors.length !== m_positions.length) {
+    } else if ((m_colors.length > 0) && m_colors.length !== m_positions.length) {
       console
-          .log("[ERROR] Number of colors are different than number of points");
+          .log('[ERROR] Number of colors are different than number of points');
     }
 
-    if ((m_textureCoords.length > 0)
-        && m_textureCoords.length === m_positions.length) {
+    if (m_textureCoords.length > 0 &&
+        m_textureCoords.length === m_positions.length) {
       sourceTexCoords = vgl.sourceDataT2fv();
       sourceTexCoords.pushBack(m_textureCoords);
       m_geom.addSource(sourceTexCoords);
-    }
-    else if ((m_textureCoords.length > 0)
-             && (m_textureCoords.length / 2) !== (m_positions.length / 3)) {
+    } else if (m_textureCoords.length > 0 &&
+        (m_textureCoords.length / 2) !== (m_positions.length / 3)) {
       console
-          .log("[ERROR] Number of texture coordinates are different than number of points");
+          .log('[ERROR] Number of texture coordinates are different than ' +
+               'number of points');
     }
 
 

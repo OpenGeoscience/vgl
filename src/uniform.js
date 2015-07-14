@@ -3,10 +3,7 @@
  * @module vgl
  */
 
-/*jslint devel: true, forin: true, newcap: true, plusplus: true*/
-/*jslint white: true, continue:true, indent: 2*/
-
-/*global vgl, gl, ogs, vec2, vec3, vec4, mat3, mat4, inherit, $*/
+/*global vgl, mat4, inherit*/
 //////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -18,14 +15,14 @@
  * @returns {vgl.uniform} OpenGL uniform encapsulation
  */
 ///////////////////////////////////////////////////////////////////////////////
-vgl.uniform = function(type, name) {
+vgl.uniform = function (type, name) {
   'use strict';
 
   if (!(this instanceof vgl.uniform)) {
     return new vgl.uniform();
   }
 
-  this.getTypeNumberOfComponents = function(type) {
+  this.getTypeNumberOfComponents = function (type) {
     switch (type) {
       case vgl.GL.FLOAT:
       case vgl.GL.INT:
@@ -60,8 +57,7 @@ vgl.uniform = function(type, name) {
 
   var m_type = type,
       m_name = name,
-      m_dataArray = [],
-      m_numberOfElements = 1;
+      m_dataArray = [];
 
   m_dataArray.length = this.getTypeNumberOfComponents(m_type);
 
@@ -72,7 +68,7 @@ vgl.uniform = function(type, name) {
    * @returns {*}
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.name = function() {
+  this.name = function () {
     return m_name;
   };
 
@@ -83,7 +79,7 @@ vgl.uniform = function(type, name) {
    * @returns {*}
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.type = function() {
+  this.type = function () {
     return m_type;
   };
 
@@ -94,7 +90,7 @@ vgl.uniform = function(type, name) {
    * @returns {Array}
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.get = function() {
+  this.get = function () {
     return m_dataArray;
   };
 
@@ -105,34 +101,29 @@ vgl.uniform = function(type, name) {
    * @param value
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.set = function(value) {
+  this.set = function (value) {
     var i = 0;
     if (m_dataArray.length === 16) {
-      for (i = 0; i < 16; ++i) {
+      for (i = 0; i < 16; i += 1) {
         m_dataArray[i] = value[i];
       }
-    }
-    else if (m_dataArray.length === 9) {
-      for (i = 0; i < 9; ++i) {
+    } else if (m_dataArray.length === 9) {
+      for (i = 0; i < 9; i += 1) {
         m_dataArray[i] = value[i];
       }
-    }
-    else if (m_dataArray.length === 4) {
-      for (i = 0; i < 4; ++i) {
+    } else if (m_dataArray.length === 4) {
+      for (i = 0; i < 4; i += 1) {
         m_dataArray[i] = value[i];
       }
-    }
-    else if (m_dataArray.length === 3) {
-      for (i = 0; i < 3; ++i) {
+    } else if (m_dataArray.length === 3) {
+      for (i = 0; i < 3; i += 1) {
         m_dataArray[i] = value[i];
       }
-    }
-    else if (m_dataArray.length === 2) {
-      for (i = 0; i < 2; ++i) {
+    } else if (m_dataArray.length === 2) {
+      for (i = 0; i < 2; i += 1) {
         m_dataArray[i] = value[i];
       }
-    }
-    else {
+    } else {
       m_dataArray[0] = value;
     }
   };
@@ -144,7 +135,7 @@ vgl.uniform = function(type, name) {
    * @param location
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.callGL = function(renderState, location) {
+  this.callGL = function (renderState, location) {
     if (this.m_numberElements < 1) {
       return;
     }
@@ -187,7 +178,9 @@ vgl.uniform = function(type, name) {
    * @param program
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.update = function(renderState, program) {
+  this.update = function (renderState, program) {
+    renderState = renderState; /* unused parameter */
+    program = program; /* unused parameter */
     // Should be implemented by the derived class
   };
 
@@ -202,7 +195,7 @@ vgl.uniform = function(type, name) {
  * @returns {vgl.modelViewUniform}
  */
 ///////////////////////////////////////////////////////////////////////////////
-vgl.modelViewUniform = function(name) {
+vgl.modelViewUniform = function (name) {
   'use strict';
 
   if (!(this instanceof vgl.modelViewUniform)) {
@@ -210,7 +203,7 @@ vgl.modelViewUniform = function(name) {
   }
 
   if (name.length === 0) {
-    name = "modelViewMatrix";
+    name = 'modelViewMatrix';
   }
 
   vgl.uniform.call(this, vgl.GL.FLOAT_MAT4, name);
@@ -225,7 +218,8 @@ vgl.modelViewUniform = function(name) {
    * @param {vgl.shaderProgram} program
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.update = function(renderState, program) {
+  this.update = function (renderState, program) {
+    program = program; /* unused parameter */
     this.set(renderState.m_modelViewMatrix);
   };
 
@@ -242,7 +236,7 @@ inherit(vgl.modelViewUniform, vgl.uniform);
  * @returns {vgl.projectionUniform}
  */
 ///////////////////////////////////////////////////////////////////////////////
-vgl.projectionUniform = function(name) {
+vgl.projectionUniform = function (name) {
   'use strict';
 
   if (!(this instanceof vgl.projectionUniform)) {
@@ -250,7 +244,7 @@ vgl.projectionUniform = function(name) {
   }
 
   if (name.length === 0) {
-    name = "projectionMatrix";
+    name = 'projectionMatrix';
   }
 
   vgl.uniform.call(this, vgl.GL.FLOAT_MAT4, name);
@@ -265,7 +259,8 @@ vgl.projectionUniform = function(name) {
    * @param program
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.update = function(renderState, program) {
+  this.update = function (renderState, program) {
+    program = program; /* unused parameter */
     this.set(renderState.m_projectionMatrix);
   };
 
@@ -283,7 +278,7 @@ inherit(vgl.projectionUniform, vgl.uniform);
  * @returns {vgl.floatUniform}
  */
 ///////////////////////////////////////////////////////////////////////////////
-vgl.floatUniform = function(name, value) {
+vgl.floatUniform = function (name, value) {
   'use strict';
 
   if (!(this instanceof vgl.floatUniform)) {
@@ -291,7 +286,7 @@ vgl.floatUniform = function(name, value) {
   }
 
   if (name.length === 0) {
-    name = "floatUniform";
+    name = 'floatUniform';
   }
 
   value = value === undefined ? 1.0 : value;
@@ -312,7 +307,7 @@ inherit(vgl.floatUniform, vgl.uniform);
  * @returns {vgl.normalMatrixUniform}
  */
 ///////////////////////////////////////////////////////////////////////////////
-vgl.normalMatrixUniform = function(name) {
+vgl.normalMatrixUniform = function (name) {
   'use strict';
 
   if (!(this instanceof vgl.normalMatrixUniform)) {
@@ -320,7 +315,7 @@ vgl.normalMatrixUniform = function(name) {
   }
 
   if (name.length === 0) {
-    name = "normalMatrix";
+    name = 'normalMatrix';
   }
 
   vgl.uniform.call(this, vgl.GL.FLOAT_MAT4, name);
@@ -335,7 +330,8 @@ vgl.normalMatrixUniform = function(name) {
    * @param {vgl.shaderProgram} program
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.update = function(renderState, program) {
+  this.update = function (renderState, program) {
+    program = program; /* unused parameter */
     this.set(renderState.m_normalMatrix);
   };
 

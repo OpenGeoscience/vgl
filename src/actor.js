@@ -3,10 +3,7 @@
  * @module vgl
  */
 
-/*jslint devel: true, forin: true, newcap: true, plusplus: true*/
-/*jslint white: true, continue:true, indent: 2*/
-
-/*global vgl, ogs, vec3, vec4, mat4, inherit, $*/
+/*global vgl, vec3, mat4, inherit*/
 //////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////
@@ -17,7 +14,7 @@
  * @returns {vgl.actor}
  */
 ////////////////////////////////////////////////////////////////////////////
-vgl.actor = function() {
+vgl.actor = function () {
   'use strict';
 
   if (!(this instanceof vgl.actor)) {
@@ -38,7 +35,7 @@ vgl.actor = function() {
    * @returns {mat4}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.matrix = function() {
+  this.matrix = function () {
     return m_transformMatrix;
   };
 
@@ -49,7 +46,7 @@ vgl.actor = function() {
    * @param {mat4} 4X4 transformation matrix
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.setMatrix = function(tmatrix) {
+  this.setMatrix = function (tmatrix) {
     if (tmatrix !== m_transformMatrix) {
       m_transformMatrix = tmatrix;
       m_this.modified();
@@ -63,7 +60,7 @@ vgl.actor = function() {
    * @returns {String} Possible values are Absolute or Relative
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.referenceFrame = function() {
+  this.referenceFrame = function () {
     return m_referenceFrame;
   };
 
@@ -75,7 +72,7 @@ vgl.actor = function() {
    * referenceFrame Possible values are (Absolute | Relative)
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.setReferenceFrame = function(referenceFrame) {
+  this.setReferenceFrame = function (referenceFrame) {
     if (referenceFrame !== m_referenceFrame) {
       m_referenceFrame = referenceFrame;
       m_this.modified();
@@ -91,7 +88,7 @@ vgl.actor = function() {
    * @returns {vgl.mapper}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.mapper = function() {
+  this.mapper = function () {
     return m_mapper;
   };
 
@@ -102,7 +99,7 @@ vgl.actor = function() {
    * @param {vgl.mapper}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.setMapper = function(mapper) {
+  this.setMapper = function (mapper) {
     if (mapper !== m_mapper) {
       m_mapper = mapper;
       m_this.boundsModified();
@@ -114,7 +111,8 @@ vgl.actor = function() {
    * @todo
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.accept = function(visitor) {
+  this.accept = function (visitor) {
+    visitor = visitor; /* ignore this parameter */
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -122,7 +120,8 @@ vgl.actor = function() {
    * @todo
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.ascend = function(visitor) {
+  this.ascend = function (visitor) {
+    visitor = visitor; /* ignore this parameter */
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -131,7 +130,9 @@ vgl.actor = function() {
    * @todo
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.computeLocalToWorldMatrix = function(matrix, visitor) {
+  this.computeLocalToWorldMatrix = function (matrix, visitor) {
+    matrix = matrix; /* ignore this parameter */
+    visitor = visitor; /* ignore this parameter */
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -140,7 +141,9 @@ vgl.actor = function() {
    * @todo
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.computeWorldToLocalMatrix = function(matrix, visitor) {
+  this.computeWorldToLocalMatrix = function (matrix, visitor) {
+    matrix = matrix; /* ignore this parameter */
+    visitor = visitor; /* ignore this parameter */
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -148,14 +151,14 @@ vgl.actor = function() {
    * Compute actor bounds
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.computeBounds = function() {
+  this.computeBounds = function () {
     if (m_mapper === null || m_mapper === undefined) {
       m_this.resetBounds();
       return;
     }
 
     var computeBoundsTimestamp = m_this.computeBoundsTimestamp(),
-        mapperBounds, minPt, maxPt, actorMatrix, newBounds;
+        mapperBounds, minPt, maxPt, newBounds;
 
     if (m_this.boundsDirtyTimestamp().getMTime() > computeBoundsTimestamp.getMTime() ||
       m_mapper.boundsDirtyTimestamp().getMTime() > computeBoundsTimestamp.getMTime()) {

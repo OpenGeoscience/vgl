@@ -3,10 +3,8 @@
  * @module vgl
  */
 
-/*jslint devel: true, forin: true, newcap: true, plusplus: true*/
-/*jslint white: true, continue:true, indent: 2*/
-
-/*global vgl, ogs, vec4, inherit, $*/
+/*global vgl, inherit*/
+/*exported VisitorType */
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
@@ -18,10 +16,10 @@
  */
 //////////////////////////////////////////////////////////////////////////////
 var TraversalMode = {
-  "TraverseNone" : 0x1,
-  "TraverseParents" : 0x2,
-  "TraverseAllChildren" : 0x4,
-  "TraverseActiveChildren" : 0x8
+  'TraverseNone' : 0x1,
+  'TraverseParents' : 0x2,
+  'TraverseAllChildren' : 0x4,
+  'TraverseActiveChildren' : 0x8
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -33,10 +31,10 @@ var TraversalMode = {
  */
 //////////////////////////////////////////////////////////////////////////////
 var VisitorType = {
-  "ActorVisitor" : 0x1,
-  "UpdateVisitor" : 0x2,
-  "EventVisitor" : 0x4,
-  "CullVisitor" : 0x8
+  'ActorVisitor' : 0x1,
+  'UpdateVisitor' : 0x2,
+  'EventVisitor' : 0x4,
+  'CullVisitor' : 0x8
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -46,15 +44,10 @@ var VisitorType = {
  * @returns {vgl.visitor}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.visitor = function() {
+vgl.visitor = function () {
   'use strict';
 
   vgl.object.call(this);
-
-  var m_visitorType = VisitorType.UpdateVisitor,
-      m_traversalMode = TraversalMode.TraverseAllChildren,
-      m_modelViewMatrixStack = [],
-      m_projectionMatrixStack = [];
 
   ////////////////////////////////////////////////////////////////////////////
   /**
@@ -63,7 +56,7 @@ vgl.visitor = function() {
    * @param mat
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.pushModelViewMatrix = function(mat) {
+  this.pushModelViewMatrix = function (mat) {
     this.m_modelViewMatrixStack.push(mat);
   };
 
@@ -72,7 +65,7 @@ vgl.visitor = function() {
    * Pop model-view matrix from the stack
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.popModelViewMatrix = function() {
+  this.popModelViewMatrix = function () {
     this.m_modelViewMatrixStack.pop();
   };
 
@@ -83,7 +76,7 @@ vgl.visitor = function() {
    * @param mat
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.pushProjectionMatrix = function(mat) {
+  this.pushProjectionMatrix = function (mat) {
     this.m_projectionMatrixStack.push(mat);
   };
 
@@ -92,7 +85,7 @@ vgl.visitor = function() {
    * Pop projection matrix from the stack
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.popProjectionMatrix = function() {
+  this.popProjectionMatrix = function () {
     this.m_projectionMatrixStack.pop();
   };
 
@@ -103,13 +96,13 @@ vgl.visitor = function() {
    * @returns {mat4}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.modelViewMatrix = function() {
+  this.modelViewMatrix = function () {
     var mvMat = mat4.create(),
         i;
 
     mat4.identity(mvMat);
 
-    for (i = 0; i < this.m_modelViewMatrixStack.length; ++i) {
+    for (i = 0; i < this.m_modelViewMatrixStack.length; i += 1) {
       mat4.multiply(mvMat, this.m_modelViewMatrixStack[i], mvMat);
     }
 
@@ -123,14 +116,16 @@ vgl.visitor = function() {
    * @returns {mat4}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.projectionMatrix = function() {
+  this.projectionMatrix = function () {
     var projMat = mat4.create(),
+        mvMat = mat4.create(),
         i;
 
     mat4.identity(projMat);
 
-    for (i = 0; i < this.m_modelViewMatrixStack.length; ++i) {
+    for (i = 0; i < this.m_modelViewMatrixStack.length; i += 1) {
       mat4.multiply(mvMat, this.m_modelViewMatrixStack[i], projMat);
+      mat4.copy(projMat, mvMat);
     }
 
     return projMat;
@@ -143,12 +138,11 @@ vgl.visitor = function() {
    * @param {vgl.node} node
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.traverse = function(node) {
+  this.traverse = function (node) {
     if (node instanceof node) {
       if (this.m_traversalMode === TraversalMode.TraverseParents) {
         node.ascend(this);
-      }
-      else {
+      } else {
         node.traverse(this);
       }
     }
@@ -161,7 +155,7 @@ vgl.visitor = function() {
    * @param {vgl.node} node
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.visit = function(node) {
+  this.visit = function (node) {
     this.traverse(node);
   };
 
@@ -172,10 +166,10 @@ vgl.visitor = function() {
    * @param {vgl.actor} actor
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.visit = function(actor) {
+  this.visit = function (actor) {
     this.traverse(actor);
   };
 
   return this;
-}
+};
 inherit(vgl.visitor, vgl.object);

@@ -7,9 +7,10 @@
  * @returns {vgl.graphicsObject}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.graphicsObject = function(type) {
+vgl.graphicsObject = function (type) {
   'use strict';
 
+  type = type; /* unused parameter */
   if (!(this instanceof vgl.graphicsObject)) {
     return new vgl.graphicsObject();
   }
@@ -25,7 +26,8 @@ vgl.graphicsObject = function(type) {
    * @returns {boolean}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this._setup = function(renderState) {
+  this._setup = function (renderState) {
+    renderState = renderState; /* unused parameter */
     return false;
   };
 
@@ -37,7 +39,8 @@ vgl.graphicsObject = function(type) {
    * @returns {boolean}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this._cleanup = function(renderState) {
+  this._cleanup = function (renderState) {
+    renderState = renderState; /* unused parameter */
     return false;
   };
 
@@ -49,7 +52,8 @@ vgl.graphicsObject = function(type) {
    * @returns {boolean}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.bind = function(renderState) {
+  this.bind = function (renderState) {
+    renderState = renderState; /* unused parameter */
     return false;
   };
 
@@ -63,7 +67,8 @@ vgl.graphicsObject = function(type) {
    * TODO: Change it to unbind (simple)
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.undoBind = function(renderState) {
+  this.undoBind = function (renderState) {
+    renderState = renderState; /* unused parameter */
     return false;
   };
 
@@ -72,7 +77,8 @@ vgl.graphicsObject = function(type) {
    * Render the object
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.render = function(renderState) {
+  this.render = function (renderState) {
+    renderState = renderState; /* unused parameter */
     return false;
   };
 
@@ -81,9 +87,9 @@ vgl.graphicsObject = function(type) {
    * Remove the object and release its graphics resources
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.remove = function(renderState) {
+  this.remove = function (renderState) {
     m_this._cleanup(renderState);
-  }
+  };
 
   return m_this;
 };

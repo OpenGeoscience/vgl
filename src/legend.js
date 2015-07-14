@@ -3,10 +3,6 @@
  * @module vgl
  */
 
-/*jslint devel: true, forin: true, newcap: true, plusplus: true*/
-/*jslint white: true, indent: 2*/
-
-/*global vgl, ogs, inherit, $, Image*/
 /*global vgl*/
 //////////////////////////////////////////////////////////////////////////////
 
@@ -20,13 +16,15 @@
  * @returns {vgl.legend}
  */
 ////////////////////////////////////////////////////////////////////////////
-vgl.legend = function() {
-    'use strict';
+vgl.legend = function () {
+  'use strict';
 
-    if (!(this instanceof vgl.legend)) {
-        return new vgl.legend();
-    }
-    vgl.actor.call(this);
+  var m_lookupTable = null;
+
+  if (!(this instanceof vgl.legend)) {
+    return new vgl.legend();
+  }
+  vgl.actor.call(this);
 
   ////////////////////////////////////////////////////////////////////////////
   /**
@@ -34,7 +32,7 @@ vgl.legend = function() {
    * @returns {*}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.lookupTable = function() {
+  this.lookupTable = function () {
     return m_lookupTable;
   };
 
@@ -44,7 +42,7 @@ vgl.legend = function() {
    * @param lookupTable
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.setLookupTable = function(lookupTable) {
+  this.setLookupTable = function (lookupTable) {
     m_lookupTable = lookupTable;
     this.modified();
   };

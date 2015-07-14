@@ -3,14 +3,8 @@
  * @module vgl
  */
 
-/*jslint devel: true, forin: true, newcap: true, plusplus: true*/
-/*jslint white: true, continue:true, indent: 2*/
-
-/*global vgl, ogs, vec4, inherit, $*/
+/*global vgl, vec4, inherit*/
 //////////////////////////////////////////////////////////////////////////////
-
-// TODO Current we support only one context
-var gl = null;
 
 //////////////////////////////////////////////////////////////////////////////
 /**
@@ -20,7 +14,7 @@ var gl = null;
  * @returns {vgl.renderWindow}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.renderWindow = function(canvas) {
+vgl.renderWindow = function (canvas) {
   'use strict';
 
   if (!(this instanceof vgl.renderWindow)) {
@@ -46,8 +40,8 @@ vgl.renderWindow = function(canvas) {
    * @returns {Array}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.windowSize = function() {
-    return [ m_width, m_height ];
+  this.windowSize = function () {
+    return [m_width, m_height];
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -59,7 +53,7 @@ vgl.renderWindow = function(canvas) {
    * @returns {boolean}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.setWindowSize = function(width, height) {
+  this.setWindowSize = function (width, height) {
 
     if (m_width !== width || m_height !== height) {
       m_width = width;
@@ -80,8 +74,8 @@ vgl.renderWindow = function(canvas) {
    * @returns {Array}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.windowPosition = function() {
-    return [ m_x, m_y ];
+  this.windowPosition = function () {
+    return [m_x, m_y];
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -93,7 +87,7 @@ vgl.renderWindow = function(canvas) {
    * @returns {boolean}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.setWindowPosition = function(x, y) {
+  this.setWindowPosition = function (x, y) {
     if ((m_x !== x) || (m_y !== y)) {
       m_x = x;
       m_y = y;
@@ -109,7 +103,7 @@ vgl.renderWindow = function(canvas) {
    * @returns {Array}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.renderers = function() {
+  this.renderers = function () {
     return m_renderers;
   };
 
@@ -120,7 +114,7 @@ vgl.renderWindow = function(canvas) {
    * @returns vgl.renderer
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.activeRenderer = function() {
+  this.activeRenderer = function () {
     return m_activeRender;
   };
 
@@ -132,7 +126,7 @@ vgl.renderWindow = function(canvas) {
    * @returns {boolean}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.addRenderer = function(ren) {
+  this.addRenderer = function (ren) {
     if (m_this.hasRenderer(ren) === false) {
       m_renderers.push(ren);
       ren.setRenderWindow(m_this);
@@ -156,7 +150,7 @@ vgl.renderWindow = function(canvas) {
    * @returns {boolean}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.removeRenderer = function(ren) {
+  this.removeRenderer = function (ren) {
     var index = m_renderers.indexOf(ren);
     if (index !== -1) {
       if (m_activeRender === ren) {
@@ -177,12 +171,12 @@ vgl.renderWindow = function(canvas) {
    * @returns {vgl.renderer}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.getRenderer = function(index) {
+  this.getRenderer = function (index) {
     if (index < m_renderers.length) {
       return m_renderers[index];
     }
 
-    console.log("[WARNING] Out of index array");
+    console.log('[WARNING] Out of index array');
     return null;
   };
 
@@ -194,9 +188,9 @@ vgl.renderWindow = function(canvas) {
    * @returns {boolean}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.hasRenderer = function(ren) {
+  this.hasRenderer = function (ren) {
     var i;
-    for (i = 0; i < m_renderers.length; ++i) {
+    for (i = 0; i < m_renderers.length; i += 1) {
       if (ren === m_renderers[i]) {
         return true;
       }
@@ -213,7 +207,7 @@ vgl.renderWindow = function(canvas) {
    * @param height
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.resize = function(width, height) {
+  this.resize = function (width, height) {
     m_this.positionAndResize(m_x, m_y, width, height);
     m_this.modified();
   };
@@ -228,13 +222,13 @@ vgl.renderWindow = function(canvas) {
    * @param height
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.positionAndResize = function(x, y, width, height) {
+  this.positionAndResize = function (x, y, width, height) {
     m_x = x;
     m_y = y;
     m_width = width;
     m_height = height;
     var i;
-    for (i = 0; i < m_renderers.length; ++i) {
+    for (i = 0; i < m_renderers.length; i += 1) {
       m_renderers[i].positionAndResize(m_x, m_y, m_width, m_height);
     }
     m_this.modified();
@@ -247,22 +241,23 @@ vgl.renderWindow = function(canvas) {
    * @returns {boolean}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this._setup = function(renderState) {
-    // Initialize the global variable gl to null.
+  this._setup = function (renderState) {
+    renderState = renderState; /* unused parameter */
     m_context = null;
 
     try {
       // Try to grab the standard context. If it fails, fallback to
       // experimental.
-      m_context = m_canvas.getContext("webgl")
-           || m_canvas.getContext("experimental-webgl");
+      m_context = m_canvas.getContext('webgl') ||
+            m_canvas.getContext('experimental-webgl');
 
       // Set width and height of renderers if not set already
       var i;
-      for (i = 0; i < m_renderers.length; ++i) {
-        if ((m_renderers[i].width() > m_width) || m_renderers[i].width() === 0
-            || (m_renderers[i].height() > m_height)
-            || m_renderers[i].height() === 0) {
+      for (i = 0; i < m_renderers.length; i += 1) {
+        if ((m_renderers[i].width() > m_width) ||
+            m_renderers[i].width() === 0 ||
+            (m_renderers[i].height() > m_height) ||
+            m_renderers[i].height() === 0) {
           m_renderers[i].resize(m_x, m_y, m_width, m_height);
         }
       }
@@ -274,7 +269,7 @@ vgl.renderWindow = function(canvas) {
 
     // If we don't have a GL context, give up now
     if (!m_context) {
-      console("[ERROR] Unable to initialize WebGL. Your browser may not support it.");
+      console('[ERROR] Unable to initialize WebGL. Your browser may not support it.');
     }
 
     return false;
@@ -285,7 +280,7 @@ vgl.renderWindow = function(canvas) {
    * Return current GL context
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.context = function() {
+  this.context = function () {
     return m_context;
   };
 
@@ -294,9 +289,9 @@ vgl.renderWindow = function(canvas) {
    * Delete this window and release any graphics resources
    */
   ////////////////////////////////////////////////////////////////////////////
-  this._cleanup = function(renderState) {
+  this._cleanup = function (renderState) {
     var i;
-    for (i = 0; i < m_renderers.length; ++i) {
+    for (i = 0; i < m_renderers.length; i += 1) {
       m_renderers[i]._cleanup(renderState);
     }
   };
@@ -306,10 +301,10 @@ vgl.renderWindow = function(canvas) {
    * Render the scene
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.render = function() {
+  this.render = function () {
     var i;
-    m_renderers.sort(function(a, b) {return a.layer() - b.layer();});
-    for (i = 0; i < m_renderers.length; ++i) {
+    m_renderers.sort(function (a, b) {return a.layer() - b.layer();});
+    for (i = 0; i < m_renderers.length; i += 1) {
       m_renderers[i].render();
     }
   };
@@ -320,7 +315,7 @@ vgl.renderWindow = function(canvas) {
    * @returns {vec4}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.focusDisplayPoint = function() {
+  this.focusDisplayPoint = function () {
     return m_activeRender.focusDisplayPoint();
   };
 
@@ -333,11 +328,11 @@ vgl.renderWindow = function(canvas) {
    * @returns {vec4}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.displayToWorld = function(x, y, focusDisplayPoint, ren) {
+  this.displayToWorld = function (x, y, focusDisplayPoint, ren) {
     ren = ren === undefined ? ren = m_activeRender : ren;
 
     var camera = ren.camera();
-    if(!focusDisplayPoint) {
+    if (!focusDisplayPoint) {
       focusDisplayPoint = ren.focusDisplayPoint();
     }
 
@@ -355,7 +350,7 @@ vgl.renderWindow = function(canvas) {
    * @returns {vec4}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.worldToDisplay = function(x, y, z, ren) {
+  this.worldToDisplay = function (x, y, z, ren) {
     ren = ren === undefined ? ren = m_activeRender : ren;
     var camera = ren.camera();
     return ren.worldToDisplay(

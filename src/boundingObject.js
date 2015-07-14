@@ -3,10 +3,7 @@
  * @module vgl
  */
 
-/*jslint devel: true, forin: true, newcap: true, plusplus: true*/
-/*jslint white: true, continue:true, indent: 2*/
-
-/*global vgl, ogs, vec4, inherit, $*/
+/*global vgl, inherit*/
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
@@ -17,7 +14,7 @@
  * @return {vgl.boundingObject}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.boundingObject = function() {
+vgl.boundingObject = function () {
   'use strict';
 
   if (!(this instanceof vgl.boundingObject)) {
@@ -38,7 +35,7 @@ vgl.boundingObject = function() {
    * Get current bounds of the object
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.bounds = function() {
+  this.bounds = function () {
     return m_bounds;
   };
 
@@ -47,25 +44,25 @@ vgl.boundingObject = function() {
    * Check if bounds are valid
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.hasValidBounds = function(bounds) {
-    if (bounds[0] == Number.MAX_VALUE ||
-        bounds[1] == -Number.MAX_VALUE ||
-        bounds[2] == Number.MAX_VALUE ||
-        bounds[3] == -Number.MAX_VALUE ||
-        bounds[4] == Number.MAX_VALUE ||
-        bounds[5] == -Number.MAX_VALUE)  {
+  this.hasValidBounds = function (bounds) {
+    if (bounds[0] === Number.MAX_VALUE ||
+        bounds[1] === -Number.MAX_VALUE ||
+        bounds[2] === Number.MAX_VALUE ||
+        bounds[3] === -Number.MAX_VALUE ||
+        bounds[4] === Number.MAX_VALUE ||
+        bounds[5] === -Number.MAX_VALUE) {
       return false;
     }
 
     return true;
-  }
+  };
 
   ////////////////////////////////////////////////////////////////////////////
   /**
    * Set current bounds of the object
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.setBounds = function(minX, maxX, minY, maxY, minZ, maxZ) {
+  this.setBounds = function (minX, maxX, minY, maxY, minZ, maxZ) {
     if (!this.hasValidBounds([minX, maxX, minY, maxY, minZ, maxZ])) {
       return;
     }
@@ -88,7 +85,7 @@ vgl.boundingObject = function() {
    * Reset bounds to default values
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.resetBounds = function() {
+  this.resetBounds = function () {
     m_bounds[0] = Number.MAX_VALUE;
     m_bounds[1] = -Number.MAX_VALUE;
     m_bounds[2] = Number.MAX_VALUE;
@@ -106,7 +103,7 @@ vgl.boundingObject = function() {
    * Should be implemented by the concrete class
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.computeBounds = function() {
+  this.computeBounds = function () {
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -116,7 +113,7 @@ vgl.boundingObject = function() {
    * @returns {vgl.timestamp}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.computeBoundsTimestamp = function() {
+  this.computeBoundsTimestamp = function () {
     return m_computeBoundsTimestamp;
   };
 
@@ -127,7 +124,7 @@ vgl.boundingObject = function() {
    * @returns {vgl.timestamp}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.boundsDirtyTimestamp = function() {
+  this.boundsDirtyTimestamp = function () {
     return m_boundsDirtyTimestamp;
   };
 
@@ -137,8 +134,8 @@ vgl.boundingObject = function() {
 };
 
 vgl.boundingObject.ReferenceFrame = {
-  "Relative" : 0,
-  "Absolute" : 1
+  'Relative' : 0,
+  'Absolute' : 1
 };
 
 inherit(vgl.boundingObject, vgl.object);

@@ -3,10 +3,7 @@
  * @module vgl
  */
 
-/*jslint devel: true, forin: true, newcap: true, plusplus: true*/
-/*jslint white: true, continue:true, indent: 2*/
-
-/*global vgl, ogs, vec4, Uint16Array, gl, inherit, $*/
+/*global vgl, Uint16Array, inherit*/
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
@@ -17,12 +14,12 @@
  *         Color: number, Scalar: number}}
  */
 //////////////////////////////////////////////////////////////////////////////
-var vertexAttributeKeys = {
-  "Position" : 0,
-  "Normal" : 1,
-  "TextureCoordinate" : 2,
-  "Color" : 3,
-  "Scalar" : 4
+vgl.vertexAttributeKeys = {
+  'Position' : 0,
+  'Normal' : 1,
+  'TextureCoordinate' : 2,
+  'Color' : 3,
+  'Scalar' : 4
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -33,7 +30,7 @@ var vertexAttributeKeys = {
  * @return {vgl.primitive}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.primitive = function() {
+vgl.primitive = function () {
   'use strict';
 
   if (!(this instanceof vgl.primitive)) {
@@ -53,7 +50,7 @@ vgl.primitive = function() {
    * @returns {null}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.indices = function() {
+  this.indices = function () {
     return m_indices;
   };
 
@@ -63,7 +60,8 @@ vgl.primitive = function() {
    * @param type
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.createIndices = function(type) {
+  this.createIndices = function (type) {
+    type = type; /* unused parameters */
     // TODO Check for the type
     m_indices = new Uint16Array();
   };
@@ -73,7 +71,7 @@ vgl.primitive = function() {
    * Return the number of indices
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.numberOfIndices = function() {
+  this.numberOfIndices = function () {
     return m_indices.length;
   };
 
@@ -82,7 +80,7 @@ vgl.primitive = function() {
    * Return size of indices in bytes
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.sizeInBytes = function() {
+  this.sizeInBytes = function () {
     return m_indices.length * Uint16Array.BYTES_PER_ELEMENT;
   };
 
@@ -91,7 +89,7 @@ vgl.primitive = function() {
    * Return primitive type g
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.primitiveType = function() {
+  this.primitiveType = function () {
     return m_primitiveType;
   };
 
@@ -100,7 +98,7 @@ vgl.primitive = function() {
    * Set primitive type
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.setPrimitiveType = function(type) {
+  this.setPrimitiveType = function (type) {
     m_primitiveType = type;
   };
 
@@ -109,7 +107,7 @@ vgl.primitive = function() {
    * Return count of indices that form a primitives
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.indicesPerPrimitive = function() {
+  this.indicesPerPrimitive = function () {
     return m_indicesPerPrimitive;
   };
 
@@ -118,7 +116,7 @@ vgl.primitive = function() {
    * Set count of indices that form a primitive
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.setIndicesPerPrimitive = function(count) {
+  this.setIndicesPerPrimitive = function (count) {
     m_indicesPerPrimitive = count;
   };
 
@@ -127,7 +125,7 @@ vgl.primitive = function() {
    * Return indices value type
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.indicesValueType = function() {
+  this.indicesValueType = function () {
     return m_indicesValueType;
   };
 
@@ -136,7 +134,7 @@ vgl.primitive = function() {
    * Set indices value type
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.setIndicesValueType = function(type) {
+  this.setIndicesValueType = function (type) {
     m_indicesValueType = type;
   };
 
@@ -145,7 +143,7 @@ vgl.primitive = function() {
    * Set indices from a array
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.setIndices = function(indicesArray) {
+  this.setIndices = function (indicesArray) {
     // TODO Check for the type
     m_indices = new Uint16Array(indicesArray);
   };
@@ -160,7 +158,7 @@ vgl.primitive = function() {
  * @returns {vgl.triangleStrip}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.triangleStrip = function() {
+vgl.triangleStrip = function () {
   'use strict';
 
   if (!(this instanceof vgl.triangleStrip)) {
@@ -185,7 +183,7 @@ inherit(vgl.triangleStrip, vgl.primitive);
  * @returns {vgl.triangles}
  */
 ////////////////////////////////////////////////////////////////////////////
-vgl.triangles = function() {
+vgl.triangles = function () {
   'use strict';
 
   if (!(this instanceof vgl.triangles)) {
@@ -209,7 +207,7 @@ inherit(vgl.triangles, vgl.primitive);
  * @returns {vgl.lines}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.lines = function() {
+vgl.lines = function () {
   'use strict';
 
   if (!(this instanceof vgl.lines)) {
@@ -232,7 +230,7 @@ inherit(vgl.lines, vgl.primitive);
  * @returns {vgl.lineStrip}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.lineStrip = function() {
+vgl.lineStrip = function () {
   'use strict';
 
   if (!(this instanceof vgl.lineStrip)) {
@@ -255,7 +253,7 @@ inherit(vgl.lineStrip, vgl.primitive);
  * @returns {vgl.points}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.points = function() {
+vgl.points = function () {
   'use strict';
 
   if (!(this instanceof vgl.points)) {
@@ -279,7 +277,7 @@ inherit(vgl.points, vgl.primitive);
  * @returns {vgl.vertexDataP3f}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.vertexDataP3f = function() {
+vgl.vertexDataP3f = function () {
   'use strict';
 
   if (!(this instanceof vgl.vertexDataP3f)) {
@@ -300,7 +298,7 @@ vgl.vertexDataP3f = function() {
  * @returns {vgl.vertexDataP3N3f}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.vertexDataP3N3f = function() {
+vgl.vertexDataP3N3f = function () {
   'use strict';
 
   if (!(this instanceof vgl.vertexDataP3N3f)) {
@@ -321,7 +319,7 @@ vgl.vertexDataP3N3f = function() {
  * @returns {vgl.vertexDataP3T3f}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.vertexDataP3T3f = function() {
+vgl.vertexDataP3T3f = function () {
   'use strict';
 
   if (!(this instanceof vgl.vertexDataP3T3f)) {
@@ -341,7 +339,7 @@ vgl.vertexDataP3T3f = function() {
  * @returns {vgl.sourceData}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.sourceData = function(arg) {
+vgl.sourceData = function (arg) {
   'use strict';
 
   if (!(this instanceof vgl.sourceData)) {
@@ -351,18 +349,18 @@ vgl.sourceData = function(arg) {
   arg = arg || {};
   var m_attributesMap = {},
       m_data = [],
-      m_name = arg.name || "Source " + new Date().toISOString(),
+      m_name = arg.name || 'Source ' + new Date().toISOString(),
 
       ////////////////////////////////////////////////////////////////////////////
       /**
        * Attribute data for the source
        */
       ////////////////////////////////////////////////////////////////////////////
-      vglAttributeData = function() {
+      vglAttributeData = function () {
         // Number of components per group
         // Type of data type (GL_FLOAT etc)
         this.m_numberOfComponents = 0;
-            // Size of data type
+        // Size of data type
         this.m_dataType = 0;
         this.m_dataTypeSize = 0;
         // Specifies whether fixed-point data values should be normalized
@@ -382,19 +380,19 @@ vgl.sourceData = function(arg) {
    * @returns {Array or Float32Array}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.data = function() {
+  this.data = function () {
     return m_data;
   };
 
   ////////////////////////////////////////////////////////////////////////////
- /**
+  /**
    * Return raw data for this source
    *
    * @returns {Array or Float32Array}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.getData = function() {
-    return data();
+  this.getData = function () {
+    return this.data();
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -420,7 +418,7 @@ vgl.sourceData = function(arg) {
   ////////////////////////////////////////////////////////////////////////////
   this.setData = function (data) {
     if (!(data instanceof Array) && !(data instanceof Float32Array)) {
-      console.log("[error] Requires array");
+      console.log('[error] Requires array');
       return;
     }
     if (data instanceof Float32Array) {
@@ -435,11 +433,15 @@ vgl.sourceData = function(arg) {
    * Add new attribute data to the source
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.addAttribute = function(key, dataType, sizeOfDataType, offset, stride,
+  this.addAttribute = function (key, dataType, sizeOfDataType, offset, stride,
                                noOfComponents, normalized) {
 
     if (!m_attributesMap.hasOwnProperty(key)) {
+      /* jshint newcap: false */
+      //jscs:disable requireCapitalizedConstructors
       var newAttr = new vglAttributeData();
+      //jscs:enable requireCapitalizedConstructors
+      /* jshint newcap: true */
       newAttr.m_dataType = dataType;
       newAttr.m_dataTypeSize = sizeOfDataType;
       newAttr.m_offset = offset;
@@ -455,7 +457,7 @@ vgl.sourceData = function(arg) {
    * Return size of the source data
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.sizeOfArray = function() {
+  this.sizeOfArray = function () {
     return Object.size(m_data);
   };
 
@@ -464,7 +466,7 @@ vgl.sourceData = function(arg) {
    * Return length of array
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.lengthOfArray = function() {
+  this.lengthOfArray = function () {
     return m_data.length;
   };
 
@@ -477,7 +479,8 @@ vgl.sourceData = function(arg) {
     * TODO: code below is probably wrong.
     *   Example:
     *            format P3N3f
-    *            m_data = [ 1, 2, 3, 4, 5, 6 ]; // contains one vertex, one normal, m_data.length == 6
+    *            m_data = [ 1, 2, 3, 4, 5, 6 ]; // contains one vertex,
+    *                                    // one normal, m_data.length == 6
     *
     *       The inner loop computes:
     *             sizeInBytes += 3 * 4; // for position
@@ -486,13 +489,13 @@ vgl.sourceData = function(arg) {
     *        Then sizeInBytes *= 6; // m_data.length == 6
     *        which gives sizeInBytes == 144 bytes when it should have been 4*6 = 24
     */
-  this.sizeInBytes = function() {
+  this.sizeInBytes = function () {
     var sizeInBytes = 0,
         keys = this.keys(), i;
 
-    for (i = 0; i < keys.length(); ++i) {
-      sizeInBytes += this.numberOfComponents(keys[i])
-                     * this.sizeOfAttributeDataType(keys[i]);
+    for (i = 0; i < keys.length(); i += 1) {
+      sizeInBytes += this.numberOfComponents(keys[i]) *
+                     this.sizeOfAttributeDataType(keys[i]);
     }
 
     sizeInBytes *= this.sizeOfArray();
@@ -505,7 +508,7 @@ vgl.sourceData = function(arg) {
    * Check if there is attribute exists of a given key type
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.hasKey = function(key) {
+  this.hasKey = function (key) {
     return m_attributesMap.hasOwnProperty(key);
   };
 
@@ -514,7 +517,7 @@ vgl.sourceData = function(arg) {
    * Return keys of all attributes
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.keys = function() {
+  this.keys = function () {
     return Object.keys(m_attributesMap);
   };
 
@@ -523,7 +526,7 @@ vgl.sourceData = function(arg) {
    * Return number of attributes of source data
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.numberOfAttributes = function() {
+  this.numberOfAttributes = function () {
     return Object.size(m_attributesMap);
   };
 
@@ -532,7 +535,7 @@ vgl.sourceData = function(arg) {
    * Return number of components of the attribute data
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.attributeNumberOfComponents = function(key) {
+  this.attributeNumberOfComponents = function (key) {
     if (m_attributesMap.hasOwnProperty(key)) {
       return m_attributesMap[key].m_numberOfComponents;
     }
@@ -545,7 +548,7 @@ vgl.sourceData = function(arg) {
    * Return if the attribute data is normalized
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.normalized = function(key) {
+  this.normalized = function (key) {
     if (m_attributesMap.hasOwnProperty(key)) {
       return m_attributesMap[key].m_normalized;
     }
@@ -558,7 +561,7 @@ vgl.sourceData = function(arg) {
    * Return size of the attribute data type
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.sizeOfAttributeDataType = function(key) {
+  this.sizeOfAttributeDataType = function (key) {
     if (m_attributesMap.hasOwnProperty(key)) {
       return m_attributesMap[key].m_dataTypeSize;
     }
@@ -571,7 +574,7 @@ vgl.sourceData = function(arg) {
    * Return attribute data type
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.attributeDataType = function(key) {
+  this.attributeDataType = function (key) {
     if (m_attributesMap.hasOwnProperty(key)) {
       return m_attributesMap[key].m_dataType;
     }
@@ -584,7 +587,7 @@ vgl.sourceData = function(arg) {
    * Return attribute offset
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.attributeOffset = function(key) {
+  this.attributeOffset = function (key) {
     if (m_attributesMap.hasOwnProperty(key)) {
       return m_attributesMap[key].m_offset;
     }
@@ -597,7 +600,7 @@ vgl.sourceData = function(arg) {
    * Return attribute stride
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.attributeStride = function(key) {
+  this.attributeStride = function (key) {
     if (m_attributesMap.hasOwnProperty(key)) {
       return m_attributesMap[key].m_stride;
     }
@@ -610,7 +613,8 @@ vgl.sourceData = function(arg) {
    * Virtual function to insert new vertex data at the end
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.pushBack = function(vertexData) {
+  this.pushBack = function (vertexData) {
+    vertexData = vertexData; /* unused parameter */
     // Should be implemented by the base class
   };
 
@@ -619,7 +623,7 @@ vgl.sourceData = function(arg) {
    * Insert new data block to the raw data
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.insert = function(data) {
+  this.insert = function (data) {
     var i;
 
     //m_data = m_data.concat(data); //no, slow on Safari
@@ -643,21 +647,21 @@ vgl.sourceData = function(arg) {
       if (!m_data.length && data.slice) {
         m_data = data.slice(0);
       } else {
-        for (i = 0; i < data.length; i++) {
+        for (i = 0; i < data.length; i += 1) {
           m_data[m_data.length] = data[i];
         }
       }
     }
   };
 
-  this.insertAt = function(index, data) {
+  this.insertAt = function (index, data) {
     var i;
 
     if (!data.length) {
       m_data[index] = data;
     } else {
-      for (i = 0; i < data.length; i++) {
-        m_data[index*data.length+i] = data[i];
+      for (i = 0; i < data.length; i += 1) {
+        m_data[index * data.length + i] = data[i];
       }
     }
   };
@@ -667,7 +671,7 @@ vgl.sourceData = function(arg) {
    * Return name of the source data
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.name = function() {
+  this.name = function () {
     return m_name;
   };
 
@@ -676,7 +680,7 @@ vgl.sourceData = function(arg) {
    * Set name of the source data
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.setName = function(name) {
+  this.setName = function (name) {
     m_name = name;
   };
 
@@ -685,20 +689,21 @@ vgl.sourceData = function(arg) {
 };
 
 
-vgl.sourceDataAnyfv = function(size, key, arg) {
+vgl.sourceDataAnyfv = function (size, key, arg) {
+  'use strict';
   if (!(this instanceof vgl.sourceDataAnyfv)) {
-      return new vgl.sourceDataAnyfv(size, key, arg);
-    }
+    return new vgl.sourceDataAnyfv(size, key, arg);
+  }
 
-    vgl.sourceData.call(this, arg);
-    this.addAttribute(key, vgl.GL.FLOAT,
-                      4, 0, size * 4, size, false);
+  vgl.sourceData.call(this, arg);
+  this.addAttribute(key, vgl.GL.FLOAT,
+                    4, 0, size * 4, size, false);
 
-    this.pushBack = function(value) {
-      this.insert(value);
-    };
+  this.pushBack = function (value) {
+    this.insert(value);
+  };
 
-    return this;
+  return this;
 };
 inherit(vgl.sourceDataAnyfv, vgl.sourceData);
 
@@ -709,7 +714,7 @@ inherit(vgl.sourceDataAnyfv, vgl.sourceData);
  * @returns {vgl.sourceDataP3T3f}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.sourceDataP3T3f = function(arg) {
+vgl.sourceDataP3T3f = function (arg) {
   'use strict';
 
   if (!(this instanceof vgl.sourceDataP3T3f)) {
@@ -722,7 +727,7 @@ vgl.sourceDataP3T3f = function(arg) {
   this.addAttribute(vgl.vertexAttributeKeys.TextureCoordinate, vgl.GL.FLOAT, 4, 12,
                     6 * 4, 3, false);
 
-  this.pushBack = function(value) {
+  this.pushBack = function (value) {
     this.insert(value.m_position);
     this.insert(value.m_texCoordinate);
   };
@@ -739,7 +744,7 @@ inherit(vgl.sourceDataP3T3f, vgl.sourceData);
  * @returns {vgl.sourceDataP3N3f}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.sourceDataP3N3f = function(arg) {
+vgl.sourceDataP3N3f = function (arg) {
   'use strict';
 
   if (!(this instanceof vgl.sourceDataP3N3f)) {
@@ -753,7 +758,7 @@ vgl.sourceDataP3N3f = function(arg) {
   this.addAttribute(vgl.vertexAttributeKeys.Normal, vgl.GL.FLOAT, 4, 12, 6 * 4, 3,
                     false);
 
-  this.pushBack = function(value) {
+  this.pushBack = function (value) {
     this.insert(value.m_position);
     this.insert(value.m_normal);
   };
@@ -770,7 +775,7 @@ inherit(vgl.sourceDataP3N3f, vgl.sourceData);
  * @returns {vgl.sourceDataP3fv}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.sourceDataP3fv = function(arg) {
+vgl.sourceDataP3fv = function (arg) {
   'use strict';
 
   if (!(this instanceof vgl.sourceDataP3fv)) {
@@ -782,7 +787,7 @@ vgl.sourceDataP3fv = function(arg) {
   this.addAttribute(vgl.vertexAttributeKeys.Position, vgl.GL.FLOAT, 4, 0, 3 * 4, 3,
                     false);
 
-  this.pushBack = function(value) {
+  this.pushBack = function (value) {
     this.insert(value);
   };
 
@@ -798,7 +803,7 @@ inherit(vgl.sourceDataP3fv, vgl.sourceData);
  * @returns {vgl.sourceDataT2fv}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.sourceDataT2fv = function(arg) {
+vgl.sourceDataT2fv = function (arg) {
   'use strict';
 
   if (!(this instanceof vgl.sourceDataT2fv)) {
@@ -810,7 +815,7 @@ vgl.sourceDataT2fv = function(arg) {
   this.addAttribute(vgl.vertexAttributeKeys.TextureCoordinate, vgl.GL.FLOAT, 4, 0,
                     2 * 4, 2, false);
 
-  this.pushBack = function(value) {
+  this.pushBack = function (value) {
     this.insert(value);
   };
 
@@ -826,7 +831,7 @@ inherit(vgl.sourceDataT2fv, vgl.sourceData);
  * @returns {vgl.sourceDataC3fv}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.sourceDataC3fv = function(arg) {
+vgl.sourceDataC3fv = function (arg) {
   'use strict';
 
   if (!(this instanceof vgl.sourceDataC3fv)) {
@@ -837,7 +842,7 @@ vgl.sourceDataC3fv = function(arg) {
 
   this.addAttribute(vgl.vertexAttributeKeys.Color, vgl.GL.FLOAT, 4, 0, 3 * 4, 3, false);
 
-  this.pushBack = function(value) {
+  this.pushBack = function (value) {
     this.insert(value);
   };
 
@@ -854,7 +859,7 @@ inherit(vgl.sourceDataC3fv, vgl.sourceData);
  * @returns {vgl.sourceDataSf}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.sourceDataSf = function(arg) {
+vgl.sourceDataSf = function (arg) {
   'use strict';
 
   if (!(this instanceof vgl.sourceDataSf)) {
@@ -870,7 +875,7 @@ vgl.sourceDataSf = function(arg) {
 
   this.addAttribute(vgl.vertexAttributeKeys.Scalar, vgl.GL.FLOAT, 4, 0, 4, 1, false);
 
-  this.pushBack = function(value) {
+  this.pushBack = function (value) {
     if (m_max === null || value > m_max) {
       m_max = value;
     }
@@ -881,7 +886,7 @@ vgl.sourceDataSf = function(arg) {
     this.data()[this.data().length] = value;
   };
 
-  this.insertAt = function(index, value) {
+  this.insertAt = function (index, value) {
     if (m_max === null || value > m_max) {
       m_max = value;
     }
@@ -893,7 +898,7 @@ vgl.sourceDataSf = function(arg) {
     this.data()[index] = value;
   };
 
-  this.scalarRange = function() {
+  this.scalarRange = function () {
     if (m_fixedmin === null || m_fixedmax === null) {
       return [m_min, m_max];
     }
@@ -901,7 +906,7 @@ vgl.sourceDataSf = function(arg) {
     return [m_fixedmin, m_fixedmax];
   };
 
-  this.setScalarRange = function(min, max) {
+  this.setScalarRange = function (min, max) {
     m_fixedmin = min;
     m_fixedmax = max;
   };
@@ -922,28 +927,23 @@ inherit(vgl.sourceDataSf, vgl.sourceData);
  * @returns {vgl.sourceDataDf}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.sourceDataDf = function(arg) {
+vgl.sourceDataDf = function (arg) {
   'use strict';
 
   if (!(this instanceof vgl.sourceDataDf)) {
     return new vgl.sourceDataDf(arg);
   }
 
-  var m_min = null,
-      m_max = null,
-      m_fixedmin = null,
-      m_fixedmax = null;
-
   vgl.sourceData.call(this, arg);
 
   this.addAttribute(vgl.vertexAttributeKeys.Scalar, vgl.GL.FLOAT,
                     4, 0, 4, 1, false);
 
-  this.pushBack = function(value) {
+  this.pushBack = function (value) {
     this.data()[this.data().length] = value;
   };
 
-  this.insertAt = function(index, value) {
+  this.insertAt = function (index, value) {
     this.data()[index] = value;
   };
 
@@ -959,8 +959,8 @@ inherit(vgl.sourceDataDf, vgl.sourceData);
  * @class
  * @returns {vgl.geometryData}
  */
- /////////////////////////////////////////////////////////////////////////////
-vgl.geometryData = function() {
+/////////////////////////////////////////////////////////////////////////////
+vgl.geometryData = function () {
   'use strict';
 
   if (!(this instanceof vgl.geometryData)) {
@@ -969,7 +969,7 @@ vgl.geometryData = function() {
   vgl.data.call(this);
 
   /** @private */
-  var m_name = "",
+  var m_name = '',
       m_primitives = [],
       m_sources = [],
       m_bounds = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
@@ -981,7 +981,7 @@ vgl.geometryData = function() {
    * Return type
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.type = function() {
+  this.type = function () {
     return vgl.data.geometry;
   };
 
@@ -990,7 +990,7 @@ vgl.geometryData = function() {
    * Return ID of the geometry data
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.name = function() {
+  this.name = function () {
     return m_name;
   };
 
@@ -999,7 +999,7 @@ vgl.geometryData = function() {
    * Set name of the geometry data
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.setName = function(name) {
+  this.setName = function (name) {
     m_name = name;
   };
 
@@ -1008,11 +1008,11 @@ vgl.geometryData = function() {
    * Add new source
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.addSource = function(source, sourceName) {
+  this.addSource = function (source, sourceName) {
     // @todo Check if the incoming source has duplicate keys
 
     if (sourceName !== undefined) {
-        source.setName(sourceName);
+      source.setName(sourceName);
     }
     // NOTE This might not work on IE8 or lower
     if (m_sources.indexOf(source) === -1) {
@@ -1032,7 +1032,7 @@ vgl.geometryData = function() {
    * Return source for a given index. Returns 0 if not found.
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.source = function(index) {
+  this.source = function (index) {
     if (index < m_sources.length) {
       return m_sources[index];
     }
@@ -1052,24 +1052,24 @@ vgl.geometryData = function() {
       }
     }
     return 0;
-  }
+  };
 
   ////////////////////////////////////////////////////////////////////////////
   /**
    * Return number of sources
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.numberOfSources = function() {
+  this.numberOfSources = function () {
     return m_sources.length;
   };
 
   /**
    * Return source data given a key
    */
-  this.sourceData = function(key) {
+  this.sourceData = function (key) {
     var i;
 
-    for (i = 0; i < m_sources.length; ++i) {
+    for (i = 0; i < m_sources.length; i += 1) {
       if (m_sources[i].hasKey(key)) {
         return m_sources[i];
       }
@@ -1083,7 +1083,7 @@ vgl.geometryData = function() {
    * Add new primitive
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.addPrimitive = function(primitive) {
+  this.addPrimitive = function (primitive) {
     m_primitives.push(primitive);
     return true;
   };
@@ -1093,7 +1093,7 @@ vgl.geometryData = function() {
    * Return primitive for a given index. Returns null if not found.
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.primitive = function(index) {
+  this.primitive = function (index) {
     if (index < m_primitives.length) {
       return m_primitives[index];
     }
@@ -1106,7 +1106,7 @@ vgl.geometryData = function() {
    * Return number of primitives
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.numberOfPrimitives = function() {
+  this.numberOfPrimitives = function () {
     return m_primitives.length;
   };
 
@@ -1115,7 +1115,7 @@ vgl.geometryData = function() {
    * Return bounds [minX, maxX, minY, maxY, minZ, maxZ]
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.bounds = function() {
+  this.bounds = function () {
     if (m_boundsDirtyTimestamp.getMTime() > m_computeBoundsTimestamp.getMTime()) {
       this.computeBounds();
     }
@@ -1142,7 +1142,7 @@ vgl.geometryData = function() {
    * Reset bounds
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.resetBounds = function() {
+  this.resetBounds = function () {
     m_bounds[0] = 0.0;
     m_bounds[1] = 0.0;
     m_bounds[2] = 0.0;
@@ -1156,7 +1156,7 @@ vgl.geometryData = function() {
    * Set bounds
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.setBounds = function(minX, maxX, minY, maxY, minZ, maxZ) {
+  this.setBounds = function (minX, maxX, minY, maxY, minZ, maxZ) {
     m_bounds[0] = minX;
     m_bounds[1] = maxX;
     m_bounds[2] = minY;
@@ -1174,7 +1174,7 @@ vgl.geometryData = function() {
    * Compute bounds
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.computeBounds = function() {
+  this.computeBounds = function () {
     if (m_boundsDirtyTimestamp.getMTime() > m_computeBoundsTimestamp.getMTime()) {
       var attr = vgl.vertexAttributeKeys.Position,
           sourceData = this.sourceData(attr),
@@ -1194,7 +1194,7 @@ vgl.geometryData = function() {
 
       this.resetBounds();
 
-      for (j = 0; j < numberOfComponents; ++j) {
+      for (j = 0; j < numberOfComponents; j += 1) {
         ib = j * 2;
         jb = j * 2 + 1;
         if (count) {
@@ -1225,7 +1225,7 @@ vgl.geometryData = function() {
    * Returns the vertex closest to a given position
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.findClosestVertex = function(point) {
+  this.findClosestVertex = function (point) {
     var attr = vgl.vertexAttributeKeys.Position,
         sourceData = this.sourceData(attr),
         sizeOfDataType = sourceData.sizeOfAttributeDataType(attr),
@@ -1244,10 +1244,10 @@ vgl.geometryData = function() {
     }
 
     if (!point.z) {
-      point = {x:point.x, y:point.y, z:0};
+      point = {x: point.x, y: point.y, z: 0};
     }
 
-    for (vi = offset, i = 0; vi < data.length; vi += stride, i++) {
+    for (vi = offset, i = 0; vi < data.length; vi += stride, i += 1) {
       vPos = [data[vi],
               data[vi + 1],
               data[vi + 2]];
@@ -1255,7 +1255,7 @@ vgl.geometryData = function() {
       dx = vPos[0] - point.x;
       dy = vPos[1] - point.y;
       dz = vPos[2] - point.z;
-      dist = Math.sqrt(dx*dx + dy*dy + dz*dz);
+      dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
       if (dist < minDist) {
         minDist = dist;
         minIndex = i;
@@ -1269,7 +1269,7 @@ vgl.geometryData = function() {
    * Returns the requested vertex position
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.getPosition = function(index) {
+  this.getPosition = function (index) {
     var attr = vgl.vertexAttributeKeys.Position,
         sourceData = this.sourceData(attr),
         sizeOfDataType = sourceData.sizeOfAttributeDataType(attr),
@@ -1280,12 +1280,12 @@ vgl.geometryData = function() {
 
     // assume positions are always triplets
     if (numberOfComponents !== 3) {
-      console.log("[warning] getPosition assumes three component data");
+      console.log('[warning] getPosition assumes three component data');
     }
 
-    return [ data[offset + index*stride],
-             data[offset + index*stride + 1],
-             data[offset + index*stride + 2] ];
+    return [data[offset + index * stride],
+            data[offset + index * stride + 1],
+            data[offset + index * stride + 2]];
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -1293,7 +1293,7 @@ vgl.geometryData = function() {
    * Returns the scalar corresponding to a given vertex index
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.getScalar = function(index) {
+  this.getScalar = function (index) {
     var attr = vgl.vertexAttributeKeys.Scalar,
         sourceData = this.sourceData(attr),
         numberOfComponents, sizeOfDataType, data, stride, offset;
@@ -1308,14 +1308,14 @@ vgl.geometryData = function() {
     stride = sourceData.attributeStride(attr) / sizeOfDataType;
     offset = sourceData.attributeOffset(attr) / sizeOfDataType;
 
-    //console.log("index for scalar is " + index);
-    //console.log("offset for scalar is " + offset);
-    //console.log("stride for scalar is " + stride);
+    //console.log('index for scalar is ' + index);
+    //console.log('offset for scalar is ' + offset);
+    //console.log('stride for scalar is ' + stride);
 
-    //console.log("have " + data.length + " scalars");
+    //console.log('have ' + data.length + ' scalars');
 
     if (index * stride + offset >= data.length) {
-      console.log("access out of bounds in getScalar");
+      console.log('access out of bounds in getScalar');
     }
 
     return data[index * stride + offset];

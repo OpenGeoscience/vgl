@@ -3,10 +3,7 @@
  * @module vgl
  */
 
-/*jslint devel: true, forin: true, newcap: true, plusplus: true*/
-/*jslint white: true, continue:true, indent: 2*/
-
-/*global Uint8Array, vgl, gl, ogs, vec4, inherit, $*/
+/*global Uint8Array, vgl, inherit*/
 //////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -17,7 +14,7 @@
  * @returns {vgl.texture}
  */
 ///////////////////////////////////////////////////////////////////////////////
-vgl.texture = function() {
+vgl.texture = function () {
   'use strict';
 
   if (!(this instanceof vgl.texture)) {
@@ -51,7 +48,7 @@ vgl.texture = function() {
         renderState.m_context.activeTexture(vgl.GL.TEXTURE1);
         break;
       case 2:
-        gl.activeTexture(vgl.GL.TEXTURE2);
+        renderState.m_context.activeTexture(vgl.GL.TEXTURE2);
         break;
       case 3:
         renderState.m_context.activeTexture(vgl.GL.TEXTURE3);
@@ -93,8 +90,8 @@ vgl.texture = function() {
         renderState.m_context.activeTexture(vgl.GL.TEXTURE15);
         break;
       default:
-        throw "[error] Texture unit "  + this.m_textureUnit +
-              " is not supported";
+        throw '[error] Texture unit '  + m_that.m_textureUnit +
+              ' is not supported';
     }
   }
 
@@ -105,17 +102,21 @@ vgl.texture = function() {
    * @param renderState
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.setup = function(renderState) {
+  this.setup = function (renderState) {
     // Activate the texture unit first
     activateTextureUnit(renderState);
 
     renderState.m_context.deleteTexture(this.m_textureHandle);
     this.m_textureHandle = renderState.m_context.createTexture();
     renderState.m_context.bindTexture(vgl.GL.TEXTURE_2D, this.m_textureHandle);
-    renderState.m_context.texParameteri(vgl.GL.TEXTURE_2D, vgl.GL.TEXTURE_MIN_FILTER, vgl.GL.LINEAR);
-    renderState.m_context.texParameteri(vgl.GL.TEXTURE_2D, vgl.GL.TEXTURE_MAG_FILTER, vgl.GL.LINEAR);
-    renderState.m_context.texParameteri(vgl.GL.TEXTURE_2D, vgl.GL.TEXTURE_WRAP_S, vgl.GL.CLAMP_TO_EDGE);
-    renderState.m_context.texParameteri(vgl.GL.TEXTURE_2D, vgl.GL.TEXTURE_WRAP_T, vgl.GL.CLAMP_TO_EDGE);
+    renderState.m_context.texParameteri(vgl.GL.TEXTURE_2D,
+        vgl.GL.TEXTURE_MIN_FILTER, vgl.GL.LINEAR);
+    renderState.m_context.texParameteri(vgl.GL.TEXTURE_2D,
+        vgl.GL.TEXTURE_MAG_FILTER, vgl.GL.LINEAR);
+    renderState.m_context.texParameteri(vgl.GL.TEXTURE_2D,
+        vgl.GL.TEXTURE_WRAP_S, vgl.GL.CLAMP_TO_EDGE);
+    renderState.m_context.texParameteri(vgl.GL.TEXTURE_2D,
+        vgl.GL.TEXTURE_WRAP_T, vgl.GL.CLAMP_TO_EDGE);
 
     if (this.m_image !== null) {
       renderState.m_context.pixelStorei(vgl.GL.UNPACK_ALIGNMENT, 1);
@@ -124,15 +125,14 @@ vgl.texture = function() {
       this.updateDimensions();
       this.computeInternalFormatUsingImage();
 
-      // console.log("m_internalFormat " + this.m_internalFormat);
-      // console.log("m_pixelFormat " + this.m_pixelFormat);
-      // console.log("m_pixelDataType " + this.m_pixelDataType);
+      // console.log('m_internalFormat ' + this.m_internalFormat);
+      // console.log('m_pixelFormat ' + this.m_pixelFormat);
+      // console.log('m_pixelDataType ' + this.m_pixelDataType);
 
       // FOR now support only 2D textures
       renderState.m_context.texImage2D(vgl.GL.TEXTURE_2D, 0, this.m_internalFormat,
         this.m_pixelFormat, this.m_pixelDataType, this.m_image);
-    }
-    else {
+    } else {
       renderState.m_context.texImage2D(vgl.GL.TEXTURE_2D, 0, this.m_internalFormat,
         this.m_width, this.m_height, 0, this.m_pixelFormat, this.m_pixelDataType, null);
     }
@@ -148,7 +148,7 @@ vgl.texture = function() {
    * @param renderState
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.bind = function(renderState) {
+  this.bind = function (renderState) {
     // TODO Call setup via material setup
     if (this.getMTime() > m_setupTimestamp.getMTime()) {
       this.setup(renderState);
@@ -165,7 +165,7 @@ vgl.texture = function() {
    * @param renderState
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.undoBind = function(renderState) {
+  this.undoBind = function (renderState) {
     renderState.m_context.bindTexture(vgl.GL.TEXTURE_2D, null);
   };
 
@@ -176,7 +176,7 @@ vgl.texture = function() {
    * @returns {vgl.image}
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.image = function() {
+  this.image = function () {
     return this.m_image;
   };
 
@@ -188,7 +188,7 @@ vgl.texture = function() {
    * @returns {boolean}
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.setImage = function(image) {
+  this.setImage = function (image) {
     if (image !== null) {
       this.m_image = image;
       this.updateDimensions();
@@ -206,7 +206,7 @@ vgl.texture = function() {
    * @returns {number}
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.textureUnit = function() {
+  this.textureUnit = function () {
     return this.m_textureUnit;
   };
 
@@ -218,7 +218,7 @@ vgl.texture = function() {
    * @returns {boolean}
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.setTextureUnit = function(unit) {
+  this.setTextureUnit = function (unit) {
     if (this.m_textureUnit === unit) {
       return false;
     }
@@ -235,7 +235,7 @@ vgl.texture = function() {
    * @returns {*}
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.width = function() {
+  this.width = function () {
     return this.m_width;
   };
 
@@ -247,7 +247,7 @@ vgl.texture = function() {
    * @returns {boolean}
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.setWidth = function(width) {
+  this.setWidth = function (width) {
     if (m_that.m_width !== width) {
       m_that.m_width = width;
       m_that.modified();
@@ -264,7 +264,7 @@ vgl.texture = function() {
    * @returns {*}
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.height = function() {
+  this.height = function () {
     return m_that.m_height;
   };
 
@@ -276,7 +276,7 @@ vgl.texture = function() {
    * @returns {vgl.texture}
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.setHeight = function(height) {
+  this.setHeight = function (height) {
     if (m_that.m_height !== height) {
       m_that.m_height = height;
       m_that.modified();
@@ -293,7 +293,7 @@ vgl.texture = function() {
    * @returns {number}
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.depth = function() {
+  this.depth = function () {
     return this.m_depth;
   };
 
@@ -305,7 +305,7 @@ vgl.texture = function() {
    * @returns {boolean}
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.setDepth = function(depth) {
+  this.setDepth = function (depth) {
     if (this.m_image === null) {
       return false;
     }
@@ -322,7 +322,7 @@ vgl.texture = function() {
    * @returns {*}
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.textureHandle = function() {
+  this.textureHandle = function () {
     return this.m_textureHandle;
   };
 
@@ -333,7 +333,7 @@ vgl.texture = function() {
    * @returns {*}
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.internalFormat = function() {
+  this.internalFormat = function () {
     return this.m_internalFormat;
   };
 
@@ -345,7 +345,7 @@ vgl.texture = function() {
    * @returns {boolean}
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.setInternalFormat = function(internalFormat) {
+  this.setInternalFormat = function (internalFormat) {
     if (this.m_internalFormat !== internalFormat) {
       this.m_internalFormat = internalFormat;
       this.modified();
@@ -362,7 +362,7 @@ vgl.texture = function() {
    * @returns {*}
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.pixelFormat = function() {
+  this.pixelFormat = function () {
     return this.m_pixelFormat;
   };
 
@@ -374,7 +374,7 @@ vgl.texture = function() {
    * @returns {boolean}
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.setPixelFormat = function(pixelFormat) {
+  this.setPixelFormat = function (pixelFormat) {
     if (this.m_image === null) {
       return false;
     }
@@ -391,7 +391,7 @@ vgl.texture = function() {
    * @returns {*}
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.pixelDataType = function() {
+  this.pixelDataType = function () {
     return this.m_pixelDataType;
   };
 
@@ -403,7 +403,7 @@ vgl.texture = function() {
    * @returns {boolean}
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.setPixelDataType = function(pixelDataType) {
+  this.setPixelDataType = function (pixelDataType) {
     if (this.m_image === null) {
       return false;
     }
@@ -420,7 +420,7 @@ vgl.texture = function() {
    * Compute internal format of the texture
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.computeInternalFormatUsingImage = function() {
+  this.computeInternalFormatUsingImage = function () {
     // Currently image does not define internal format
     // and hence it's pixel format is the only way to query
     // information on how color has been stored.
@@ -453,7 +453,7 @@ vgl.texture = function() {
    * Update texture dimensions
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.updateDimensions = function() {
+  this.updateDimensions = function () {
     if (this.m_image !== null) {
       this.m_width = this.m_image.width;
       this.m_height = this.m_image.height;
@@ -474,7 +474,7 @@ inherit(vgl.texture, vgl.materialAttribute);
  * @returns {vgl.lookupTable}
  */
 ///////////////////////////////////////////////////////////////////////////////
-vgl.lookupTable = function() {
+vgl.lookupTable = function () {
   'use strict';
 
   if (!(this instanceof vgl.lookupTable)) {
@@ -483,43 +483,43 @@ vgl.lookupTable = function() {
   vgl.texture.call(this);
 
   var m_setupTimestamp = vgl.timestamp(),
-      m_range = [0,0];
+      m_range = [0, 0];
 
   this.m_colorTable = //paraview bwr colortable
-    [0.07514311,0.468049805,1,1,
-     0.247872569,0.498782363,1,1,
-     0.339526309,0.528909511,1,1,
-     0.409505078,0.558608486,1,1,
-     0.468487184,0.588057293,1,1,
-     0.520796675,0.617435078,1,1,
-     0.568724526,0.646924167,1,1,
-     0.613686735,0.676713218,1,1,
-     0.656658579,0.707001303,1,1,
-     0.698372844,0.738002964,1,1,
-     0.739424025,0.769954435,1,1,
-     0.780330104,0.803121429,1,1,
-     0.821573924,0.837809045,1,1,
-     0.863634967,0.874374691,1,1,
-     0.907017747,0.913245283,1,1,
-     0.936129275,0.938743558,0.983038586,1,
-     0.943467973,0.943498599,0.943398095,1,
-     0.990146732,0.928791426,0.917447482,1,
-     1,0.88332677,0.861943246,1,
-     1,0.833985467,0.803839606,1,
-     1,0.788626485,0.750707739,1,
-     1,0.746206642,0.701389973,1,
-     1,0.70590052,0.654994046,1,
-     1,0.667019783,0.610806959,1,
-     1,0.6289553,0.568237474,1,
-     1,0.591130233,0.526775617,1,
-     1,0.552955184,0.485962266,1,
-     1,0.513776083,0.445364274,1,
-     1,0.472800903,0.404551679,1,
-     1,0.428977855,0.363073592,1,
-     1,0.380759558,0.320428137,1,
-     0.961891484,0.313155629,0.265499262,1,
-     0.916482116,0.236630659,0.209939162,1].map(
-             function(x) {return x*255;});
+    [0.07514311, 0.468049805, 1, 1,
+     0.247872569, 0.498782363, 1, 1,
+     0.339526309, 0.528909511, 1, 1,
+     0.409505078, 0.558608486, 1, 1,
+     0.468487184, 0.588057293, 1, 1,
+     0.520796675, 0.617435078, 1, 1,
+     0.568724526, 0.646924167, 1, 1,
+     0.613686735, 0.676713218, 1, 1,
+     0.656658579, 0.707001303, 1, 1,
+     0.698372844, 0.738002964, 1, 1,
+     0.739424025, 0.769954435, 1, 1,
+     0.780330104, 0.803121429, 1, 1,
+     0.821573924, 0.837809045, 1, 1,
+     0.863634967, 0.874374691, 1, 1,
+     0.907017747, 0.913245283, 1, 1,
+     0.936129275, 0.938743558, 0.983038586, 1,
+     0.943467973, 0.943498599, 0.943398095, 1,
+     0.990146732, 0.928791426, 0.917447482, 1,
+     1, 0.88332677, 0.861943246, 1,
+     1, 0.833985467, 0.803839606, 1,
+     1, 0.788626485, 0.750707739, 1,
+     1, 0.746206642, 0.701389973, 1,
+     1, 0.70590052, 0.654994046, 1,
+     1, 0.667019783, 0.610806959, 1,
+     1, 0.6289553, 0.568237474, 1,
+     1, 0.591130233, 0.526775617, 1,
+     1, 0.552955184, 0.485962266, 1,
+     1, 0.513776083, 0.445364274, 1,
+     1, 0.472800903, 0.404551679, 1,
+     1, 0.428977855, 0.363073592, 1,
+     1, 0.380759558, 0.320428137, 1,
+     0.961891484, 0.313155629, 0.265499262, 1,
+     0.916482116, 0.236630659, 0.209939162, 1].map(
+             function (x) {return x * 255;});
 
   /////////////////////////////////////////////////////////////////////////////
   /**
@@ -528,7 +528,7 @@ vgl.lookupTable = function() {
    * @param {vgl.renderState} renderState
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.setup = function(renderState) {
+  this.setup = function (renderState) {
     if (this.textureUnit() === 0) {
       renderState.m_context.activeTexture(vgl.GL.TEXTURE0);
     } else if (this.textureUnit() === 1) {
@@ -538,13 +538,17 @@ vgl.lookupTable = function() {
     renderState.m_context.deleteTexture(this.m_textureHandle);
     this.m_textureHandle = renderState.m_context.createTexture();
     renderState.m_context.bindTexture(vgl.GL.TEXTURE_2D, this.m_textureHandle);
-    renderState.m_context.texParameteri(vgl.GL.TEXTURE_2D, vgl.GL.TEXTURE_MIN_FILTER, vgl.GL.LINEAR);
-    renderState.m_context.texParameteri(vgl.GL.TEXTURE_2D, vgl.GL.TEXTURE_MAG_FILTER, vgl.GL.LINEAR);
-    renderState.m_context.texParameteri(vgl.GL.TEXTURE_2D, vgl.GL.TEXTURE_WRAP_S, vgl.GL.CLAMP_TO_EDGE);
-    renderState.m_context.texParameteri(vgl.GL.TEXTURE_2D, vgl.GL.TEXTURE_WRAP_T, vgl.GL.CLAMP_TO_EDGE);
+    renderState.m_context.texParameteri(vgl.GL.TEXTURE_2D,
+        vgl.GL.TEXTURE_MIN_FILTER, vgl.GL.LINEAR);
+    renderState.m_context.texParameteri(vgl.GL.TEXTURE_2D,
+        vgl.GL.TEXTURE_MAG_FILTER, vgl.GL.LINEAR);
+    renderState.m_context.texParameteri(vgl.GL.TEXTURE_2D,
+        vgl.GL.TEXTURE_WRAP_S, vgl.GL.CLAMP_TO_EDGE);
+    renderState.m_context.texParameteri(vgl.GL.TEXTURE_2D,
+        vgl.GL.TEXTURE_WRAP_T, vgl.GL.CLAMP_TO_EDGE);
     renderState.m_context.pixelStorei(vgl.GL.UNPACK_ALIGNMENT, 1);
 
-    this.m_width = this.m_colorTable.length/4;
+    this.m_width = this.m_colorTable.length / 4;
     this.m_height = 1;
     this.m_depth = 0;
     renderState.m_context.texImage2D(vgl.GL.TEXTURE_2D,
@@ -562,7 +566,7 @@ vgl.lookupTable = function() {
    * @returns {*}
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.colorTable = function() {
+  this.colorTable = function () {
     return this.m_colorTable;
   };
 
@@ -574,7 +578,7 @@ vgl.lookupTable = function() {
    * @returns {boolean}
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.setColorTable = function(colors) {
+  this.setColorTable = function (colors) {
     if (this.m_colorTable === colors) {
       return false;
     }
@@ -591,7 +595,7 @@ vgl.lookupTable = function() {
    * @returns {Array}
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.range = function() {
+  this.range = function () {
     return m_range;
   };
 
@@ -603,7 +607,7 @@ vgl.lookupTable = function() {
    * @returns {boolean}
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.setRange = function(range) {
+  this.setRange = function (range) {
     if (m_range === range) {
       return false;
     }
@@ -619,7 +623,7 @@ vgl.lookupTable = function() {
    * @param range
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.updateRange = function(range) {
+  this.updateRange = function (range) {
     if (!(range instanceof Array)) {
       console.log('[error] Invalid data type for range. Requires array [min,max]');
     }

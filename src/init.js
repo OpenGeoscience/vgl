@@ -3,13 +3,11 @@
  * @module vgl
  */
 
-/*jslint devel: true, forin: true, newcap: true, plusplus: true*/
-/*jslint white: true, continue:true, indent: 2*/
-
-/*global vgl, ogs, vec4, inherit, $*/
+/*global vgl: true, ogs: true, inherit*/
+/*exported vgl, inherit*/
 //////////////////////////////////////////////////////////////////////////////
 
-if(typeof ogs === 'undefined') {
+if (typeof ogs === 'undefined') {
   var ogs = {};
 }
 
@@ -21,18 +19,18 @@ if(typeof ogs === 'undefined') {
  * @returns {*|{}}
  */
 //////////////////////////////////////////////////////////////////////////////
-ogs.namespace = function(ns_string) {
+ogs.namespace = function (ns_string) {
   'use strict';
 
   var parts = ns_string.split('.'), parent = ogs, i;
 
   // strip redundant leading global
-  if (parts[0] === "ogs") {
+  if (parts[0] === 'ogs') {
     parts = parts.slice(1);
   }
   for (i = 0; i < parts.length; i += 1) {
     // create a property if it doesn't exist
-    if (typeof parent[parts[i]] === "undefined") {
+    if (typeof parent[parts[i]] === 'undefined') {
       parent[parts[i]] = {};
     }
     parent = parent[parts[i]];
@@ -41,7 +39,7 @@ ogs.namespace = function(ns_string) {
 };
 
 /** vgl namespace */
-var vgl = ogs.namespace("gl");
+var vgl = ogs.namespace('gl');
 
 //////////////////////////////////////////////////////////////////////////////
 /**
@@ -52,9 +50,9 @@ var vgl = ogs.namespace("gl");
  */
 //////////////////////////////////////////////////////////////////////////////
 function inherit(C, P) {
-  "use strict";
+  'use strict';
 
-  var F = function() {
+  var F = function () {
   };
   F.prototype = P.prototype;
   C.prototype = new F();
@@ -70,13 +68,13 @@ function inherit(C, P) {
  * @returns {number} *
  */
 //////////////////////////////////////////////////////////////////////////////
-Object.size = function(obj) {
-  "use strict";
+Object.size = function (obj) {
+  'use strict';
 
   var size = 0, key = null;
   for (key in obj) {
     if (obj.hasOwnProperty(key)) {
-      size++;
+      size += 1;
     }
   }
   return size;

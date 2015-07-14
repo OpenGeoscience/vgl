@@ -3,10 +3,7 @@
  * @module vgl
  */
 
-/*jslint devel: true, forin: true, newcap: true, plusplus: true*/
-/*jslint white: true, continue:true, indent: 2*/
-
-/*global vgl, ogs, vec4, inherit, $*/
+/*global vgl, inherit, $*/
 //////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////
@@ -18,7 +15,7 @@
  * @returns {vgl.interactorStyle}
  */
 ////////////////////////////////////////////////////////////////////////////
-vgl.interactorStyle = function() {
+vgl.interactorStyle = function () {
   'use strict';
 
   if (!(this instanceof vgl.interactorStyle)) {
@@ -37,7 +34,7 @@ vgl.interactorStyle = function() {
    * @returns {null}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.viewer = function() {
+  this.viewer = function () {
     return m_viewer;
   };
 
@@ -48,7 +45,7 @@ vgl.interactorStyle = function() {
    * @param viewer
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.setViewer = function(viewer) {
+  this.setViewer = function (viewer) {
     if (viewer !== m_viewer) {
       m_viewer = viewer;
       $(m_viewer).on(vgl.event.mousePress, m_that.handleMouseDown);
@@ -72,7 +69,8 @@ vgl.interactorStyle = function() {
    * @returns {boolean}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.handleMouseDown = function(event) {
+  this.handleMouseDown = function (event) {
+    event = event; /* unused parameter */
     return true;
   };
 
@@ -84,7 +82,8 @@ vgl.interactorStyle = function() {
    * @returns {boolean}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.handleMouseUp = function(event) {
+  this.handleMouseUp = function (event) {
+    event = event; /* unused parameter */
     return true;
   };
 
@@ -96,7 +95,8 @@ vgl.interactorStyle = function() {
    * @returns {boolean}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.handleMouseMove = function(event) {
+  this.handleMouseMove = function (event) {
+    event = event; /* unused parameter */
     return true;
   };
 
@@ -108,9 +108,10 @@ vgl.interactorStyle = function() {
    * @returns {boolean}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.handleMouseOut = function(event) {
+  this.handleMouseOut = function (event) {
+    event = event; /* unused parameter */
     return true;
-  }
+  };
 
   ////////////////////////////////////////////////////////////////////////////
   /**
@@ -120,7 +121,8 @@ vgl.interactorStyle = function() {
    * @returns {boolean}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.handleMouseWheel = function(event) {
+  this.handleMouseWheel = function (event) {
+    event = event; /* unused parameter */
     return true;
   };
 
@@ -132,7 +134,8 @@ vgl.interactorStyle = function() {
    * @returns {boolean}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.handleClick = function(event) {
+  this.handleClick = function (event) {
+    event = event; /* unused parameter */
     return true;
   };
 
@@ -144,7 +147,8 @@ vgl.interactorStyle = function() {
    * @returns {boolean}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.handleDoubleClick = function(event) {
+  this.handleDoubleClick = function (event) {
+    event = event; /* unused parameter */
     return true;
   };
 
@@ -156,7 +160,8 @@ vgl.interactorStyle = function() {
    * @returns {boolean}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.handleKeyPress = function(event) {
+  this.handleKeyPress = function (event) {
+    event = event; /* unused parameter */
     return true;
   };
 
@@ -168,7 +173,8 @@ vgl.interactorStyle = function() {
    * @returns {boolean}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.handleContextMenu = function(event) {
+  this.handleContextMenu = function (event) {
+    event = event; /* unused parameter */
     return true;
   };
 
@@ -177,7 +183,7 @@ vgl.interactorStyle = function() {
    * Reset to default
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.reset = function() {
+  this.reset = function () {
     return true;
   };
 

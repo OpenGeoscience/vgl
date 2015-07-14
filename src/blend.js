@@ -3,10 +3,7 @@
  * @module vgl
  */
 
-/*jslint devel: true, forin: true, newcap: true, plusplus: true*/
-/*jslint white: true, continue:true, indent: 2*/
-
-/*global vgl, gl, ogs, vec4, inherit, $*/
+/*global vgl, inherit*/
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
@@ -19,7 +16,7 @@
  * @returns {vgl.blendFunction}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.blendFunction = function(source, destination) {
+vgl.blendFunction = function (source, destination) {
   'use strict';
 
   if (!(this instanceof vgl.blendFunction)) {
@@ -37,7 +34,7 @@ vgl.blendFunction = function(source, destination) {
    * @param {vgl.renderState}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.apply = function(renderState) {
+  this.apply = function (renderState) {
     renderState.m_context.blendFuncSeparate(m_source, m_destination,
                          vgl.GL.ONE, vgl.GL.ONE_MINUS_SRC_ALPHA);
   };
@@ -52,7 +49,7 @@ vgl.blendFunction = function(source, destination) {
  * @returns {vgl.blend}
  */
 ////////////////////////////////////////////////////////////////////////////
-vgl.blend = function() {
+vgl.blend = function () {
   'use strict';
 
   if (!(this instanceof vgl.blend)) {
@@ -73,14 +70,13 @@ vgl.blend = function() {
    * @param {vgl.renderState}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.bind = function(renderState) {
+  this.bind = function (renderState) {
     m_wasEnabled = renderState.m_context.isEnabled(vgl.GL.BLEND);
 
     if (this.enabled()) {
       renderState.m_context.enable(vgl.GL.BLEND);
       m_blendFunction.apply(renderState);
-    }
-    else {
+    } else {
       renderState.m_context.disable(vgl.GL.BLEND);
     }
 
@@ -94,11 +90,10 @@ vgl.blend = function() {
    * @param {vgl.renderState}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.undoBind = function(renderState) {
+  this.undoBind = function (renderState) {
     if (m_wasEnabled) {
       renderState.m_context.enable(vgl.GL.BLEND);
-    }
-    else {
+    } else {
       renderState.m_context.disable(vgl.GL.BLEND);
     }
 

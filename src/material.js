@@ -3,10 +3,7 @@
  * @module vgl
  */
 
-/*jslint devel: true, forin: true, newcap: true, plusplus: true*/
-/*jslint white: true, continue:true, indent: 2*/
-
-/*global vgl, ogs, vec4, inherit, $*/
+/*global vgl, inherit*/
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
@@ -17,7 +14,7 @@
  * @returns {vgl.material}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.material = function() {
+vgl.material = function () {
   'use strict';
 
   if (!(this instanceof vgl.material)) {
@@ -40,7 +37,7 @@ vgl.material = function() {
    * @returns {number}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.binNumber = function() {
+  this.binNumber = function () {
     return m_binNumber;
   };
 
@@ -51,7 +48,7 @@ vgl.material = function() {
    * @param binNo
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.setBinNumber = function(binNo) {
+  this.setBinNumber = function (binNo) {
     m_binNumber = binNo;
     m_this.modified();
   };
@@ -64,7 +61,7 @@ vgl.material = function() {
    * @returns {boolean}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.exists = function(attr) {
+  this.exists = function (attr) {
     if (attr.type() === vgl.materialAttribute.Texture) {
       return m_textureAttributes.hasOwnProperty(attr);
     }
@@ -80,13 +77,13 @@ vgl.material = function() {
    * @returns {vgl.uniform}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.uniform = function(name) {
+  this.uniform = function (name) {
     if (m_shaderProgram) {
       return m_shaderProgram.uniform(name);
     }
 
     return null;
-  }
+  };
 
   ////////////////////////////////////////////////////////////////////////////
   /**
@@ -96,7 +93,7 @@ vgl.material = function() {
    * @returns {vgl.materialAttribute}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.attribute = function(name) {
+  this.attribute = function (name) {
     if (m_attributes.hasOwnProperty(name)) {
       return m_attributes[name];
     }
@@ -119,7 +116,7 @@ vgl.material = function() {
    * @returns {boolean}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.setAttribute = function(attr) {
+  this.setAttribute = function (attr) {
     if (attr.type() === vgl.materialAttributeType.Texture &&
         m_textureAttributes[attr.textureUnit()] !== attr) {
       m_textureAttributes[attr.textureUnit()] = attr;
@@ -149,7 +146,7 @@ vgl.material = function() {
    * @returns {boolean}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.addAttribute = function(attr) {
+  this.addAttribute = function (attr) {
     if (m_this.exists(attr)) {
       return false;
     }
@@ -179,7 +176,7 @@ vgl.material = function() {
    * @returns {vgl.shaderProgram}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.shaderProgram = function() {
+  this.shaderProgram = function () {
     return m_shaderProgram;
   };
 
@@ -191,7 +188,8 @@ vgl.material = function() {
    * @returns {boolean}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this._setup = function(renderState) {
+  this._setup = function (renderState) {
+    renderState = renderState; /* unused parameter */
     return false;
   };
 
@@ -203,10 +201,10 @@ vgl.material = function() {
    * @returns {boolean}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this._cleanup = function(renderState) {
-    for (key in m_attributes) {
+  this._cleanup = function (renderState) {
+    for (var key in m_attributes) {
       if (m_attributes.hasOwnProperty(key)) {
-          m_attributes[key]._cleanup(renderState);
+        m_attributes[key]._cleanup(renderState);
       }
     }
 
@@ -224,7 +222,7 @@ vgl.material = function() {
    * @param renderState
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.bind = function(renderState) {
+  this.bind = function (renderState) {
     var key = null;
 
     m_shaderProgram.bind(renderState);
@@ -251,7 +249,7 @@ vgl.material = function() {
    * @param renderState
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.undoBind = function(renderState) {
+  this.undoBind = function (renderState) {
     var key = null;
     for (key in m_attributes) {
       if (m_attributes.hasOwnProperty(key)) {
@@ -274,7 +272,7 @@ vgl.material = function() {
    * @param key
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.bindVertexData = function(renderState, key) {
+  this.bindVertexData = function (renderState, key) {
     var i = null;
 
     for (i in m_attributes) {
@@ -292,7 +290,7 @@ vgl.material = function() {
    * @param key
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.undoBindVertexData = function(renderState, key) {
+  this.undoBindVertexData = function (renderState, key) {
     var i = null;
 
     for (i in m_attributes) {
@@ -306,11 +304,11 @@ vgl.material = function() {
 };
 
 vgl.material.RenderBin = {
-  "Base" : 0,
-  "Default" : 100,
-  "Opaque" : 100,
-  "Transparent" : 1000,
-  "Overlay" : 10000
+  'Base' : 0,
+  'Default' : 100,
+  'Opaque' : 100,
+  'Transparent' : 1000,
+  'Overlay' : 10000
 };
 
 inherit(vgl.material, vgl.graphicsObject);

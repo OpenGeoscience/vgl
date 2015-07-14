@@ -3,13 +3,10 @@
  * @module vgl
  */
 
-/*jslint devel: true, forin: true, newcap: true, plusplus: true*/
-/*jslint white: true, continue:true, indent: 2*/
-
-/*global vgl, ogs, vec4, inherit, $*/
+/*global vgl*/
 //////////////////////////////////////////////////////////////////////////////
 
-vgl.data = function() {
+vgl.data = function () {
   'use strict';
 
   if (!(this instanceof vgl.data)) {
@@ -21,7 +18,7 @@ vgl.data = function() {
    * Return data type. Should be implemented by the derived class
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.type = function() {
+  this.type = function () {
   };
 };
 

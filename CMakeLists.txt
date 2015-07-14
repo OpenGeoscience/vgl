@@ -8,14 +8,20 @@ set(MINIFY OFF CACHE BOOL "Minify the JavaScript files prior to concatenating.")
 set(MANGLE OFF CACHE BOOL "When minifying, also mangle non-public symbol names.")
 set(VGL_DATA_DIR "" CACHE PATH  "Path to directory containing data for testing.")
 set(VGL_BASELINE_DIR "" CACHE PATH "Path to directory containing baseline images for testing.")
-set(BUILD_TESTING OFF CACHE BOOL "Enable testing")
+set(BUILD_TESTING OFF CACHE BOOL "Enable additional testing")
 set(REBUILD_JSDOC OFF CACHE BOOL "Enable rebuilding of docs/*.rst")
 set(BUILD_DOCUMENTATION OFF CACHE BOOL "Build documentation")
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
-# Find JSLint.
-find_package(JSLint)
+
+# set up targets for node programs
+set(NODE_MODULES_PATH "${CMAKE_CURRENT_SOURCE_DIR}/node_modules")
+set(JSHINT_EXECUTABLE "${NODE_MODULES_PATH}/.bin/jshint")
+set(JSCS_EXECUTABLE "${NODE_MODULES_PATH}/.bin/jscs")
+
+set(JS_HINT_TESTS ON CACHE BOOL "Generate jshint style tests for JS source files.")
+set(JSCS_TESTS ON CACHE BOOL "Generate jscs style tests for JS source files.")
 
 set(_source_files
   init.js
@@ -75,16 +81,6 @@ if(NOT DEFINED VGL_DEPLOY_DIR)
       CACHE PATH "PATH to deployment directory" FORCE)
 endif()
 
-# Useuful macro
-macro(list_contains var value)
-  set(${var})
-  foreach(value2 ${ARGN})
-    if(${value} STREQUAL ${value2})
-      set(${var} TRUE)
-    endif(${value} STREQUAL ${value2})
-  endforeach(value2)
-endmacro(list_contains)
-
 #/////////////////////////////////////////////////////////////////////////////
 #//
 #//
@@ -109,14 +105,9 @@ add_custom_target(vgl_pre_deploy ALL
 
 set(_min_js_file ${VGL_DEPLOY_LIB_DIR}/vgl.min.js)
 set(_js_file ${VGL_DEPLOY_LIB_DIR}/vgl.js)
-set(_js_lint_files)
 set(_js_uglify_files)
 
 foreach(d ${_source_files})
-  list_contains(contains d ${_exclude_js_lint})
-  if(NOT contains)
-      set(_js_lint_files ${_js_lint_files} ${CMAKE_CURRENT_SOURCE_DIR}/src/${d})
-  endif()
   set(_js_uglify_files ${_js_uglify_files} ${CMAKE_CURRENT_SOURCE_DIR}/src/${d})
 endforeach()
 
@@ -165,10 +156,40 @@ foreach(m ${paths})
     )
 endforeach()
 
-# Testing --- disabled when compiling with geojs
-if (BUILD_TESTING AND NOT GEOJS_VERSION)
+if (NOT GEOJS_VERSION)
   include(CTest)
   enable_testing()
+
+  if(${JS_HINT_TESTS})
+    add_custom_target(
+      jshint-binary
+      ALL
+      DEPENDS "${JSHINT_EXECUTABLE}"
+    )
+    add_test(
+      NAME "jshint"
+      WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+      COMMAND "${JSHINT_EXECUTABLE}" "src"
+    )
+  endif() # JS_HINT_TESTS
+
+  if(${JSCS_TESTS})
+    add_custom_target(
+      jscs-binary
+      ALL
+      DEPENDS "${JSCS_EXECUTABLE}"
+    )
+    add_test(
+      NAME "jscs"
+      WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+      COMMAND "${JSCS_EXECUTABLE}" "src"
+    )
+  endif() # JSCS_TESTS
+
+endif()
+
+# Testing --- disabled when compiling with geojs
+if (BUILD_TESTING AND NOT GEOJS_VERSION)
 
   if(EXISTS "${VGL_DATA_DIR}" AND IS_DIRECTORY "${VGL_DATA_DIR}")
     message("[info] VGL data directory is set to ${VGL_DATA_DIR}")
@@ -213,12 +234,8 @@ if (BUILD_TESTING AND NOT GEOJS_VERSION)
   # GUI testing (requires python)
   find_package(PythonInterp REQUIRED)
   add_subdirectory(src)
-endif()
 
-# JSLint tests.
-foreach(f ${_js_lint_files})
-    add_test(jslint-${f} ${JSLint_EXECUTABLE} ${f})
-endforeach()
+endif()
 
 # Documentation
 

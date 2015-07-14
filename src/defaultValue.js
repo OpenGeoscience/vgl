@@ -3,10 +3,7 @@
  * @module vgl
  */
 
-/*jslint devel: true, forin: true, newcap: true, plusplus: true*/
-/*jslint white: true, continue:true, indent: 2*/
-
-/*global vgl, ogs, vec4, inherit, $*/
+/*global vgl*/
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
@@ -18,7 +15,7 @@
  * @returns {vgl.defaultValue}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.defaultValue = function(a, b) {
+vgl.defaultValue = function (a, b) {
   'use strict';
 
   if (typeof a !== 'undefined') {

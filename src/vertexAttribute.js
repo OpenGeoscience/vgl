@@ -3,10 +3,7 @@
  * @module vgl
  */
 
-/*jslint devel: true, forin: true, newcap: true, plusplus: true*/
-/*jslint white: true, continue:true, indent: 2*/
-
-/*global vgl, gl, ogs, vec4, inherit, $*/
+/*global vgl*/
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
@@ -20,24 +17,24 @@
  */
 //////////////////////////////////////////////////////////////////////////////
 vgl.vertexAttributeKeys = {
-  "Position" : 0,
-  "Normal" : 1,
-  "TextureCoordinate" : 2,
-  "Color" : 3,
-  "CountAttributeIndex" : 4
+  'Position' : 0,
+  'Normal' : 1,
+  'TextureCoordinate' : 2,
+  'Color' : 3,
+  'CountAttributeIndex' : 4
 };
 
 vgl.vertexAttributeKeysIndexed = {
-  "Zero" : 0,
-  "One" : 1,
-  "Two" : 2,
-  "Three" : 3,
-  "Four" : 4,
-  "Five" : 5,
-  "Six" : 6,
-  "Seven" : 7,
-  "Eight" : 8,
-  "Nine" : 9
+  'Zero' : 0,
+  'One' : 1,
+  'Two' : 2,
+  'Three' : 3,
+  'Four' : 4,
+  'Five' : 5,
+  'Six' : 6,
+  'Seven' : 7,
+  'Eight' : 8,
+  'Nine' : 9
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -48,7 +45,7 @@ vgl.vertexAttributeKeysIndexed = {
  * @returns {vgl.vertexAttribute}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.vertexAttribute = function(name) {
+vgl.vertexAttribute = function (name) {
   'use strict';
 
   if (!(this instanceof vgl.vertexAttribute)) {
@@ -64,7 +61,7 @@ vgl.vertexAttribute = function(name) {
    * @returns {string}
    */
   //////////////////////////////////////////////////////////////////////////////
-  this.name = function() {
+  this.name = function () {
     return m_name;
   };
 
@@ -76,12 +73,13 @@ vgl.vertexAttribute = function(name) {
    * @param {vgl.vertexAttributeKeys} key
    */
   //////////////////////////////////////////////////////////////////////////////
-  this.bindVertexData = function(renderState, key) {
+  this.bindVertexData = function (renderState, key) {
     var geometryData = renderState.m_mapper.geometryData(),
         sourceData = geometryData.sourceData(key),
         program = renderState.m_material.shaderProgram();
 
-    renderState.m_context.vertexAttribPointer(program.attributeLocation(m_name), sourceData
+    renderState.m_context.vertexAttribPointer(program.attributeLocation(
+        m_name), sourceData
         .attributeNumberOfComponents(key), sourceData.attributeDataType(key),
                            sourceData.normalized(key), sourceData
                                .attributeStride(key), sourceData
@@ -98,7 +96,9 @@ vgl.vertexAttribute = function(name) {
    * @param {vgl.vertexAttributeKeys} key
    */
   //////////////////////////////////////////////////////////////////////////////
-  this.undoBindVertexData = function(renderState, key) {
+  this.undoBindVertexData = function (renderState, key) {
+    key = key; /* unused parameter */
+
     var program = renderState.m_material.shaderProgram();
 
     renderState.m_context.disableVertexAttribArray(program.attributeLocation(m_name));

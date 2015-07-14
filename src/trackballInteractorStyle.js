@@ -3,10 +3,7 @@
  * @module vgl
  */
 
-/*jslint devel: true, forin: true, newcap: true, plusplus: true*/
-/*jslint white: true, continue:true, indent: 2*/
-
-/*global vgl, ogs, vec4, inherit, $*/
+/*global vgl, vec4, inherit*/
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
@@ -17,7 +14,7 @@
  * @returns {vgl.trackballInteractorStyle}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.trackballInteractorStyle = function() {
+vgl.trackballInteractorStyle = function () {
   'use strict';
 
   if (!(this instanceof vgl.trackballInteractorStyle)) {
@@ -41,14 +38,12 @@ vgl.trackballInteractorStyle = function() {
    * @returns {boolean}
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.handleMouseMove = function(event) {
-    var canvas = m_that.viewer().canvas(),
-        width = m_that.viewer().renderWindow().windowSize()[0],
+  this.handleMouseMove = function (event) {
+    var width = m_that.viewer().renderWindow().windowSize()[0],
         height = m_that.viewer().renderWindow().windowSize()[1],
         ren = m_that.viewer().renderWindow().activeRenderer(),
         cam = ren.camera(), coords = m_that.viewer().relMouseCoords(event),
-        fp, fdp, fwp, dp1, dp2, wp1, wp2, coords, dx, dy, dz,
-        coords, m_zTrans;
+        fp, fdp, fwp, dp1, dp2, wp1, wp2, dx, dy, dz, m_zTrans;
 
     m_outsideCanvas = false;
     m_currPos = {x: 0, y: 0};
@@ -122,7 +117,7 @@ vgl.trackballInteractorStyle = function() {
    * @returns {boolean}
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.handleMouseDown = function(event) {
+  this.handleMouseDown = function (event) {
     var coords;
 
     if (event.button === 0) {
@@ -158,7 +153,7 @@ vgl.trackballInteractorStyle = function() {
    * @returns {boolean}
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.handleMouseUp = function(event) {
+  this.handleMouseUp = function (event) {
     if (event.button === 0) {
       m_leftMouseBtnDown = false;
     }
@@ -179,7 +174,7 @@ vgl.trackballInteractorStyle = function() {
    * @returns {boolean}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.handleMouseWheel = function(event) {
+  this.handleMouseWheel = function (event) {
     var ren = m_that.viewer().renderWindow().activeRenderer(),
         cam = ren.camera();
 

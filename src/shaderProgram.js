@@ -3,10 +3,7 @@
  * @module vgl
  */
 
-/*jslint devel: true, forin: true, newcap: true, plusplus: true*/
-/*jslint white: true, continue:true, indent: 2*/
-
-/*global vgl, gl, ogs, vec4, inherit, $*/
+/*global vgl, inherit, $*/
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
@@ -18,18 +15,19 @@
  */
 //////////////////////////////////////////////////////////////////////////////
 
-var getBaseUrl = (function() {
+var getBaseUrl = (function () {
+  'use strict';
   var scripts = document.getElementsByTagName('script');
   var index = scripts.length - 1;
   var vglScript = scripts[index];
-  var index = vglScript.src.lastIndexOf('/')
-  var baseUrl = vglScript.src.substring(0, index)
+  index = vglScript.src.lastIndexOf('/');
+  var baseUrl = vglScript.src.substring(0, index);
 
-  return function() { return baseUrl; };
+  return function () { return baseUrl; };
 })();
 
 
-vgl.shaderProgram = function() {
+vgl.shaderProgram = function () {
   'use strict';
 
   if (!(this instanceof vgl.shaderProgram)) {
@@ -54,13 +52,13 @@ vgl.shaderProgram = function() {
    * Create a particular shader type using GLSL shader strings from a file
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.loadFromFile = function(type, sourceUrl) {
+  this.loadFromFile = function (type, sourceUrl) {
     var shader;
     $.ajax({
       url: sourceUrl,
-      type: "GET",
+      type: 'GET',
       async: false,
-      success: function(result) {
+      success: function (result) {
         //console.log(result);
         shader = vgl.shader(type);
         shader.setShaderSource(result);
@@ -75,9 +73,9 @@ vgl.shaderProgram = function() {
    * relative to VGL load URL.
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.loadShader = function(type, file) {
-    this.loadFromFile(type, getBaseUrl() + '/shaders/' + file)
-  }
+  this.loadShader = function (type, file) {
+    this.loadFromFile(type, getBaseUrl() + '/shaders/' + file);
+  };
 
   /////////////////////////////////////////////////////////////////////////////
   /**
@@ -87,7 +85,7 @@ vgl.shaderProgram = function() {
    * @returns {*}
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.queryUniformLocation = function(renderState, name) {
+  this.queryUniformLocation = function (renderState, name) {
     return renderState.m_context.getUniformLocation(m_programHandle, name);
   };
 
@@ -99,7 +97,7 @@ vgl.shaderProgram = function() {
    * @returns {*}
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.queryAttributeLocation = function(renderState, name) {
+  this.queryAttributeLocation = function (renderState, name) {
     return renderState.m_context.getAttribLocation(m_programHandle, name);
   };
 
@@ -111,13 +109,13 @@ vgl.shaderProgram = function() {
    * @returns {boolean}
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.addShader = function(shader) {
+  this.addShader = function (shader) {
     if (m_shaders.indexOf(shader) > -1) {
       return false;
     }
 
     var i;
-    for (i = 0; i < m_shaders.length; ++i) {
+    for (i = 0; i < m_shaders.length; i += 1) {
       if (m_shaders[i].shaderType() === shader.shaderType()) {
         m_shaders.splice(m_shaders.indexOf(shader), 1);
       }
@@ -136,7 +134,7 @@ vgl.shaderProgram = function() {
    * @returns {boolean}
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.addUniform = function(uniform) {
+  this.addUniform = function (uniform) {
     if (m_uniforms.indexOf(uniform) > -1) {
       return false;
     }
@@ -153,7 +151,7 @@ vgl.shaderProgram = function() {
    * @param key
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.addVertexAttribute = function(attr, key) {
+  this.addVertexAttribute = function (attr, key) {
     m_vertexAttributes[key] = attr;
     m_this.modified();
   };
@@ -169,7 +167,7 @@ vgl.shaderProgram = function() {
    * @returns {number}
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.uniformLocation = function(name) {
+  this.uniformLocation = function (name) {
     return m_uniformNameToLocation[name];
   };
 
@@ -184,7 +182,7 @@ vgl.shaderProgram = function() {
    * @returns {number}
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.attributeLocation = function(name) {
+  this.attributeLocation = function (name) {
     return m_vertexAttributeNameToLocation[name];
   };
 
@@ -196,9 +194,9 @@ vgl.shaderProgram = function() {
    * @returns {*}
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.uniform = function(name) {
+  this.uniform = function (name) {
     var i;
-    for (i = 0; i < m_uniforms.length; ++i) {
+    for (i = 0; i < m_uniforms.length; i += 1) {
       if (m_uniforms[i].name() === name) {
         return m_uniforms[i];
       }
@@ -214,10 +212,10 @@ vgl.shaderProgram = function() {
    * This method should be used directly unless required
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.updateUniforms = function(renderState) {
+  this.updateUniforms = function (renderState) {
     var i;
 
-    for (i = 0; i < m_uniforms.length; ++i) {
+    for (i = 0; i < m_uniforms.length; i += 1) {
       m_uniforms[i].callGL(renderState,
         m_uniformNameToLocation[m_uniforms[i].name()]);
     }
@@ -230,13 +228,13 @@ vgl.shaderProgram = function() {
    * @returns {boolean}
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.link = function(renderState) {
+  this.link = function (renderState) {
     renderState.m_context.linkProgram(m_programHandle);
 
     // If creating the shader program failed, alert
     if (!renderState.m_context.getProgramParameter(m_programHandle,
         vgl.GL.LINK_STATUS)) {
-      console.log("[ERROR] Unable to initialize the shader program.");
+      console.log('[ERROR] Unable to initialize the shader program.');
       return false;
     }
 
@@ -248,7 +246,7 @@ vgl.shaderProgram = function() {
    * Use the shader program
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.use = function(renderState) {
+  this.use = function (renderState) {
     renderState.m_context.useProgram(m_programHandle);
   };
 
@@ -257,7 +255,7 @@ vgl.shaderProgram = function() {
    * Peform any initialization required
    */
   /////////////////////////////////////////////////////////////////////////////
-  this._setup = function(renderState) {
+  this._setup = function (renderState) {
     if (m_programHandle === 0) {
       m_programHandle = renderState.m_context.createProgram();
     }
@@ -268,7 +266,7 @@ vgl.shaderProgram = function() {
    * Peform any clean up required when the program gets deleted
    */
   /////////////////////////////////////////////////////////////////////////////
-  this._cleanup = function(renderState) {
+  this._cleanup = function (renderState) {
     m_this.deleteVertexAndFragment(renderState);
     m_this.deleteProgram(renderState);
   };
@@ -278,7 +276,7 @@ vgl.shaderProgram = function() {
    * Delete the shader program
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.deleteProgram = function(renderState) {
+  this.deleteProgram = function (renderState) {
     renderState.m_context.deleteProgram(m_programHandle);
   };
 
@@ -287,9 +285,9 @@ vgl.shaderProgram = function() {
    * Delete vertex and fragment shaders
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.deleteVertexAndFragment = function(renderState) {
+  this.deleteVertexAndFragment = function (renderState) {
     var i;
-    for (i = 0; i < m_shaders.length; ++i) {
+    for (i = 0; i < m_shaders.length; i += 1) {
       renderState.m_context.detachShader(m_shaders[i].shaderHandle());
       renderState.m_context.deleteShader(m_shaders[i].shaderHandle());
     }
@@ -300,7 +298,7 @@ vgl.shaderProgram = function() {
    * Compile and link a shader
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.compileAndLink = function(renderState) {
+  this.compileAndLink = function (renderState) {
     var i;
 
     if (m_compileTimestamp.getMTime() >= this.getMTime()) {
@@ -310,7 +308,7 @@ vgl.shaderProgram = function() {
     m_this._setup(renderState);
 
     // Compile shaders
-    for (i = 0; i < m_shaders.length; ++i) {
+    for (i = 0; i < m_shaders.length; i += 1) {
       m_shaders[i].compile(renderState);
       m_shaders[i].attachShader(renderState, m_programHandle);
     }
@@ -319,12 +317,12 @@ vgl.shaderProgram = function() {
 
     // link program
     if (!m_this.link(renderState)) {
-      console.log("[ERROR] Failed to link Program");
+      console.log('[ERROR] Failed to link Program');
       m_this._cleanup(renderState);
     }
 
     m_compileTimestamp.modified();
-  }
+  };
 
   /////////////////////////////////////////////////////////////////////////////
   /**
@@ -334,7 +332,7 @@ vgl.shaderProgram = function() {
    * @returns {boolean}
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.bind = function(renderState) {
+  this.bind = function (renderState) {
     var i = 0;
 
     if (m_bindTimestamp.getMTime() < m_this.getMTime()) {
@@ -345,13 +343,12 @@ vgl.shaderProgram = function() {
       m_this.use(renderState);
       m_this.bindUniforms(renderState);
       m_bindTimestamp.modified();
-    }
-    else {
+    } else {
       m_this.use(renderState);
     }
 
     // Call update callback.
-    for (i = 0; i < m_uniforms.length; ++i) {
+    for (i = 0; i < m_uniforms.length; i += 1) {
       m_uniforms[i].update(renderState, m_this);
     }
 
@@ -366,7 +363,7 @@ vgl.shaderProgram = function() {
    * @param renderState
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.undoBind = function(renderState) {
+  this.undoBind = function (renderState) {
     // REF https://www.khronos.org/opengles/sdk/docs/man/xhtml/glUseProgram.xml
     // If program is 0, then the current rendering state refers to an invalid
     // program object, and the results of vertex and fragment shader execution
@@ -382,7 +379,7 @@ vgl.shaderProgram = function() {
    * @param key
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.bindVertexData = function(renderState, key) {
+  this.bindVertexData = function (renderState, key) {
     if (m_vertexAttributes.hasOwnProperty(key)) {
       m_vertexAttributes[key].bindVertexData(renderState, key);
     }
@@ -396,7 +393,7 @@ vgl.shaderProgram = function() {
    * @param key
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.undoBindVertexData = function(renderState, key) {
+  this.undoBindVertexData = function (renderState, key) {
     if (m_vertexAttributes.hasOwnProperty(key)) {
       m_vertexAttributes[key].undoBindVertexData(renderState, key);
     }
@@ -407,9 +404,9 @@ vgl.shaderProgram = function() {
    * Bind uniforms
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.bindUniforms = function(renderState) {
+  this.bindUniforms = function (renderState) {
     var i;
-    for (i = 0; i < m_uniforms.length; ++i) {
+    for (i = 0; i < m_uniforms.length; i += 1) {
       m_uniformNameToLocation[m_uniforms[i].name()] = this
           .queryUniformLocation(renderState, m_uniforms[i].name());
     }
@@ -420,12 +417,14 @@ vgl.shaderProgram = function() {
    * Bind vertex attributes
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.bindAttributes = function(renderState) {
+  this.bindAttributes = function (renderState) {
     var key, name;
     for (key in m_vertexAttributes) {
-      name = m_vertexAttributes[key].name();
-      renderState.m_context.bindAttribLocation(m_programHandle, key, name);
-      m_vertexAttributeNameToLocation[name] = key;
+      if (m_vertexAttributes.hasOwnProperty(key)) {
+        name = m_vertexAttributes[key].name();
+        renderState.m_context.bindAttribLocation(m_programHandle, key, name);
+        m_vertexAttributeNameToLocation[name] = key;
+      }
     }
   };
 

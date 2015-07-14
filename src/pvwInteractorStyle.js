@@ -3,10 +3,7 @@
  * @module vgl
  */
 
-/*jslint devel: true, forin: true, newcap: true, plusplus: true*/
-/*jslint white: true, continue:true, indent: 2*/
-
-/*global vgl, ogs, vec4, inherit, $*/
+/*global vgl, vec4, inherit*/
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
@@ -17,7 +14,7 @@
  * @returns {vgl.pvwInteractorStyle}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.pvwInteractorStyle = function() {
+vgl.pvwInteractorStyle = function () {
   'use strict';
 
   if (!(this instanceof vgl.pvwInteractorStyle)) {
@@ -64,22 +61,22 @@ vgl.pvwInteractorStyle = function() {
    * @returns {boolean}
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.handleMouseMove = function(event) {
+  this.handleMouseMove = function (event) {
     var rens = [], i = null, secCameras = [], deltaxy = null;
-        m_width = m_that.viewer().renderWindow().windowSize()[0];
-        m_height = m_that.viewer().renderWindow().windowSize()[1];
-        m_renderer = m_that.viewer().renderWindow().activeRenderer();
-        m_camera = m_renderer.camera();
-        m_outsideCanvas = false;
-        m_coords = m_that.viewer().relMouseCoords(event);
-        m_currentMousePos = {
-          x: 0,
-          y: 0
-        };
+    m_width = m_that.viewer().renderWindow().windowSize()[0];
+    m_height = m_that.viewer().renderWindow().windowSize()[1];
+    m_renderer = m_that.viewer().renderWindow().activeRenderer();
+    m_camera = m_renderer.camera();
+    m_outsideCanvas = false;
+    m_coords = m_that.viewer().relMouseCoords(event);
+    m_currentMousePos = {
+      x: 0,
+      y: 0
+    };
 
     // Get secondary cameras
     rens = m_that.viewer().renderWindow().renderers();
-    for (i = 0; i < rens.length; ++i) {
+    for (i = 0; i < rens.length; i += 1) {
       if (m_renderer !== rens[i]) {
         secCameras.push(rens[i].camera());
       }
@@ -101,17 +98,20 @@ vgl.pvwInteractorStyle = function() {
       return;
     }
     m_focalPoint = m_camera.focalPoint();
-    m_focusWorldPt = vec4.fromValues(m_focalPoint[0], m_focalPoint[1], m_focalPoint[2], 1);
-    m_focusDisplayPt = m_renderer.worldToDisplay(m_focusWorldPt, m_camera.viewMatrix(),
-      m_camera.projectionMatrix(), m_width, m_height);
+    m_focusWorldPt = vec4.fromValues(m_focalPoint[0], m_focalPoint[1],
+                                     m_focalPoint[2], 1);
+    m_focusDisplayPt = m_renderer.worldToDisplay(m_focusWorldPt,
+        m_camera.viewMatrix(), m_camera.projectionMatrix(), m_width, m_height);
     m_displayPt1 = vec4.fromValues(
       m_currentMousePos.x, m_currentMousePos.y, m_focusDisplayPt[2], 1.0);
     m_displayPt2 = vec4.fromValues(
       m_mouseLastPos.x, m_mouseLastPos.y, m_focusDisplayPt[2], 1.0);
     m_worldPt1 = m_renderer.displayToWorld(
-      m_displayPt1, m_camera.viewMatrix(), m_camera.projectionMatrix(), m_width, m_height);
+      m_displayPt1, m_camera.viewMatrix(), m_camera.projectionMatrix(),
+      m_width, m_height);
     m_worldPt2 = m_renderer.displayToWorld(
-      m_displayPt2, m_camera.viewMatrix(), m_camera.projectionMatrix(), m_width, m_height);
+      m_displayPt2, m_camera.viewMatrix(), m_camera.projectionMatrix(),
+      m_width, m_height);
 
     m_dx = m_worldPt1[0] - m_worldPt2[0];
     m_dy = m_worldPt1[1] - m_worldPt2[1];
@@ -127,12 +127,12 @@ vgl.pvwInteractorStyle = function() {
       m_camera.rotate(deltaxy[0], deltaxy[1]);
 
       // Apply rotation to all other cameras
-      for (i = 0; i < secCameras.length; ++i) {
+      for (i = 0; i < secCameras.length; i += 1) {
         secCameras[i].rotate(deltaxy[0], deltaxy[1]);
       }
 
       // Apply rotation to all other cameras
-      for (i = 0; i < rens.length; ++i) {
+      for (i = 0; i < rens.length; i += 1) {
         rens[i].resetCameraClippingRange();
       }
       render();
@@ -162,7 +162,7 @@ vgl.pvwInteractorStyle = function() {
    * @returns {boolean}
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.handleMouseDown = function(event) {
+  this.handleMouseDown = function (event) {
     if (event.button === 0) {
       m_leftMouseButtonDown = true;
     }
@@ -196,8 +196,7 @@ vgl.pvwInteractorStyle = function() {
    * @returns {boolean}
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.handleMouseUp = function(event) {
-    var canvas = m_that.viewer().canvas();
+  this.handleMouseUp = function (event) {
     if (event.button === 0) {
       m_leftMouseButtonDown = false;
     }

@@ -3,10 +3,7 @@
  * @module vgl
  */
 
-/*jslint devel: true, forin: true, newcap: true, plusplus: true*/
-/*jslint white: true, continue:true, indent: 2*/
-
-/*global vgl, ogs, vec4, inherit, $*/
+/*global vgl, inherit*/
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
@@ -17,7 +14,7 @@
  * @returns {vgl.groupNode}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.groupNode = function() {
+vgl.groupNode = function () {
   'use strict';
 
   if (!(this instanceof vgl.groupNode)) {
@@ -38,14 +35,14 @@ vgl.groupNode = function() {
    * @returns {boolean}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.setVisible = function(flag) {
+  this.setVisible = function (flag) {
     var i;
 
     if (this.b_setVisible(flag) !== true) {
       return false;
     }
 
-    for (i = 0; i < m_children.length; ++i) {
+    for (i = 0; i < m_children.length; i += 1) {
       m_children[i].setVisible(flag);
     }
 
@@ -60,7 +57,7 @@ vgl.groupNode = function() {
    * @returns {boolean}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.addChild = function(childNode) {
+  this.addChild = function (childNode) {
     if (childNode instanceof vgl.node) {
       if (m_children.indexOf(childNode) === -1) {
         childNode.setParent(this);
@@ -82,7 +79,7 @@ vgl.groupNode = function() {
    * @returns {boolean}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.removeChild = function(childNode) {
+  this.removeChild = function (childNode) {
     if (childNode.parent() === this) {
       var index = m_children.indexOf(childNode);
       m_children.splice(index, 1);
@@ -96,9 +93,9 @@ vgl.groupNode = function() {
    * Remove parent-child relationship between child nodes and the group node
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.removeChildren = function() {
+  this.removeChildren = function () {
     var i;
-    for (i = 0; i < m_children.length; ++i) {
+    for (i = 0; i < m_children.length; i += 1) {
       this.removeChild(m_children[i]);
     }
 
@@ -112,7 +109,7 @@ vgl.groupNode = function() {
    * @returns {Array}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.children = function() {
+  this.children = function () {
     return m_children;
   };
 
@@ -124,10 +121,10 @@ vgl.groupNode = function() {
    * @returns {bool}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.hasChild = function(node) {
+  this.hasChild = function (node) {
     var i = 0, child = false;
 
-    for (i = 0; i < m_children.length; i++) {
+    for (i = 0; i < m_children.length; i += 1) {
       if (m_children[i] === node) {
         child = true;
         break;
@@ -144,7 +141,7 @@ vgl.groupNode = function() {
    * @param visitor
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.accept = function(visitor) {
+  this.accept = function (visitor) {
     visitor.visit(this);
   };
 
@@ -155,7 +152,7 @@ vgl.groupNode = function() {
    * @param visitor
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.traverse = function(visitor) {
+  this.traverse = function (visitor) {
     switch (visitor.type()) {
       case visitor.UpdateVisitor:
         this.traverseChildrenAndUpdateBounds(visitor);
@@ -175,7 +172,7 @@ vgl.groupNode = function() {
    * @param visitor
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.traverseChildrenAndUpdateBounds = function(visitor) {
+  this.traverseChildrenAndUpdateBounds = function (visitor) {
     var i;
 
     if (this.m_parent && this.boundsDirtyTimestamp().getMTime() >
@@ -187,7 +184,7 @@ vgl.groupNode = function() {
     this.computeBounds();
 
     if (visitor.mode() === visitor.TraverseAllChildren) {
-      for (i = 0; i < m_children.length(); ++i) {
+      for (i = 0; i < m_children.length(); i += 1) {
         m_children[i].accept(visitor);
         this.updateBounds(m_children[i]);
       }
@@ -203,11 +200,11 @@ vgl.groupNode = function() {
    * @param visitor
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.traverseChildren = function(visitor) {
+  this.traverseChildren = function (visitor) {
     var i;
 
     if (visitor.mode() === vgl.vesVisitor.TraverseAllChildren) {
-      for (i = 0; i < m_children.length(); ++i) {
+      for (i = 0; i < m_children.length(); i += 1) {
         m_children[i].accept(visitor);
       }
     }
@@ -218,7 +215,7 @@ vgl.groupNode = function() {
    * Compute bounds for the group node
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.computeBounds = function() {
+  this.computeBounds = function () {
     var i = 0;
 
     if (this.computeBoundsTimestamp().getMTime() >
@@ -226,7 +223,7 @@ vgl.groupNode = function() {
       return;
     }
 
-    for (i = 0; i < m_children.length; ++i) {
+    for (i = 0; i < m_children.length; i += 1) {
       this.updateBounds(m_children[i]);
     }
   };
@@ -241,7 +238,7 @@ vgl.groupNode = function() {
    * @param child
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.updateBounds = function(child) {
+  this.updateBounds = function (child) {
     // FIXME: This check should not be required and possibly is incorrect
     if (child.overlay()) {
       return;
@@ -256,7 +253,7 @@ vgl.groupNode = function() {
         jstep = 0,
         i;
 
-    for (i = 0; i < 3; ++i) {
+    for (i = 0; i < 3; i += 1) {
       istep = i * 2;
       jstep = i * 2 + 1;
       if (childBounds[istep] < bounds[istep]) {

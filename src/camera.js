@@ -3,10 +3,7 @@
  * @module vgl
  */
 
-/*jslint devel: true, forin: true, newcap: true, plusplus: true*/
-/*jslint white: true, continue:true, indent: 2, bitwise: true*/
-
-/*global vgl, gl, ogs, vec3, vec4, mat4, inherit, $*/
+/*global vgl, vec3, vec4, mat4, inherit*/
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
@@ -17,7 +14,7 @@
  * @returns {vgl.camera}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.camera = function() {
+vgl.camera = function () {
   'use strict';
 
   if (!(this instanceof vgl.camera)) {
@@ -51,15 +48,17 @@ vgl.camera = function() {
       m_enableParallelProjection = false,
       m_clearColor = [0.0, 0.0, 0.0, 0.0],
       m_clearDepth = 1.0,
+      /*jshint bitwise: false */
       m_clearMask = vgl.GL.COLOR_BUFFER_BIT |
                     vgl.GL.DEPTH_BUFFER_BIT;
+  /*jshint bitwise: true */
 
   ////////////////////////////////////////////////////////////////////////////
   /**
    * Get view angle of the camera
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.viewAngle = function() {
+  this.viewAngle = function () {
     return m_viewAngle;
   };
 
@@ -68,7 +67,7 @@ vgl.camera = function() {
    * Set view angle of the camera in degrees, which is converted to radians.
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.setViewAngleDegrees = function(a) {
+  this.setViewAngleDegrees = function (a) {
     m_viewAngle = (Math.PI * a) / 180.0;
     this.modified();
   };
@@ -78,7 +77,7 @@ vgl.camera = function() {
    * Set view angle of the camera in degrees, which is converted to radians.
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.setViewAngle = function(a) {
+  this.setViewAngle = function (a) {
     if (m_enableScale) {
       m_viewAngle = a;
       this.modified();
@@ -90,7 +89,7 @@ vgl.camera = function() {
    * Get position of the camera
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.position = function() {
+  this.position = function () {
     return m_position;
   };
 
@@ -99,7 +98,7 @@ vgl.camera = function() {
    * Set position of the camera
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.setPosition = function(x, y, z) {
+  this.setPosition = function (x, y, z) {
     if (m_enableTranslation) {
       m_position = vec4.fromValues(x, y, z, 1.0);
       this.modified();
@@ -111,7 +110,7 @@ vgl.camera = function() {
    * Get focal point of the camera
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.focalPoint = function() {
+  this.focalPoint = function () {
     return m_focalPoint;
   };
 
@@ -120,7 +119,7 @@ vgl.camera = function() {
    * Set focal point of the camera
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.setFocalPoint = function(x, y, z) {
+  this.setFocalPoint = function (x, y, z) {
     if (m_enableRotation && m_enableTranslation) {
       m_focalPoint = vec4.fromValues(x, y, z, 1.0);
       this.modified();
@@ -132,7 +131,7 @@ vgl.camera = function() {
    * Get view-up direction of camera
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.viewUpDirection = function() {
+  this.viewUpDirection = function () {
     return m_viewUp;
   };
 
@@ -141,7 +140,7 @@ vgl.camera = function() {
    * Set view-up direction of the camera
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.setViewUpDirection = function(x, y, z) {
+  this.setViewUpDirection = function (x, y, z) {
     m_viewUp = vec4.fromValues(x, y, z, 0);
     this.modified();
   };
@@ -151,7 +150,7 @@ vgl.camera = function() {
    * Get center of rotation for camera
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.centerOfRotation = function() {
+  this.centerOfRotation = function () {
     return m_centerOfRotation;
   };
 
@@ -160,7 +159,7 @@ vgl.camera = function() {
    * Set center of rotation for camera
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.setCenterOfRotation = function(centerOfRotation) {
+  this.setCenterOfRotation = function (centerOfRotation) {
     m_centerOfRotation = centerOfRotation;
     this.modified();
   };
@@ -170,7 +169,7 @@ vgl.camera = function() {
    * Get clipping range of the camera
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.clippingRange = function() {
+  this.clippingRange = function () {
     return [m_near, m_far];
   };
 
@@ -179,7 +178,7 @@ vgl.camera = function() {
    * Set clipping range of the camera
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.setClippingRange = function(near, far) {
+  this.setClippingRange = function (near, far) {
     m_near = near;
     m_far = far;
     this.modified();
@@ -190,7 +189,7 @@ vgl.camera = function() {
    * Get view aspect
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.viewAspect = function() {
+  this.viewAspect = function () {
     return m_viewAspect;
   };
 
@@ -199,7 +198,7 @@ vgl.camera = function() {
    * Set view aspect
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.setViewAspect = function(aspect) {
+  this.setViewAspect = function (aspect) {
     m_viewAspect = aspect;
     this.modified();
   };
@@ -209,7 +208,7 @@ vgl.camera = function() {
    * Return active mode for scaling (enabled / disabled)
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.enableScale = function(flag) {
+  this.enableScale = function () {
     return m_enableScale;
   };
 
@@ -218,7 +217,7 @@ vgl.camera = function() {
    * Enable/disable scaling
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.setEnableScale = function(flag) {
+  this.setEnableScale = function (flag) {
     if (flag !== m_enableScale) {
       m_enableScale = flag;
       this.modified();
@@ -233,7 +232,7 @@ vgl.camera = function() {
    * Return active mode for rotation (enabled / disabled)
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.enableRotation = function(f) {
+  this.enableRotation = function () {
     return m_enableRotation;
   };
 
@@ -242,7 +241,7 @@ vgl.camera = function() {
    * Enable / disable rotation
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.setEnableRotation = function(flag) {
+  this.setEnableRotation = function (flag) {
     if (flag !== m_enableRotation) {
       m_enableRotation = flag;
       this.modified();
@@ -257,7 +256,7 @@ vgl.camera = function() {
    * Return active mode for translation (enabled/disabled)
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.enableTranslation = function(flag) {
+  this.enableTranslation = function () {
     return m_enableTranslation;
   };
 
@@ -266,7 +265,7 @@ vgl.camera = function() {
    * Enable / disable translation
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.setEnableTranslation = function(flag) {
+  this.setEnableTranslation = function (flag) {
     if (flag !== m_enableTranslation) {
       m_enableTranslation = flag;
       this.modified();
@@ -281,7 +280,7 @@ vgl.camera = function() {
    * Return if parallel projection is enabled
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.isEnabledParallelProjection = function() {
+  this.isEnabledParallelProjection = function () {
     return m_enableParallelProjection;
   };
 
@@ -290,7 +289,7 @@ vgl.camera = function() {
    * Enable / disable parallel projection
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.enableParallelProjection = function(flag) {
+  this.enableParallelProjection = function (flag) {
     if (flag !== m_enableParallelProjection) {
       m_enableParallelProjection = flag;
       this.modified();
@@ -305,8 +304,17 @@ vgl.camera = function() {
    * Enable / disable parallel projection
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.setEnnableParallelProjection = function(flag) {
-    return enableParallelProjection();
+  this.setEnableParallelProjection = function (flag) {
+    return this.enableParallelProjection(flag);
+  };
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
+   * Get parallel projection parameters
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.parallelProjection = function () {
+    return {left: m_left, right: m_right, top: m_top, bottom: m_bottom};
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -314,7 +322,7 @@ vgl.camera = function() {
    * Set parallel projection parameters
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.setParallelProjection = function(left, right, top, bottom) {
+  this.setParallelProjection = function (left, right, top, bottom) {
     m_left = left;
     m_right = right;
     m_top = top;
@@ -327,7 +335,7 @@ vgl.camera = function() {
    * Return direction of projection
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.directionOfProjection = function() {
+  this.directionOfProjection = function () {
     this.computeDirectionOfProjection();
     return m_directionOfProjection;
   };
@@ -337,7 +345,7 @@ vgl.camera = function() {
    * Return view plane normal direction
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.viewPlaneNormal = function() {
+  this.viewPlaneNormal = function () {
     this.computeViewPlaneNormal();
     return m_viewPlaneNormal;
   };
@@ -351,7 +359,7 @@ vgl.camera = function() {
    * @returns {mat4}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.viewMatrix = function() {
+  this.viewMatrix = function () {
     return this.computeViewMatrix();
   };
 
@@ -364,7 +372,7 @@ vgl.camera = function() {
    * @returns {mat4}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.projectionMatrix = function() {
+  this.projectionMatrix = function () {
     return this.computeProjectionMatrix();
   };
 
@@ -375,7 +383,7 @@ vgl.camera = function() {
    * @returns {number}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.clearMask = function() {
+  this.clearMask = function () {
     return m_clearMask;
   };
 
@@ -386,7 +394,7 @@ vgl.camera = function() {
    * @param mask
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.setClearMask = function(mask) {
+  this.setClearMask = function (mask) {
     m_clearMask = mask;
     this.modified();
   };
@@ -398,7 +406,7 @@ vgl.camera = function() {
    * @returns {Array}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.clearColor = function() {
+  this.clearColor = function () {
     return m_clearColor;
   };
 
@@ -409,7 +417,7 @@ vgl.camera = function() {
    * @param color RGBA
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.setClearColor = function(r, g, b, a) {
+  this.setClearColor = function (r, g, b, a) {
     m_clearColor[0] = r;
     m_clearColor[1] = g;
     m_clearColor[2] = b;
@@ -424,7 +432,7 @@ vgl.camera = function() {
    * @returns {{1.0: null}}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.clearDepth = function() {
+  this.clearDepth = function () {
     return m_clearDepth;
   };
 
@@ -434,7 +442,7 @@ vgl.camera = function() {
    * @param depth
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.setClearDepth = function(depth) {
+  this.setClearDepth = function (depth) {
     m_clearDepth = depth;
     this.modified();
   };
@@ -444,7 +452,7 @@ vgl.camera = function() {
    * Compute direction of projection
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.computeDirectionOfProjection = function() {
+  this.computeDirectionOfProjection = function () {
     vec3.subtract(m_directionOfProjection, m_focalPoint, m_position);
     vec3.normalize(m_directionOfProjection, m_directionOfProjection);
     this.modified();
@@ -455,7 +463,7 @@ vgl.camera = function() {
    * Compute view plane normal
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.computeViewPlaneNormal = function() {
+  this.computeViewPlaneNormal = function () {
     m_viewPlaneNormal[0] = -m_directionOfProjection[0];
     m_viewPlaneNormal[1] = -m_directionOfProjection[1];
     m_viewPlaneNormal[2] = -m_directionOfProjection[2];
@@ -466,7 +474,7 @@ vgl.camera = function() {
    * Move camera closer or further away from the scene
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.zoom = function(d, dir) {
+  this.zoom = function (d, dir) {
     if (d === 0) {
       return;
     }
@@ -495,7 +503,7 @@ vgl.camera = function() {
    * Move camera sideways
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.pan = function(dx, dy, dz) {
+  this.pan = function (dx, dy, dz) {
     if (!m_enableTranslation) {
       return;
     }
@@ -516,7 +524,7 @@ vgl.camera = function() {
    * Compute camera coordinate axes
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.computeOrthogonalAxes = function() {
+  this.computeOrthogonalAxes = function () {
     this.computeDirectionOfProjection();
     vec3.cross(m_rightDir, m_directionOfProjection, m_viewUp);
     vec3.normalize(m_rightDir, m_rightDir);
@@ -530,7 +538,7 @@ vgl.camera = function() {
    * @param dy Rotation around horizontal axis in degrees
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.rotate = function(dx, dy) {
+  this.rotate = function (dx, dy) {
     if (!m_enableRotation) {
       return;
     }
@@ -572,7 +580,7 @@ vgl.camera = function() {
    * Compute camera view matrix
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.computeViewMatrix = function() {
+  this.computeViewMatrix = function () {
     if (m_computeModelViewMatrixTime.getMTime() < this.getMTime()) {
       mat4.lookAt(m_viewMatrix, m_position, m_focalPoint, m_viewUp);
       m_computeModelViewMatrixTime.modified();
@@ -585,12 +593,12 @@ vgl.camera = function() {
    * Compute camera projection matrix
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.computeProjectionMatrix = function() {
+  this.computeProjectionMatrix = function () {
     if (m_computeProjectMatrixTime.getMTime() < this.getMTime()) {
       if (!m_enableParallelProjection) {
         mat4.perspective(m_projectionMatrix, m_viewAngle, m_viewAspect, m_near, m_far);
       } else {
-        console.log('paralle projection');
+        console.log('parallel projection');
         mat4.ortho(m_projectionMatrix,
           m_left, m_right, m_bottom, m_top, m_near, m_far);
       }

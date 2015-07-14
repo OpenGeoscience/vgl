@@ -3,10 +3,7 @@
  * @module vgl
  */
 
-/*jslint devel: true, forin: true, newcap: true, plusplus: true*/
-/*jslint white: true, continue:true, indent: 2*/
-
-/*global document, vgl, gl, ogs, vec4, inherit, $*/
+/*global document, vgl, inherit*/
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
@@ -19,7 +16,7 @@
  * @returns {vgl.utils}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.utils = function() {
+vgl.utils = function () {
   'use strict';
 
   if (!(this instanceof vgl.utils)) {
@@ -42,7 +39,7 @@ inherit(vgl.utils, vgl.object);
  * @returns {number}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.utils.computePowerOfTwo = function(value, pow) {
+vgl.utils.computePowerOfTwo = function (value, pow) {
   'use strict';
   pow = pow || 1;
   while (pow < value) {
@@ -61,8 +58,9 @@ vgl.utils.computePowerOfTwo = function(value, pow) {
  * @returns {vgl.shader}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.utils.createTextureVertexShader = function(context) {
+vgl.utils.createTextureVertexShader = function (context) {
   'use strict';
+  context = context; /* unused parameter */
   var vertexShaderSource = [
         'attribute vec3 vertexPosition;',
         'attribute vec3 textureCoord;',
@@ -74,7 +72,7 @@ vgl.utils.createTextureVertexShader = function(context) {
         '{',
         'gl_PointSize = pointSize;',
         'gl_Position = projectionMatrix * modelViewMatrix * vec4(vertexPosition, 1.0);',
-        ' iTextureCoord = textureCoord;', '}' ].join('\n'),
+        ' iTextureCoord = textureCoord;', '}'].join('\n'),
       shader = new vgl.shader(vgl.GL.VERTEX_SHADER);
   shader.setShaderSource(vertexShaderSource);
   return shader;
@@ -90,15 +88,17 @@ vgl.utils.createTextureVertexShader = function(context) {
  * @returns {vgl.shader}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.utils.createTextureFragmentShader = function(context) {
+vgl.utils.createTextureFragmentShader = function (context) {
   'use strict';
+  context = context; /* unused parameter */
   var fragmentShaderSource = [
         'varying highp vec3 iTextureCoord;',
         'uniform sampler2D sampler2d;',
         'uniform mediump float opacity;',
         'void main(void) {',
-        'gl_FragColor = vec4(texture2D(sampler2d, vec2(iTextureCoord.s, iTextureCoord.t)).xyz, opacity);',
-        '}' ].join('\n'),
+        'gl_FragColor = vec4(texture2D(sampler2d, vec2(iTextureCoord.s, ' +
+                        'iTextureCoord.t)).xyz, opacity);',
+        '}'].join('\n'),
       shader = new vgl.shader(vgl.GL.FRAGMENT_SHADER);
 
   shader.setShaderSource(fragmentShaderSource);
@@ -117,12 +117,14 @@ vgl.utils.createTextureFragmentShader = function(context) {
 //////////////////////////////////////////////////////////////////////////////
 vgl.utils.createRgbaTextureFragmentShader = function (context) {
   'use strict';
+  context = context; /* unused parameter */
   var fragmentShaderSource = [
         'varying highp vec3 iTextureCoord;',
         'uniform sampler2D sampler2d;',
         'uniform mediump float opacity;',
         'void main(void) {',
-        '  mediump vec4 color = vec4(texture2D(sampler2d, vec2(iTextureCoord.s, iTextureCoord.t)).xyzw);',
+        '  mediump vec4 color = vec4(texture2D(sampler2d, vec2(' +
+                                'iTextureCoord.s, iTextureCoord.t)).xyzw);',
         '  color.w *= opacity;',
         '  gl_FragColor = color;',
         '}'
@@ -143,8 +145,9 @@ vgl.utils.createRgbaTextureFragmentShader = function (context) {
  * @returns {vgl.shader}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.utils.createVertexShader = function(context) {
+vgl.utils.createVertexShader = function (context) {
   'use strict';
+  context = context; /* unused parameter */
   var vertexShaderSource = [
         'attribute vec3 vertexPosition;',
         'attribute vec3 vertexColor;',
@@ -157,7 +160,7 @@ vgl.utils.createVertexShader = function(context) {
         '{',
         'gl_PointSize = pointSize;',
         'gl_Position = projectionMatrix * modelViewMatrix * vec4(vertexPosition, 1.0);',
-        ' iVertexColor = vertexColor;', '}' ].join('\n'),
+        ' iVertexColor = vertexColor;', '}'].join('\n'),
       shader = new vgl.shader(vgl.GL.VERTEX_SHADER);
 
   shader.setShaderSource(vertexShaderSource);
@@ -174,8 +177,9 @@ vgl.utils.createVertexShader = function(context) {
  * @returns {vgl.shader}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.utils.createPointVertexShader = function(context) {
+vgl.utils.createPointVertexShader = function (context) {
   'use strict';
+  context = context; /* unused parameter */
   var vertexShaderSource = [
         'attribute vec3 vertexPosition;',
         'attribute vec3 vertexColor;',
@@ -188,7 +192,7 @@ vgl.utils.createPointVertexShader = function(context) {
         '{',
         'gl_PointSize =  vertexSize;',
         'gl_Position = projectionMatrix * modelViewMatrix * vec4(vertexPosition, 1.0);',
-        ' iVertexColor = vertexColor;', '}' ].join('\n'),
+        ' iVertexColor = vertexColor;', '}'].join('\n'),
       shader = new vgl.shader(vgl.GL.VERTEX_SHADER);
 
   shader.setShaderSource(vertexShaderSource);
@@ -205,8 +209,9 @@ vgl.utils.createPointVertexShader = function(context) {
  * @returns {vgl.shader}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.utils.createVertexShaderSolidColor = function(context) {
+vgl.utils.createVertexShaderSolidColor = function (context) {
   'use strict';
+  context = context; /* unused parameter */
   var vertexShaderSource = [
         'attribute vec3 vertexPosition;',
         'uniform mediump float pointSize;',
@@ -216,7 +221,7 @@ vgl.utils.createVertexShaderSolidColor = function(context) {
         '{',
         'gl_PointSize = pointSize;',
         'gl_Position = projectionMatrix * modelViewMatrix * vec4(vertexPosition, 1.0);',
-        '}' ].join('\n'),
+        '}'].join('\n'),
     shader = new vgl.shader(vgl.GL.VERTEX_SHADER);
 
   shader.setShaderSource(vertexShaderSource);
@@ -234,8 +239,11 @@ vgl.utils.createVertexShaderSolidColor = function(context) {
  * @returns {vgl.shader}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.utils.createVertexShaderColorMap = function(context, min, max) {
+vgl.utils.createVertexShaderColorMap = function (context, min, max) {
   'use strict';
+  context = context; /* unused parameter */
+  min = min; /* unused parameter */
+  max = max; /* unused parameter */
   var vertexShaderSource = [
         'attribute vec3 vertexPosition;',
         'attribute float vertexScalar;',
@@ -250,7 +258,7 @@ vgl.utils.createVertexShaderColorMap = function(context, min, max) {
         'gl_PointSize = pointSize;',
         'gl_Position = projectionMatrix * modelViewMatrix * vec4(vertexPosition, 1.0);',
         'iVertexScalar = (vertexScalar-lutMin)/(lutMax-lutMin);',
-        '}' ].join('\n'),
+        '}'].join('\n'),
       shader = new vgl.shader(vgl.GL.VERTEX_SHADER);
 
   shader.setShaderSource(vertexShaderSource);
@@ -267,13 +275,14 @@ vgl.utils.createVertexShaderColorMap = function(context, min, max) {
  * @returns {vgl.shader}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.utils.createFragmentShader = function(context) {
+vgl.utils.createFragmentShader = function (context) {
   'use strict';
-  var fragmentShaderSource = [ 'varying mediump vec3 iVertexColor;',
+  context = context; /* unused parameter */
+  var fragmentShaderSource = ['varying mediump vec3 iVertexColor;',
                               'uniform mediump float opacity;',
                               'void main(void) {',
                               'gl_FragColor = vec4(iVertexColor, opacity);',
-                              '}' ].join('\n'),
+                              '}'].join('\n'),
       shader = new vgl.shader(vgl.GL.FRAGMENT_SHADER);
 
   shader.setShaderSource(fragmentShaderSource);
@@ -290,8 +299,9 @@ vgl.utils.createFragmentShader = function(context) {
  * @returns {vgl.shader}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.utils.createPhongVertexShader = function(context) {
+vgl.utils.createPhongVertexShader = function (context) {
   'use strict';
+  context = context; /* unused parameter */
 
   var vertexShaderSource = [
       'attribute highp vec3 vertexPosition;',
@@ -312,7 +322,7 @@ vgl.utils.createPhongVertexShader = function(context) {
       'gl_Position = projectionMatrix * varPosition;',
       'varNormal = vec3(normalMatrix * vec4(vertexNormal, 0.0));',
       'varVertexColor = vertexColor;',
-      '}' ].join('\n'),
+      '}'].join('\n'),
 
       shader = new vgl.shader(vgl.GL.VERTEX_SHADER);
 
@@ -333,8 +343,9 @@ vgl.utils.createPhongVertexShader = function(context) {
  * @returns {vgl.shader}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.utils.createPhongFragmentShader = function(context) {
+vgl.utils.createPhongFragmentShader = function (context) {
   'use strict';
+  context = context; /* unused parameter */
   var fragmentShaderSource = [
     'uniform mediump float opacity;',
     'precision mediump float;',
@@ -357,7 +368,7 @@ vgl.utils.createPhongFragmentShader = function(context) {
     '  color = lambertian * varVertexColor;',
     '}',
     'gl_FragColor = vec4(color * opacity, 1.0 - opacity);',
-    '}' ].join('\n'),
+    '}'].join('\n'),
     shader = new vgl.shader(vgl.GL.FRAGMENT_SHADER);
 
   shader.setShaderSource(fragmentShaderSource);
@@ -375,13 +386,14 @@ vgl.utils.createPhongFragmentShader = function(context) {
  * @returns {vgl.shader}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.utils.createFragmentShaderSolidColor = function(context, color) {
+vgl.utils.createFragmentShaderSolidColor = function (context, color) {
   'use strict';
-  var fragmentShaderSource = ['uniform mediump float opacity;',
-                              'void main(void) {',
-                              'gl_FragColor = vec4(' + color[0] + ',' + color[1] + ',' + color[2] + ', opacity);',
-                              '}' ].join('\n'),
-      shader = new vgl.shader(vgl.GL.FRAGMENT_SHADER);
+  var fragmentShaderSource = [
+      'uniform mediump float opacity;',
+      'void main(void) {',
+      'gl_FragColor = vec4(' + color[0] + ',' + color[1] + ',' + color[2] + ', opacity);',
+      '}'].join('\n'),
+    shader = new vgl.shader(vgl.GL.FRAGMENT_SHADER);
 
   shader.setShaderSource(fragmentShaderSource);
   return shader;
@@ -397,15 +409,17 @@ vgl.utils.createFragmentShaderSolidColor = function(context, color) {
  * @returns {vgl.shader}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.utils.createFragmentShaderColorMap = function(context) {
+vgl.utils.createFragmentShaderColorMap = function (context) {
   'use strict';
+  context = context; /* unused parameter */
   var fragmentShaderSource = [
         'varying mediump float iVertexScalar;',
         'uniform sampler2D sampler2d;',
         'uniform mediump float opacity;',
         'void main(void) {',
-        'gl_FragColor = vec4(texture2D(sampler2d, vec2(iVertexScalar, 0.0)).xyz, opacity);',
-        '}' ].join('\n'),
+        'gl_FragColor = vec4(texture2D(sampler2d, vec2(iVertexScalar, ' +
+            '0.0)).xyz, opacity);',
+        '}'].join('\n'),
       shader = new vgl.shader(vgl.GL.FRAGMENT_SHADER);
 
   shader.setShaderSource(fragmentShaderSource);
@@ -422,8 +436,9 @@ vgl.utils.createFragmentShaderColorMap = function(context) {
  * @returns {vgl.shader}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.utils.createPointSpritesVertexShader = function(context) {
+vgl.utils.createPointSpritesVertexShader = function (context) {
   'use strict';
+  context = context; /* unused parameter */
   var vertexShaderSource = [
         'attribute vec3 vertexPosition;',
         'attribute vec3 vertexColor;',
@@ -440,8 +455,9 @@ vgl.utils.createPointSpritesVertexShader = function(context) {
         '  realPointSize = pointSize.x;}',
         'gl_PointSize = realPointSize ;',
         'iVertexScalar = vertexPosition.z;',
-        'gl_Position = projectionMatrix * modelViewMatrix * vec4(vertexPosition.xy, height, 1.0);',
-        ' iVertexColor = vertexColor;', '}' ].join('\n'),
+        'gl_Position = projectionMatrix * modelViewMatrix * ' +
+            'vec4(vertexPosition.xy, height, 1.0);',
+        ' iVertexColor = vertexColor;', '}'].join('\n'),
       shader = new vgl.shader(vgl.GL.VERTEX_SHADER);
   shader.setShaderSource(vertexShaderSource);
   return shader;
@@ -457,8 +473,9 @@ vgl.utils.createPointSpritesVertexShader = function(context) {
  * @returns {vgl.shader}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.utils.createPointSpritesFragmentShader = function(context) {
+vgl.utils.createPointSpritesFragmentShader = function (context) {
   'use strict';
+  context = context; /* unused parameter */
   var fragmentShaderSource = [
         'varying mediump vec3 iVertexColor;',
         'varying highp float iVertexScalar;',
@@ -479,7 +496,9 @@ vgl.utils.createPointSpritesFragmentShader = function(context) {
         '}',
         'highp float texOpacity = texture2D(opacityLookup, realTexCoord).w;',
         'if (useScalarsToColors == 1) {',
-        '  gl_FragColor = vec4(texture2D(scalarsToColors, vec2((iVertexScalar - lutMin)/(lutMax - lutMin), 0.0)).xyz, texOpacity);',
+        '  gl_FragColor = vec4(texture2D(scalarsToColors, vec2((' +
+            'iVertexScalar - lutMin)/(lutMax - lutMin), 0.0)).xyz, ' +
+            'texOpacity);',
         '} else if (useVertexColors == 1) {',
         '  gl_FragColor = vec4(iVertexColor, texOpacity);',
         '} else {',
@@ -501,19 +520,19 @@ vgl.utils.createPointSpritesFragmentShader = function(context) {
  * @returns {vgl.material}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.utils.createTextureMaterial = function(isRgba) {
+vgl.utils.createTextureMaterial = function (isRgba) {
   'use strict';
   var mat = new vgl.material(),
     blend = new vgl.blend(),
     prog = new vgl.shaderProgram(),
-    vertexShader = vgl.utils.createTextureVertexShader(gl),
+    vertexShader = vgl.utils.createTextureVertexShader(vgl.GL),
     fragmentShader = null,
-    posVertAttr = new vgl.vertexAttribute("vertexPosition"),
-    texCoordVertAttr = new vgl.vertexAttribute("textureCoord"),
-    pointsizeUniform = new vgl.floatUniform("pointSize", 5.0),
-    modelViewUniform = new vgl.modelViewUniform("modelViewMatrix"),
-    projectionUniform = new vgl.projectionUniform("projectionMatrix"),
-    samplerUniform = new vgl.uniform(vgl.GL.INT, "sampler2d"),
+    posVertAttr = new vgl.vertexAttribute('vertexPosition'),
+    texCoordVertAttr = new vgl.vertexAttribute('textureCoord'),
+    pointsizeUniform = new vgl.floatUniform('pointSize', 5.0),
+    modelViewUniform = new vgl.modelViewUniform('modelViewMatrix'),
+    projectionUniform = new vgl.projectionUniform('projectionMatrix'),
+    samplerUniform = new vgl.uniform(vgl.GL.INT, 'sampler2d'),
     opacityUniform = null;
 
   samplerUniform.set(0);
@@ -526,9 +545,9 @@ vgl.utils.createTextureMaterial = function(isRgba) {
   prog.addUniform(projectionUniform);
 
   if (isRgba) {
-    fragmentShader = vgl.utils.createRgbaTextureFragmentShader(gl);
+    fragmentShader = vgl.utils.createRgbaTextureFragmentShader(vgl.GL);
   } else {
-    fragmentShader = vgl.utils.createTextureFragmentShader(gl);
+    fragmentShader = vgl.utils.createTextureFragmentShader(vgl.GL);
   }
   opacityUniform = new vgl.floatUniform('opacity', 1.0);
   prog.addUniform(opacityUniform);
@@ -550,20 +569,20 @@ vgl.utils.createTextureMaterial = function(isRgba) {
  * @returns {vgl.material}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.utils.createGeometryMaterial = function() {
+vgl.utils.createGeometryMaterial = function () {
   'use strict';
-   var mat = new vgl.material(),
-       prog = new vgl.shaderProgram(),
-       pointSize = 5.0,
-       opacity = 1.0,
-       vertexShader = vgl.utils.createVertexShader(gl),
-       fragmentShader = vgl.utils.createFragmentShader(gl),
-       posVertAttr = new vgl.vertexAttribute("vertexPosition"),
-       colorVertAttr = new vgl.vertexAttribute("vertexColor"),
-       pointsizeUniform = new vgl.floatUniform("pointSize", pointSize),
-       opacityUniform = new vgl.floatUniform("opacity", opacity),
-       modelViewUniform = new vgl.modelViewUniform("modelViewMatrix"),
-       projectionUniform = new vgl.projectionUniform("projectionMatrix");
+  var mat = new vgl.material(),
+      prog = new vgl.shaderProgram(),
+      pointSize = 5.0,
+      opacity = 1.0,
+      vertexShader = vgl.utils.createVertexShader(vgl.GL),
+      fragmentShader = vgl.utils.createFragmentShader(vgl.GL),
+      posVertAttr = new vgl.vertexAttribute('vertexPosition'),
+      colorVertAttr = new vgl.vertexAttribute('vertexColor'),
+      pointsizeUniform = new vgl.floatUniform('pointSize', pointSize),
+      opacityUniform = new vgl.floatUniform('opacity', opacity),
+      modelViewUniform = new vgl.modelViewUniform('modelViewMatrix'),
+      projectionUniform = new vgl.projectionUniform('projectionMatrix');
 
   prog.addVertexAttribute(posVertAttr, vgl.vertexAttributeKeys.Position);
   prog.addVertexAttribute(colorVertAttr, vgl.vertexAttributeKeys.Color);
@@ -587,20 +606,20 @@ vgl.utils.createGeometryMaterial = function() {
  * @returns {vgl.material}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.utils.createPointGeometryMaterial = function(opacity) {
+vgl.utils.createPointGeometryMaterial = function (opacity) {
   'use strict';
-   var mat = new vgl.material(),
-       blend = new vgl.blend(),
-       prog = new vgl.shaderProgram(),
-       opacity = opacity === undefined ? 1.0 : opacity,
-       vertexShader = vgl.utils.createPointVertexShader(gl),
-       fragmentShader = vgl.utils.createFragmentShader(gl),
-       posVertAttr = new vgl.vertexAttribute("vertexPosition"),
-       colorVertAttr = new vgl.vertexAttribute("vertexColor"),
-       sizeVertAttr = new vgl.vertexAttribute("vertexSize"),
-       opacityUniform = new vgl.floatUniform("opacity", opacity),
-       modelViewUniform = new vgl.modelViewUniform("modelViewMatrix"),
-       projectionUniform = new vgl.projectionUniform("projectionMatrix");
+  opacity = opacity === undefined ? 1.0 : opacity;
+  var mat = new vgl.material(),
+      blend = new vgl.blend(),
+      prog = new vgl.shaderProgram(),
+      vertexShader = vgl.utils.createPointVertexShader(vgl.GL),
+      fragmentShader = vgl.utils.createFragmentShader(vgl.GL),
+      posVertAttr = new vgl.vertexAttribute('vertexPosition'),
+      colorVertAttr = new vgl.vertexAttribute('vertexColor'),
+      sizeVertAttr = new vgl.vertexAttribute('vertexSize'),
+      opacityUniform = new vgl.floatUniform('opacity', opacity),
+      modelViewUniform = new vgl.modelViewUniform('modelViewMatrix'),
+      projectionUniform = new vgl.projectionUniform('projectionMatrix');
 
   prog.addVertexAttribute(posVertAttr, vgl.vertexAttributeKeys.Position);
   prog.addVertexAttribute(colorVertAttr, vgl.vertexAttributeKeys.Color);
@@ -626,20 +645,19 @@ vgl.utils.createPointGeometryMaterial = function(opacity) {
  * @returns {vgl.material}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.utils.createPhongMaterial = function() {
+vgl.utils.createPhongMaterial = function () {
   'use strict';
-   var mat = new vgl.material(),
-       prog = new vgl.shaderProgram(),
-       blend = new vgl.blend(),
-       vertexShader = vgl.utils.createPhongVertexShader(gl),
-       fragmentShader = vgl.utils.createPhongFragmentShader(gl),
-       posVertAttr = new vgl.vertexAttribute("vertexPosition"),
-       normalVertAttr = new vgl.vertexAttribute("vertexNormal"),
-       colorVertAttr = new vgl.vertexAttribute("vertexColor"),
-       opacityUniform = new vgl.floatUniform("opacity", 1.0),
-       modelViewUniform = new vgl.modelViewUniform("modelViewMatrix"),
-       normalUniform = new vgl.normalMatrixUniform("normalMatrix"),
-       projectionUniform = new vgl.projectionUniform("projectionMatrix");
+  var mat = new vgl.material(),
+      prog = new vgl.shaderProgram(),
+      vertexShader = vgl.utils.createPhongVertexShader(vgl.GL),
+      fragmentShader = vgl.utils.createPhongFragmentShader(vgl.GL),
+      posVertAttr = new vgl.vertexAttribute('vertexPosition'),
+      normalVertAttr = new vgl.vertexAttribute('vertexNormal'),
+      colorVertAttr = new vgl.vertexAttribute('vertexColor'),
+      opacityUniform = new vgl.floatUniform('opacity', 1.0),
+      modelViewUniform = new vgl.modelViewUniform('modelViewMatrix'),
+      normalUniform = new vgl.normalMatrixUniform('normalMatrix'),
+      projectionUniform = new vgl.projectionUniform('projectionMatrix');
 
   prog.addVertexAttribute(posVertAttr, vgl.vertexAttributeKeys.Position);
   prog.addVertexAttribute(normalVertAttr, vgl.vertexAttributeKeys.Normal);
@@ -665,20 +683,20 @@ vgl.utils.createPhongMaterial = function() {
  * @returns {vgl.material}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.utils.createColorMaterial = function() {
+vgl.utils.createColorMaterial = function () {
   'use strict';
   var mat = new vgl.material(),
       blend = new vgl.blend(),
       prog = new vgl.shaderProgram(),
-      vertexShader = vgl.utils.createVertexShader(gl),
-      fragmentShader = vgl.utils.createFragmentShader(gl),
-      posVertAttr = new vgl.vertexAttribute("vertexPosition"),
-      texCoordVertAttr = new vgl.vertexAttribute("textureCoord"),
-      colorVertAttr = new vgl.vertexAttribute("vertexColor"),
-      pointsizeUniform = new vgl.floatUniform("pointSize", 5.0),
-      opacityUniform = new vgl.floatUniform("opacity", 1.0),
-      modelViewUniform = new vgl.modelViewUniform("modelViewMatrix"),
-      projectionUniform = new vgl.projectionUniform("projectionMatrix");
+      vertexShader = vgl.utils.createVertexShader(vgl.GL),
+      fragmentShader = vgl.utils.createFragmentShader(vgl.GL),
+      posVertAttr = new vgl.vertexAttribute('vertexPosition'),
+      texCoordVertAttr = new vgl.vertexAttribute('textureCoord'),
+      colorVertAttr = new vgl.vertexAttribute('vertexColor'),
+      pointsizeUniform = new vgl.floatUniform('pointSize', 5.0),
+      opacityUniform = new vgl.floatUniform('opacity', 1.0),
+      modelViewUniform = new vgl.modelViewUniform('modelViewMatrix'),
+      projectionUniform = new vgl.projectionUniform('projectionMatrix');
 
   prog.addVertexAttribute(posVertAttr, vgl.vertexAttributeKeys.Position);
   prog.addVertexAttribute(colorVertAttr, vgl.vertexAttributeKeys.Color);
@@ -705,7 +723,7 @@ vgl.utils.createColorMaterial = function() {
  * @returns {vgl.material}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.utils.createColorMappedMaterial = function(lut) {
+vgl.utils.createColorMappedMaterial = function (lut) {
   'use strict';
   if (!lut) {
     lut = new vgl.lookupTable();
@@ -716,17 +734,17 @@ vgl.utils.createColorMappedMaterial = function(lut) {
       blend = new vgl.blend(),
       prog = new vgl.shaderProgram(),
       vertexShader = vgl.utils.createVertexShaderColorMap(
-        gl,scalarRange[0],scalarRange[1]),
-      fragmentShader = vgl.utils.createFragmentShaderColorMap(gl),
-      posVertAttr = new vgl.vertexAttribute("vertexPosition"),
-      scalarVertAttr = new vgl.vertexAttribute("vertexScalar"),
-      pointsizeUniform = new vgl.floatUniform("pointSize", 5.0),
-      opacityUniform = new vgl.floatUniform("opacity", 1.0),
-      lutMinUniform = new vgl.floatUniform("lutMin", scalarRange[0]),
-      lutMaxUniform = new vgl.floatUniform("lutMax", scalarRange[1]),
-      modelViewUniform = new vgl.modelViewUniform("modelViewMatrix"),
-      projectionUniform = new vgl.projectionUniform("projectionMatrix"),
-      samplerUniform = new vgl.uniform(gl.FLOAT, "sampler2d"),
+        vgl.GL, scalarRange[0], scalarRange[1]),
+      fragmentShader = vgl.utils.createFragmentShaderColorMap(vgl.GL),
+      posVertAttr = new vgl.vertexAttribute('vertexPosition'),
+      scalarVertAttr = new vgl.vertexAttribute('vertexScalar'),
+      pointsizeUniform = new vgl.floatUniform('pointSize', 5.0),
+      opacityUniform = new vgl.floatUniform('opacity', 1.0),
+      lutMinUniform = new vgl.floatUniform('lutMin', scalarRange[0]),
+      lutMaxUniform = new vgl.floatUniform('lutMax', scalarRange[1]),
+      modelViewUniform = new vgl.modelViewUniform('modelViewMatrix'),
+      projectionUniform = new vgl.projectionUniform('projectionMatrix'),
+      samplerUniform = new vgl.uniform(vgl.GL.FLOAT, 'sampler2d'),
       lookupTable = lut;
 
   samplerUniform.set(0);
@@ -757,7 +775,7 @@ vgl.utils.createColorMappedMaterial = function(lut) {
  * @param lut
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.utils.updateColorMappedMaterial = function(mat, lut) {
+vgl.utils.updateColorMappedMaterial = function (mat, lut) {
   'use strict';
   if (!mat) {
     console.log('[warning] Invalid material. Nothing to update.');
@@ -789,22 +807,22 @@ vgl.utils.updateColorMappedMaterial = function(mat, lut) {
  * @returns {vgl.material}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.utils.createSolidColorMaterial = function(color) {
+vgl.utils.createSolidColorMaterial = function (color) {
   'use strict';
   if (!color) {
-    color = [1.0,1.0,1.0];
+    color = [1.0, 1.0, 1.0];
   }
 
   var mat = new vgl.material(),
       blend = new vgl.blend(),
       prog = new vgl.shaderProgram(),
-      vertexShader = vgl.utils.createVertexShaderSolidColor(gl),
-      fragmentShader = vgl.utils.createFragmentShaderSolidColor(gl, color),
-      posVertAttr = new vgl.vertexAttribute("vertexPosition"),
-      pointsizeUniform = new vgl.floatUniform("pointSize", 5.0),
-      opacityUniform = new vgl.floatUniform("opacity", 1.0),
-      modelViewUniform = new vgl.modelViewUniform("modelViewMatrix"),
-      projectionUniform = new vgl.projectionUniform("projectionMatrix");
+      vertexShader = vgl.utils.createVertexShaderSolidColor(vgl.GL),
+      fragmentShader = vgl.utils.createFragmentShaderSolidColor(vgl.GL, color),
+      posVertAttr = new vgl.vertexAttribute('vertexPosition'),
+      pointsizeUniform = new vgl.floatUniform('pointSize', 5.0),
+      opacityUniform = new vgl.floatUniform('opacity', 1.0),
+      modelViewUniform = new vgl.modelViewUniform('modelViewMatrix'),
+      projectionUniform = new vgl.projectionUniform('projectionMatrix');
 
   prog.addVertexAttribute(posVertAttr, vgl.vertexAttributeKeys.Position);
   prog.addUniform(pointsizeUniform);
@@ -828,28 +846,28 @@ vgl.utils.createSolidColorMaterial = function(color) {
  * @returns {vgl.material}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.utils.createPointSpritesMaterial = function(image, lut) {
+vgl.utils.createPointSpritesMaterial = function (image, lut) {
   'use strict';
   var scalarRange = lut === undefined ? [0, 1] : lut.range(),
       mat = new vgl.material(),
       blend = new vgl.blend(),
       prog = new vgl.shaderProgram(),
-      vertexShader = vgl.utils.createPointSpritesVertexShader(gl),
-      fragmentShader = vgl.utils.createPointSpritesFragmentShader(gl),
-      posVertAttr = new vgl.vertexAttribute("vertexPosition"),
-      colorVertAttr = new vgl.vertexAttribute("vertexColor"),
-      heightUniform = new vgl.floatUniform("height", 0.0),
+      vertexShader = vgl.utils.createPointSpritesVertexShader(vgl.GL),
+      fragmentShader = vgl.utils.createPointSpritesFragmentShader(vgl.GL),
+      posVertAttr = new vgl.vertexAttribute('vertexPosition'),
+      colorVertAttr = new vgl.vertexAttribute('vertexColor'),
+      heightUniform = new vgl.floatUniform('height', 0.0),
       vertexColorWeightUniform =
-        new vgl.floatUniform("vertexColorWeight", 0.0),
-      lutMinUniform = new vgl.floatUniform("lutMin", scalarRange[0]),
-      lutMaxUniform = new vgl.floatUniform("lutMax", scalarRange[1]),
-      modelViewUniform = new vgl.modelViewUniform("modelViewMatrix"),
-      projectionUniform = new vgl.projectionUniform("projectionMatrix"),
-      samplerUniform = new vgl.uniform(vgl.GL.INT, "opacityLookup"),
-      scalarsToColors = new vgl.uniform(vgl.GL.INT, "scalarsToColors"),
-      useScalarsToColors = new vgl.uniform(vgl.GL.INT, "useScalarsToColors"),
-      useVertexColors = new vgl.uniform(vgl.GL.INT, "useVertexColors"),
-      pointSize = new vgl.uniform(gl.FLOAT_VEC2, "pointSize"),
+        new vgl.floatUniform('vertexColorWeight', 0.0),
+      lutMinUniform = new vgl.floatUniform('lutMin', scalarRange[0]),
+      lutMaxUniform = new vgl.floatUniform('lutMax', scalarRange[1]),
+      modelViewUniform = new vgl.modelViewUniform('modelViewMatrix'),
+      projectionUniform = new vgl.projectionUniform('projectionMatrix'),
+      samplerUniform = new vgl.uniform(vgl.GL.INT, 'opacityLookup'),
+      scalarsToColors = new vgl.uniform(vgl.GL.INT, 'scalarsToColors'),
+      useScalarsToColors = new vgl.uniform(vgl.GL.INT, 'useScalarsToColors'),
+      useVertexColors = new vgl.uniform(vgl.GL.INT, 'useVertexColors'),
+      pointSize = new vgl.uniform(vgl.GL.FLOAT_VEC2, 'pointSize'),
       texture = new vgl.texture();
 
   samplerUniform.set(0);
@@ -898,7 +916,7 @@ vgl.utils.createPointSpritesMaterial = function(image, lut) {
  * @returns {vgl.actor}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.utils.createPlane = function(originX, originY, originZ,
+vgl.utils.createPlane = function (originX, originY, originZ,
                                  point1X, point1Y, point1Z,
                                  point2X, point2Y, point2Z) {
   'use strict';
@@ -929,7 +947,7 @@ vgl.utils.createPlane = function(originX, originY, originZ,
  * @returns {vgl.actor}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.utils.createTexturePlane = function(originX, originY, originZ,
+vgl.utils.createTexturePlane = function (originX, originY, originZ,
                                         point1X, point1Y, point1Z,
                                         point2X, point2Y, point2Z,
                                         isRgba) {
@@ -960,15 +978,15 @@ vgl.utils.createTexturePlane = function(originX, originY, originZ,
  * @returns {vgl.actor}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.utils.createPoints = function(positions, size, colors, texcoords, opacity) {
+vgl.utils.createPoints = function (positions, size, colors, texcoords, opacity) {
   'use strict';
   if (!positions) {
-    console.log("[ERROR] Cannot create points without positions");
+    console.log('[ERROR] Cannot create points without positions');
     return null;
   }
 
-  var opacity = opacity === undefined ? 1.0 : opacity,
-      mapper = new vgl.mapper(),
+  opacity = opacity === undefined ? 1.0 : opacity;
+  var mapper = new vgl.mapper(),
       pointSource = new vgl.pointSource(),
       mat = vgl.utils.createPointGeometryMaterial(opacity),
       actor = new vgl.actor();
@@ -983,7 +1001,7 @@ vgl.utils.createPoints = function(positions, size, colors, texcoords, opacity) {
   }
 
   if (size) {
-    pointSource.setSize(size)
+    pointSource.setSize(size);
   } else {
     pointSource.setSize(1.0);
   }
@@ -1006,16 +1024,16 @@ vgl.utils.createPoints = function(positions, size, colors, texcoords, opacity) {
  * @returns {vgl.actor}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.utils.createPointSprites = function(image, positions, colors,
+vgl.utils.createPointSprites = function (image, positions, colors,
                                               texcoords) {
   'use strict';
   if (!image) {
-    console.log("[ERROR] Point sprites requires an image");
+    console.log('[ERROR] Point sprites requires an image');
     return null;
   }
 
   if (!positions) {
-    console.log("[ERROR] Cannot create points without positions");
+    console.log('[ERROR] Cannot create points without positions');
     return null;
   }
 
@@ -1048,10 +1066,10 @@ vgl.utils.createPointSprites = function(image, positions, colors,
  * @param colors
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.utils.createLines = function(positions, colors) {
+vgl.utils.createLines = function (positions, colors) {
   'use strict';
   if (!positions) {
-    console.log("[ERROR] Cannot create points without positions");
+    console.log('[ERROR] Cannot create points without positions');
     return null;
   }
 
@@ -1084,7 +1102,7 @@ vgl.utils.createLines = function(positions, colors) {
  * @returns {Array}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.utils.createColorLegend = function(varname, lookupTable, origin,
+vgl.utils.createColorLegend = function (varname, lookupTable, origin,
                                              width, height, countMajor,
                                              countMinor) {
   'use strict';
@@ -1134,7 +1152,7 @@ vgl.utils.createColorLegend = function(varname, lookupTable, origin,
     pt2.length = 3;
 
     // For now just create labels for end points
-    for (i = 0; i < 2; ++i) {
+    for (i = 0; i < 2; i += 1) {
       index = i * (positions.length - 3);
 
       origin[0] = positions[index] - delta;
@@ -1215,14 +1233,14 @@ vgl.utils.createColorLegend = function(varname, lookupTable, origin,
                         pt2X, pt2Y, pt2Z,
                         countMajor, countMinor,
                         heightMajor, heightMinor) {
+    heightMinor = heightMinor; /* unused parameter */
     var width = pt2X - pt1X,
         index = null,
         delta = width / countMajor,
         positions = [],
-        actor = null,
         actors = [];
 
-    for (index = 0; index <= countMajor; ++index) {
+    for (index = 0; index <= countMajor; index += 1) {
       positions.push(pt1X + delta * index);
       positions.push(pt1Y);
       positions.push(pt1Z);
@@ -1251,7 +1269,6 @@ vgl.utils.createColorLegend = function(varname, lookupTable, origin,
       pt2Z = 0.0,
       actors = [],
       actor = null,
-      mapper = null,
       mat = null,
       group = vgl.groupNode();
 
@@ -1291,7 +1308,7 @@ vgl.utils.createColorLegend = function(varname, lookupTable, origin,
  * @returns {vgl.texture}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.utils.create2DTexture = function(textToWrite, textSize,
+vgl.utils.create2DTexture = function (textToWrite, textSize,
   color, font, alignment, baseline, bold) {
   'use strict';
 
@@ -1322,7 +1339,8 @@ vgl.utils.create2DTexture = function(textToWrite, textSize,
   ctx.fillStyle = 'rgba(0, 0, 0, 0)';
   ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
-  // This determines the text colour, it can take a hex value or rgba value (e.g. rgba(255,0,0,0.5))
+  // This determines the text colour, it can take a hex value or rgba value
+  // (e.g. rgba(255,0,0,0.5))
   ctx.fillStyle = 'rgba(200, 85, 10, 1.0)';
 
   // This determines the alignment of text, e.g. left, center, right
@@ -1332,12 +1350,12 @@ vgl.utils.create2DTexture = function(textToWrite, textSize,
   ctx.textBaseline = baseline;
 
   // This determines the size of the text and the font family used
-  ctx.font = 4 * textSize + "px " + font;
+  ctx.font = 4 * textSize + 'px ' + font;
   if (bold) {
-    ctx.font = "bold " + ctx.font;
+    ctx.font = 'bold ' + ctx.font;
   }
 
-  ctx.fillText(textToWrite, canvas.width/2, canvas.height/2, canvas.width);
+  ctx.fillText(textToWrite, canvas.width / 2, canvas.height / 2, canvas.width);
 
   texture.setImage(canvas);
   texture.updateDimensions();

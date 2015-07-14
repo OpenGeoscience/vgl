@@ -3,9 +3,6 @@
  * @module vgl
  */
 
-/*jslint devel: true, forin: true, newcap: true, plusplus: true*/
-/*jslint white: true, continue:true, indent: 2*/
-
 /*global vgl, Float32Array, inherit*/
 //////////////////////////////////////////////////////////////////////////////
 
@@ -46,7 +43,7 @@ vgl.mapper = function (arg) {
   ////////////////////////////////////////////////////////////////////////////
   function deleteVertexBufferObjects(renderState) {
     var i;
-    for (i = 0; i < m_buffers.length; ++i) {
+    for (i = 0; i < m_buffers.length; i += 1) {
       renderState.m_context.deleteBuffer(m_buffers[i]);
     }
   }
@@ -66,7 +63,7 @@ vgl.mapper = function (arg) {
       var numberOfSources = m_geomData.numberOfSources(),
           i, j, k, bufferId = null, keys, ks, numberOfPrimitives, data;
 
-      for (i = 0; i < numberOfSources; ++i) {
+      for (i = 0; i < numberOfSources; i += 1) {
         bufferId = m_context.createBuffer();
         m_context.bindBuffer(vgl.GL.ARRAY_BUFFER, bufferId);
         data = m_geomData.source(i).data();
@@ -80,7 +77,7 @@ vgl.mapper = function (arg) {
         keys = m_geomData.source(i).keys();
         ks = [];
 
-        for (j = 0; j < keys.length; ++j) {
+        for (j = 0; j < keys.length; j += 1) {
           ks.push(keys[j]);
         }
 
@@ -89,12 +86,13 @@ vgl.mapper = function (arg) {
       }
 
       numberOfPrimitives = m_geomData.numberOfPrimitives();
-      for (k = 0; k < numberOfPrimitives; ++k) {
+      for (k = 0; k < numberOfPrimitives; k += 1) {
         bufferId = m_context.createBuffer();
         m_context.bindBuffer(vgl.GL.ARRAY_BUFFER, bufferId);
         m_context.bufferData(vgl.GL.ARRAY_BUFFER,
           m_geomData.primitive(k).indices(), vgl.GL.STATIC_DRAW);
-        m_buffers[i++] = bufferId;
+        m_buffers[i] = bufferId;
+        i += 1;
       }
 
       m_glCompileTimestamp.modified();
@@ -289,18 +287,18 @@ vgl.mapper = function (arg) {
       if (m_bufferVertexAttributeMap.hasOwnProperty(i)) {
         m_context.bindBuffer(vgl.GL.ARRAY_BUFFER,
                                          m_buffers[bufferIndex]);
-        for (j = 0; j < m_bufferVertexAttributeMap[i].length; ++j) {
+        for (j = 0; j < m_bufferVertexAttributeMap[i].length; j += 1) {
           renderState.m_material
               .bindVertexData(renderState, m_bufferVertexAttributeMap[i][j]);
         }
-        ++bufferIndex;
+        bufferIndex += 1;
       }
     }
 
     noOfPrimitives = m_geomData.numberOfPrimitives();
-    for (j = 0; j < noOfPrimitives; ++j) {
-      m_context.bindBuffer(vgl.GL.ARRAY_BUFFER,
-                                       m_buffers[bufferIndex++]);
+    for (j = 0; j < noOfPrimitives; j += 1) {
+      m_context.bindBuffer(vgl.GL.ARRAY_BUFFER, m_buffers[bufferIndex]);
+      bufferIndex += 1;
       primitive = m_geomData.primitive(j);
       switch (primitive.primitiveType()) {
         case vgl.GL.POINTS:

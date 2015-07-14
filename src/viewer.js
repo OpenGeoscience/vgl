@@ -3,10 +3,7 @@
  * @module vgl
  */
 
-/*jslint devel: true, forin: true, newcap: true, plusplus: true*/
-/*jslint white: true, continue:true, indent: 2*/
-
-/*global window, vgl, ogs, vec4, inherit, $*/
+/*global window, vgl, inherit, $*/
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
@@ -17,7 +14,7 @@
  * @returns {vgl.viewer}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.viewer = function(canvas) {
+vgl.viewer = function (canvas) {
   'use strict';
 
   if (!(this instanceof vgl.viewer)) {
@@ -40,7 +37,7 @@ vgl.viewer = function(canvas) {
    * @returns {*}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.canvas = function() {
+  this.canvas = function () {
     return m_canvas;
   };
 
@@ -51,7 +48,7 @@ vgl.viewer = function(canvas) {
    * @returns {vgl.renderWindow}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.renderWindow = function() {
+  this.renderWindow = function () {
     return m_renderWindow;
   };
 
@@ -63,12 +60,11 @@ vgl.viewer = function(canvas) {
    * properly.
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.init = function() {
+  this.init = function () {
     if (m_renderWindow !== null) {
       m_renderWindow._setup();
-    }
-    else {
-      console.log("[ERROR] No render window attached");
+    } else {
+      console.log('[ERROR] No render window attached');
     }
   };
 
@@ -77,12 +73,11 @@ vgl.viewer = function(canvas) {
    *  Remove the viewer
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.exit = function() {
+  this.exit = function (renderState) {
     if (m_renderWindow !== null) {
       m_renderWindow._cleanup(renderState);
-    }
-    else {
-      console.log("[ERROR] No render window attached");
+    } else {
+      console.log('[ERROR] No render window attached');
     }
   };
 
@@ -93,7 +88,7 @@ vgl.viewer = function(canvas) {
    * @returns {vgl.interactorStyle}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.interactorStyle = function() {
+  this.interactorStyle = function () {
     return m_interactorStyle;
   };
 
@@ -104,7 +99,7 @@ vgl.viewer = function(canvas) {
    * @param {vgl.interactorStyle} style
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.setInteractorStyle = function(style) {
+  this.setInteractorStyle = function (style) {
     if (style !== m_interactorStyle) {
       m_interactorStyle = style;
       m_interactorStyle.setViewer(this);
@@ -120,7 +115,7 @@ vgl.viewer = function(canvas) {
    * @returns {boolean}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.handleMouseDown = function(event) {
+  this.handleMouseDown = function (event) {
     if (m_ready === true) {
       var fixedEvent = $.event.fix(event || window.event);
       // Only prevent default action for right mouse button
@@ -143,7 +138,7 @@ vgl.viewer = function(canvas) {
    * @returns {boolean}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.handleMouseUp = function(event) {
+  this.handleMouseUp = function (event) {
     if (m_ready === true) {
       var fixedEvent = $.event.fix(event || window.event);
       fixedEvent.preventDefault();
@@ -163,7 +158,7 @@ vgl.viewer = function(canvas) {
    * @returns {boolean}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.handleMouseMove = function(event) {
+  this.handleMouseMove = function (event) {
     if (m_ready === true) {
       var fixedEvent = $.event.fix(event || window.event);
       fixedEvent.preventDefault();
@@ -182,7 +177,7 @@ vgl.viewer = function(canvas) {
    * @returns {boolean}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.handleMouseWheel = function(event) {
+  this.handleMouseWheel = function (event) {
     if (m_ready === true) {
       var fixedEvent = $.event.fix(event || window.event);
       fixedEvent.preventDefault();
@@ -201,7 +196,7 @@ vgl.viewer = function(canvas) {
    * @returns {boolean}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.handleMouseOut = function(event) {
+  this.handleMouseOut = function (event) {
     if (m_ready === true) {
       var fixedEvent = $.event.fix(event || window.event);
       fixedEvent.preventDefault();
@@ -220,7 +215,7 @@ vgl.viewer = function(canvas) {
    * @returns {boolean}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.handleKeyPress = function(event) {
+  this.handleKeyPress = function (event) {
     if (m_ready === true) {
       var fixedEvent = $.event.fix(event || window.event);
       fixedEvent.preventDefault();
@@ -239,7 +234,7 @@ vgl.viewer = function(canvas) {
    * @returns {boolean}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.handleContextMenu = function(event) {
+  this.handleContextMenu = function (event) {
     if (m_ready === true) {
       var fixedEvent = $.event.fix(event || window.event);
       fixedEvent.preventDefault();
@@ -258,8 +253,8 @@ vgl.viewer = function(canvas) {
    * @returns {boolean}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.handleClick = function(event) {
-   if (m_ready === true) {
+  this.handleClick = function (event) {
+    if (m_ready === true) {
       var fixedEvent = $.event.fix(event || window.event);
       fixedEvent.preventDefault();
       fixedEvent.type = vgl.event.click;
@@ -277,7 +272,7 @@ vgl.viewer = function(canvas) {
    * @returns {boolean}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.handleDoubleClick = function(event) {
+  this.handleDoubleClick = function (event) {
     if (m_ready === true) {
       var fixedEvent = $.event.fix(event || window.event);
       fixedEvent.preventDefault();
@@ -296,9 +291,9 @@ vgl.viewer = function(canvas) {
    * @returns {{x: number, y: number}}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.relMouseCoords = function(event) {
+  this.relMouseCoords = function (event) {
     if (event.pageX === undefined || event.pageY === undefined) {
-      throw "Missing attributes pageX and pageY on the event";
+      throw 'Missing attributes pageX and pageY on the event';
     }
 
     var totalOffsetX = 0,
@@ -310,7 +305,8 @@ vgl.viewer = function(canvas) {
     do {
       totalOffsetX += currentElement.offsetLeft - currentElement.scrollLeft;
       totalOffsetY += currentElement.offsetTop - currentElement.scrollTop;
-    } while (currentElement = currentElement.offsetParent);
+      currentElement = currentElement.offsetParent;
+    } while (currentElement);
 
     canvasX = event.pageX - totalOffsetX;
     canvasY = event.pageY - totalOffsetY;
@@ -326,7 +322,7 @@ vgl.viewer = function(canvas) {
    * Render
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.render = function() {
+  this.render = function () {
     m_renderWindow.render();
   };
 
@@ -335,36 +331,36 @@ vgl.viewer = function(canvas) {
    * Bind canvas mouse events to their default handlers
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.bindEventHandlers = function() {
+  this.bindEventHandlers = function () {
     $(m_canvas).on('mousedown', this.handleMouseDown);
     $(m_canvas).on('mouseup', this.handleMouseUp);
     $(m_canvas).on('mousemove', this.handleMouseMove);
     $(m_canvas).on('mousewheel', this.handleMouseWheel);
     $(m_canvas).on('contextmenu', this.handleContextMenu);
-  }
+  };
 
   ////////////////////////////////////////////////////////////////////////////
   /**
    * Undo earlier binded  handlers for canvas mouse events
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.unbindEventHandlers = function() {
+  this.unbindEventHandlers = function () {
     $(m_canvas).off('mousedown', this.handleMouseDown);
     $(m_canvas).off('mouseup', this.handleMouseUp);
     $(m_canvas).off('mousemove', this.handleMouseMove);
     $(m_canvas).off('mousewheel', this.handleMouseWheel);
     $(m_canvas).off('contextmenu', this.handleContextMenu);
-  }
+  };
 
   ////////////////////////////////////////////////////////////////////////////
   /**
    * Initialize
    */
   ////////////////////////////////////////////////////////////////////////////
-  this._init = function() {
+  this._init = function () {
     this.bindEventHandlers();
     m_renderWindow.addRenderer(m_renderer);
-  }
+  };
 
   this._init();
   return this;
