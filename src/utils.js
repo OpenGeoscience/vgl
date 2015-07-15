@@ -520,7 +520,7 @@ vgl.utils.createPointSpritesFragmentShader = function (context) {
  * @returns {vgl.material}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.utils.createTextureMaterial = function (isRgba) {
+vgl.utils.createTextureMaterial = function (isRgba, origin) {
   'use strict';
   var mat = new vgl.material(),
     blend = new vgl.blend(),
@@ -530,10 +530,16 @@ vgl.utils.createTextureMaterial = function (isRgba) {
     posVertAttr = new vgl.vertexAttribute('vertexPosition'),
     texCoordVertAttr = new vgl.vertexAttribute('textureCoord'),
     pointsizeUniform = new vgl.floatUniform('pointSize', 5.0),
-    modelViewUniform = new vgl.modelViewUniform('modelViewMatrix'),
+    modelViewUniform,
     projectionUniform = new vgl.projectionUniform('projectionMatrix'),
     samplerUniform = new vgl.uniform(vgl.GL.INT, 'sampler2d'),
     opacityUniform = null;
+  if (origin !== undefined) {
+    modelViewUniform = new vgl.modelViewOriginUniform('modelViewMatrix',
+                                                      origin);
+  } else {
+    modelViewUniform = new vgl.modelViewUniform('modelViewMatrix');
+  }
 
   samplerUniform.set(0);
 
@@ -954,12 +960,12 @@ vgl.utils.createTexturePlane = function (originX, originY, originZ,
   'use strict';
   var mapper = new vgl.mapper(),
       planeSource = new vgl.planeSource(),
-      mat = vgl.utils.createTextureMaterial(isRgba),
+      mat = vgl.utils.createTextureMaterial(isRgba,
+                                            [originX, originY, originZ]),
       actor = new vgl.actor();
 
-  planeSource.setOrigin(originX, originY, originZ);
-  planeSource.setPoint1(point1X, point1Y, point1Z);
-  planeSource.setPoint2(point2X, point2Y, point2Z);
+  planeSource.setPoint1(point1X - originX, point1Y - originY, point1Z - originZ);
+  planeSource.setPoint2(point2X - originX, point2Y - originY, point2Z - originZ);
   mapper.setGeometryData(planeSource.create());
 
   actor.setMapper(mapper);

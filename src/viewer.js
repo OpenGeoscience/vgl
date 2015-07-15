@@ -14,11 +14,11 @@
  * @returns {vgl.viewer}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.viewer = function (canvas) {
+vgl.viewer = function (canvas, options) {
   'use strict';
 
   if (!(this instanceof vgl.viewer)) {
-    return new vgl.viewer(canvas);
+    return new vgl.viewer(canvas, options);
   }
 
   vgl.object.call(this);
@@ -27,7 +27,7 @@ vgl.viewer = function (canvas) {
       m_canvas = canvas,
       m_ready = true,
       m_interactorStyle = null,
-      m_renderer = vgl.renderer(),
+      m_renderer = vgl.renderer(options),
       m_renderWindow = vgl.renderWindow(m_canvas);
 
   ////////////////////////////////////////////////////////////////////////////

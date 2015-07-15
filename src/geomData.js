@@ -8,22 +8,6 @@
 
 //////////////////////////////////////////////////////////////////////////////
 /**
- * Vertex attribute keys
- *
- * @type {{Position: number, Normal: number, TextureCoordinate: number,
- *         Color: number, Scalar: number}}
- */
-//////////////////////////////////////////////////////////////////////////////
-vgl.vertexAttributeKeys = {
-  'Position' : 0,
-  'Normal' : 1,
-  'TextureCoordinate' : 2,
-  'Color' : 3,
-  'Scalar' : 4
-};
-
-//////////////////////////////////////////////////////////////////////////////
-/**
  * Create a new instance of class primitive
  *
  * @class
