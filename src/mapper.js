@@ -219,6 +219,9 @@ vgl.mapper = function (arg) {
     if (renderState) {
       m_context = renderState.m_context;
     }
+    if (!m_context) {
+      return false;
+    }
     var bufferIndex = -1;
     for (var i = 0; i < m_geomData.numberOfSources(); i += 1) {
       if (m_geomData.source(i).name() === sourceName) {
@@ -231,9 +234,6 @@ vgl.mapper = function (arg) {
     }
     if (!values) {
       values = m_geomData.source(i).dataToFloat32Array();
-    }
-    if (!m_context) {
-      return false;
     }
     m_context.bindBuffer(vgl.GL.ARRAY_BUFFER, m_buffers[bufferIndex]);
     if (values instanceof Float32Array) {
