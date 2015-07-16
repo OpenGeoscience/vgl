@@ -3,10 +3,7 @@
  * @module vgl
  */
 
-/*jslint devel: true, forin: true, newcap: true, plusplus: true*/
-/*jslint white: true, continue:true, bitwise:true, indent: 2*/
-
-/*global vgl, gl, ogs, vec2, vec3, vec4, mat4, inherit, $*/
+/*global vgl, vec2, vec3, vec4, mat4, inherit*/
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
@@ -16,7 +13,7 @@
  * @returns {vgl.renderState}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.renderState = function() {
+vgl.renderState = function () {
   'use strict';
 
   this.m_context = null;
@@ -34,7 +31,7 @@ vgl.renderState = function() {
  * @returns {vgl.renderer}
  */
 ////////////////////////////////////////////////////////////////////////////
-vgl.renderer = function() {
+vgl.renderer = function () {
   'use strict';
 
   if (!(this instanceof vgl.renderer)) {
@@ -44,20 +41,21 @@ vgl.renderer = function() {
 
   /** @private */
   var m_this = this;
-  m_this.m_renderWindow = null,
-  m_this.m_contextChanged = false,
-  m_this.m_sceneRoot = new vgl.groupNode(),
-  m_this.m_camera = new vgl.camera(),
-  m_this.m_nearClippingPlaneTolerance = null,
-  m_this.m_x = 0,
-  m_this.m_y = 0,
-  m_this.m_width = 0,
-  m_this.m_height = 0,
-  m_this.m_resizable = true,
-  m_this.m_resetScene = true,
-  m_this.m_layer = 0,
-  m_this.m_renderPasses = null,
+  m_this.m_renderWindow = null;
+  m_this.m_contextChanged = false;
+  m_this.m_sceneRoot = new vgl.groupNode();
+  m_this.m_camera = new vgl.camera();
+  m_this.m_nearClippingPlaneTolerance = null;
+  m_this.m_x = 0;
+  m_this.m_y = 0;
+  m_this.m_width = 0;
+  m_this.m_height = 0;
+  m_this.m_resizable = true;
+  m_this.m_resetScene = true;
+  m_this.m_layer = 0;
+  m_this.m_renderPasses = null;
   m_this.m_resetClippingRange = true;
+  m_this.m_depthBits = null;
 
   m_this.m_camera.addChild(m_this.m_sceneRoot);
 
@@ -66,7 +64,7 @@ vgl.renderer = function() {
    * Get width of the renderer
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.width = function() {
+  this.width = function () {
     return m_this.m_width;
   };
 
@@ -75,7 +73,7 @@ vgl.renderer = function() {
    * Get height of the renderer
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.height = function() {
+  this.height = function () {
     return m_this.m_height;
   };
 
@@ -87,7 +85,7 @@ vgl.renderer = function() {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.layer = function () {
-     return m_this.m_layer;
+    return m_this.m_layer;
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -97,7 +95,7 @@ vgl.renderer = function() {
    * @param layerNo
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.setLayer = function(layerNo) {
+  this.setLayer = function (layerNo) {
     m_this.m_layer = layerNo;
     m_this.modified();
   };
@@ -107,7 +105,7 @@ vgl.renderer = function() {
    *
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.isResizable = function() {
+  this.isResizable = function () {
     return m_this.m_resizable;
   };
 
@@ -116,7 +114,7 @@ vgl.renderer = function() {
    *
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.setResizable = function(r) {
+  this.setResizable = function (r) {
     m_this.m_resizable = r;
   };
 
@@ -126,7 +124,7 @@ vgl.renderer = function() {
    * Return render window (owner) of the renderer
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.renderWindow = function() {
+  this.renderWindow = function () {
     return m_this.m_renderWindow;
   };
 
@@ -135,7 +133,7 @@ vgl.renderer = function() {
    * Set render window for the renderer
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.setRenderWindow = function(renWin) {
+  this.setRenderWindow = function (renWin) {
     if (m_this.m_renderWindow !== renWin) {
       if (m_this.m_renderWindow) {
         m_this.m_renderWindow.removeRenderer(this);
@@ -151,7 +149,7 @@ vgl.renderer = function() {
    * Get background color
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.backgroundColor = function() {
+  this.backgroundColor = function () {
     return m_this.m_camera.clearColor();
   };
 
@@ -165,12 +163,10 @@ vgl.renderer = function() {
    * @param a
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.setBackgroundColor = function(r, g, b, a) {
+  this.setBackgroundColor = function (r, g, b, a) {
     m_this.m_camera.setClearColor(r, g, b, a);
     m_this.modified();
   };
-
-  this
 
   ////////////////////////////////////////////////////////////////////////////
   /**
@@ -179,7 +175,7 @@ vgl.renderer = function() {
    * @returns {vgl.groupNode}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.sceneRoot = function() {
+  this.sceneRoot = function () {
     return m_this.m_sceneRoot;
   };
 
@@ -190,7 +186,7 @@ vgl.renderer = function() {
    * @returns {vgl.camera}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.camera = function() {
+  this.camera = function () {
     return m_this.m_camera;
   };
 
@@ -199,20 +195,21 @@ vgl.renderer = function() {
    * Render the scene
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.render = function() {
+  this.render = function () {
     var i, renSt, children, actor = null, sortedActors = [],
         mvMatrixInv = mat4.create(), clearColor = null;
 
     renSt = new vgl.renderState();
     renSt.m_renderer = m_this;
     renSt.m_context = m_this.renderWindow().context();
+    m_this.m_depthBits = renSt.m_context.getParameter(vgl.GL.DEPTH_BITS);
     renSt.m_contextChanged = m_this.m_contextChanged;
 
-    if (m_this.m_renderPasses)  {
-      for (i = 0; i < m_this.m_renderPasses.length; ++i) {
+    if (m_this.m_renderPasses) {
+      for (i = 0; i < m_this.m_renderPasses.length; i += 1) {
         if (m_this.m_renderPasses[i].render(renSt)) {
           // Stop the rendering if render pass returns false
-          console.log("returning");
+          console.log('returning');
           m_this.m_renderPasses[i].remove(renSt);
           return;
         }
@@ -223,6 +220,7 @@ vgl.renderer = function() {
     renSt.m_context.enable(vgl.GL.DEPTH_TEST);
     renSt.m_context.depthFunc(vgl.GL.LEQUAL);
 
+    /*jshint bitwise: false */
     if (m_this.m_camera.clearMask() & vgl.GL.COLOR_BUFFER_BIT) {
       clearColor = m_this.m_camera.clearColor();
       renSt.m_context.clearColor(clearColor[0], clearColor[1],
@@ -232,6 +230,7 @@ vgl.renderer = function() {
     if (m_this.m_camera.clearMask() & vgl.GL.DEPTH_BUFFER_BIT) {
       renSt.m_context.clearDepth(m_this.m_camera.clearDepth());
     }
+    /*jshint bitwise: true */
 
     renSt.m_context.clear(m_this.m_camera.clearMask());
 
@@ -246,7 +245,7 @@ vgl.renderer = function() {
       m_this.m_resetScene = false;
     }
 
-    for ( i = 0; i < children.length; ++i) {
+    for (i = 0; i < children.length; i += 1) {
       actor = children[i];
 
       // Compute the bounds even if the actor is not visible
@@ -254,17 +253,15 @@ vgl.renderer = function() {
 
       // If bin number is < 0, then don't even bother
       // rendering the data
-      if (!actor.visible() || actor.material().binNumber() < 0) {
-        continue;
+      if (actor.visible() && actor.material().binNumber() >= 0) {
+        sortedActors.push([actor.material().binNumber(), actor]);
       }
-
-      sortedActors.push([actor.material().binNumber(), actor]);
     }
 
     // Now perform sorting
-    sortedActors.sort(function(a, b) {return a[0] - b[0];});
+    sortedActors.sort(function (a, b) {return a[0] - b[0];});
 
-    for ( i = 0; i < sortedActors.length; ++i) {
+    for (i = 0; i < sortedActors.length; i += 1) {
       actor = sortedActors[i][1];
       if (actor.referenceFrame() ===
           vgl.boundingObject.ReferenceFrame.Relative) {
@@ -274,7 +271,8 @@ vgl.renderer = function() {
       } else {
         renSt.m_modelViewMatrix = actor.matrix();
         renSt.m_projectionMatrix = mat4.create();
-        mat4.ortho(renSt.m_projectionMatrix, 0, m_this.m_width, 0, m_this.m_height, -1, 1);
+        mat4.ortho(renSt.m_projectionMatrix,
+                   0, m_this.m_width, 0, m_this.m_height, -1, 1);
       }
 
       mat4.invert(mvMatrixInv, renSt.m_modelViewMatrix);
@@ -297,7 +295,7 @@ vgl.renderer = function() {
    * Automatically set up the camera based on visible actors
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.resetCamera = function() {
+  this.resetCamera = function () {
     m_this.m_camera.computeBounds();
 
     var vn = m_this.m_camera.directionOfProjection(),
@@ -358,25 +356,25 @@ vgl.renderer = function() {
   * Check whether or not whether or not the bounds are valid
   */
   ////////////////////////////////////////////////////////////////////////////
-  this.hasValidBounds = function(bounds) {
-    if (bounds[0] == Number.MAX_VALUE ||
-        bounds[1] == -Number.MAX_VALUE ||
-        bounds[2] == Number.MAX_VALUE ||
-        bounds[3] == -Number.MAX_VALUE ||
-        bounds[4] == Number.MAX_VALUE ||
-        bounds[5] == -Number.MAX_VALUE)  {
+  this.hasValidBounds = function (bounds) {
+    if (bounds[0] === Number.MAX_VALUE ||
+        bounds[1] === -Number.MAX_VALUE ||
+        bounds[2] === Number.MAX_VALUE ||
+        bounds[3] === -Number.MAX_VALUE ||
+        bounds[4] === Number.MAX_VALUE ||
+        bounds[5] === -Number.MAX_VALUE) {
       return false;
     }
 
     return true;
-  }
+  };
 
   ////////////////////////////////////////////////////////////////////////////
   /**
    * Recalculate camera's clipping range
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.resetCameraClippingRange = function(bounds) {
+  this.resetCameraClippingRange = function (bounds) {
     if (typeof bounds === 'undefined') {
       m_this.m_camera.computeBounds();
       bounds = m_this.m_camera.bounds();
@@ -391,7 +389,7 @@ vgl.renderer = function() {
         a = -vn[0],
         b = -vn[1],
         c = -vn[2],
-        d = -(a*position[0] + b*position[1] + c*position[2]),
+        d = -(a * position[0] + b * position[1] + c * position[2]),
         range = vec2.create(),
         dist = null,
         i = null,
@@ -399,7 +397,7 @@ vgl.renderer = function() {
         k = null;
 
     if (!m_this.m_resetClippingRange) {
-        return;
+      return;
     }
 
     // Set the max near clipping plane and the min far clipping plane
@@ -407,9 +405,9 @@ vgl.renderer = function() {
     range[1] = 1e-18;
 
     // Find the closest / farthest bounding box vertex
-    for (k = 0; k < 2; k++ ) {
-      for (j = 0; j < 2; j++) {
-        for (i = 0; i < 2; i++) {
+    for (k = 0; k < 2; k += 1) {
+      for (j = 0; j < 2; j += 1) {
+        for (i = 0; i < 2; i += 1) {
           dist = a * bounds[i] + b * bounds[2 + j] + c * bounds[4 + k] + d;
           range[0] = (dist < range[0]) ? (dist) : (range[0]);
           range[1] = (dist > range[1]) ? (dist) : (range[1]);
@@ -435,7 +433,7 @@ vgl.renderer = function() {
     if (!m_this.m_nearClippingPlaneTolerance) {
       m_this.m_nearClippingPlaneTolerance = 0.01;
 
-      if (gl !== null && gl.getParameter(gl.DEPTH_BITS) > 16) {
+      if (m_this.m_depthBits && m_this.m_depthBits > 16) {
         m_this.m_nearClippingPlaneTolerance = 0.001;
       }
     }
@@ -443,8 +441,8 @@ vgl.renderer = function() {
     // make sure the front clipping range is not too far from the far clippnig
     // range, this is to make sure that the zbuffer resolution is effectively
     // used.
-    if (range[0] < m_this.m_nearClippingPlaneTolerance*range[1]) {
-       range[0] = m_this.m_nearClippingPlaneTolerance*range[1];
+    if (range[0] < m_this.m_nearClippingPlaneTolerance * range[1]) {
+      range[0] = m_this.m_nearClippingPlaneTolerance * range[1];
     }
 
     m_this.m_camera.setClippingRange(range[0], range[1]);
@@ -455,7 +453,7 @@ vgl.renderer = function() {
    * Resize viewport given a width and height
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.resize = function(width, height) {
+  this.resize = function (width, height) {
     // @note: where do m_this.m_x and m_this.m_y come from?
     m_this.positionAndResize(m_this.m_x, m_this.m_y, width, height);
   };
@@ -465,7 +463,7 @@ vgl.renderer = function() {
    * Resize viewport given a position, width and height
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.positionAndResize = function(x, y, width, height) {
+  this.positionAndResize = function (x, y, width, height) {
     var i;
 
     // TODO move this code to camera
@@ -484,7 +482,7 @@ vgl.renderer = function() {
     }
 
     if (m_this.m_renderPasses) {
-      for (i = 0; i < m_this.m_renderPasses.length; ++i) {
+      for (i = 0; i < m_this.m_renderPasses.length; i += 1) {
         m_this.m_renderPasses[i].resize(width, height);
         m_this.m_renderPasses[i].renderer().positionAndResize(x, y, width, height);
       }
@@ -499,7 +497,7 @@ vgl.renderer = function() {
    * @returns {boolean}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.addActor = function(actor) {
+  this.addActor = function (actor) {
     if (actor instanceof vgl.actor) {
       m_this.m_sceneRoot.addChild(actor);
       m_this.modified();
@@ -517,8 +515,8 @@ vgl.renderer = function() {
    * @returns {boolean}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.hasActor = function(actor) {
-      return m_this.m_sceneRoot.hasChild(actor);
+  this.hasActor = function (actor) {
+    return m_this.m_sceneRoot.hasChild(actor);
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -526,10 +524,10 @@ vgl.renderer = function() {
    * Add an array of actors to the collection
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.addActors = function(actors) {
+  this.addActors = function (actors) {
     var i = null;
     if (actors instanceof Array) {
-      for (i = 0; i < actors.length; ++i) {
+      for (i = 0; i < actors.length; i += 1) {
         m_this.m_sceneRoot.addChild(actors[i]);
       }
       m_this.modified();
@@ -544,7 +542,7 @@ vgl.renderer = function() {
    * @returns {boolean}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.removeActor = function(actor) {
+  this.removeActor = function (actor) {
     if (m_this.m_sceneRoot.children().indexOf(actor) !== -1) {
       m_this.m_sceneRoot.removeChild(actor);
       m_this.modified();
@@ -562,13 +560,13 @@ vgl.renderer = function() {
    * @returns {boolean}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.removeActors = function(actors) {
+  this.removeActors = function (actors) {
     if (!(actors instanceof Array)) {
       return false;
     }
 
     var i;
-    for (i = 0; i < actors.length; ++i) {
+    for (i = 0; i < actors.length; i += 1) {
       m_this.m_sceneRoot.removeChild(actors[i]);
     }
     m_this.modified();
@@ -582,7 +580,7 @@ vgl.renderer = function() {
    * @returns {*}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.removeAllActors = function() {
+  this.removeAllActors = function () {
     return m_this.m_sceneRoot.removeChildren();
   };
 
@@ -591,7 +589,7 @@ vgl.renderer = function() {
    * Transform a point in the world space to display space
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.worldToDisplay = function(worldPt, viewMatrix, projectionMatrix, width,
+  this.worldToDisplay = function (worldPt, viewMatrix, projectionMatrix, width,
                                  height) {
     var viewProjectionMatrix = mat4.create(),
         winX = null,
@@ -635,7 +633,7 @@ vgl.renderer = function() {
    * @returns {vec4}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.displayToWorld = function(displayPt, viewMatrix, projectionMatrix,
+  this.displayToWorld = function (displayPt, viewMatrix, projectionMatrix,
                                  width, height) {
     var x = (2.0 * displayPt[0] / width) - 1,
         y = -(2.0 * displayPt[1] / height) + 1,
@@ -664,7 +662,7 @@ vgl.renderer = function() {
    * @returns {vec4}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.focusDisplayPoint = function() {
+  this.focusDisplayPoint = function () {
     var focalPoint = m_this.m_camera.focalPoint(),
       focusWorldPt = vec4.fromValues(
         focalPoint[0], focalPoint[1], focalPoint[2], 1);
@@ -680,7 +678,7 @@ vgl.renderer = function() {
    * @returns {bool}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.resetScene = function() {
+  this.resetScene = function () {
     return m_this.m_resetScene;
   };
 
@@ -692,11 +690,11 @@ vgl.renderer = function() {
    * @param reset
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.setResetScene = function(reset) {
-     if (m_this.m_resetScene !== reset) {
-       m_this.m_resetScene = reset;
-       m_this.modified()
-     }
+  this.setResetScene = function (reset) {
+    if (m_this.m_resetScene !== reset) {
+      m_this.m_resetScene = reset;
+      m_this.modified();
+    }
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -705,7 +703,7 @@ vgl.renderer = function() {
    * @returns {bool}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.resetClippingRange = function() {
+  this.resetClippingRange = function () {
     return m_this.m_resetClippingRange;
   };
 
@@ -717,11 +715,11 @@ vgl.renderer = function() {
    * @param reset
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.setResetClippingRange = function(reset) {
-     if (m_this.m_resetClippingRange !== reset) {
-       m_this.m_resetClippingRange = reset;
-       m_this.modified()
-     }
+  this.setResetClippingRange = function (reset) {
+    if (m_this.m_resetClippingRange !== reset) {
+      m_this.m_resetClippingRange = reset;
+      m_this.modified();
+    }
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -729,11 +727,11 @@ vgl.renderer = function() {
    *
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.addRenderPass = function(renPass) {
+  this.addRenderPass = function (renPass) {
     var i;
 
     if (m_this.m_renderPasses) {
-      for (i = 0; i < m_this.m_renderPasses.length; ++i) {
+      for (i = 0; i < m_this.m_renderPasses.length; i += 1) {
         if (renPass === m_this.m_renderPasses[i]) {
           return;
         }
@@ -749,8 +747,8 @@ vgl.renderer = function() {
    *
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.removeRenderPass = function(renPass) {
-    // TODO Implement this
+  this.removeRenderPass = function (renPass) {
+    renPass = renPass; // TODO Implement this
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -758,10 +756,10 @@ vgl.renderer = function() {
    *
    */
   ////////////////////////////////////////////////////////////////////////////
-  this._cleanup = function(renderState) {
+  this._cleanup = function (renderState) {
     var children = m_this.m_sceneRoot.children();
-    for ( i = 0; i < children.length; ++i) {
-      actor = children[i];
+    for (var i = 0; i < children.length; i += 1) {
+      var actor = children[i];
       actor.material()._cleanup(renderState);
       actor.mapper()._cleanup(renderState);
     }

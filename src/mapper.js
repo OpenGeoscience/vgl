@@ -3,10 +3,7 @@
  * @module vgl
  */
 
-/*jslint devel: true, forin: true, newcap: true, plusplus: true*/
-/*jslint white: true, continue:true, indent: 2*/
-
-/*global vgl, gl, ogs, vec4, Float32Array, inherit, $*/
+/*global vgl, Float32Array, inherit*/
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
@@ -17,7 +14,7 @@
  * @returns {vgl.mapper}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.mapper = function(arg) {
+vgl.mapper = function (arg) {
   'use strict';
 
   if (!(this instanceof vgl.mapper)) {
@@ -29,12 +26,13 @@ vgl.mapper = function(arg) {
   arg = arg || {};
 
   var m_dirty = true,
-      m_color = [ 0.0, 1.0, 1.0 ],
+      m_color = [0.0, 1.0, 1.0],
       m_geomData = null,
       m_buffers = [],
       m_bufferVertexAttributeMap = {},
       m_dynamicDraw = arg.dynamicDraw === undefined ? false : arg.dynamicDraw,
-      m_glCompileTimestamp = vgl.timestamp();
+      m_glCompileTimestamp = vgl.timestamp(),
+      m_context = null;
 
   ////////////////////////////////////////////////////////////////////////////
   /**
@@ -45,7 +43,7 @@ vgl.mapper = function(arg) {
   ////////////////////////////////////////////////////////////////////////////
   function deleteVertexBufferObjects(renderState) {
     var i;
-    for (i = 0; i < m_buffers.length; ++i) {
+    for (i = 0; i < m_buffers.length; i += 1) {
       renderState.m_context.deleteBuffer(m_buffers[i]);
     }
   }
@@ -59,24 +57,27 @@ vgl.mapper = function(arg) {
   ////////////////////////////////////////////////////////////////////////////
   function createVertexBufferObjects(renderState) {
     if (m_geomData) {
+      if (renderState) {
+        m_context = renderState.m_context;
+      }
       var numberOfSources = m_geomData.numberOfSources(),
           i, j, k, bufferId = null, keys, ks, numberOfPrimitives, data;
 
-      for (i = 0; i < numberOfSources; ++i) {
-        bufferId = renderState.m_context.createBuffer();
-        renderState.m_context.bindBuffer(vgl.GL.ARRAY_BUFFER, bufferId);
+      for (i = 0; i < numberOfSources; i += 1) {
+        bufferId = m_context.createBuffer();
+        m_context.bindBuffer(vgl.GL.ARRAY_BUFFER, bufferId);
         data = m_geomData.source(i).data();
         if (!(data instanceof Float32Array)) {
           data = new Float32Array(data);
         }
-        renderState.m_context.bufferData(vgl.GL.ARRAY_BUFFER, data,
+        m_context.bufferData(vgl.GL.ARRAY_BUFFER, data,
                       m_dynamicDraw ? vgl.GL.DYNAMIC_DRAW :
                       vgl.GL.STATIC_DRAW);
 
         keys = m_geomData.source(i).keys();
         ks = [];
 
-        for (j = 0; j < keys.length; ++j) {
+        for (j = 0; j < keys.length; j += 1) {
           ks.push(keys[j]);
         }
 
@@ -85,12 +86,13 @@ vgl.mapper = function(arg) {
       }
 
       numberOfPrimitives = m_geomData.numberOfPrimitives();
-      for (k = 0; k < numberOfPrimitives; ++k) {
-        bufferId = renderState.m_context.createBuffer();
-        renderState.m_context.bindBuffer(vgl.GL.ARRAY_BUFFER, bufferId);
-        renderState.m_context.bufferData(vgl.GL.ARRAY_BUFFER,
+      for (k = 0; k < numberOfPrimitives; k += 1) {
+        bufferId = m_context.createBuffer();
+        m_context.bindBuffer(vgl.GL.ARRAY_BUFFER, bufferId);
+        m_context.bufferData(vgl.GL.ARRAY_BUFFER,
           m_geomData.primitive(k).indices(), vgl.GL.STATIC_DRAW);
-        m_buffers[i++] = bufferId;
+        m_buffers[i] = bufferId;
+        i += 1;
       }
 
       m_glCompileTimestamp.modified();
@@ -105,6 +107,7 @@ vgl.mapper = function(arg) {
    */
   ////////////////////////////////////////////////////////////////////////////
   function cleanUpDrawObjects(renderState) {
+    renderState = renderState; /* avoid unused warning */
     m_bufferVertexAttributeMap = {};
     m_buffers = [];
   }
@@ -134,7 +137,7 @@ vgl.mapper = function(arg) {
    * Compute bounds of the data
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.computeBounds = function() {
+  this.computeBounds = function () {
     if (m_geomData === null || typeof m_geomData === 'undefined') {
       this.resetBounds();
       return;
@@ -159,7 +162,7 @@ vgl.mapper = function(arg) {
    * Get solid color of the geometry
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.color = function() {
+  this.color = function () {
     return m_color;
   };
 
@@ -172,7 +175,7 @@ vgl.mapper = function(arg) {
    * @param b Blue component of the color [0.0 - 1.0]
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.setColor = function(r, g, b) {
+  this.setColor = function (r, g, b) {
     m_color[0] = r;
     m_color[1] = g;
     m_color[2] = b;
@@ -185,7 +188,7 @@ vgl.mapper = function(arg) {
    * Return stored geometry data if any
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.geometryData = function() {
+  this.geometryData = function () {
     return m_geomData;
   };
 
@@ -194,7 +197,7 @@ vgl.mapper = function(arg) {
    * Connect mapper to its geometry data
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.setGeometryData = function(geom) {
+  this.setGeometryData = function (geom) {
     if (m_geomData !== geom) {
       m_geomData = geom;
 
@@ -212,7 +215,13 @@ vgl.mapper = function(arg) {
    *    If not specified, use the source's own buffer.
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.updateSourceBuffer = function (renderState, sourceName, values) {
+  this.updateSourceBuffer = function (sourceName, values, renderState) {
+    if (renderState) {
+      m_context = renderState.m_context;
+    }
+    if (!m_context) {
+      return false;
+    }
     var bufferIndex = -1;
     for (var i = 0; i < m_geomData.numberOfSources(); i += 1) {
       if (m_geomData.source(i).name() === sourceName) {
@@ -226,13 +235,12 @@ vgl.mapper = function(arg) {
     if (!values) {
       values = m_geomData.source(i).dataToFloat32Array();
     }
-    renderState.m_context.bindBuffer(vgl.GL.ARRAY_BUFFER,
-      m_buffers[bufferIndex]);
+    m_context.bindBuffer(vgl.GL.ARRAY_BUFFER, m_buffers[bufferIndex]);
     if (values instanceof Float32Array) {
-      renderState.m_context.bufferSubData(vgl.GL.ARRAY_BUFFER, 0, values);
+      m_context.bufferSubData(vgl.GL.ARRAY_BUFFER, 0, values);
     } else {
-      renderState.m_context.bufferSubData(vgl.GL.ARRAY_BUFFER, 0,
-        new Float32Array(values));
+      m_context.bufferSubData(vgl.GL.ARRAY_BUFFER, 0,
+                              new Float32Array(values));
     }
     return true;
   };
@@ -261,14 +269,15 @@ vgl.mapper = function(arg) {
    * Render the mapper
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.render = function(renderState) {
-    if (this.getMTime() > m_glCompileTimestamp.getMTime() |
+  this.render = function (renderState) {
+    if (this.getMTime() > m_glCompileTimestamp.getMTime() ||
         renderState.m_contextChanged) {
       setupDrawObjects(renderState);
     }
+    m_context = renderState.m_context;
 
     // Fixed vertex color
-    renderState.m_context.vertexAttrib3fv(vgl.vertexAttributeKeys.Color, this.color());
+    m_context.vertexAttrib3fv(vgl.vertexAttributeKeys.Color, this.color());
 
     // TODO Use renderState
     var bufferIndex = 0,
@@ -276,39 +285,39 @@ vgl.mapper = function(arg) {
 
     for (i in m_bufferVertexAttributeMap) {
       if (m_bufferVertexAttributeMap.hasOwnProperty(i)) {
-        renderState.m_context.bindBuffer(vgl.GL.ARRAY_BUFFER,
+        m_context.bindBuffer(vgl.GL.ARRAY_BUFFER,
                                          m_buffers[bufferIndex]);
-        for (j = 0; j < m_bufferVertexAttributeMap[i].length; ++j) {
+        for (j = 0; j < m_bufferVertexAttributeMap[i].length; j += 1) {
           renderState.m_material
               .bindVertexData(renderState, m_bufferVertexAttributeMap[i][j]);
         }
-        ++bufferIndex;
+        bufferIndex += 1;
       }
     }
 
     noOfPrimitives = m_geomData.numberOfPrimitives();
-    for (j = 0; j < noOfPrimitives; ++j) {
-      renderState.m_context.bindBuffer(vgl.GL.ARRAY_BUFFER,
-                                       m_buffers[bufferIndex++]);
+    for (j = 0; j < noOfPrimitives; j += 1) {
+      m_context.bindBuffer(vgl.GL.ARRAY_BUFFER, m_buffers[bufferIndex]);
+      bufferIndex += 1;
       primitive = m_geomData.primitive(j);
-      switch(primitive.primitiveType()) {
+      switch (primitive.primitiveType()) {
         case vgl.GL.POINTS:
-          renderState.m_context.drawArrays (vgl.GL.POINTS, 0, primitive.numberOfIndices());
+          m_context.drawArrays(vgl.GL.POINTS, 0, primitive.numberOfIndices());
           break;
         case vgl.GL.LINES:
-          renderState.m_context.drawArrays (vgl.GL.LINES, 0, primitive.numberOfIndices());
+          m_context.drawArrays(vgl.GL.LINES, 0, primitive.numberOfIndices());
           break;
         case vgl.GL.LINE_STRIP:
-          renderState.m_context.drawArrays (vgl.GL.LINE_STRIP, 0, primitive.numberOfIndices());
+          m_context.drawArrays(vgl.GL.LINE_STRIP, 0, primitive.numberOfIndices());
           break;
         case vgl.GL.TRIANGLES:
-          renderState.m_context.drawArrays (vgl.GL.TRIANGLES, 0, primitive.numberOfIndices());
+          m_context.drawArrays(vgl.GL.TRIANGLES, 0, primitive.numberOfIndices());
           break;
         case vgl.GL.TRIANGLE_STRIP:
-          renderState.m_context.drawArrays (vgl.GL.TRIANGLE_STRIP, 0, primitive.numberOfIndices());
+          m_context.drawArrays(vgl.GL.TRIANGLE_STRIP, 0, primitive.numberOfIndices());
           break;
       }
-      renderState.m_context.bindBuffer (vgl.GL.ARRAY_BUFFER, null);
+      m_context.bindBuffer (vgl.GL.ARRAY_BUFFER, null);
     }
   };
 

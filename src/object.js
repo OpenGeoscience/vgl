@@ -3,10 +3,7 @@
  * @module vgl
  */
 
-/*jslint devel: true, forin: true, newcap: true, plusplus: true*/
-/*jslint white: true, continue:true, indent: 2*/
-
-/*global vgl, ogs, vec4, inherit, $*/
+/*global vgl*/
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
@@ -17,7 +14,7 @@
  * @returns {vgl.object}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.object = function() {
+vgl.object = function () {
   'use strict';
 
   if (!(this instanceof vgl.object)) {
@@ -33,7 +30,7 @@ vgl.object = function() {
    * Mark the object modified
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.modified = function() {
+  this.modified = function () {
     m_modifiedTime.modified();
   };
 
@@ -44,7 +41,7 @@ vgl.object = function() {
    * @returns {*}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.getMTime = function() {
+  this.getMTime = function () {
     return m_modifiedTime.getMTime();
   };
 

@@ -3,12 +3,7 @@
  * @module vgl
  */
 
-/*jslint devel: true, forin: true, newcap: true, plusplus: true*/
-/*jslint white: true, continue:true, indent: 2, bitwise: true*/
-
-
-/*global vgl, vec4, mat4, inherit, unescape*/
-/*global Float32Array, Int8Array, gl, Uint16Array, $*/
+/*global vgl, mat4, unescape, Float32Array, Int8Array, Uint16Array*/
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
@@ -20,7 +15,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 
-vgl.vtkReader = function() {
+vgl.vtkReader = function () {
   'use strict';
 
   if (!(this instanceof vgl.vtkReader)) {
@@ -28,21 +23,18 @@ vgl.vtkReader = function() {
   }
 
   var m_base64Chars =
-    ['A','B','C','D','E','F','G','H','I','J','K','L','M',
-     'N','O','P','Q','R','S','T','U','V','W','X','Y','Z',
-     'a','b','c','d','e','f','g','h','i','j','k','l','m',
-     'n','o','p','q','r','s','t','u','v','w','x','y','z',
-     '0','1','2','3','4','5','6','7','8','9','+','/'],
+    ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
+     'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
+     'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
+     'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+     '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '+', '/'],
   m_reverseBase64Chars = [],
-  m_vtkObjectList = {},
-  m_vglObjects = {},
   m_vtkRenderedList = {},
-  m_vtkObjHashList = {},
   m_vtkObjectCount = 0,
   m_vtkScene = null,
   m_node = null,
   END_OF_INPUT = -1,
-  m_base64Str = "",
+  m_base64Str = '',
   m_base64Count = 0,
   m_pos = 0,
   m_viewer = null,
@@ -50,7 +42,7 @@ vgl.vtkReader = function() {
 
   //initialize the array here if not already done.
   if (m_reverseBase64Chars.length === 0) {
-    for ( i = 0; i < m_base64Chars.length; i++) {
+    for (i = 0; i < m_base64Chars.length; i += 1) {
       m_reverseBase64Chars[m_base64Chars[i]] = i;
     }
   }
@@ -96,7 +88,7 @@ vgl.vtkReader = function() {
         return END_OF_INPUT;
       }
       nextCharacter = m_base64Str.charAt(m_base64Count);
-      m_base64Count++;
+      m_base64Count += 1;
 
       if (m_reverseBase64Chars[nextCharacter]) {
         return m_reverseBase64Chars[nextCharacter];
@@ -117,7 +109,7 @@ vgl.vtkReader = function() {
    * @returns result
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.decode64 = function(str) {
+  this.decode64 = function (str) {
     var result = '',
         inBuffer = new Array(4),
         done = false;
@@ -130,6 +122,7 @@ vgl.vtkReader = function() {
            (inBuffer[1] = this.readReverseBase64()) !== END_OF_INPUT) {
       inBuffer[2] = this.readReverseBase64();
       inBuffer[3] = this.readReverseBase64();
+      /*jshint bitwise: false */
       result += this.ntos((((inBuffer[0] << 2) & 0xff) | inBuffer[1] >> 4));
       if (inBuffer[2] !== END_OF_INPUT) {
         result +=  this.ntos((((inBuffer[1] << 4) & 0xff) | inBuffer[2] >> 2));
@@ -141,6 +134,7 @@ vgl.vtkReader = function() {
       } else {
         done = true;
       }
+      /*jshint bitwise: true */
     }
 
     return result;
@@ -154,11 +148,13 @@ vgl.vtkReader = function() {
    * @returns v
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.readNumber = function(ss) {
+  this.readNumber = function (ss) {
+    //jshint plusplus: false, bitwise: false
     var v = ((ss[m_pos++]) +
              (ss[m_pos++] << 8) +
              (ss[m_pos++] << 16) +
              (ss[m_pos++] << 24));
+    //jshint plusplus: true, bitwise: true
     return v;
   };
 
@@ -171,12 +167,13 @@ vgl.vtkReader = function() {
    * @returns points
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.readF3Array = function(numberOfPoints, ss) {
-    var size = numberOfPoints*4*3, test = new Int8Array(size),
+  this.readF3Array = function (numberOfPoints, ss) {
+    var size = numberOfPoints * 4 * 3, test = new Int8Array(size),
         points = null, i;
 
-    for(i = 0; i < size; i++) {
-      test[i] = ss[m_pos++];
+    for (i = 0; i < size; i += 1) {
+      test[i] = ss[m_pos];
+      m_pos += 1;
     }
 
     points = new Float32Array(test.buffer);
@@ -195,13 +192,15 @@ vgl.vtkReader = function() {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.readColorArray = function (numberOfPoints, ss, vglcolors) {
-    var i,r,g,b,idx = 0, tmp = new Array(numberOfPoints*3);
-    for(i = 0; i < numberOfPoints; i++) {
-      tmp[idx++] = ss[m_pos++]/255.0;
-      tmp[idx++] = ss[m_pos++]/255.0;
-      tmp[idx++] = ss[m_pos++]/255.0;
+    var i, idx = 0, tmp = new Array(numberOfPoints * 3);
+    //jshint plusplus: false
+    for (i = 0; i < numberOfPoints; i += 1) {
+      tmp[idx++] = ss[m_pos++] / 255.0;
+      tmp[idx++] = ss[m_pos++] / 255.0;
+      tmp[idx++] = ss[m_pos++] / 255.0;
       m_pos++;
     }
+    //jshint plusplus: true
     vglcolors.insert(tmp);
   };
 
@@ -212,72 +211,71 @@ vgl.vtkReader = function() {
    * @param buffer
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.parseObject = function(vtkObject) {
+  this.parseObject = function (vtkObject) {
     var geom = new vgl.geometryData(), mapper = vgl.mapper(), ss = [],
         type = null, data = null, size, matrix = null, material = null,
         actor, colorMapData, shaderProg, opacityUniform, lookupTable,
         colorTable, windowSize, width, height, position;
 
     //dehexlify
-//    data = this.decode64(vtkObject.data);
+    //data = this.decode64(vtkObject.data);
     data = atob(vtkObject.data);
-    for(i = 0; i < data.length; i++) {
+    //jshint bitwise: false
+    for (i = 0; i < data.length; i += 1) {
       ss[i] = data.charCodeAt(i) & 0xff;
     }
+    //jshint bitwise: true
 
     //Determine the Object type
     m_pos = 0;
     size = this.readNumber(ss);
-    type = String.fromCharCode(ss[m_pos++]);
+    type = String.fromCharCode(ss[m_pos]);
+    m_pos += 1;
     geom.setName(type);
 
     // Lines
     if (type === 'L') {
       matrix = this.parseLineData(geom, ss);
       material = vgl.utils.createGeometryMaterial();
-    }
     // Mesh
-    else if (type === 'M') {
+    } else if (type === 'M') {
       matrix = this.parseMeshData(geom, ss);
       material = vgl.utils.createPhongMaterial();
-    }
     // Points
-    else if (type === 'P'){
+    } else if (type === 'P') {
       matrix = this.parsePointData(geom, ss);
       material = vgl.utils.createGeometryMaterial();
-    }
     // ColorMap
-    else if (type === 'C') {
+    } else if (type === 'C') {
       colorMapData = this.parseColorMapData(geom, ss, size);
       colorTable = [];
 
-      for (i = 0; i < colorMapData.colors.length; i++) {
-        colorTable.push(colorMapData.colors[i][1])
-        colorTable.push(colorMapData.colors[i][2])
-        colorTable.push(colorMapData.colors[i][3])
-        colorTable.push(colorMapData.colors[i][0] * 255)
+      for (i = 0; i < colorMapData.colors.length; i += 1) {
+        colorTable.push(colorMapData.colors[i][1]);
+        colorTable.push(colorMapData.colors[i][2]);
+        colorTable.push(colorMapData.colors[i][3]);
+        colorTable.push(colorMapData.colors[i][0] * 255);
       }
 
       lookupTable = new vgl.lookupTable();
       lookupTable.setColorTable(colorTable);
 
       windowSize = m_viewer.renderWindow().windowSize();
-      width = colorMapData.size[0]*windowSize[0];
-      height = colorMapData.size[1]*windowSize[1];
+      width = colorMapData.size[0] * windowSize[0];
+      height = colorMapData.size[1] * windowSize[1];
 
-      position = [colorMapData.position[0]*windowSize[0],
-                  (1-colorMapData.position[1])*windowSize[1], 0];
-      position[1] = position[1]-height;
+      position = [colorMapData.position[0] * windowSize[0],
+                  (1 - colorMapData.position[1]) * windowSize[1], 0];
+      position[1] = position[1] - height;
 
       // For now hardcode the height
       height = 30;
 
       return vgl.utils.createColorLegend(colorMapData.title,
           lookupTable, position, width, height, 3, 0);
-    }
     // Unknown
-    else {
-      console.log("Ignoring unrecognized encoded data type " + type);
+    } else {
+      console.log('Ignoring unrecognized encoded data type ' + type);
     }
 
     mapper.setGeometryData(geom);
@@ -285,8 +283,8 @@ vgl.vtkReader = function() {
     //default opacity === solid. If were transparent, set it lower.
     if (vtkObject.hasTransparency) {
       shaderProg = material.shaderProgram();
-      opacityUniform = shaderProg.uniform("opacity");
-      console.log("opacity ", vtkObject.opacity);
+      opacityUniform = shaderProg.uniform('opacity');
+      console.log('opacity ', vtkObject.opacity);
       opacityUniform.set(vtkObject.opacity);
       material.setBinNumber(1000);
     }
@@ -307,7 +305,7 @@ vgl.vtkReader = function() {
    * @returns matrix
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.parseLineData = function(geom, ss) {
+  this.parseLineData = function (geom, ss) {
     var vglpoints = null, vglcolors = null, vgllines = null,
         matrix = mat4.create(),
         numberOfIndex, numberOfPoints, points,
@@ -315,17 +313,19 @@ vgl.vtkReader = function() {
         p = null, idx = 0;
 
     numberOfPoints = this.readNumber(ss);
-    p = new Array(numberOfPoints*3);
+    p = new Array(numberOfPoints * 3);
 
     //Getting Points
     vglpoints = new vgl.sourceDataP3fv();
     points = this.readF3Array(numberOfPoints, ss);
 
-    for(i = 0; i < numberOfPoints; i++) {
-      p[idx++] = points[i*3/*+0*/];
-      p[idx++] = points[i*3+1];
-      p[idx++] =  points[i*3+2];
+    //jshint plusplus: false
+    for (i = 0; i < numberOfPoints; i += 1) {
+      p[idx++] = points[i * 3/*+0*/];
+      p[idx++] = points[i * 3 + 1];
+      p[idx++] =  points[i * 3 + 2];
     }
+    //jshint plusplus: true
     vglpoints.insert(p);
     geom.addSource(vglpoints);
 
@@ -339,9 +339,10 @@ vgl.vtkReader = function() {
     geom.addPrimitive(vgllines);
     numberOfIndex = this.readNumber(ss);
 
-    temp = new Int8Array(numberOfIndex*2);
-    for(i = 0; i < numberOfIndex*2; i++) {
-      temp[i] = ss[m_pos++];
+    temp = new Int8Array(numberOfIndex * 2);
+    for (i = 0; i < numberOfIndex * 2; i += 1) {
+      temp[i] = ss[m_pos];
+      m_pos += 1;
     }
 
     index = new Uint16Array(temp.buffer);
@@ -349,10 +350,11 @@ vgl.vtkReader = function() {
     vgllines.setPrimitiveType(vgl.GL.LINES);
 
     //Getting Matrix
-    size = 16*4;
+    size = 16 * 4;
     temp = new Int8Array(size);
-    for(i=0; i<size; i++) {
-      temp[i] = ss[m_pos++];
+    for (i = 0; i < size; i += 1) {
+      temp[i] = ss[m_pos];
+      m_pos += 1;
     }
 
     m = new Float32Array(temp.buffer);
@@ -369,29 +371,31 @@ vgl.vtkReader = function() {
    * @returns matrix
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.parseMeshData = function(geom, ss) {
-    var vglpoints = null, vglcolors = null, vgllines = null,
-        normals = null, matrix = mat4.create(), v1 = null,
+  this.parseMeshData = function (geom, ss) {
+    var vglpoints = null, vglcolors = null,
+        normals = null, matrix = mat4.create(),
         vgltriangles = null, numberOfIndex, numberOfPoints,
         points, temp, index, size, m, i, tcoord,
         pn = null, idx = 0;
 
     numberOfPoints = this.readNumber(ss);
-    pn = new Array(numberOfPoints*6);
+    pn = new Array(numberOfPoints * 6);
     //Getting Points
     vglpoints = new vgl.sourceDataP3N3f();
     points = this.readF3Array(numberOfPoints, ss);
 
     //Getting Normals
     normals = this.readF3Array(numberOfPoints, ss);
-    for(i = 0; i < numberOfPoints; i++) {
-      pn[idx++] = points[i*3/*+0*/];
-      pn[idx++] = points[i*3+1];
-      pn[idx++] = points[i*3+2];
-      pn[idx++] = normals[i*3/*+0*/];
-      pn[idx++] = normals[i*3+1];
-      pn[idx++] = normals[i*3+2];
+    //jshint plusplus: false
+    for (i = 0; i < numberOfPoints; i += 1) {
+      pn[idx++] = points[i * 3/*+0*/];
+      pn[idx++] = points[i * 3 + 1];
+      pn[idx++] = points[i * 3 + 2];
+      pn[idx++] = normals[i * 3/*+0*/];
+      pn[idx++] = normals[i * 3 + 1];
+      pn[idx++] = normals[i * 3 + 2];
     }
+    //jshint plusplus: true
     vglpoints.insert(pn);
     geom.addSource(vglpoints);
 
@@ -405,9 +409,10 @@ vgl.vtkReader = function() {
     vgltriangles = new vgl.triangles();
     numberOfIndex = this.readNumber(ss);
 
-    temp = new Int8Array(numberOfIndex*2);
-    for(i = 0; i < numberOfIndex*2; i++) {
-      temp[i] = ss[m_pos++];
+    temp = new Int8Array(numberOfIndex * 2);
+    for (i = 0; i < numberOfIndex * 2; i += 1) {
+      temp[i] = ss[m_pos];
+      m_pos += 1;
     }
 
     index = new Uint16Array(temp.buffer);
@@ -415,10 +420,11 @@ vgl.vtkReader = function() {
     geom.addPrimitive(vgltriangles);
 
     //Getting Matrix
-    size = 16*4;
+    size = 16 * 4;
     temp = new Int8Array(size);
-    for(i = 0; i < size; i++) {
-      temp[i] = ss[m_pos++];
+    for (i = 0; i < size; i += 1) {
+      temp[i] = ss[m_pos];
+      m_pos += 1;
     }
 
     m = new Float32Array(temp.buffer);
@@ -439,14 +445,14 @@ vgl.vtkReader = function() {
    * @returns matrix
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.parsePointData = function(geom, ss) {
+  this.parsePointData = function (geom, ss) {
     var numberOfPoints, points, indices, temp, size,
         matrix = mat4.create(), vglpoints = null,
         vglcolors = null, vglVertexes = null, m,
         p = null, idx = 0;
 
     numberOfPoints = this.readNumber(ss);
-    p = new Array(numberOfPoints*3);
+    p = new Array(numberOfPoints * 3);
 
     //Getting Points and creating 1:1 connectivity
     vglpoints = new vgl.sourceDataP3fv();
@@ -454,12 +460,14 @@ vgl.vtkReader = function() {
 
     indices = new Uint16Array(numberOfPoints);
 
-    for (i = 0; i < numberOfPoints; i++) {
+    //jshint plusplus: false
+    for (i = 0; i < numberOfPoints; i += 1) {
       indices[i] = i;
-      p[idx++] = points[i*3/*+0*/];
-      p[idx++] = points[i*3+1];
-      p[idx++] = points[i*3+2];
+      p[idx++] = points[i * 3/*+0*/];
+      p[idx++] = points[i * 3 + 1];
+      p[idx++] = points[i * 3 + 2];
     }
+    //jshint plusplus: true
     vglpoints.insert(p);
     geom.addSource(vglpoints);
 
@@ -474,10 +482,11 @@ vgl.vtkReader = function() {
     geom.addPrimitive(vglVertexes);
 
     //Getting matrix
-    size = 16*4;
+    size = 16 * 4;
     temp = new Int8Array(size);
-    for(i = 0; i < size; i++) {
-      temp[i] = ss[m_pos++];
+    for (i = 0; i < size; i += 1) {
+      temp[i] = ss[m_pos];
+      m_pos += 1;
     }
 
     m = new Float32Array(temp.buffer);
@@ -494,7 +503,7 @@ vgl.vtkReader = function() {
    * @returns matrix
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.parseColorMapData = function(geom, ss, numColors) {
+  this.parseColorMapData = function (geom, ss, numColors) {
 
     var tmpArray, size, xrgb, i, c, obj = {};
 
@@ -504,25 +513,29 @@ vgl.vtkReader = function() {
     // Getting Position
     size = 8;
     tmpArray = new Int8Array(size);
-    for(i=0; i < size; i++) {
-        tmpArray[i] = ss[m_pos++];
+    for (i = 0; i < size; i += 1) {
+      tmpArray[i] = ss[m_pos];
+      m_pos += 1;
     }
     obj.position = new Float32Array(tmpArray.buffer);
 
     // Getting Size
     size = 8;
     tmpArray = new Int8Array(size);
-    for(i=0; i < size; i++) {
-        tmpArray[i] = ss[m_pos++];
+    for (i = 0; i < size; i += 1) {
+      tmpArray[i] = ss[m_pos];
+      m_pos += 1;
     }
     obj.size = new Float32Array(tmpArray.buffer);
 
     //Getting Colors
     obj.colors = [];
-    for(c=0; c < obj.numOfColors; c++){
+    //jshint plusplus: false
+    for (c = 0; c < obj.numOfColors; c += 1) {
       tmpArray = new Int8Array(4);
-      for(i=0; i < 4; i++) {
-        tmpArray[i] = ss[m_pos++];
+      for (i = 0; i < 4; i += 1) {
+        tmpArray[i] = ss[m_pos];
+        m_pos += 1;
       }
 
       xrgb = [
@@ -536,10 +549,11 @@ vgl.vtkReader = function() {
 
     obj.orientation = ss[m_pos++];
     obj.numOfLabels = ss[m_pos++];
-    obj.title = "";
-    while(m_pos < ss.length) {
+    obj.title = '';
+    while (m_pos < ss.length) {
       obj.title += String.fromCharCode(ss[m_pos++]);
     }
+    //jshint plusplus: true
 
     return obj;
   };
@@ -552,13 +566,13 @@ vgl.vtkReader = function() {
    * @returns renderer
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.parseSceneMetadata = function(renderer, layer) {
+  this.parseSceneMetadata = function (renderer, layer) {
 
     var sceneRenderer = m_vtkScene.Renderers[layer],
         camera = renderer.camera(), bgc, localWidth, localHeight;
 
-    localWidth = (sceneRenderer.size[0] - sceneRenderer.origin[0])*m_node.width;
-    localHeight = (sceneRenderer.size[1] - sceneRenderer.origin[1])*m_node.height;
+    localWidth = (sceneRenderer.size[0] - sceneRenderer.origin[0]) * m_node.width;
+    localHeight = (sceneRenderer.size[1] - sceneRenderer.origin[1]) * m_node.height;
     renderer.resize(localWidth, localHeight);
 
     /// We are setting the center to the focal point because of
@@ -578,12 +592,11 @@ vgl.vtkReader = function() {
       sceneRenderer.LookAt[4], sceneRenderer.LookAt[5],
       sceneRenderer.LookAt[6]);
 
-    if (layer === 0)
-    {
+    if (layer === 0) {
       bgc = sceneRenderer.Background1;
       renderer.setBackgroundColor(bgc[0], bgc[1], bgc[2], 1);
     } else {
-        renderer.setResizable(false);
+      renderer.setResizable(false);
     }
     renderer.setLayer(layer);
   };
@@ -595,13 +608,13 @@ vgl.vtkReader = function() {
    * @returns viewer
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.initScene = function() {
+  this.initScene = function () {
     var renderer, layer;
 
-    if ( m_vtkScene === null ) {
+    if (m_vtkScene === null) {
       return m_viewer;
     }
-    for(layer = m_vtkScene.Renderers.length - 1; layer >= 0; layer--) {
+    for (layer = m_vtkScene.Renderers.length - 1; layer >= 0; layer -= 1) {
 
       renderer = this.getRenderer(layer);
       this.parseSceneMetadata(renderer, layer);
@@ -619,10 +632,10 @@ vgl.vtkReader = function() {
    * @returns viewer
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.createViewer = function(node) {
+  this.createViewer = function (node) {
     var interactorStyle;
 
-    if(m_viewer === null) {
+    if (m_viewer === null) {
       m_node = node;
       m_viewer = vgl.viewer(node);
       m_viewer.init();
@@ -644,9 +657,9 @@ vgl.vtkReader = function() {
    * @returns void
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.deleteViewer = function() {
-      m_vtkRenderedList = {};
-      m_viewer = null;
+  this.deleteViewer = function () {
+    m_vtkRenderedList = {};
+    m_viewer = null;
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -658,7 +671,7 @@ vgl.vtkReader = function() {
    * @returns void
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.updateCanvas = function(node) {
+  this.updateCanvas = function (node) {
     m_node = node;
     m_viewer.renderWindow().resize(node.width, node.height);
 
@@ -673,7 +686,7 @@ vgl.vtkReader = function() {
    * @returns void
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.numObjects = function() {
+  this.numObjects = function () {
     return m_vtkObjectCount;
   };
 
@@ -685,7 +698,7 @@ vgl.vtkReader = function() {
    * @returns renderer
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.getRenderer = function(layer) {
+  this.getRenderer = function (layer) {
     var renderer;
 
     renderer = m_vtkRenderedList[layer];
@@ -696,7 +709,7 @@ vgl.vtkReader = function() {
       m_viewer.renderWindow().addRenderer(renderer);
 
       if (layer !== 0) {
-          renderer.camera().setClearMask(vgl.GL.DepthBufferBit);
+        renderer.camera().setClearMask(vgl.GL.DepthBufferBit);
       }
 
       m_vtkRenderedList[layer] = renderer;
@@ -713,7 +726,7 @@ vgl.vtkReader = function() {
    * @returns void
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.setVtkScene = function(scene) {
+  this.setVtkScene = function (scene) {
     m_vtkScene = scene;
   };
 

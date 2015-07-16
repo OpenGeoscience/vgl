@@ -3,10 +3,7 @@
  * @module vgl
  */
 
-/*jslint devel: true, forin: true, newcap: true, plusplus: true*/
-/*jslint white: true, continue:true, indent: 2*/
-
-/*global vgl, ogs, vec4, inherit, $*/
+/*global vgl, vec4, inherit*/
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
@@ -17,7 +14,7 @@
  * @returns {vgl.picker}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.picker = function() {
+vgl.picker = function () {
   'use strict';
 
   if (!(this instanceof vgl.picker)) {
@@ -26,16 +23,14 @@ vgl.picker = function() {
   vgl.object.call(this);
 
   /** @private */
-  var m_that = this,
-      m_tolerance = 0.025,
-      m_actors = [];
+  var m_actors = [];
 
   ////////////////////////////////////////////////////////////////////////////
   /**
    * Get actors intersected
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.getActors = function() {
+  this.getActors = function () {
     return m_actors;
   };
 
@@ -44,15 +39,15 @@ vgl.picker = function() {
    * Perform pick operation
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.pick = function(selectionX, selectionY, renderer) {
+  this.pick = function (selectionX, selectionY, renderer) {
     // Check if variables are acceptable
-    if (typeof(selectionX) === "undefined"){
+    if (selectionX === undefined) {
       return 0;
     }
-    if (typeof(selectionY) === "undefined"){
+    if (selectionY === undefined) {
       return 0;
     }
-    if (typeof(renderer) === "undefined"){
+    if (renderer === undefined) {
       return 0;
     }
 
@@ -76,7 +71,7 @@ vgl.picker = function() {
         cameraPos = camera.position(), ray = [], actors, count, i, bb,
         tmin, tmax, tymin, tymax, tzmin, tzmax, actor;
 
-    for (i = 0; i < 3; ++i){
+    for (i = 0; i < 3; i += 1) {
       ray[i] = worldPt[i] - cameraPos[i];
     }
 
@@ -84,27 +79,29 @@ vgl.picker = function() {
     actors = renderer.sceneRoot().children();
     count = 0;
 
-    for (i = 0; i < actors.length; ++i) {
+    for (i = 0; i < actors.length; i += 1) {
       actor = actors[i];
       if (actor.visible() === true) {
         bb = actor.bounds();
         // Ray-aabb intersection - Smits' method
-        if (ray[0] >= 0){
-          tmin = (bb[0] - cameraPos[0])/ray[0];
-          tmax = (bb[1] - cameraPos[0])/ray[0];
+        if (ray[0] >= 0) {
+          tmin = (bb[0] - cameraPos[0]) / ray[0];
+          tmax = (bb[1] - cameraPos[0]) / ray[0];
         } else {
-          tmin = (bb[1] - cameraPos[0])/ray[0];
-          tmax = (bb[0] - cameraPos[0])/ray[0];
+          tmin = (bb[1] - cameraPos[0]) / ray[0];
+          tmax = (bb[0] - cameraPos[0]) / ray[0];
         }
-        if (ray[1] >= 0){
-          tymin = (bb[2] - cameraPos[1])/ray[1];
-          tymax = (bb[3] - cameraPos[1])/ray[1];
+        if (ray[1] >= 0) {
+          tymin = (bb[2] - cameraPos[1]) / ray[1];
+          tymax = (bb[3] - cameraPos[1]) / ray[1];
         } else {
-          tymin = (bb[3] - cameraPos[1])/ray[1];
-          tymax = (bb[2] - cameraPos[1])/ray[1];
+          tymin = (bb[3] - cameraPos[1]) / ray[1];
+          tymax = (bb[2] - cameraPos[1]) / ray[1];
         }
         if ((tmin > tymax) || (tymin > tmax)) {
+          //jscs:disable disallowKeywords
           continue;
+          //jscs:enable disallowKeywords
         }
 
 
@@ -115,14 +112,16 @@ vgl.picker = function() {
           tmax = tymax;
         }
         if (ray[2] >= 0) {
-          tzmin = (bb[4] - cameraPos[2])/ray[2];
-          tzmax = (bb[5] - cameraPos[2])/ray[2];
+          tzmin = (bb[4] - cameraPos[2]) / ray[2];
+          tzmax = (bb[5] - cameraPos[2]) / ray[2];
         } else {
-          tzmin = (bb[5] - cameraPos[2])/ray[2];
-          tzmax = (bb[4] - cameraPos[2])/ray[2];
+          tzmin = (bb[5] - cameraPos[2]) / ray[2];
+          tzmax = (bb[4] - cameraPos[2]) / ray[2];
         }
         if ((tmin > tzmax) || (tzmin > tmax)) {
+          //jscs:disable disallowKeywords
           continue;
+          //jscs:enable disallowKeywords
         }
         if (tzmin > tmin) {
           tmin = tzmin;
@@ -131,7 +130,8 @@ vgl.picker = function() {
           tmax = tzmax;
         }
 
-        m_actors[count++] = actor;
+        m_actors[count] = actor;
+        count += 1;
       }
     }
     return count;

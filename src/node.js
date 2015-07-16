@@ -3,10 +3,7 @@
  * @module vgl
  */
 
-/*jslint devel: true, forin: true, newcap: true, plusplus: true*/
-/*jslint white: true, continue:true, indent: 2*/
-
-/*global vgl, ogs, vec4, inherit, $*/
+/*global vgl, inherit*/
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
@@ -17,7 +14,7 @@
  * @returns {vgl.node}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.node = function() {
+vgl.node = function () {
   'use strict';
 
   if (!(this instanceof vgl.node)) {
@@ -36,7 +33,7 @@ vgl.node = function() {
    * Accept visitor for scene traversal
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.accept = function(visitor) {
+  this.accept = function (visitor) {
     visitor.visit(this);
   };
 
@@ -45,7 +42,7 @@ vgl.node = function() {
    * Return active material used by the node
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.material = function() {
+  this.material = function () {
     return m_material;
   };
 
@@ -57,7 +54,7 @@ vgl.node = function() {
    * @returns {boolean}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.setMaterial = function(material) {
+  this.setMaterial = function (material) {
     if (material !== m_material) {
       m_material = material;
       this.modified();
@@ -74,7 +71,7 @@ vgl.node = function() {
    * @returns {boolean}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.visible = function() {
+  this.visible = function () {
     return m_visible;
   };
 
@@ -86,7 +83,7 @@ vgl.node = function() {
    * @returns {boolean}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.setVisible = function(flag) {
+  this.setVisible = function (flag) {
     if (flag !== m_visible) {
       m_visible = flag;
       this.modified();
@@ -103,7 +100,7 @@ vgl.node = function() {
    * @returns {null}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.parent = function() {
+  this.parent = function () {
     return m_parent;
   };
 
@@ -115,7 +112,7 @@ vgl.node = function() {
    * @returns {boolean}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.setParent = function(parent) {
+  this.setParent = function (parent) {
     if (parent !== m_parent) {
       if (m_parent !== null) {
         m_parent.removeChild(this);
@@ -135,7 +132,7 @@ vgl.node = function() {
    * @returns {boolean}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.overlay = function() {
+  this.overlay = function () {
     return m_overlay;
   };
 
@@ -147,7 +144,7 @@ vgl.node = function() {
    * @returns {boolean}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.setOverlay = function(flag) {
+  this.setOverlay = function (flag) {
     if (m_overlay !== flag) {
       m_overlay = flag;
       this.modified();
@@ -162,7 +159,8 @@ vgl.node = function() {
    * Traverse parent and their parent and so on
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.ascend = function(visitor) {
+  this.ascend = function (visitor) {
+    visitor = visitor; /* unused parameter */
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -170,7 +168,8 @@ vgl.node = function() {
    * Traverse children
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.traverse = function(visitor) {
+  this.traverse = function (visitor) {
+    visitor = visitor; /* unused parameter */
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -179,7 +178,7 @@ vgl.node = function() {
    *
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.boundsModified = function() {
+  this.boundsModified = function () {
     // @todo Implement this
     this.boundsDirtyTimestamp().modified();
 

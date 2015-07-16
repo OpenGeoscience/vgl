@@ -3,10 +3,7 @@
  * @module vgl
  */
 
-/*jslint devel: true, forin: true, newcap: true, plusplus: true*/
-/*jslint white: true, continue:true, indent: 2*/
-
-/*global vgl, ogs, vec4, inherit, $*/
+/*global vgl, inherit*/
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
@@ -17,7 +14,7 @@
  * @returns {vgl.planeSource}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.planeSource = function() {
+vgl.planeSource = function () {
   'use strict';
 
   if (!(this instanceof vgl.planeSource)) {
@@ -25,10 +22,10 @@ vgl.planeSource = function() {
   }
   vgl.source.call(this);
 
-  var m_origin = [ 0.0, 0.0, 0.0 ],
-      m_point1 = [ 1.0, 0.0, 0.0 ],
-      m_point2 = [ 0.0, 1.0, 0.0 ],
-      m_normal = [ 0.0, 0.0, 1.0 ],
+  var m_origin = [0.0, 0.0, 0.0],
+      m_point1 = [1.0, 0.0, 0.0],
+      m_point2 = [0.0, 1.0, 0.0],
+      m_normal = [0.0, 0.0, 1.0],
       m_xresolution = 1,
       m_yresolution = 1,
       m_geom = null;
@@ -42,7 +39,7 @@ vgl.planeSource = function() {
    * @param z
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.setOrigin = function(x, y, z) {
+  this.setOrigin = function (x, y, z) {
     m_origin[0] = x;
     m_origin[1] = y;
     m_origin[2] = z;
@@ -57,7 +54,7 @@ vgl.planeSource = function() {
    * @param z
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.setPoint1 = function(x, y, z) {
+  this.setPoint1 = function (x, y, z) {
     m_point1[0] = x;
     m_point1[1] = y;
     m_point1[2] = z;
@@ -72,7 +69,7 @@ vgl.planeSource = function() {
    * @param z
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.setPoint2 = function(x, y, z) {
+  this.setPoint2 = function (x, y, z) {
     m_point2[0] = x;
     m_point2[1] = y;
     m_point2[2] = z;
@@ -85,7 +82,7 @@ vgl.planeSource = function() {
    * @returns {null}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.create = function() {
+  this.create = function () {
     m_geom = new vgl.geometryData();
 
     var x = [], tc = [], v1 = [], v2 = [],
@@ -102,7 +99,7 @@ vgl.planeSource = function() {
     pts.length = 3;
 
     // Check input
-    for (i = 0; i < 3; i++) {
+    for (i = 0; i < 3; i += 1) {
       v1[i] = m_point1[i] - m_origin[i];
       v2[i] = m_point2[i] - m_origin[i];
     }
@@ -116,16 +113,17 @@ vgl.planeSource = function() {
     texCoords.length = 2 * numPts;
     indices.length = numPts;
 
-    for (k = 0, i = 0; i < (m_yresolution + 1); i++) {
+    for (k = 0, i = 0; i < (m_yresolution + 1); i += 1) {
       tc[1] = i / m_yresolution;
 
-      for (j = 0; j < (m_xresolution + 1); j++) {
+      for (j = 0; j < (m_xresolution + 1); j += 1) {
         tc[0] = j / m_xresolution;
 
-        for (ii = 0; ii < 3; ii++) {
+        for (ii = 0; ii < 3; ii += 1) {
           x[ii] = m_origin[ii] + tc[0] * v1[ii] + tc[1] * v2[ii];
         }
 
+        //jshint plusplus: false
         positions[posIndex++] = x[0];
         positions[posIndex++] = x[1];
         positions[posIndex++] = x[2];
@@ -140,12 +138,13 @@ vgl.planeSource = function() {
 
         texCoords[texCoordIndex++] = tc[0];
         texCoords[texCoordIndex++] = tc[1];
+        //jshint plusplus: true
       }
     }
 
     /// Generate polygon connectivity
-    for (i = 0; i < m_yresolution; i++) {
-      for (j = 0; j < m_xresolution; j++) {
+    for (i = 0; i < m_yresolution; i += 1) {
+      for (j = 0; j < m_xresolution; j += 1) {
         pts[0] = j + i * (m_xresolution + 1);
         pts[1] = pts[0] + 1;
         pts[2] = pts[0] + m_xresolution + 2;
@@ -153,7 +152,7 @@ vgl.planeSource = function() {
       }
     }
 
-    for (i = 0; i < numPts; ++i) {
+    for (i = 0; i < numPts; i += 1) {
       indices[i] = i;
     }
 

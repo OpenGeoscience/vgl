@@ -3,10 +3,7 @@
  * @module vgl
  */
 
-/*jslint devel: true, forin: true, newcap: true, plusplus: true*/
-/*jslint white: true, continue:true, indent: 2*/
-
-/*global gl, vgl, ogs, vec4, inherit, $*/
+/*global vgl, inherit*/
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
@@ -17,7 +14,7 @@
  * @returns {vgl.shader}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.shader = function(type) {
+vgl.shader = function (type) {
   'use strict';
 
   if (!(this instanceof vgl.shader)) {
@@ -28,14 +25,14 @@ vgl.shader = function(type) {
   var m_shaderHandle = null,
       m_compileTimestamp = vgl.timestamp(),
       m_shaderType = type,
-      m_shaderSource = "";
+      m_shaderSource = '';
 
   /////////////////////////////////////////////////////////////////////////////
   /**
    * Get shader handle
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.shaderHandle = function() {
+  this.shaderHandle = function () {
     return m_shaderHandle;
   };
 
@@ -46,7 +43,7 @@ vgl.shader = function(type) {
    * @returns {*}
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.shaderType = function() {
+  this.shaderType = function () {
     return m_shaderType;
   };
 
@@ -57,7 +54,7 @@ vgl.shader = function(type) {
    * @returns {string}
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.shaderSource = function() {
+  this.shaderSource = function () {
     return m_shaderSource;
   };
 
@@ -68,7 +65,7 @@ vgl.shader = function(type) {
    * @param {string} source
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.setShaderSource = function(source) {
+  this.setShaderSource = function (source) {
     m_shaderSource = source;
     this.modified();
   };
@@ -80,7 +77,7 @@ vgl.shader = function(type) {
    * @returns {null}
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.compile = function(renderState) {
+  this.compile = function (renderState) {
     if (this.getMTime() < m_compileTimestamp.getMTime()) {
       return m_shaderHandle;
     }
@@ -91,9 +88,10 @@ vgl.shader = function(type) {
     renderState.m_context.compileShader(m_shaderHandle);
 
     // See if it compiled successfully
-    if (!renderState.m_context.getShaderParameter(m_shaderHandle, vgl.GL.COMPILE_STATUS)) {
-      console.log("[ERROR] An error occurred compiling the shaders: "
-                  + renderState.m_context.getShaderInfoLog(m_shaderHandle));
+    if (!renderState.m_context.getShaderParameter(m_shaderHandle,
+        vgl.GL.COMPILE_STATUS)) {
+      console.log('[ERROR] An error occurred compiling the shaders: ' +
+                  renderState.m_context.getShaderInfoLog(m_shaderHandle));
       console.log(m_shaderSource);
       renderState.m_context.deleteShader(m_shaderHandle);
       return null;
@@ -111,7 +109,7 @@ vgl.shader = function(type) {
    * @param programHandle
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.attachShader = function(renderState, programHandle) {
+  this.attachShader = function (renderState, programHandle) {
     renderState.m_context.attachShader(programHandle, m_shaderHandle);
   };
 };

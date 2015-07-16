@@ -3,18 +3,15 @@
  * @module vgl
  */
 
-/*jslint devel: true, forin: true, newcap: true, plusplus: true*/
-/*jslint white: true, continue:true, indent: 2*/
-
-/*global vgl, ogs, vec4, inherit, $*/
+/*global vgl, inherit*/
 //////////////////////////////////////////////////////////////////////////////
 
 vgl.materialAttributeType = {
-  "Undefined" : 0x0,
-  "ShaderProgram" : 0x1,
-  "Texture" : 0x2,
-  "Blend" : 0x3,
-  "Depth" : 0x4
+  'Undefined' : 0x0,
+  'ShaderProgram' : 0x1,
+  'Texture' : 0x2,
+  'Blend' : 0x3,
+  'Depth' : 0x4
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -26,7 +23,7 @@ vgl.materialAttributeType = {
  * @returns {vgl.materialAttribute}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.materialAttribute = function(type) {
+vgl.materialAttribute = function (type) {
   'use strict';
 
   if (!(this instanceof vgl.materialAttribute)) {
@@ -46,7 +43,7 @@ vgl.materialAttribute = function(type) {
    * @returns {*}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.type = function() {
+  this.type = function () {
     return m_type;
   };
 
@@ -57,7 +54,7 @@ vgl.materialAttribute = function(type) {
    * @returns {boolean}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.enabled = function() {
+  this.enabled = function () {
     return m_enabled;
   };
 
@@ -70,7 +67,9 @@ vgl.materialAttribute = function(type) {
    * @returns {boolean}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.bindVertexData = function(renderState, key) {
+  this.bindVertexData = function (renderState, key) {
+    renderState = renderState; /* unused parameter */
+    key = key /* unused parameter */;
     return false;
   };
 
@@ -83,7 +82,9 @@ vgl.materialAttribute = function(type) {
    * @returns {boolean}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.undoBindVertexData = function(renderState, key) {
+  this.undoBindVertexData = function (renderState, key) {
+    renderState = renderState; /* unused parameter */
+    key = key /* unused parameter */;
     return false;
   };
 

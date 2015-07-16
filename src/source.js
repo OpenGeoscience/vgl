@@ -3,10 +3,7 @@
  * @module vgl
  */
 
-/*jslint devel: true, forin: true, newcap: true, plusplus: true*/
-/*jslint white: true, continue:true, indent: 2*/
-
-/*global vgl, ogs, vec4, inherit, $*/
+/*global vgl, inherit*/
 //////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -16,7 +13,7 @@
  * @returns {vgl.source}
  */
 ///////////////////////////////////////////////////////////////////////////////
-vgl.source = function() {
+vgl.source = function () {
   'use strict';
 
   if (!(this instanceof vgl.source)) {
@@ -30,7 +27,7 @@ vgl.source = function() {
    * Virtual function to create a source instance
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.create = function() {
+  this.create = function () {
   };
 
   return this;

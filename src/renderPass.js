@@ -1,5 +1,5 @@
 //////////////////////////////////////////////////////////////////////////////
-vgl.renderPass = function() {
+vgl.renderPass = function () {
   'use strict';
 
   if (!(this instanceof vgl.renderPass)) {
@@ -11,29 +11,29 @@ vgl.renderPass = function() {
       m_renderTarget = null,
       m_renderer = vgl.renderer();
 
-  this.setRenderer = function(ren) {
+  this.setRenderer = function (ren) {
     if (ren !== m_renderer) {
       m_renderer = ren;
       m_this.modified();
     }
   };
 
-  this.renderer = function() {
+  this.renderer = function () {
     return m_renderer;
   };
 
-  this.setRenderTarget = function(renTgt) {
+  this.setRenderTarget = function (renTgt) {
     if (m_renderTarget !== renTgt) {
       m_renderTarget = renTgt;
       m_this.modified();
     }
   };
 
-  this.renderTarget = function() {
+  this.renderTarget = function () {
     return m_renderTarget;
   };
 
-  this.render = function(renderState) {
+  this.render = function (renderState) {
     var result = false;
 
     if (m_renderTarget) {
@@ -45,14 +45,14 @@ vgl.renderPass = function() {
     return result;
   };
 
-  this.remove = function(renderState) {
+  this.remove = function (renderState) {
     if (m_renderTarget) {
       return m_renderTarget.remove(renderState);
     }
   };
 
   ////////////////////////////////////////////////////////////////////////////
-  this.resize = function(width, height) {
+  this.resize = function (width, height) {
     if (m_renderTarget) {
       m_renderTarget.resize(width, height);
     }

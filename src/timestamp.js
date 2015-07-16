@@ -3,10 +3,7 @@
  * @module vgl
  */
 
-/*jslint devel: true, forin: true, newcap: true, plusplus: true*/
-/*jslint white: true, continue:true, indent: 2*/
-
-/*global vgl, ogs, vec4, inherit, $*/
+/*global vgl*/
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
@@ -19,7 +16,7 @@
 //////////////////////////////////////////////////////////////////////////////
 var m_globalModifiedTime = 0;
 
-vgl.timestamp = function() {
+vgl.timestamp = function () {
   'use strict';
 
   if (!(this instanceof vgl.timestamp)) {
@@ -33,8 +30,8 @@ vgl.timestamp = function() {
    * Update modified time
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.modified = function() {
-    ++m_globalModifiedTime;
+  this.modified = function () {
+    m_globalModifiedTime += 1;
     m_modifiedTime = m_globalModifiedTime;
   };
 
@@ -45,7 +42,7 @@ vgl.timestamp = function() {
    * @returns {number}
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.getMTime = function() {
+  this.getMTime = function () {
     return m_modifiedTime;
   };
 };

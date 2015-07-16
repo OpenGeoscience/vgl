@@ -3,10 +3,8 @@
  * @module vgl
  */
 
-/*jslint devel: true, forin: true, newcap: true, plusplus: true*/
-/*jslint white: true, continue:true, indent: 2*/
-
-/*global vgl, ogs, vec4, inherit, $*/
+/* global mat4 */
+/* exported modelViewMatrixStack */
 //////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
@@ -14,10 +12,18 @@
  * Helper function to create stack for matrices
  */
 //////////////////////////////////////////////////////////////////////////////
-function modelViewMatrixStack() {
+vgl.modelViewMatrixStack = function () {
   'use strict';
 
   var mvMatrixStack = [];
+
+  if (!(this instanceof vgl.modelViewMatrixStack)) {
+    /* jshint newcap: false */
+    //jscs:disable requireCapitalizedConstructors
+    return new vgl.modelViewMatrixStack();
+    //jscs:enable requireCapitalizedConstructors
+    /* jshint newcap: true */
+  }
 
   ////////////////////////////////////////////////////////////////////////////
   /**
@@ -26,7 +32,7 @@ function modelViewMatrixStack() {
    * @param mat
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.pushMatrix = function(mat) {
+  this.pushMatrix = function (mat) {
     var copy = mat4.create();
     mat4.set(mat, copy);
     mvMatrixStack.push(copy);
@@ -39,11 +45,11 @@ function modelViewMatrixStack() {
    * @returns {*}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.popMatrix = function() {
+  this.popMatrix = function () {
     if (mvMatrixStack.length === 0) {
-      throw "Invalid popMatrix!";
+      throw 'Invalid popMatrix!';
     }
     var mat = mvMatrixStack.pop();
     return mat;
   };
-}
+};
