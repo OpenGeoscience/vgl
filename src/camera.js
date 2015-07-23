@@ -43,8 +43,7 @@ vgl.camera = function (arg) {
       m_right = 1.0,
       m_top = +1.0,
       m_bottom = -1.0,
-      m_parallelExtents = [undefined, undefined, 1, 256],
-      m_unitsPerPixel,
+      m_parallelExtents = {zoom: 1, tilesize: 256},
       m_enableTranslation = true,
       m_enableRotation = true,
       m_enableScale = true,
@@ -351,23 +350,23 @@ vgl.camera = function (arg) {
    * Set parallel projection extents parameters
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.setParallelExtents = function (width, height, zoom, tilesize) {
-    var extents = [width, height, zoom, tilesize], i, mod = false;
-    for (i = 0; i < extents.length; i += 1) {
-      if (extents[i] !== undefined && extents[i] !== m_parallelExtents[i]) {
-        m_parallelExtents[i] = extents[i];
+  this.setParallelExtents = function (extents) {
+    var prop = ['width', 'height', 'zoom', 'tilesize'], mod = false, i, key;
+    for (i = 0; i < prop.length; i += 1) {
+      key = prop[i];
+      if (extents[key] !== undefined &&
+          extents[key] !== m_parallelExtents[key]) {
+        m_parallelExtents[key] = extents[key];
         mod = true;
       }
     }
-    width = m_parallelExtents[0];
-    height = m_parallelExtents[1];
-    zoom = m_parallelExtents[2];
-    tilesize = m_parallelExtents[3];
-    if (mod && width && height && zoom !== undefined && tilesize) {
-      m_unitsPerPixel = this.unitsPerPixel(zoom, tilesize);
-      m_right = m_unitsPerPixel * width / 2;
+    if (mod && m_parallelExtents.width && m_parallelExtents.height &&
+        m_parallelExtents.zoom !== undefined && m_parallelExtents.tilesize) {
+      var unitsPerPixel = this.unitsPerPixel(m_parallelExtents.zoom,
+                                             m_parallelExtents.tilesize);
+      m_right = unitsPerPixel * m_parallelExtents.width / 2;
       m_left = -m_right;
-      m_top = m_unitsPerPixel * height / 2;
+      m_top = unitsPerPixel * m_parallelExtents.height / 2;
       m_bottom = -m_top;
       this.modified();
     }
@@ -639,8 +638,7 @@ vgl.camera = function (arg) {
   ////////////////////////////////////////////////////////////////////////////
   this.computeViewMatrix = function () {
     if (m_computeModelViewMatrixTime.getMTime() < this.getMTime()) {
-      var position = m_position, focalPoint = m_focalPoint;
-      mat4.lookAt(m_viewMatrix, position, focalPoint, m_viewUp);
+      mat4.lookAt(m_viewMatrix, m_position, m_focalPoint, m_viewUp);
       m_computeModelViewMatrixTime.modified();
     }
     return m_viewMatrix;
@@ -669,19 +667,29 @@ vgl.camera = function (arg) {
         return null;
       }
     }
-    if (!m_parallelExtents[0] || !m_parallelExtents[1] || !m_unitsPerPixel) {
+    var unitsPerPixel = this.unitsPerPixel(m_parallelExtents.zoom,
+                                           m_parallelExtents.tilesize);
+    /* If we don't have screen dimensions, we can't know how to align pixels */
+    if (!m_parallelExtents.width || !m_parallelExtents.height ||
+        !unitsPerPixel) {
       return null;
     }
-    if (parseFloat(m_parallelExtents[2].toFixed(6)) !==
-        parseFloat(m_parallelExtents[2].toFixed(0))) {
+    /* If we aren't at an integer zoom level, we shouldn't align pixels.  If
+     * we are really close to an integer zoom level, that is good enough. */
+    if (parseFloat(m_parallelExtents.zoom.toFixed(6)) !==
+        parseFloat(m_parallelExtents.zoom.toFixed(0))) {
       return null;
     }
-    var align = {round: m_unitsPerPixel, dx: 0, dy: 0};
-    if (m_parallelExtents[0] % 2) {
-      align.dx = m_unitsPerPixel * 0.5;
+    var align = {round: unitsPerPixel, dx: 0, dy: 0};
+    /* If the screen is an odd number of pixels, shift the view center to the
+     * center of a pixel so that the pixels fit discretely across the screen.
+     * If an even number of pixels, align the view center between pixels for
+     * the same reason. */
+    if (m_parallelExtents.width % 2) {
+      align.dx = unitsPerPixel * 0.5;
     }
-    if (m_parallelExtents[1] % 2) {
-      align.dy = m_unitsPerPixel * 0.5;
+    if (m_parallelExtents.height % 2) {
+      align.dy = unitsPerPixel * 0.5;
     }
     return align;
   };

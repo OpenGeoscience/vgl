@@ -484,8 +484,8 @@ vgl.renderer = function (arg) {
       m_this.m_width = width;
       m_this.m_height = height;
 
-      m_this.m_camera.setViewAspect(m_this.m_width / m_this.m_height);
-      m_this.m_camera.setParallelExtents(m_this.m_width, m_this.m_height);
+      m_this.m_camera.setViewAspect(width / height);
+      m_this.m_camera.setParallelExtents({width: width, height: height});
       m_this.modified();
     }
 
