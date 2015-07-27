@@ -3,7 +3,7 @@
  * @module vgl
  */
 
-/*global vgl, mat4, inherit*/
+/*global vgl, mat4, vec3, inherit*/
 //////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -227,6 +227,64 @@ vgl.modelViewUniform = function (name) {
 };
 
 inherit(vgl.modelViewUniform, vgl.uniform);
+
+///////////////////////////////////////////////////////////////////////////////
+/**
+ * Create new instance of class modelViewOriginUniform.
+ *
+ * @param name
+ * @param uniform: a triplet of floats.
+ * @returns {vgl.modelViewUniform}
+ */
+///////////////////////////////////////////////////////////////////////////////
+vgl.modelViewOriginUniform = function (name, origin) {
+  'use strict';
+
+  if (!(this instanceof vgl.modelViewOriginUniform)) {
+    return new vgl.modelViewOriginUniform(name, origin);
+  }
+
+  if (name.length === 0) {
+    name = 'modelViewMatrix';
+  }
+
+  var m_origin = vec3.fromValues(origin[0], origin[1], origin[2]);
+
+  vgl.uniform.call(this, vgl.GL.FLOAT_MAT4, name);
+
+  this.set(mat4.create());
+
+  /////////////////////////////////////////////////////////////////////////////
+  /**
+   * Update the uniform given a render state and shader program.  This offsets
+   * the modelViewMatrix by the origin, and, if the model view should be
+   * aligned, aligns it appropriately.  The alignment must be done after the
+   * origin offset to maintain precision.
+   *
+   * @param {vgl.renderState} renderState
+   * @param {vgl.shaderProgram} program
+   */
+  /////////////////////////////////////////////////////////////////////////////
+  this.update = function (renderState, program) {
+    program = program; /* unused parameter */
+    var view = mat4.create();
+    mat4.translate(view, renderState.m_modelViewMatrix, m_origin);
+    if (renderState.m_modelViewAlignment) {
+      var align = renderState.m_modelViewAlignment;
+      /* view[12] and view[13] are the x and y offsets.  align.round is the
+       * units-per-pixel, and align.dx and .dy are either 0 or half the size of
+       * a unit-per-pixel.  The alignment guarantees that the texels are
+       * aligned with screen pixels. */
+      view[12] = Math.round(view[12] / align.round) * align.round + align.dx;
+      view[13] = Math.round(view[13] / align.round) * align.round + align.dy;
+    }
+    this.set(view);
+  };
+
+  return this;
+};
+
+inherit(vgl.modelViewOriginUniform, vgl.uniform);
 
 //////////////////////////////////////////////////////////////////////////////
 /**

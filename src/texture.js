@@ -33,6 +33,7 @@ vgl.texture = function () {
   this.m_pixelFormat = vgl.GL.RGBA;
   this.m_pixelDataType = vgl.GL.UNSIGNED_BYTE;
   this.m_internalFormat = vgl.GL.RGBA;
+  this.m_nearestPixel = false;
 
   this.m_image = null;
 
@@ -110,9 +111,11 @@ vgl.texture = function () {
     this.m_textureHandle = renderState.m_context.createTexture();
     renderState.m_context.bindTexture(vgl.GL.TEXTURE_2D, this.m_textureHandle);
     renderState.m_context.texParameteri(vgl.GL.TEXTURE_2D,
-        vgl.GL.TEXTURE_MIN_FILTER, vgl.GL.LINEAR);
+        vgl.GL.TEXTURE_MIN_FILTER,
+        this.m_nearestPixel ? vgl.GL.NEAREST : vgl.GL.LINEAR);
     renderState.m_context.texParameteri(vgl.GL.TEXTURE_2D,
-        vgl.GL.TEXTURE_MAG_FILTER, vgl.GL.LINEAR);
+        vgl.GL.TEXTURE_MAG_FILTER,
+        this.m_nearestPixel ? vgl.GL.NEAREST : vgl.GL.LINEAR);
     renderState.m_context.texParameteri(vgl.GL.TEXTURE_2D,
         vgl.GL.TEXTURE_WRAP_S, vgl.GL.CLAMP_TO_EDGE);
     renderState.m_context.texParameteri(vgl.GL.TEXTURE_2D,
@@ -196,6 +199,35 @@ vgl.texture = function () {
       return true;
     }
 
+    return false;
+  };
+
+  /////////////////////////////////////////////////////////////////////////////
+  /**
+   * Get nearest pixel flag for the texture
+   *
+   * @returns boolean
+   */
+  /////////////////////////////////////////////////////////////////////////////
+  this.nearestPixel = function () {
+    return this.m_nearestPixel;
+  };
+
+  /////////////////////////////////////////////////////////////////////////////
+  /**
+   * Set nearest pixel flag for the texture
+   *
+   * @param {boolean} nearest pixel flag
+   * @returns {boolean}
+   */
+  /////////////////////////////////////////////////////////////////////////////
+  this.setNearestPixel = function (nearest) {
+    nearest = nearest ? true : false;
+    if (nearest !== this.m_nearestPixel) {
+      this.m_nearestPixel = nearest;
+      this.modified();
+      return true;
+    }
     return false;
   };
 

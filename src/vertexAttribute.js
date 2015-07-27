@@ -21,7 +21,8 @@ vgl.vertexAttributeKeys = {
   'Normal' : 1,
   'TextureCoordinate' : 2,
   'Color' : 3,
-  'CountAttributeIndex' : 4
+  'Scalar': 4,
+  'CountAttributeIndex' : 5
 };
 
 vgl.vertexAttributeKeysIndexed = {

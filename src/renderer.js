@@ -31,20 +31,21 @@ vgl.renderState = function () {
  * @returns {vgl.renderer}
  */
 ////////////////////////////////////////////////////////////////////////////
-vgl.renderer = function () {
+vgl.renderer = function (arg) {
   'use strict';
 
   if (!(this instanceof vgl.renderer)) {
-    return new vgl.renderer();
+    return new vgl.renderer(arg);
   }
   vgl.graphicsObject.call(this);
+  arg = arg || {};
 
   /** @private */
   var m_this = this;
   m_this.m_renderWindow = null;
   m_this.m_contextChanged = false;
   m_this.m_sceneRoot = new vgl.groupNode();
-  m_this.m_camera = new vgl.camera();
+  m_this.m_camera = new vgl.camera(arg);
   m_this.m_nearClippingPlaneTolerance = null;
   m_this.m_x = 0;
   m_this.m_y = 0;
@@ -268,8 +269,10 @@ vgl.renderer = function () {
         mat4.multiply(renSt.m_modelViewMatrix, m_this.m_camera.viewMatrix(),
           actor.matrix());
         renSt.m_projectionMatrix = m_this.m_camera.projectionMatrix();
+        renSt.m_modelViewAlignment = m_this.m_camera.viewAlignment();
       } else {
         renSt.m_modelViewMatrix = actor.matrix();
+        renSt.m_modelViewAlignment = null;
         renSt.m_projectionMatrix = mat4.create();
         mat4.ortho(renSt.m_projectionMatrix,
                    0, m_this.m_width, 0, m_this.m_height, -1, 1);
@@ -454,6 +457,9 @@ vgl.renderer = function () {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.resize = function (width, height) {
+    if (!width || !height) {
+      return;
+    }
     // @note: where do m_this.m_x and m_this.m_y come from?
     m_this.positionAndResize(m_this.m_x, m_this.m_y, width, height);
   };
@@ -467,9 +473,10 @@ vgl.renderer = function () {
     var i;
 
     // TODO move this code to camera
-    if (x < 0 || y < 0 || width < 0 || height < 0) {
+    if (x < 0 || y < 0 || width <= 0 || height <= 0) {
       console.log('[error] Invalid position and resize values',
         x, y, width, height);
+      return;
     }
 
     //If we're allowing this renderer to resize ...
@@ -477,7 +484,8 @@ vgl.renderer = function () {
       m_this.m_width = width;
       m_this.m_height = height;
 
-      m_this.m_camera.setViewAspect(m_this.m_width / m_this.m_height);
+      m_this.m_camera.setViewAspect(width / height);
+      m_this.m_camera.setParallelExtents({width: width, height: height});
       m_this.modified();
     }
 

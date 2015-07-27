@@ -14,13 +14,14 @@
  * @returns {vgl.camera}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.camera = function () {
+vgl.camera = function (arg) {
   'use strict';
 
   if (!(this instanceof vgl.camera)) {
-    return new vgl.camera();
+    return new vgl.camera(arg);
   }
   vgl.groupNode.call(this);
+  arg = arg || {};
 
   /** @private */
   var m_viewAngle = (Math.PI * 30) / 180.0,
@@ -42,6 +43,7 @@ vgl.camera = function () {
       m_right = 1.0,
       m_top = +1.0,
       m_bottom = -1.0,
+      m_parallelExtents = {zoom: 1, tilesize: 256},
       m_enableTranslation = true,
       m_enableRotation = true,
       m_enableScale = true,
@@ -52,6 +54,10 @@ vgl.camera = function () {
       m_clearMask = vgl.GL.COLOR_BUFFER_BIT |
                     vgl.GL.DEPTH_BUFFER_BIT;
   /*jshint bitwise: true */
+
+  if (arg.parallelProjection !== undefined) {
+    m_enableParallelProjection = arg.parallelProjection ? true : false;
+  }
 
   ////////////////////////////////////////////////////////////////////////////
   /**
@@ -332,6 +338,56 @@ vgl.camera = function () {
 
   ////////////////////////////////////////////////////////////////////////////
   /**
+   * Get parallel projection extents parameters
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.parallelExtents = function () {
+    return m_parallelExtents;
+  };
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
+   * Set parallel projection extents parameters
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.setParallelExtents = function (extents) {
+    var prop = ['width', 'height', 'zoom', 'tilesize'], mod = false, i, key;
+    for (i = 0; i < prop.length; i += 1) {
+      key = prop[i];
+      if (extents[key] !== undefined &&
+          extents[key] !== m_parallelExtents[key]) {
+        m_parallelExtents[key] = extents[key];
+        mod = true;
+      }
+    }
+    if (mod && m_parallelExtents.width && m_parallelExtents.height &&
+        m_parallelExtents.zoom !== undefined && m_parallelExtents.tilesize) {
+      var unitsPerPixel = this.unitsPerPixel(m_parallelExtents.zoom,
+                                             m_parallelExtents.tilesize);
+      m_right = unitsPerPixel * m_parallelExtents.width / 2;
+      m_left = -m_right;
+      m_top = unitsPerPixel * m_parallelExtents.height / 2;
+      m_bottom = -m_top;
+      this.modified();
+    }
+  };
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
+   * Compute the units per pixel.
+   *
+   * @param zoom: tile zoom level.
+   * @param tilesize: number of pixels per tile (defaults to 256).
+   * @returns: unitsPerPixel.
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.unitsPerPixel = function (zoom, tilesize) {
+    tilesize = tilesize || 256;
+    return 360.0 * Math.pow(2, -zoom) / tilesize;
+  };
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
    * Return direction of projection
    */
   ////////////////////////////////////////////////////////////////////////////
@@ -590,6 +646,56 @@ vgl.camera = function () {
 
   ////////////////////////////////////////////////////////////////////////////
   /**
+   * Check if the texture should be aligned to the screen.  Alignment only
+   * occurs if the parallel extents contain width, height, and a
+   * close-to-integer zoom level, and if the units-per-pixel value has been
+   * computed.  The camera must either be in parallel projection mode OR must
+   * have a perspective camera which is oriented along the z-axis without any
+   * rotation.
+   *
+   * @returns: either null if no alignment should occur, or an alignment object
+   *           with the rounding value and offsets.
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.viewAlignment = function () {
+    if (!m_enableParallelProjection) {
+      /* If we aren't in parallel projection mode, ensure that the projection
+       * matrix meets strict specifications */
+      var proj = this.projectionMatrix();
+      if (proj[1] || proj[2] || proj[3] || proj[4] || proj[6] || proj[7] ||
+          proj[8] || proj[9] || proj[12] || proj[13] || proj[15]) {
+        return null;
+      }
+    }
+    var unitsPerPixel = this.unitsPerPixel(m_parallelExtents.zoom,
+                                           m_parallelExtents.tilesize);
+    /* If we don't have screen dimensions, we can't know how to align pixels */
+    if (!m_parallelExtents.width || !m_parallelExtents.height ||
+        !unitsPerPixel) {
+      return null;
+    }
+    /* If we aren't at an integer zoom level, we shouldn't align pixels.  If
+     * we are really close to an integer zoom level, that is good enough. */
+    if (parseFloat(m_parallelExtents.zoom.toFixed(6)) !==
+        parseFloat(m_parallelExtents.zoom.toFixed(0))) {
+      return null;
+    }
+    var align = {round: unitsPerPixel, dx: 0, dy: 0};
+    /* If the screen is an odd number of pixels, shift the view center to the
+     * center of a pixel so that the pixels fit discretely across the screen.
+     * If an even number of pixels, align the view center between pixels for
+     * the same reason. */
+    if (m_parallelExtents.width % 2) {
+      align.dx = unitsPerPixel * 0.5;
+    }
+    if (m_parallelExtents.height % 2) {
+      align.dy = unitsPerPixel * 0.5;
+    }
+    return align;
+  };
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
    * Compute camera projection matrix
    */
   ////////////////////////////////////////////////////////////////////////////
@@ -598,7 +704,6 @@ vgl.camera = function () {
       if (!m_enableParallelProjection) {
         mat4.perspective(m_projectionMatrix, m_viewAngle, m_viewAspect, m_near, m_far);
       } else {
-        console.log('parallel projection');
         mat4.ortho(m_projectionMatrix,
           m_left, m_right, m_bottom, m_top, m_near, m_far);
       }
@@ -609,9 +714,54 @@ vgl.camera = function () {
     return m_projectionMatrix;
   };
 
+  ////////////////////////////////////////////////////////////////////////////
+  /**
+   * Convert a zoom level and window size to a camera height.
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.zoomToHeight = function (zoom, width, height) {
+    return vgl.zoomToHeight(zoom, width, height, m_viewAngle);
+  };
+
   this.computeDirectionOfProjection();
 
   return this;
 };
 
 inherit(vgl.camera, vgl.groupNode);
+
+////////////////////////////////////////////////////////////////////////////
+/**
+ * Convert a zoom level and window size to a camera height.
+ *
+ * @param zoom: Zoom level, as used in OSM maps.
+ * @param width: width of the window.
+ * @param height: height of the window.
+ * @returns: perspective camera height.
+ */
+////////////////////////////////////////////////////////////////////////////
+vgl.zoomToHeight = function (zoom, width, height, viewAngle) {
+  'use strict';
+  viewAngle = viewAngle || (30 * Math.PI / 180.0);
+  var newZ = 360 * Math.pow(2, -zoom);
+  newZ /= Math.tan(viewAngle / 2) * 2 * 256 / height;
+  return newZ;
+};
+
+////////////////////////////////////////////////////////////////////////////
+/**
+ * Convert a camera height and window size to a zoom level.
+ *
+ * @param z: perspective camera height.
+ * @param width: width of the window.
+ * @param height: height of the window.
+ * @returns: zoom level.
+ */
+////////////////////////////////////////////////////////////////////////////
+vgl.heightToZoom = function (z, width, height, viewAngle) {
+  'use strict';
+  viewAngle = viewAngle || (30 * Math.PI / 180.0);
+  z *= Math.tan(viewAngle / 2) * 2 * 256 / height;
+  var zoom = -Math.log2(z / 360);
+  return zoom;
+};
