@@ -1,0 +1,14 @@
+{
+  "name": "vgl",
+  "description": "VTK for the Web.",
+  "main": "vgl.js",
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/OpenGeoscience/vgl",
+  "moduleType": [],
+  "ignore": [
+    "**/*",
+    "!/vgl.js",
+    "!/vgl.min.js",
+    "!README.md"
+  ]
+}
