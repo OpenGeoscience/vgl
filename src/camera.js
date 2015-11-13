@@ -421,6 +421,19 @@ vgl.camera = function (arg) {
 
   ////////////////////////////////////////////////////////////////////////////
   /**
+   * Set the view-matrix for the camera and mark that it is up to date so that
+   * it won't be recomputed unless something else changes.
+   *
+   * @param {mat4} view: new view matrix.
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.setViewMatrix = function (view) {
+    mat4.copy(m_viewMatrix, view);
+    m_computeModelViewMatrixTime.modified();
+  };
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
    * Return camera projection matrix This method does not compute the
    * projection-matrix for the camera. It is assumed that a call to
    * computeProjectionMatrix has been made earlier.
@@ -430,6 +443,19 @@ vgl.camera = function (arg) {
   ////////////////////////////////////////////////////////////////////////////
   this.projectionMatrix = function () {
     return this.computeProjectionMatrix();
+  };
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
+   * Set the projection-matrix for the camera and mark that it is up to date so
+   * that it won't be recomputed unless something else changes.
+   *
+   * @param {mat4} proj: new projection matrix.
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.setProjectionMatrix = function (proj) {
+    mat4.copy(m_projectionMatrix, proj);
+    m_computeProjectMatrixTime.modified();
   };
 
   ////////////////////////////////////////////////////////////////////////////
