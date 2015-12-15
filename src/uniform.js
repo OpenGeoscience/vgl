@@ -275,8 +275,8 @@ vgl.modelViewOriginUniform = function (name, origin) {
        * units-per-pixel, and align.dx and .dy are either 0 or half the size of
        * a unit-per-pixel.  The alignment guarantees that the texels are
        * aligned with screen pixels. */
-      view[12] = Math.round(view[12] / align.round) * align.round + align.dx;
-      view[13] = Math.round(view[13] / align.round) * align.round + align.dy;
+      view[12] = Math.round(view[12] / align.roundx) * align.roundx + align.dx;
+      view[13] = Math.round(view[13] / align.roundy) * align.roundy + align.dy;
     }
     this.set(view);
   };
