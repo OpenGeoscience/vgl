@@ -6350,7 +6350,7 @@ vgl.camera = function (arg) {
         parseFloat(m_parallelExtents.zoom.toFixed(0))) {
       return null;
     }
-    var align = {round: unitsPerPixel, dx: 0, dy: 0};
+    var align = {roundx: unitsPerPixel, roundy: unitsPerPixel, dx: 0, dy: 0};
     /* If the screen is an odd number of pixels, shift the view center to the
      * center of a pixel so that the pixels fit discretely across the screen.
      * If an even number of pixels, align the view center between pixels for
@@ -8918,8 +8918,8 @@ vgl.modelViewOriginUniform = function (name, origin) {
        * units-per-pixel, and align.dx and .dy are either 0 or half the size of
        * a unit-per-pixel.  The alignment guarantees that the texels are
        * aligned with screen pixels. */
-      view[12] = Math.round(view[12] / align.round) * align.round + align.dx;
-      view[13] = Math.round(view[13] / align.round) * align.round + align.dy;
+      view[12] = Math.round(view[12] / align.roundx) * align.roundx + align.dx;
+      view[13] = Math.round(view[13] / align.roundy) * align.roundy + align.dy;
     }
     this.set(view);
   };
