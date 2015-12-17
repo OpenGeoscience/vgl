@@ -115,3 +115,45 @@ vgl.shader = function (type) {
 };
 
 inherit(vgl.shader, vgl.object);
+
+
+/* We can use the same shader multiple times if it is identical.  This caches
+ * the last N shaders and will reuse them when possible.  The cache keeps the
+ * most recently requested shader at the front.  If you are doing anything more
+ * to a shader then creating it and setting its source once, do not use this
+ * cache.
+ */
+(function () {
+  'use strict';
+  var m_shaderCache = [],
+      m_shaderCacheMaxSize = 10;
+
+  /////////////////////////////////////////////////////////////////////////////
+  /**
+   * Get a shader from the cache.  Create a new shader if necessary using a
+   * specific source.
+   *
+   * @param type One of vgl.GL.*_SHADER
+   * @param {string} source the source code of the shader.
+   */
+  /////////////////////////////////////////////////////////////////////////////
+  vgl.getCachedShader = function (type, source) {
+    for (var i = 0; i < m_shaderCache.length; i += 1) {
+      if (m_shaderCache[i].type === type &&
+          m_shaderCache[i].source === source) {
+        if (i) {
+          m_shaderCache.splice(0, 0, m_shaderCache.splice(i, 1)[0]);
+        }
+        return m_shaderCache[0].shader;
+      }
+    }
+    var shader = new vgl.shader(type);
+    shader.setShaderSource(source);
+    m_shaderCache.unshift({type: type, source: source, shader: shader});
+    if (m_shaderCache.length >= m_shaderCacheMaxSize) {
+      m_shaderCache.splice(m_shaderCacheMaxSize,
+                           m_shaderCache.length - m_shaderCacheMaxSize);
+    }
+    return shader;
+  };
+})();
