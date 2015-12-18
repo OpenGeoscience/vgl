@@ -7528,6 +7528,48 @@ vgl.shader = function (type) {
 
 inherit(vgl.shader, vgl.object);
 
+
+/* We can use the same shader multiple times if it is identical.  This caches
+ * the last N shaders and will reuse them when possible.  The cache keeps the
+ * most recently requested shader at the front.  If you are doing anything more
+ * to a shader then creating it and setting its source once, do not use this
+ * cache.
+ */
+(function () {
+  'use strict';
+  var m_shaderCache = [],
+      m_shaderCacheMaxSize = 10;
+
+  /////////////////////////////////////////////////////////////////////////////
+  /**
+   * Get a shader from the cache.  Create a new shader if necessary using a
+   * specific source.
+   *
+   * @param type One of vgl.GL.*_SHADER
+   * @param {string} source the source code of the shader.
+   */
+  /////////////////////////////////////////////////////////////////////////////
+  vgl.getCachedShader = function (type, source) {
+    for (var i = 0; i < m_shaderCache.length; i += 1) {
+      if (m_shaderCache[i].type === type &&
+          m_shaderCache[i].source === source) {
+        if (i) {
+          m_shaderCache.splice(0, 0, m_shaderCache.splice(i, 1)[0]);
+        }
+        return m_shaderCache[0].shader;
+      }
+    }
+    var shader = new vgl.shader(type);
+    shader.setShaderSource(source);
+    m_shaderCache.unshift({type: type, source: source, shader: shader});
+    if (m_shaderCache.length >= m_shaderCacheMaxSize) {
+      m_shaderCache.splice(m_shaderCacheMaxSize,
+                           m_shaderCache.length - m_shaderCacheMaxSize);
+    }
+    return shader;
+  };
+})();
+
 //////////////////////////////////////////////////////////////////////////////
 /**
  * @module vgl
@@ -9762,10 +9804,8 @@ vgl.utils.createTextureVertexShader = function (context) {
         '{',
         'gl_PointSize = pointSize;',
         'gl_Position = projectionMatrix * modelViewMatrix * vec4(vertexPosition, 1.0);',
-        ' iTextureCoord = textureCoord;', '}'].join('\n'),
-      shader = new vgl.shader(vgl.GL.VERTEX_SHADER);
-  shader.setShaderSource(vertexShaderSource);
-  return shader;
+        ' iTextureCoord = textureCoord;', '}'].join('\n');
+  return vgl.getCachedShader(vgl.GL.VERTEX_SHADER, vertexShaderSource);
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -9788,11 +9828,8 @@ vgl.utils.createTextureFragmentShader = function (context) {
         'void main(void) {',
         'gl_FragColor = vec4(texture2D(sampler2d, vec2(iTextureCoord.s, ' +
                         'iTextureCoord.t)).xyz, opacity);',
-        '}'].join('\n'),
-      shader = new vgl.shader(vgl.GL.FRAGMENT_SHADER);
-
-  shader.setShaderSource(fragmentShaderSource);
-  return shader;
+        '}'].join('\n');
+  return vgl.getCachedShader(vgl.GL.FRAGMENT_SHADER, fragmentShaderSource);
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -9818,11 +9855,8 @@ vgl.utils.createRgbaTextureFragmentShader = function (context) {
         '  color.w *= opacity;',
         '  gl_FragColor = color;',
         '}'
-      ].join('\n'),
-      shader = new vgl.shader(vgl.GL.FRAGMENT_SHADER);
-
-  shader.setShaderSource(fragmentShaderSource);
-  return shader;
+      ].join('\n');
+  return vgl.getCachedShader(vgl.GL.FRAGMENT_SHADER, fragmentShaderSource);
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -9850,11 +9884,8 @@ vgl.utils.createVertexShader = function (context) {
         '{',
         'gl_PointSize = pointSize;',
         'gl_Position = projectionMatrix * modelViewMatrix * vec4(vertexPosition, 1.0);',
-        ' iVertexColor = vertexColor;', '}'].join('\n'),
-      shader = new vgl.shader(vgl.GL.VERTEX_SHADER);
-
-  shader.setShaderSource(vertexShaderSource);
-  return shader;
+        ' iVertexColor = vertexColor;', '}'].join('\n');
+  return vgl.getCachedShader(vgl.GL.VERTEX_SHADER, vertexShaderSource);
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -9882,11 +9913,8 @@ vgl.utils.createPointVertexShader = function (context) {
         '{',
         'gl_PointSize =  vertexSize;',
         'gl_Position = projectionMatrix * modelViewMatrix * vec4(vertexPosition, 1.0);',
-        ' iVertexColor = vertexColor;', '}'].join('\n'),
-      shader = new vgl.shader(vgl.GL.VERTEX_SHADER);
-
-  shader.setShaderSource(vertexShaderSource);
-  return shader;
+        ' iVertexColor = vertexColor;', '}'].join('\n');
+  return vgl.getCachedShader(vgl.GL.VERTEX_SHADER, vertexShaderSource);
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -9911,11 +9939,8 @@ vgl.utils.createVertexShaderSolidColor = function (context) {
         '{',
         'gl_PointSize = pointSize;',
         'gl_Position = projectionMatrix * modelViewMatrix * vec4(vertexPosition, 1.0);',
-        '}'].join('\n'),
-    shader = new vgl.shader(vgl.GL.VERTEX_SHADER);
-
-  shader.setShaderSource(vertexShaderSource);
-  return shader;
+        '}'].join('\n');
+  return vgl.getCachedShader(vgl.GL.VERTEX_SHADER, vertexShaderSource);
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -9948,11 +9973,8 @@ vgl.utils.createVertexShaderColorMap = function (context, min, max) {
         'gl_PointSize = pointSize;',
         'gl_Position = projectionMatrix * modelViewMatrix * vec4(vertexPosition, 1.0);',
         'iVertexScalar = (vertexScalar-lutMin)/(lutMax-lutMin);',
-        '}'].join('\n'),
-      shader = new vgl.shader(vgl.GL.VERTEX_SHADER);
-
-  shader.setShaderSource(vertexShaderSource);
-  return shader;
+        '}'].join('\n');
+  return vgl.getCachedShader(vgl.GL.VERTEX_SHADER, vertexShaderSource);
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -9972,11 +9994,8 @@ vgl.utils.createFragmentShader = function (context) {
                               'uniform mediump float opacity;',
                               'void main(void) {',
                               'gl_FragColor = vec4(iVertexColor, opacity);',
-                              '}'].join('\n'),
-      shader = new vgl.shader(vgl.GL.FRAGMENT_SHADER);
-
-  shader.setShaderSource(fragmentShaderSource);
-  return shader;
+                              '}'].join('\n');
+  return vgl.getCachedShader(vgl.GL.FRAGMENT_SHADER, fragmentShaderSource);
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -10012,13 +10031,8 @@ vgl.utils.createPhongVertexShader = function (context) {
       'gl_Position = projectionMatrix * varPosition;',
       'varNormal = vec3(normalMatrix * vec4(vertexNormal, 0.0));',
       'varVertexColor = vertexColor;',
-      '}'].join('\n'),
-
-      shader = new vgl.shader(vgl.GL.VERTEX_SHADER);
-
-  shader.setShaderSource(vertexShaderSource);
-
-  return shader;
+      '}'].join('\n');
+  return vgl.getCachedShader(vgl.GL.VERTEX_SHADER, vertexShaderSource);
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -10058,11 +10072,8 @@ vgl.utils.createPhongFragmentShader = function (context) {
     '  color = lambertian * varVertexColor;',
     '}',
     'gl_FragColor = vec4(color * opacity, 1.0 - opacity);',
-    '}'].join('\n'),
-    shader = new vgl.shader(vgl.GL.FRAGMENT_SHADER);
-
-  shader.setShaderSource(fragmentShaderSource);
-  return shader;
+    '}'].join('\n');
+  return vgl.getCachedShader(vgl.GL.FRAGMENT_SHADER, fragmentShaderSource);
 };
 
 
@@ -10082,11 +10093,8 @@ vgl.utils.createFragmentShaderSolidColor = function (context, color) {
       'uniform mediump float opacity;',
       'void main(void) {',
       'gl_FragColor = vec4(' + color[0] + ',' + color[1] + ',' + color[2] + ', opacity);',
-      '}'].join('\n'),
-    shader = new vgl.shader(vgl.GL.FRAGMENT_SHADER);
-
-  shader.setShaderSource(fragmentShaderSource);
-  return shader;
+      '}'].join('\n');
+  return vgl.getCachedShader(vgl.GL.FRAGMENT_SHADER, fragmentShaderSource);
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -10109,11 +10117,8 @@ vgl.utils.createFragmentShaderColorMap = function (context) {
         'void main(void) {',
         'gl_FragColor = vec4(texture2D(sampler2d, vec2(iVertexScalar, ' +
             '0.0)).xyz, opacity);',
-        '}'].join('\n'),
-      shader = new vgl.shader(vgl.GL.FRAGMENT_SHADER);
-
-  shader.setShaderSource(fragmentShaderSource);
-  return shader;
+        '}'].join('\n');
+  return vgl.getCachedShader(vgl.GL.FRAGMENT_SHADER, fragmentShaderSource);
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -10147,10 +10152,8 @@ vgl.utils.createPointSpritesVertexShader = function (context) {
         'iVertexScalar = vertexPosition.z;',
         'gl_Position = projectionMatrix * modelViewMatrix * ' +
             'vec4(vertexPosition.xy, height, 1.0);',
-        ' iVertexColor = vertexColor;', '}'].join('\n'),
-      shader = new vgl.shader(vgl.GL.VERTEX_SHADER);
-  shader.setShaderSource(vertexShaderSource);
-  return shader;
+        ' iVertexColor = vertexColor;', '}'].join('\n');
+  return vgl.getCachedShader(vgl.GL.VERTEX_SHADER, vertexShaderSource);
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -10194,11 +10197,8 @@ vgl.utils.createPointSpritesFragmentShader = function (context) {
         '} else {',
         '  gl_FragColor = vec4(texture2D(opacityLookup, realTexCoord).xyz, texOpacity);',
         '}}'
-    ].join('\n'),
-    shader = new vgl.shader(vgl.GL.FRAGMENT_SHADER);
-
-  shader.setShaderSource(fragmentShaderSource);
-  return shader;
+    ].join('\n');
+  return vgl.getCachedShader(vgl.GL.FRAGMENT_SHADER, fragmentShaderSource);
 };
 
 //////////////////////////////////////////////////////////////////////////////
