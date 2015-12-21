@@ -134,12 +134,14 @@ inherit(vgl.shader, vgl.object);
    * specific source.
    *
    * @param type One of vgl.GL.*_SHADER
+   * @param context the GL context for the shader.
    * @param {string} source the source code of the shader.
    */
   /////////////////////////////////////////////////////////////////////////////
-  vgl.getCachedShader = function (type, source) {
+  vgl.getCachedShader = function (type, context, source) {
     for (var i = 0; i < m_shaderCache.length; i += 1) {
       if (m_shaderCache[i].type === type &&
+          m_shaderCache[i].context === context &&
           m_shaderCache[i].source === source) {
         if (i) {
           m_shaderCache.splice(0, 0, m_shaderCache.splice(i, 1)[0]);
@@ -149,7 +151,12 @@ inherit(vgl.shader, vgl.object);
     }
     var shader = new vgl.shader(type);
     shader.setShaderSource(source);
-    m_shaderCache.unshift({type: type, source: source, shader: shader});
+    m_shaderCache.unshift({
+      type: type,
+      context: context,
+      source: source,
+      shader: shader
+    });
     if (m_shaderCache.length >= m_shaderCacheMaxSize) {
       m_shaderCache.splice(m_shaderCacheMaxSize,
                            m_shaderCache.length - m_shaderCacheMaxSize);
