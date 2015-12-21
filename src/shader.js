@@ -163,4 +163,13 @@ inherit(vgl.shader, vgl.object);
     }
     return shader;
   };
+
+  /////////////////////////////////////////////////////////////////////////////
+  /**
+   * Clear the shader cache.
+   */
+  /////////////////////////////////////////////////////////////////////////////
+  vgl.clearCachedShaders = function () {
+    m_shaderCache.splice(0, m_shaderCache.length);
+  };
 })();
