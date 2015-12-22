@@ -172,13 +172,11 @@ inherit(vgl.shader, vgl.object);
    */
   /////////////////////////////////////////////////////////////////////////////
   vgl.clearCachedShaders = function (context) {
-    console.log(context, m_shaderCache, m_shaderCache.length);
     for (var i = m_shaderCache.length - 1; i >= 0; i -= 1) {
       if (context === null || context === undefined ||
           m_shaderCache[i].context === context) {
         m_shaderCache.splice(i, 1);
       }
     }
-    console.log(context, m_shaderCache, m_shaderCache.length);
   };
 })();
