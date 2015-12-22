@@ -294,6 +294,7 @@ vgl.renderWindow = function (canvas) {
     for (i = 0; i < m_renderers.length; i += 1) {
       m_renderers[i]._cleanup(renderState);
     }
+    vgl.clearCachedShaders(renderState ? renderState.m_context : null);
   };
 
   ////////////////////////////////////////////////////////////////////////////
