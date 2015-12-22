@@ -167,9 +167,18 @@ inherit(vgl.shader, vgl.object);
   /////////////////////////////////////////////////////////////////////////////
   /**
    * Clear the shader cache.
+   *
+   * @param context the GL context to clear, or null for clear all.
    */
   /////////////////////////////////////////////////////////////////////////////
-  vgl.clearCachedShaders = function () {
-    m_shaderCache.splice(0, m_shaderCache.length);
+  vgl.clearCachedShaders = function (context) {
+    console.log(context, m_shaderCache, m_shaderCache.length);
+    for (var i = m_shaderCache.length - 1; i >= 0; i -= 1) {
+      if (context === null || context === undefined ||
+          m_shaderCache[i].context === context) {
+        m_shaderCache.splice(i, 1);
+      }
+    }
+    console.log(context, m_shaderCache, m_shaderCache.length);
   };
 })();
