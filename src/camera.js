@@ -425,10 +425,16 @@ vgl.camera = function (arg) {
    * it won't be recomputed unless something else changes.
    *
    * @param {mat4} view: new view matrix.
+   * @param {boolean} preserveType: if true, clone the input using slice.  This
+   *    can be used to ensure the array is a specific precision.
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.setViewMatrix = function (view) {
-    mat4.copy(m_viewMatrix, view);
+  this.setViewMatrix = function (view, preserveType) {
+    if (!preserveType) {
+      mat4.copy(m_viewMatrix, view);
+    } else {
+      m_viewMatrix = view.slice();
+    }
     m_computeModelViewMatrixTime.modified();
   };
 

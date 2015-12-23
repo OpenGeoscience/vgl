@@ -266,8 +266,14 @@ vgl.renderer = function (arg) {
       actor = sortedActors[i][1];
       if (actor.referenceFrame() ===
           vgl.boundingObject.ReferenceFrame.Relative) {
-        mat4.multiply(renSt.m_modelViewMatrix, m_this.m_camera.viewMatrix(),
-          actor.matrix());
+        var view = m_this.m_camera.viewMatrix();
+        /* If the view matrix is a plain array, keep it as such.  This is
+         * intended to preserve precision, and will only be the case if the
+         * view matrix was created by delibrately setting it as an array. */
+        if (view instanceof Array) {
+          renSt.m_modelViewMatrix = new Array(16);
+        }
+        mat4.multiply(renSt.m_modelViewMatrix, view, actor.matrix());
         renSt.m_projectionMatrix = m_this.m_camera.projectionMatrix();
         renSt.m_modelViewAlignment = m_this.m_camera.viewAlignment();
       } else {
