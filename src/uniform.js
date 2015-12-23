@@ -3,7 +3,7 @@
  * @module vgl
  */
 
-/*global vgl, mat4, vec3, inherit*/
+/*global vgl, mat4, inherit*/
 //////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -248,7 +248,7 @@ vgl.modelViewOriginUniform = function (name, origin) {
     name = 'modelViewMatrix';
   }
 
-  var m_origin = vec3.fromValues(origin[0], origin[1], origin[2]);
+  var m_origin = [origin[0], origin[1], origin[2] || 0];
 
   vgl.uniform.call(this, vgl.GL.FLOAT_MAT4, name);
 
