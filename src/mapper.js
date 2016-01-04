@@ -32,21 +32,26 @@ vgl.mapper = function (arg) {
       m_bufferVertexAttributeMap = {},
       m_dynamicDraw = arg.dynamicDraw === undefined ? false : arg.dynamicDraw,
       m_glCompileTimestamp = vgl.timestamp(),
-      m_context = null;
+      m_context = null,
+      m_this = this;
 
   ////////////////////////////////////////////////////////////////////////////
   /**
    * Delete cached VBO if any
-   *
-   * @private
    */
   ////////////////////////////////////////////////////////////////////////////
-  function deleteVertexBufferObjects(renderState) {
+  this.deleteVertexBufferObjects = function (renderState) {
     var i;
-    for (i = 0; i < m_buffers.length; i += 1) {
-      renderState.m_context.deleteBuffer(m_buffers[i]);
+    var context = m_context;
+    if (renderState) {
+      context = renderState.m_context;
     }
-  }
+    if (context) {
+      for (i = 0; i < m_buffers.length; i += 1) {
+        context.deleteBuffer(m_buffers[i]);
+      }
+    }
+  };
 
   ////////////////////////////////////////////////////////////////////////////
   /**
@@ -121,7 +126,7 @@ vgl.mapper = function (arg) {
   ////////////////////////////////////////////////////////////////////////////
   function setupDrawObjects(renderState) {
     // Delete buffer objects from past if any.
-    deleteVertexBufferObjects(renderState);
+    m_this.deleteVertexBufferObjects(renderState);
 
     // Clear any cache related to buffers
     cleanUpDrawObjects(renderState);
