@@ -203,7 +203,9 @@ vgl.renderer = function (arg) {
     renSt = new vgl.renderState();
     renSt.m_renderer = m_this;
     renSt.m_context = m_this.renderWindow().context();
-    m_this.m_depthBits = renSt.m_context.getParameter(vgl.GL.DEPTH_BITS);
+    if (!m_this.m_depthBits || m_this.m_contextChanged) {
+      m_this.m_depthBits = renSt.m_context.getParameter(vgl.GL.DEPTH_BITS);
+    }
     renSt.m_contextChanged = m_this.m_contextChanged;
 
     if (m_this.m_renderPasses) {
@@ -558,6 +560,12 @@ vgl.renderer = function (arg) {
   ////////////////////////////////////////////////////////////////////////////
   this.removeActor = function (actor) {
     if (m_this.m_sceneRoot.children().indexOf(actor) !== -1) {
+      /* When we remove an actor, free the VBOs of the mapper and mark the
+       * mapper as modified; it will reallocate VBOs as necessary. */
+      if (actor.mapper()) {
+        actor.mapper().deleteVertexBufferObjects();
+        actor.mapper().modified();
+      }
       m_this.m_sceneRoot.removeChild(actor);
       m_this.modified();
       return true;
