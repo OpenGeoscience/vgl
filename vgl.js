@@ -3519,21 +3519,26 @@ vgl.mapper = function (arg) {
       m_bufferVertexAttributeMap = {},
       m_dynamicDraw = arg.dynamicDraw === undefined ? false : arg.dynamicDraw,
       m_glCompileTimestamp = vgl.timestamp(),
-      m_context = null;
+      m_context = null,
+      m_this = this;
 
   ////////////////////////////////////////////////////////////////////////////
   /**
    * Delete cached VBO if any
-   *
-   * @private
    */
   ////////////////////////////////////////////////////////////////////////////
-  function deleteVertexBufferObjects(renderState) {
+  this.deleteVertexBufferObjects = function (renderState) {
     var i;
-    for (i = 0; i < m_buffers.length; i += 1) {
-      renderState.m_context.deleteBuffer(m_buffers[i]);
+    var context = m_context;
+    if (renderState) {
+      context = renderState.m_context;
     }
-  }
+    if (context) {
+      for (i = 0; i < m_buffers.length; i += 1) {
+        context.deleteBuffer(m_buffers[i]);
+      }
+    }
+  };
 
   ////////////////////////////////////////////////////////////////////////////
   /**
@@ -3608,7 +3613,7 @@ vgl.mapper = function (arg) {
   ////////////////////////////////////////////////////////////////////////////
   function setupDrawObjects(renderState) {
     // Delete buffer objects from past if any.
-    deleteVertexBufferObjects(renderState);
+    m_this.deleteVertexBufferObjects(renderState);
 
     // Clear any cache related to buffers
     cleanUpDrawObjects(renderState);
@@ -4700,7 +4705,9 @@ vgl.renderer = function (arg) {
     renSt = new vgl.renderState();
     renSt.m_renderer = m_this;
     renSt.m_context = m_this.renderWindow().context();
-    m_this.m_depthBits = renSt.m_context.getParameter(vgl.GL.DEPTH_BITS);
+    if (!m_this.m_depthBits || m_this.m_contextChanged) {
+      m_this.m_depthBits = renSt.m_context.getParameter(vgl.GL.DEPTH_BITS);
+    }
     renSt.m_contextChanged = m_this.m_contextChanged;
 
     if (m_this.m_renderPasses) {
@@ -4763,8 +4770,14 @@ vgl.renderer = function (arg) {
       actor = sortedActors[i][1];
       if (actor.referenceFrame() ===
           vgl.boundingObject.ReferenceFrame.Relative) {
-        mat4.multiply(renSt.m_modelViewMatrix, m_this.m_camera.viewMatrix(),
-          actor.matrix());
+        var view = m_this.m_camera.viewMatrix();
+        /* If the view matrix is a plain array, keep it as such.  This is
+         * intended to preserve precision, and will only be the case if the
+         * view matrix was created by delibrately setting it as an array. */
+        if (view instanceof Array) {
+          renSt.m_modelViewMatrix = new Array(16);
+        }
+        mat4.multiply(renSt.m_modelViewMatrix, view, actor.matrix());
         renSt.m_projectionMatrix = m_this.m_camera.projectionMatrix();
         renSt.m_modelViewAlignment = m_this.m_camera.viewAlignment();
       } else {
@@ -5049,6 +5062,12 @@ vgl.renderer = function (arg) {
   ////////////////////////////////////////////////////////////////////////////
   this.removeActor = function (actor) {
     if (m_this.m_sceneRoot.children().indexOf(actor) !== -1) {
+      /* When we remove an actor, free the VBOs of the mapper and mark the
+       * mapper as modified; it will reallocate VBOs as necessary. */
+      if (actor.mapper()) {
+        actor.mapper().deleteVertexBufferObjects();
+        actor.mapper().modified();
+      }
       m_this.m_sceneRoot.removeChild(actor);
       m_this.modified();
       return true;
@@ -5573,6 +5592,7 @@ vgl.renderWindow = function (canvas) {
     for (i = 0; i < m_renderers.length; i += 1) {
       m_renderers[i]._cleanup(renderState);
     }
+    vgl.clearCachedShaders(renderState ? renderState.m_context : null);
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -6069,10 +6089,16 @@ vgl.camera = function (arg) {
    * it won't be recomputed unless something else changes.
    *
    * @param {mat4} view: new view matrix.
+   * @param {boolean} preserveType: if true, clone the input using slice.  This
+   *    can be used to ensure the array is a specific precision.
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.setViewMatrix = function (view) {
-    mat4.copy(m_viewMatrix, view);
+  this.setViewMatrix = function (view, preserveType) {
+    if (!preserveType) {
+      mat4.copy(m_viewMatrix, view);
+    } else {
+      m_viewMatrix = view.slice();
+    }
     m_computeModelViewMatrixTime.modified();
   };
 
@@ -7546,12 +7572,14 @@ inherit(vgl.shader, vgl.object);
    * specific source.
    *
    * @param type One of vgl.GL.*_SHADER
+   * @param context the GL context for the shader.
    * @param {string} source the source code of the shader.
    */
   /////////////////////////////////////////////////////////////////////////////
-  vgl.getCachedShader = function (type, source) {
+  vgl.getCachedShader = function (type, context, source) {
     for (var i = 0; i < m_shaderCache.length; i += 1) {
       if (m_shaderCache[i].type === type &&
+          m_shaderCache[i].context === context &&
           m_shaderCache[i].source === source) {
         if (i) {
           m_shaderCache.splice(0, 0, m_shaderCache.splice(i, 1)[0]);
@@ -7561,12 +7589,33 @@ inherit(vgl.shader, vgl.object);
     }
     var shader = new vgl.shader(type);
     shader.setShaderSource(source);
-    m_shaderCache.unshift({type: type, source: source, shader: shader});
+    m_shaderCache.unshift({
+      type: type,
+      context: context,
+      source: source,
+      shader: shader
+    });
     if (m_shaderCache.length >= m_shaderCacheMaxSize) {
       m_shaderCache.splice(m_shaderCacheMaxSize,
                            m_shaderCache.length - m_shaderCacheMaxSize);
     }
     return shader;
+  };
+
+  /////////////////////////////////////////////////////////////////////////////
+  /**
+   * Clear the shader cache.
+   *
+   * @param context the GL context to clear, or null for clear all.
+   */
+  /////////////////////////////////////////////////////////////////////////////
+  vgl.clearCachedShaders = function (context) {
+    for (var i = m_shaderCache.length - 1; i >= 0; i -= 1) {
+      if (context === null || context === undefined ||
+          m_shaderCache[i].context === context) {
+        m_shaderCache.splice(i, 1);
+      }
+    }
   };
 })();
 
@@ -8688,7 +8737,7 @@ inherit(vgl.lookupTable, vgl.texture);
  * @module vgl
  */
 
-/*global vgl, mat4, vec3, inherit*/
+/*global vgl, mat4, inherit*/
 //////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -8933,7 +8982,7 @@ vgl.modelViewOriginUniform = function (name, origin) {
     name = 'modelViewMatrix';
   }
 
-  var m_origin = vec3.fromValues(origin[0], origin[1], origin[2]);
+  var m_origin = [origin[0], origin[1], origin[2] || 0];
 
   vgl.uniform.call(this, vgl.GL.FLOAT_MAT4, name);
 
@@ -9792,7 +9841,6 @@ vgl.utils.computePowerOfTwo = function (value, pow) {
 //////////////////////////////////////////////////////////////////////////////
 vgl.utils.createTextureVertexShader = function (context) {
   'use strict';
-  context = context; /* unused parameter */
   var vertexShaderSource = [
         'attribute vec3 vertexPosition;',
         'attribute vec3 textureCoord;',
@@ -9805,7 +9853,8 @@ vgl.utils.createTextureVertexShader = function (context) {
         'gl_PointSize = pointSize;',
         'gl_Position = projectionMatrix * modelViewMatrix * vec4(vertexPosition, 1.0);',
         ' iTextureCoord = textureCoord;', '}'].join('\n');
-  return vgl.getCachedShader(vgl.GL.VERTEX_SHADER, vertexShaderSource);
+  return vgl.getCachedShader(vgl.GL.VERTEX_SHADER, context,
+                             vertexShaderSource);
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -9820,7 +9869,6 @@ vgl.utils.createTextureVertexShader = function (context) {
 //////////////////////////////////////////////////////////////////////////////
 vgl.utils.createTextureFragmentShader = function (context) {
   'use strict';
-  context = context; /* unused parameter */
   var fragmentShaderSource = [
         'varying highp vec3 iTextureCoord;',
         'uniform sampler2D sampler2d;',
@@ -9829,7 +9877,8 @@ vgl.utils.createTextureFragmentShader = function (context) {
         'gl_FragColor = vec4(texture2D(sampler2d, vec2(iTextureCoord.s, ' +
                         'iTextureCoord.t)).xyz, opacity);',
         '}'].join('\n');
-  return vgl.getCachedShader(vgl.GL.FRAGMENT_SHADER, fragmentShaderSource);
+  return vgl.getCachedShader(vgl.GL.FRAGMENT_SHADER, context,
+                             fragmentShaderSource);
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -9844,7 +9893,6 @@ vgl.utils.createTextureFragmentShader = function (context) {
 //////////////////////////////////////////////////////////////////////////////
 vgl.utils.createRgbaTextureFragmentShader = function (context) {
   'use strict';
-  context = context; /* unused parameter */
   var fragmentShaderSource = [
         'varying highp vec3 iTextureCoord;',
         'uniform sampler2D sampler2d;',
@@ -9856,7 +9904,8 @@ vgl.utils.createRgbaTextureFragmentShader = function (context) {
         '  gl_FragColor = color;',
         '}'
       ].join('\n');
-  return vgl.getCachedShader(vgl.GL.FRAGMENT_SHADER, fragmentShaderSource);
+  return vgl.getCachedShader(vgl.GL.FRAGMENT_SHADER, context,
+                             fragmentShaderSource);
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -9871,7 +9920,6 @@ vgl.utils.createRgbaTextureFragmentShader = function (context) {
 //////////////////////////////////////////////////////////////////////////////
 vgl.utils.createVertexShader = function (context) {
   'use strict';
-  context = context; /* unused parameter */
   var vertexShaderSource = [
         'attribute vec3 vertexPosition;',
         'attribute vec3 vertexColor;',
@@ -9885,7 +9933,8 @@ vgl.utils.createVertexShader = function (context) {
         'gl_PointSize = pointSize;',
         'gl_Position = projectionMatrix * modelViewMatrix * vec4(vertexPosition, 1.0);',
         ' iVertexColor = vertexColor;', '}'].join('\n');
-  return vgl.getCachedShader(vgl.GL.VERTEX_SHADER, vertexShaderSource);
+  return vgl.getCachedShader(vgl.GL.VERTEX_SHADER, context,
+                             vertexShaderSource);
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -9900,7 +9949,6 @@ vgl.utils.createVertexShader = function (context) {
 //////////////////////////////////////////////////////////////////////////////
 vgl.utils.createPointVertexShader = function (context) {
   'use strict';
-  context = context; /* unused parameter */
   var vertexShaderSource = [
         'attribute vec3 vertexPosition;',
         'attribute vec3 vertexColor;',
@@ -9914,7 +9962,8 @@ vgl.utils.createPointVertexShader = function (context) {
         'gl_PointSize =  vertexSize;',
         'gl_Position = projectionMatrix * modelViewMatrix * vec4(vertexPosition, 1.0);',
         ' iVertexColor = vertexColor;', '}'].join('\n');
-  return vgl.getCachedShader(vgl.GL.VERTEX_SHADER, vertexShaderSource);
+  return vgl.getCachedShader(vgl.GL.VERTEX_SHADER, context,
+                             vertexShaderSource);
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -9929,7 +9978,6 @@ vgl.utils.createPointVertexShader = function (context) {
 //////////////////////////////////////////////////////////////////////////////
 vgl.utils.createVertexShaderSolidColor = function (context) {
   'use strict';
-  context = context; /* unused parameter */
   var vertexShaderSource = [
         'attribute vec3 vertexPosition;',
         'uniform mediump float pointSize;',
@@ -9940,7 +9988,8 @@ vgl.utils.createVertexShaderSolidColor = function (context) {
         'gl_PointSize = pointSize;',
         'gl_Position = projectionMatrix * modelViewMatrix * vec4(vertexPosition, 1.0);',
         '}'].join('\n');
-  return vgl.getCachedShader(vgl.GL.VERTEX_SHADER, vertexShaderSource);
+  return vgl.getCachedShader(vgl.GL.VERTEX_SHADER, context,
+                             vertexShaderSource);
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -9956,7 +10005,6 @@ vgl.utils.createVertexShaderSolidColor = function (context) {
 //////////////////////////////////////////////////////////////////////////////
 vgl.utils.createVertexShaderColorMap = function (context, min, max) {
   'use strict';
-  context = context; /* unused parameter */
   min = min; /* unused parameter */
   max = max; /* unused parameter */
   var vertexShaderSource = [
@@ -9974,7 +10022,8 @@ vgl.utils.createVertexShaderColorMap = function (context, min, max) {
         'gl_Position = projectionMatrix * modelViewMatrix * vec4(vertexPosition, 1.0);',
         'iVertexScalar = (vertexScalar-lutMin)/(lutMax-lutMin);',
         '}'].join('\n');
-  return vgl.getCachedShader(vgl.GL.VERTEX_SHADER, vertexShaderSource);
+  return vgl.getCachedShader(vgl.GL.VERTEX_SHADER, context,
+                             vertexShaderSource);
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -9989,13 +10038,13 @@ vgl.utils.createVertexShaderColorMap = function (context, min, max) {
 //////////////////////////////////////////////////////////////////////////////
 vgl.utils.createFragmentShader = function (context) {
   'use strict';
-  context = context; /* unused parameter */
   var fragmentShaderSource = ['varying mediump vec3 iVertexColor;',
                               'uniform mediump float opacity;',
                               'void main(void) {',
                               'gl_FragColor = vec4(iVertexColor, opacity);',
                               '}'].join('\n');
-  return vgl.getCachedShader(vgl.GL.FRAGMENT_SHADER, fragmentShaderSource);
+  return vgl.getCachedShader(vgl.GL.FRAGMENT_SHADER, context,
+                             fragmentShaderSource);
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -10010,8 +10059,6 @@ vgl.utils.createFragmentShader = function (context) {
 //////////////////////////////////////////////////////////////////////////////
 vgl.utils.createPhongVertexShader = function (context) {
   'use strict';
-  context = context; /* unused parameter */
-
   var vertexShaderSource = [
       'attribute highp vec3 vertexPosition;',
       'attribute mediump vec3 vertexNormal;',
@@ -10032,7 +10079,8 @@ vgl.utils.createPhongVertexShader = function (context) {
       'varNormal = vec3(normalMatrix * vec4(vertexNormal, 0.0));',
       'varVertexColor = vertexColor;',
       '}'].join('\n');
-  return vgl.getCachedShader(vgl.GL.VERTEX_SHADER, vertexShaderSource);
+  return vgl.getCachedShader(vgl.GL.VERTEX_SHADER, context,
+                             vertexShaderSource);
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -10049,7 +10097,6 @@ vgl.utils.createPhongVertexShader = function (context) {
 //////////////////////////////////////////////////////////////////////////////
 vgl.utils.createPhongFragmentShader = function (context) {
   'use strict';
-  context = context; /* unused parameter */
   var fragmentShaderSource = [
     'uniform mediump float opacity;',
     'precision mediump float;',
@@ -10073,7 +10120,8 @@ vgl.utils.createPhongFragmentShader = function (context) {
     '}',
     'gl_FragColor = vec4(color * opacity, 1.0 - opacity);',
     '}'].join('\n');
-  return vgl.getCachedShader(vgl.GL.FRAGMENT_SHADER, fragmentShaderSource);
+  return vgl.getCachedShader(vgl.GL.FRAGMENT_SHADER, context,
+                             fragmentShaderSource);
 };
 
 
@@ -10094,7 +10142,8 @@ vgl.utils.createFragmentShaderSolidColor = function (context, color) {
       'void main(void) {',
       'gl_FragColor = vec4(' + color[0] + ',' + color[1] + ',' + color[2] + ', opacity);',
       '}'].join('\n');
-  return vgl.getCachedShader(vgl.GL.FRAGMENT_SHADER, fragmentShaderSource);
+  return vgl.getCachedShader(vgl.GL.FRAGMENT_SHADER, context,
+                             fragmentShaderSource);
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -10109,7 +10158,6 @@ vgl.utils.createFragmentShaderSolidColor = function (context, color) {
 //////////////////////////////////////////////////////////////////////////////
 vgl.utils.createFragmentShaderColorMap = function (context) {
   'use strict';
-  context = context; /* unused parameter */
   var fragmentShaderSource = [
         'varying mediump float iVertexScalar;',
         'uniform sampler2D sampler2d;',
@@ -10118,7 +10166,8 @@ vgl.utils.createFragmentShaderColorMap = function (context) {
         'gl_FragColor = vec4(texture2D(sampler2d, vec2(iVertexScalar, ' +
             '0.0)).xyz, opacity);',
         '}'].join('\n');
-  return vgl.getCachedShader(vgl.GL.FRAGMENT_SHADER, fragmentShaderSource);
+  return vgl.getCachedShader(vgl.GL.FRAGMENT_SHADER, context,
+                             fragmentShaderSource);
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -10133,7 +10182,6 @@ vgl.utils.createFragmentShaderColorMap = function (context) {
 //////////////////////////////////////////////////////////////////////////////
 vgl.utils.createPointSpritesVertexShader = function (context) {
   'use strict';
-  context = context; /* unused parameter */
   var vertexShaderSource = [
         'attribute vec3 vertexPosition;',
         'attribute vec3 vertexColor;',
@@ -10153,7 +10201,8 @@ vgl.utils.createPointSpritesVertexShader = function (context) {
         'gl_Position = projectionMatrix * modelViewMatrix * ' +
             'vec4(vertexPosition.xy, height, 1.0);',
         ' iVertexColor = vertexColor;', '}'].join('\n');
-  return vgl.getCachedShader(vgl.GL.VERTEX_SHADER, vertexShaderSource);
+  return vgl.getCachedShader(vgl.GL.VERTEX_SHADER, context,
+                             vertexShaderSource);
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -10168,7 +10217,6 @@ vgl.utils.createPointSpritesVertexShader = function (context) {
 //////////////////////////////////////////////////////////////////////////////
 vgl.utils.createPointSpritesFragmentShader = function (context) {
   'use strict';
-  context = context; /* unused parameter */
   var fragmentShaderSource = [
         'varying mediump vec3 iVertexColor;',
         'varying highp float iVertexScalar;',
@@ -10198,7 +10246,8 @@ vgl.utils.createPointSpritesFragmentShader = function (context) {
         '  gl_FragColor = vec4(texture2D(opacityLookup, realTexCoord).xyz, texOpacity);',
         '}}'
     ].join('\n');
-  return vgl.getCachedShader(vgl.GL.FRAGMENT_SHADER, fragmentShaderSource);
+  return vgl.getCachedShader(vgl.GL.FRAGMENT_SHADER, context,
+                             fragmentShaderSource);
 };
 
 //////////////////////////////////////////////////////////////////////////////
