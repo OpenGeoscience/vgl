@@ -288,8 +288,9 @@ vgl.shaderProgram = function () {
   this.deleteVertexAndFragment = function (renderState) {
     var i;
     for (i = 0; i < m_shaders.length; i += 1) {
-      renderState.m_context.detachShader(m_shaders[i].shaderHandle());
-      renderState.m_context.deleteShader(m_shaders[i].shaderHandle());
+      renderState.m_context.detachShader(m_shaders[i].shaderHandle(renderState));
+      renderState.m_context.deleteShader(m_shaders[i].shaderHandle(renderState));
+      m_shaders[i].removeContext(renderState);
     }
   };
 

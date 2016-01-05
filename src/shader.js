@@ -22,18 +22,59 @@ vgl.shader = function (type) {
   }
   vgl.object.call(this);
 
-  var m_shaderHandle = null,
-      m_compileTimestamp = vgl.timestamp(),
+  var m_shaderContexts = [],
       m_shaderType = type,
       m_shaderSource = '';
+
+  /**
+   * A shader can be associated with multiple contexts.  Each context needs to
+   * be compiled and attached separately.  These are tracked in the
+   * m_shaderContexts array.
+   *
+   * @param renderState a renderState that includes a m_context value.
+   * @return an object with context, compileTimestamp, and, if compiled, a
+   *    shaderHandle entry.
+   */
+  this._getContextEntry = function (renderState) {
+    var context = renderState.m_context, i, entry;
+    for (i = 0; i < m_shaderContexts.length; i += 1) {
+      if (m_shaderContexts[i].context === context) {
+        return m_shaderContexts[i];
+      }
+    }
+    entry = {
+      context: context,
+      compileTimestamp: vgl.timestamp()
+    };
+    m_shaderContexts.push(entry);
+    return entry;
+  };
+
+  /**
+   * Remove the context from the list of tracked contexts.  This allows the
+   * associated shader handle to be GCed.  Does nothing if the context is not
+   * in the list of tracked contexts.
+   *
+   * @param renderState a renderState that includes a m_context value.
+   */
+  this.removeContext = function (renderState) {
+    var context = renderState.m_context, i;
+    for (i = 0; i < m_shaderContexts.length; i += 1) {
+      if (m_shaderContexts[i].context === context) {
+        m_shaderContexts.splice(i, 1);
+        return;
+      }
+    }
+  };
 
   /////////////////////////////////////////////////////////////////////////////
   /**
    * Get shader handle
    */
   /////////////////////////////////////////////////////////////////////////////
-  this.shaderHandle = function () {
-    return m_shaderHandle;
+  this.shaderHandle = function (renderState) {
+    var entry = this._getContextEntry(renderState);
+    return entry.shaderHandle;
   };
 
   /////////////////////////////////////////////////////////////////////////////
@@ -78,28 +119,29 @@ vgl.shader = function (type) {
    */
   /////////////////////////////////////////////////////////////////////////////
   this.compile = function (renderState) {
-    if (this.getMTime() < m_compileTimestamp.getMTime()) {
-      return m_shaderHandle;
+    var entry = this._getContextEntry(renderState);
+    if (this.getMTime() < entry.compileTimestamp.getMTime()) {
+      return entry.shaderHandle;
     }
 
-    renderState.m_context.deleteShader(m_shaderHandle);
-    m_shaderHandle = renderState.m_context.createShader(m_shaderType);
-    renderState.m_context.shaderSource(m_shaderHandle, m_shaderSource);
-    renderState.m_context.compileShader(m_shaderHandle);
+    renderState.m_context.deleteShader(entry.shaderHandle);
+    entry.shaderHandle = renderState.m_context.createShader(m_shaderType);
+    renderState.m_context.shaderSource(entry.shaderHandle, m_shaderSource);
+    renderState.m_context.compileShader(entry.shaderHandle);
 
     // See if it compiled successfully
-    if (!renderState.m_context.getShaderParameter(m_shaderHandle,
+    if (!renderState.m_context.getShaderParameter(entry.shaderHandle,
         vgl.GL.COMPILE_STATUS)) {
       console.log('[ERROR] An error occurred compiling the shaders: ' +
-                  renderState.m_context.getShaderInfoLog(m_shaderHandle));
+                  renderState.m_context.getShaderInfoLog(entry.shaderHandle));
       console.log(m_shaderSource);
-      renderState.m_context.deleteShader(m_shaderHandle);
+      renderState.m_context.deleteShader(entry.shaderHandle);
       return null;
     }
 
-    m_compileTimestamp.modified();
+    entry.compileTimestamp.modified();
 
-    return m_shaderHandle;
+    return entry.shaderHandle;
   };
 
   /////////////////////////////////////////////////////////////////////////////
@@ -110,7 +152,8 @@ vgl.shader = function (type) {
    */
   /////////////////////////////////////////////////////////////////////////////
   this.attachShader = function (renderState, programHandle) {
-    renderState.m_context.attachShader(programHandle, m_shaderHandle);
+    renderState.m_context.attachShader(
+        programHandle, this.shaderHandle(renderState));
   };
 };
 
