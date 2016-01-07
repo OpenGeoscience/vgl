@@ -17,12 +17,16 @@
 
 var getBaseUrl = (function () {
   'use strict';
+  var baseUrl = '.';
   var scripts = document.getElementsByTagName('script');
-  var index = scripts.length - 1;
-  var vglScript = scripts[index];
-  index = vglScript.src.lastIndexOf('/');
-  var baseUrl = vglScript.src.substring(0, index);
-
+  /* When run in certain environments, there may be no scripts loaded.  For
+   * instance, jQuery's $.getScript won't add it to a script tag. */
+  if (scripts.length > 0) {
+    var index = scripts.length - 1;
+    var vglScript = scripts[index];
+    index = vglScript.src.lastIndexOf('/');
+    baseUrl = vglScript.src.substring(0, index);
+  }
   return function () { return baseUrl; };
 })();
 
