@@ -233,7 +233,7 @@ inherit(vgl.modelViewUniform, vgl.uniform);
  * Create new instance of class modelViewOriginUniform.
  *
  * @param name
- * @param uniform: a triplet of floats.
+ * @param {array} origin a triplet of floats.
  * @returns {vgl.modelViewUniform}
  */
 ///////////////////////////////////////////////////////////////////////////////
@@ -247,12 +247,23 @@ vgl.modelViewOriginUniform = function (name, origin) {
   if (name.length === 0) {
     name = 'modelViewMatrix';
   }
+  origin = origin || [0, 0, 0];
 
   var m_origin = [origin[0], origin[1], origin[2] || 0];
 
   vgl.uniform.call(this, vgl.GL.FLOAT_MAT4, name);
 
   this.set(mat4.create());
+
+  /**
+   * Change the origin used by the uniform view matrix.
+   *
+   * @param {array} origin a triplet of floats.
+   */
+  this.setOrigin = function (origin) {
+    origin = origin || [0, 0, 0];
+    m_origin = [origin[0], origin[1], origin[2] || 0];
+  };
 
   /////////////////////////////////////////////////////////////////////////////
   /**
@@ -355,7 +366,6 @@ vgl.floatUniform = function (name, value) {
 };
 
 inherit(vgl.floatUniform, vgl.uniform);
-
 
 ///////////////////////////////////////////////////////////////////////////////
 /**
