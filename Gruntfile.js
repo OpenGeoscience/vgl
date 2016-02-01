@@ -34,13 +34,13 @@ module.exports = function (grunt) {
     concat: {
       dist: {
         src: files,
-        dest: 'dist/vgl.js'
+        dest: 'dist/vgl.concat.js'
       }
     },
     uglify: {
       dist: {
         files: {
-          'dist/vgl.min.js': files
+          'dist/vgl.min.js': 'dist/vgl.js'
         },
         options: {
           mangle: true,
@@ -48,14 +48,23 @@ module.exports = function (grunt) {
           sourceMap: true
         }
       }
+    },
+    umd: {
+      dist: {
+        src: 'dist/vgl.concat.js',
+        dest: 'dist/vgl.js',
+        objectToExport: 'vgl',
+        amdModuleId: 'vgl'
+      }
     }
   });
 
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-jscs');
+  grunt.loadNpmTasks('grunt-umd');
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-uglify');
 
   grunt.registerTask('test', ['jshint', 'jscs']);
-  grunt.registerTask('default', ['concat', 'uglify']);
+  grunt.registerTask('default', ['concat', 'umd', 'uglify']);
 };
