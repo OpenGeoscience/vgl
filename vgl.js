@@ -1,3 +1,19 @@
+(function (root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    // AMD. Register as an anonymous module unless amdModuleId is set
+    define('vgl', [], function () {
+      return (root['vgl'] = factory());
+    });
+  } else if (typeof exports === 'object') {
+    // Node. Does not work with strict CommonJS, but
+    // only CommonJS-like environments that support module.exports,
+    // like Node.
+    module.exports = factory();
+  } else {
+    root['vgl'] = factory();
+  }
+}(this, function () {
+
 //////////////////////////////////////////////////////////////////////////////
 /**
  * @module vgl
@@ -9015,7 +9031,7 @@ inherit(vgl.modelViewUniform, vgl.uniform);
  * Create new instance of class modelViewOriginUniform.
  *
  * @param name
- * @param uniform: a triplet of floats.
+ * @param {array} origin a triplet of floats.
  * @returns {vgl.modelViewUniform}
  */
 ///////////////////////////////////////////////////////////////////////////////
@@ -9029,12 +9045,23 @@ vgl.modelViewOriginUniform = function (name, origin) {
   if (name.length === 0) {
     name = 'modelViewMatrix';
   }
+  origin = origin || [0, 0, 0];
 
   var m_origin = [origin[0], origin[1], origin[2] || 0];
 
   vgl.uniform.call(this, vgl.GL.FLOAT_MAT4, name);
 
   this.set(mat4.create());
+
+  /**
+   * Change the origin used by the uniform view matrix.
+   *
+   * @param {array} origin a triplet of floats.
+   */
+  this.setOrigin = function (origin) {
+    origin = origin || [0, 0, 0];
+    m_origin = [origin[0], origin[1], origin[2] || 0];
+  };
 
   /////////////////////////////////////////////////////////////////////////////
   /**
@@ -9137,7 +9164,6 @@ vgl.floatUniform = function (name, value) {
 };
 
 inherit(vgl.floatUniform, vgl.uniform);
-
 
 ///////////////////////////////////////////////////////////////////////////////
 /**
@@ -12520,3 +12546,7 @@ vgl.DataBuffers = function (initialSize) {
     return data[name].array;
   };
 };
+
+return vgl;
+
+}));
