@@ -36,6 +36,7 @@ var VisitorType = {
   'EventVisitor' : 0x4,
   'CullVisitor' : 0x8
 };
+window.VisitorType = VisitorType;
 
 //////////////////////////////////////////////////////////////////////////////
 /**

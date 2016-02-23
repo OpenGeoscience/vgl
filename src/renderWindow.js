@@ -263,8 +263,7 @@ vgl.renderWindow = function (canvas) {
       }
 
       return true;
-    }
-    catch (e) {
+    } catch (e) {
     }
 
     // If we don't have a GL context, give up now
@@ -304,7 +303,7 @@ vgl.renderWindow = function (canvas) {
   ////////////////////////////////////////////////////////////////////////////
   this.render = function () {
     var i;
-    m_renderers.sort(function (a, b) {return a.layer() - b.layer();});
+    m_renderers.sort(function (a, b) { return a.layer() - b.layer(); });
     for (i = 0; i < m_renderers.length; i += 1) {
       m_renderers[i].render();
     }

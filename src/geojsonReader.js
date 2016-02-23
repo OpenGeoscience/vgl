@@ -37,7 +37,7 @@ vgl.geojsonReader = function () {
   this.readScalars = function (coordinates, geom, size_estimate, idx) {
     var array = null,
         s = null,
-        r  = null,
+        r = null,
         g = null,
         b = null;
 
@@ -289,13 +289,12 @@ vgl.geojsonReader = function () {
         vglcoords = new vgl.sourceDataP3fv(),
         x = null,
         y = null,
-        z  = null,
+        z = null,
         thisPolyLength = coordinates[0].length,
         vl = 1,
         i = null,
         indices = null,
         vgltriangle = null;
-
 
     for (i = 0; i < thisPolyLength; i += 1) {
       x = coordinates[0][i][0];
@@ -347,14 +346,13 @@ vgl.geojsonReader = function () {
         j = null,
         x = null,
         y = null,
-        z  = null,
+        z = null,
         thisPolyLength = null,
         vf = null,
         vl = null,
         flip = null,
         flipped = false,
         tcount = 0;
-
 
     //var time1 = new Date().getTime()
     //var a = 0;
@@ -600,8 +598,8 @@ vgl.geojsonReader = function () {
     }
 
     var obj = JSON.parse(buffer),
-      geom = this.readGJObject(obj),
-      geoms = [];
+        geom = this.readGJObject(obj),
+        geoms = [];
 
     this.m_scalarFormat = 'none';
     this.m_scalarRange = null;

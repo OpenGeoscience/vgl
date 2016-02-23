@@ -3,8 +3,7 @@
  * @module vgl
  */
 
-/*global vgl: true, ogs: true, inherit*/
-/*exported vgl, inherit*/
+/* exported vgl, inherit */
 //////////////////////////////////////////////////////////////////////////////
 
 if (typeof ogs === 'undefined') {
@@ -40,25 +39,27 @@ ogs.namespace = function (ns_string) {
 
 /** vgl namespace */
 var vgl = ogs.namespace('gl');
+window.vgl = vgl;
 
 //////////////////////////////////////////////////////////////////////////////
 /**
  * Convenient function to define JS inheritance
- *
- * @param C
- * @param P
  */
 //////////////////////////////////////////////////////////////////////////////
-function inherit(C, P) {
+vgl.inherit = function (C, P) {
   'use strict';
 
-  var F = function () {
-  };
+  var F = inherit.func();
   F.prototype = P.prototype;
   C.prototype = new F();
-  C.uber = P.prototype;
   C.prototype.constructor = C;
-}
+};
+vgl.inherit.func = function () {
+  'use strict';
+  return function () {};
+};
+
+window.inherit = vgl.inherit;
 
 //////////////////////////////////////////////////////////////////////////////
 /**

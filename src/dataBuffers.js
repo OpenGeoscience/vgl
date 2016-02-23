@@ -17,7 +17,7 @@ vgl.DataBuffers = function (initialSize) {
 
   var copyArray = function (dst, src, start, count) {
     if (!dst) {
-      console.log ('ack');
+      console.log('ack');
     }
     if (!start) {
       start = 0;
@@ -44,9 +44,9 @@ vgl.DataBuffers = function (initialSize) {
     size = new_size;
     for (var name in data) {
       if (data.hasOwnProperty(name)) {
-        var newArray = new Float32Array (new_size * data[name].len);
+        var newArray = new Float32Array(new_size * data[name].len);
         var oldArray = data[name].array;
-        copyArray (newArray, oldArray);
+        copyArray(newArray, oldArray);
         data[name].array = newArray;
         data[name].dirty = true;
       }
@@ -57,7 +57,7 @@ vgl.DataBuffers = function (initialSize) {
     if (!len) {
       throw 'Length of buffer must be a positive integer';
     }
-    var array = new Float32Array (size * len);
+    var array = new Float32Array(size * len);
     data[name] = {
       array: array,
       len: len,
@@ -68,7 +68,7 @@ vgl.DataBuffers = function (initialSize) {
 
   this.alloc = function (num) {
     if ((current + num) >= size) {
-      resize (current + num);
+      resize(current + num);
     }
     var start = current;
     current += num;
@@ -80,13 +80,13 @@ vgl.DataBuffers = function (initialSize) {
   };
 
   this.write = function (name, array, start, count) {
-    copyArray (data[name].array, array, start * data[name].len, count * data[name].len);
+    copyArray(data[name].array, array, start * data[name].len, count * data[name].len);
     data[name].dirty = true;
   };
 
   this.repeat = function (name, elem, start, count) {
     for (var i = 0; i < count; i += 1) {
-      copyArray (data[name].array, elem,
+      copyArray(data[name].array, elem,
                  (start + i) * data[name].len, data[name].len);
     }
     data[name].dirty = true;

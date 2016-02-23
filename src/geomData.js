@@ -668,10 +668,8 @@ vgl.sourceData = function (arg) {
     m_name = name;
   };
 
-
   return this;
 };
-
 
 vgl.sourceDataAnyfv = function (size, key, arg) {
   'use strict';
@@ -1196,13 +1194,12 @@ vgl.geometryData = function () {
             minv = value;
           }
         }
-        m_bounds[ib] = minv;  m_bounds[jb] = maxv;
+        m_bounds[ib] = minv; m_bounds[jb] = maxv;
       }
 
       m_computeBoundsTimestamp.modified();
     }
   };
-
 
   ////////////////////////////////////////////////////////////////////////////
   /**
@@ -1280,23 +1277,16 @@ vgl.geometryData = function () {
   this.getScalar = function (index) {
     var attr = vgl.vertexAttributeKeys.Scalar,
         sourceData = this.sourceData(attr),
-        numberOfComponents, sizeOfDataType, data, stride, offset;
+        sizeOfDataType, data, stride, offset;
 
     if (!sourceData) {
       return null;
     }
 
-    numberOfComponents = sourceData.attributeNumberOfComponents(attr);
     sizeOfDataType = sourceData.sizeOfAttributeDataType(attr);
     data = sourceData.data();
     stride = sourceData.attributeStride(attr) / sizeOfDataType;
     offset = sourceData.attributeOffset(attr) / sizeOfDataType;
-
-    //console.log('index for scalar is ' + index);
-    //console.log('offset for scalar is ' + offset);
-    //console.log('stride for scalar is ' + stride);
-
-    //console.log('have ' + data.length + ' scalars');
 
     if (index * stride + offset >= data.length) {
       console.log('access out of bounds in getScalar');

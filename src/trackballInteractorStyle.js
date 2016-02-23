@@ -29,7 +29,6 @@ vgl.trackballInteractorStyle = function () {
       m_currPos = {x: 0, y: 0},
       m_lastPos = {x: 0, y: 0};
 
-
   /////////////////////////////////////////////////////////////////////////////
   /**
    * Handle mouse move event

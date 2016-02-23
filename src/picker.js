@@ -104,7 +104,6 @@ vgl.picker = function () {
           //jscs:enable disallowKeywords
         }
 
-
         if (tymin > tmin) {
           tmin = tymin;
         }

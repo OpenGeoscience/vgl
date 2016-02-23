@@ -119,7 +119,6 @@ vgl.renderer = function (arg) {
     m_this.m_resizable = r;
   };
 
-
   ////////////////////////////////////////////////////////////////////////////
   /**
    * Return render window (owner) of the renderer
@@ -262,7 +261,7 @@ vgl.renderer = function (arg) {
     }
 
     // Now perform sorting
-    sortedActors.sort(function (a, b) {return a[0] - b[0];});
+    sortedActors.sort(function (a, b) { return a[0] - b[0]; });
 
     for (i = 0; i < sortedActors.length; i += 1) {
       actor = sortedActors[i][1];
@@ -620,7 +619,6 @@ vgl.renderer = function (arg) {
         winW = null,
         clipPt = null;
 
-
     mat4.multiply(viewProjectionMatrix, projectionMatrix, viewMatrix);
 
     // Transform world to clipping coordinates
@@ -686,7 +684,7 @@ vgl.renderer = function (arg) {
   ////////////////////////////////////////////////////////////////////////////
   this.focusDisplayPoint = function () {
     var focalPoint = m_this.m_camera.focalPoint(),
-      focusWorldPt = vec4.fromValues(
+        focusWorldPt = vec4.fromValues(
         focalPoint[0], focalPoint[1], focalPoint[2], 1);
 
     return m_this.worldToDisplay(

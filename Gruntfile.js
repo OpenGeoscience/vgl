@@ -9,28 +9,6 @@ module.exports = function (grunt) {
         });
 
   grunt.initConfig({
-    jshint: {
-      library: {
-        src: files,
-        options: {
-          jshintrc: '.jshintrc'
-        }
-      },
-      gruntfile: {
-        src: ['Gruntfile.js'],
-        options: {
-          node: true
-        }
-      }
-    },
-    jscs: {
-      library: {
-        src: files
-      },
-      gruntfile: {
-        src: ['Gruntfile.js']
-      }
-    },
     concat: {
       dist: {
         src: files,
@@ -60,11 +38,9 @@ module.exports = function (grunt) {
   });
 
   grunt.loadNpmTasks('grunt-contrib-jshint');
-  grunt.loadNpmTasks('grunt-jscs');
   grunt.loadNpmTasks('grunt-umd');
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-uglify');
 
-  grunt.registerTask('test', ['jshint', 'jscs']);
   grunt.registerTask('default', ['concat', 'umd', 'uglify']);
 };

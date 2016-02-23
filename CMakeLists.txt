@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 2.8)
 
 project(vgl)
 
+include(CTest)
+enable_testing()
+
 set(VGL_CMAKE_DIR ${${PROJECT_NAME}_SOURCE_DIR}/cmake)
 
 set(MINIFY OFF CACHE BOOL "Minify the JavaScript files prior to concatenating.")
@@ -17,11 +20,8 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 # set up targets for node programs
 set(NODE_MODULES_PATH "${CMAKE_CURRENT_SOURCE_DIR}/node_modules")
-set(JSHINT_EXECUTABLE "${NODE_MODULES_PATH}/.bin/jshint")
-set(JSCS_EXECUTABLE "${NODE_MODULES_PATH}/.bin/jscs")
 
-set(JS_HINT_TESTS ON CACHE BOOL "Generate jshint style tests for JS source files.")
-set(JSCS_TESTS ON CACHE BOOL "Generate jscs style tests for JS source files.")
+set(ESLINT_TESTS ON CACHE BOOL "Generate eslint style tests for JS source files.")
 
 set(_source_files
   init.js
@@ -156,40 +156,22 @@ foreach(m ${paths})
     )
 endforeach()
 
-if (NOT GEOJS_VERSION)
-  include(CTest)
-  enable_testing()
+if(${ESLINT_TESTS})
 
-  if(${JS_HINT_TESTS})
-    add_custom_target(
-      jshint-binary
-      ALL
-      DEPENDS "${JSHINT_EXECUTABLE}"
-    )
-    add_test(
-      NAME "jshint"
-      WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-      COMMAND "${JSHINT_EXECUTABLE}" "src"
-    )
-  endif() # JS_HINT_TESTS
+  find_program(NPM_EXECUTABLE npm)
+  if(NOT NPM_EXECUTABLE)
+    message(FATAL_ERROR "npm is required for style checks")
+  endif()
+  add_test(
+    NAME "eslint"
+    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+    COMMAND "${NPM_EXECUTABLE}" "run" "lint"
+  )
 
-  if(${JSCS_TESTS})
-    add_custom_target(
-      jscs-binary
-      ALL
-      DEPENDS "${JSCS_EXECUTABLE}"
-    )
-    add_test(
-      NAME "jscs"
-      WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-      COMMAND "${JSCS_EXECUTABLE}" "src"
-    )
-  endif() # JSCS_TESTS
+endif() # ESLINT_TESTS
 
-endif()
-
-# Testing --- disabled when compiling with geojs
-if (BUILD_TESTING AND NOT GEOJS_VERSION)
+# Testing
+if (BUILD_TESTING)
 
   if(EXISTS "${VGL_DATA_DIR}" AND IS_DIRECTORY "${VGL_DATA_DIR}")
     message("[info] VGL data directory is set to ${VGL_DATA_DIR}")

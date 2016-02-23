@@ -86,7 +86,7 @@ vgl.planeSource = function () {
     m_geom = new vgl.geometryData();
 
     var x = [], tc = [], v1 = [], v2 = [],
-        pts = [], i, j, k, ii, numPts, numPolys,
+        pts = [], i, j, ii, numPts,
         posIndex = 0, normIndex = 0, colorIndex = 0, texCoordIndex = 0,
         positions = [], normals = [], colors = [],
         texCoords = [], indices = [], tristrip = null,
@@ -107,13 +107,12 @@ vgl.planeSource = function () {
     // TODO Compute center and normal
     // Set things up; allocate memory
     numPts = (m_xresolution + 1) * (m_yresolution + 1);
-    numPolys = m_xresolution * m_yresolution * 2;
     positions.length = 3 * numPts;
     normals.length = 3 * numPts;
     texCoords.length = 2 * numPts;
     indices.length = numPts;
 
-    for (k = 0, i = 0; i < (m_yresolution + 1); i += 1) {
+    for (i = 0; i < (m_yresolution + 1); i += 1) {
       tc[1] = i / m_yresolution;
 
       for (j = 0; j < (m_xresolution + 1); j += 1) {

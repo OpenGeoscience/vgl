@@ -21,7 +21,6 @@ vgl.depthPeelRenderer = function () {
       finalShader, NUM_PASSES = 6, m_quad = null, fpwidth, fpheight, blwidth, blheight,
       fiwidth, fiheight, fpopacity, fibackgroundColor;
 
-
   function drawFullScreenQuad(renderState, material) {
     m_quad.setMaterial(material);
 
@@ -44,7 +43,7 @@ vgl.depthPeelRenderer = function () {
   }
 
   function initShaders(renderState) {
-    var fpmv, fpproj, fpvertex, fpcolor, fpdepthTex, fpnormal, fpnr, fpblend,
+    var fpmv, fpproj, fpvertex, fpcolor, fpdepthTex, fpnormal, fpnr,
         blvertex, blColorSamp, blPrevDepthSamp, blCurrDepthSamp,
         fivertex, fitempTex;
 
@@ -59,7 +58,6 @@ vgl.depthPeelRenderer = function () {
     fpheight = new vgl.floatUniform('height');
     fpopacity = new vgl.floatUniform('opacity', 1.0);
     fpdepthTex = new vgl.uniform(vgl.GL.INT, 'depthTexture');
-    fpblend = new vgl.blend();
     fpdepthTex.set(0);
 
     frontPeelShader = new vgl.shaderProgram();
@@ -80,7 +78,6 @@ vgl.depthPeelRenderer = function () {
     // Compile and link the shader
     frontPeelShader.compileAndLink(renderState);
 
-    //fpMaterial.addAttribute(fpblend);
     fpMaterial.addAttribute(frontPeelShader);
 
     //     //add attributes and uniforms
@@ -94,7 +91,7 @@ vgl.depthPeelRenderer = function () {
 
     // Load the blending shader
     blendShader = new vgl.shaderProgram();
-    blendShader.loadShader(vgl.GL.VERTEX_SHADER,   'blend.vert');
+    blendShader.loadShader(vgl.GL.VERTEX_SHADER, 'blend.vert');
     blendShader.loadShader(vgl.GL.FRAGMENT_SHADER, 'blend.frag');
     blColorSamp = new vgl.uniform(vgl.GL.INT, 'currColorTexture');
     blPrevDepthSamp = new vgl.uniform(vgl.GL.INT, 'prevDepthTexture');
@@ -129,9 +126,8 @@ vgl.depthPeelRenderer = function () {
 
     //Load the final shader
     finalShader = new vgl.shaderProgram();
-    finalShader.loadShader(vgl.GL.VERTEX_SHADER,   'blend.vert');
+    finalShader.loadShader(vgl.GL.VERTEX_SHADER, 'blend.vert');
     finalShader.loadShader(vgl.GL.FRAGMENT_SHADER, 'final.frag');
-
 
     //fimv = new vgl.modelViewUniform('modelViewMatrix');
     //fiproj = new vgl.projectionUniform('projectionMatrix');
@@ -172,6 +168,11 @@ vgl.depthPeelRenderer = function () {
     }
 
     textureFloatExt = renderState.m_context.getExtension('OES_texture_float');
+    if (!textureFloatExt) {
+      console.log('Extension Texture Float is not working');
+      window.alert(':( Sorry, Your browser doesn\'t support texture float extension.');
+      return;
+    }
     textureFloatLinearExt = renderState.m_context.getExtension(
         'OES_texture_float_linear');
     depthTextureExt = renderState.m_context.getExtension('WEBGL_depth_texture');
@@ -479,8 +480,8 @@ vgl.depthPeelRenderer = function () {
     }
 
     // Now perform sorting
-    sortedActors.sort(function (a, b) {return a[0] - b[0];});
-    sortedActors.sort(function (a, b) {return b[1] - a[1];});
+    sortedActors.sort(function (a, b) { return a[0] - b[0]; });
+    sortedActors.sort(function (a, b) { return b[1] - a[1]; });
 
     depthPeelRender(renSt, sortedActors);
   };
