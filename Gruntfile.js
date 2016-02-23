@@ -1,6 +1,13 @@
 /* jshint node: true */
 module.exports = function (grunt) {
   'use strict';
+  var pkg, vglVersion, templateData;
+
+  pkg = grunt.file.readJSON('package.json');
+  vglVersion = pkg.version;
+  templateData = {
+    VGL_VERSION: vglVersion
+  };
   var sources = grunt.file.readJSON('sources.json'),
       src = sources.vgl.prefix,
       files = sources.vgl.files
@@ -8,11 +15,23 @@ module.exports = function (grunt) {
           return src + '/' + f;
         });
 
-  grunt.initConfig({
+  grunt.config.init({
+    pkg: pkg,
+
+    clean: {
+      source: ['dist/src', 'src/version.js'],
+      all: ['dist', 'src/version.js']
+    },
     concat: {
       dist: {
         src: files,
         dest: 'dist/vgl.concat.js'
+      }
+    },
+    template: {
+      version: {
+        options: {data: templateData},
+        files: {'src/version.js': 'src/version.js.in'}
       }
     },
     uglify: {
@@ -37,10 +56,11 @@ module.exports = function (grunt) {
     }
   });
 
-  grunt.loadNpmTasks('grunt-contrib-jshint');
-  grunt.loadNpmTasks('grunt-umd');
+  grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-uglify');
+  grunt.loadNpmTasks('grunt-template');
+  grunt.loadNpmTasks('grunt-umd');
 
-  grunt.registerTask('default', ['concat', 'umd', 'uglify']);
+  grunt.registerTask('default', ['template', 'concat', 'umd', 'uglify']);
 };

@@ -25,6 +25,7 @@ set(ESLINT_TESTS ON CACHE BOOL "Generate eslint style tests for JS source files.
 
 set(_source_files
   init.js
+  version.js
   GL.js
   timestamp.js
   object.js

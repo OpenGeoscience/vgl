@@ -3,6 +3,7 @@
     "prefix": "src",
     "files": [
       "init.js",
+      "version.js",
       "GL.js",
       "timestamp.js",
       "object.js",
