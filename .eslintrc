@@ -19,7 +19,6 @@
         "jquery": true
     },
     "globals": {
-        "proj4": true,
         "gl": true,
         "mat4": true,
         "vec4": true,
