@@ -23,11 +23,9 @@ vgl.freezeObject = function (obj) {
    *
    * @exports freezeObject
    */
-  var freezedObject = Object.freeze(obj);
+  var freezedObject = Object.freeze ? Object.freeze(obj) : undefined;
   if (typeof freezedObject === 'undefined') {
-    freezedObject = function (o) {
-      return o;
-    };
+    return obj;
   }
 
   return freezedObject;

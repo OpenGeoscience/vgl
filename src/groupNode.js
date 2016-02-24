@@ -203,7 +203,7 @@ vgl.groupNode = function () {
   this.traverseChildren = function (visitor) {
     var i;
 
-    if (visitor.mode() === vgl.vesVisitor.TraverseAllChildren) {
+    if (visitor.mode() === visitor.TraverseAllChildren) {
       for (i = 0; i < m_children.length(); i += 1) {
         m_children[i].accept(visitor);
       }

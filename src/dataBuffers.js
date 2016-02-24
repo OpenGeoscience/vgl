@@ -17,7 +17,7 @@ vgl.DataBuffers = function (initialSize) {
 
   var copyArray = function (dst, src, start, count) {
     if (!dst) {
-      console.log('ack');
+      throw 'No destination';
     }
     if (!start) {
       start = 0;
@@ -53,8 +53,16 @@ vgl.DataBuffers = function (initialSize) {
     }
   };
 
+  /**
+   * Allocate a buffer with a name and a specific number of components per
+   * entry.  If a buffer with the specified name already exists, it will be
+   * overwritten.
+   *
+   * @param name: the name of the buffer to create or replace.
+   * @param len: number of components per entry.  Most be a positive integer.
+   */
   this.create = function (name, len) {
-    if (!len) {
+    if (!len || len < 0) {
       throw 'Length of buffer must be a positive integer';
     }
     var array = new Float32Array(size * len);
@@ -80,11 +88,17 @@ vgl.DataBuffers = function (initialSize) {
   };
 
   this.write = function (name, array, start, count) {
+    if (start + count > size) {
+      throw 'Write would exceed buffer size';
+    }
     copyArray(data[name].array, array, start * data[name].len, count * data[name].len);
     data[name].dirty = true;
   };
 
   this.repeat = function (name, elem, start, count) {
+    if (start + count > size) {
+      throw 'Repeat would exceed buffer size';
+    }
     for (var i = 0; i < count; i += 1) {
       copyArray(data[name].array, elem,
                  (start + i) * data[name].len, data[name].len);

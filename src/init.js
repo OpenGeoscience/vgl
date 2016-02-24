@@ -72,7 +72,7 @@ window.inherit = vgl.inherit;
 Object.size = function (obj) {
   'use strict';
 
-  var size = 0, key = null;
+  var size = 0, key;
   for (key in obj) {
     if (obj.hasOwnProperty(key)) {
       size += 1;

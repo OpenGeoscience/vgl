@@ -21,7 +21,7 @@ script:
     - cd _build
     - cmake ..
     - make
-    - ctest -VV -S ../cmake/travis_build.cmake || true
+    - ctest -j 3 -VV -S ../cmake/travis_build.cmake || true
     - if [ -f test_failed ] ; then false ; fi
 
 sudo: False
