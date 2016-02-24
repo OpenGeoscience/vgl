@@ -82,9 +82,12 @@ vgl.groupNode = function () {
   this.removeChild = function (childNode) {
     if (childNode.parent() === this) {
       var index = m_children.indexOf(childNode);
-      m_children.splice(index, 1);
-      this.boundsDirtyTimestamp().modified();
-      return true;
+      if (index >= 0) {
+        m_children.splice(index, 1);
+        childNode.setParent(null);
+        this.boundsDirtyTimestamp().modified();
+        return true;
+      }
     }
   };
 
@@ -94,9 +97,8 @@ vgl.groupNode = function () {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.removeChildren = function () {
-    var i;
-    for (i = 0; i < m_children.length; i += 1) {
-      this.removeChild(m_children[i]);
+    while (m_children.length) {
+      this.removeChild(m_children[0]);
     }
 
     this.modified();
@@ -175,16 +177,16 @@ vgl.groupNode = function () {
   this.traverseChildrenAndUpdateBounds = function (visitor) {
     var i;
 
-    if (this.m_parent && this.boundsDirtyTimestamp().getMTime() >
+    if (this.parent() && this.boundsDirtyTimestamp().getMTime() >
       this.computeBoundsTimestamp().getMTime()) {
       // Flag parents bounds dirty.
-      this.m_parent.boundsDirtyTimestamp.modified();
+      this.parent().boundsDirtyTimestamp().modified();
     }
 
     this.computeBounds();
 
     if (visitor.mode() === visitor.TraverseAllChildren) {
-      for (i = 0; i < m_children.length(); i += 1) {
+      for (i = 0; i < m_children.length; i += 1) {
         m_children[i].accept(visitor);
         this.updateBounds(m_children[i]);
       }
@@ -204,7 +206,7 @@ vgl.groupNode = function () {
     var i;
 
     if (visitor.mode() === visitor.TraverseAllChildren) {
-      for (i = 0; i < m_children.length(); i += 1) {
+      for (i = 0; i < m_children.length; i += 1) {
         m_children[i].accept(visitor);
       }
     }
@@ -244,7 +246,7 @@ vgl.groupNode = function () {
       return;
     }
 
-    // Make sure that child bounds are upto date
+    // Make sure that child bounds are up to date
     child.computeBounds();
 
     var bounds = this.bounds(),
