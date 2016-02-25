@@ -44,6 +44,7 @@ function closeToArray(a1, a2, precision) {
   precision = Math.pow(10, -precision) / 2;
   for (i = 0; i < a1.length; i += 1) {
     if (Math.abs(a1[i] - a2[i]) >= precision) {
+      console.log('not closeToEqual: [' + i + '] ' + a1[i] + ' !~= ' + a2[i]);
       return false;
     }
   }

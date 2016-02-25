@@ -73,6 +73,7 @@ module.exports = function (grunt) {
       ext: {
         files: {
           'dist/built/vgl.ext.min.js': [
+            'node_modules/gl-matrix/dist/gl-matrix.js',
             'node_modules/jquery/dist/jquery.js'
           ]
         }

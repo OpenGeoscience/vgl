@@ -80,3 +80,10 @@ Object.size = function (obj) {
   }
   return size;
 };
+
+/* Polyfill for Math.log2 */
+if (!Math.log2) {
+  Math.log2 = function (val) {
+    return Math.log(val) / Math.log(2);
+  };
+}

@@ -43,7 +43,8 @@
       "picker.js",
       "shapefileReader.js",
       "vtkReader.js",
-      "dataBuffers.js"
+      "dataBuffers.js",
+      "depthPeelRenderer.js"
     ]
   }
 }
