@@ -205,9 +205,6 @@ function mockVGLRenderer() {
   vgl.renderWindow = function () {
     return m_renderWindow;
   };
-  geo.gl.vglRenderer.supported = function () {
-    return true;
-  };
 
   vgl._mocked = true;
   vgl.mockCounts = function () {

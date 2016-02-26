@@ -27,7 +27,7 @@ vgl.materialAttribute = function (type) {
   'use strict';
 
   if (!(this instanceof vgl.materialAttribute)) {
-    return new vgl.materialAttribute();
+    return new vgl.materialAttribute(type);
   }
   vgl.graphicsObject.call(this);
 
