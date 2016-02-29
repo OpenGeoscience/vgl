@@ -8,7 +8,6 @@ vgl.renderTarget = function () {
 
   var m_preventRenderPropagation = false;
 
-
   this.preventRenderPropagation = function (val) {
     if (val) {
       m_preventRenderPropagation = val;
@@ -36,7 +35,6 @@ vgl.renderTarget = function () {
 };
 
 inherit(vgl.renderTarget, vgl.object);
-
 
 //////////////////////////////////////////////////////////////////////////////
 vgl.fbo = function () {
@@ -76,7 +74,7 @@ vgl.fbo = function () {
     }
 
     if (!depthTexture) {
-      depthBufferHandle =  vgl.GL.createRenderbuffer();
+      depthBufferHandle = vgl.GL.createRenderbuffer();
       renderState.m_context.bindRenderbuffer(vgl.GL.RENDERBUFFER, depthBufferHandle);
       renderState.m_context.renderbufferStorage(vgl.GL.RENDERBUFFER,
         vgl.GL.DEPTH_COMPONENT16, m_width, m_height);

@@ -28,17 +28,17 @@ vgl.vtkReader = function () {
      'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
      'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
      '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '+', '/'],
-  m_reverseBase64Chars = [],
-  m_vtkRenderedList = {},
-  m_vtkObjectCount = 0,
-  m_vtkScene = null,
-  m_node = null,
-  END_OF_INPUT = -1,
-  m_base64Str = '',
-  m_base64Count = 0,
-  m_pos = 0,
-  m_viewer = null,
-  i = 0;
+      m_reverseBase64Chars = [],
+      m_vtkRenderedList = {},
+      m_vtkObjectCount = 0,
+      m_vtkScene = null,
+      m_node = null,
+      END_OF_INPUT = -1,
+      m_base64Str = '',
+      m_base64Count = 0,
+      m_pos = 0,
+      m_viewer = null,
+      i = 0;
 
   //initialize the array here if not already done.
   if (m_reverseBase64Chars.length === 0) {
@@ -46,8 +46,6 @@ vgl.vtkReader = function () {
       m_reverseBase64Chars[m_base64Chars[i]] = i;
     }
   }
-
-
 
   ////////////////////////////////////////////////////////////////////////////
   /**
@@ -125,9 +123,9 @@ vgl.vtkReader = function () {
       /*jshint bitwise: false */
       result += this.ntos((((inBuffer[0] << 2) & 0xff) | inBuffer[1] >> 4));
       if (inBuffer[2] !== END_OF_INPUT) {
-        result +=  this.ntos((((inBuffer[1] << 4) & 0xff) | inBuffer[2] >> 2));
+        result += this.ntos((((inBuffer[1] << 4) & 0xff) | inBuffer[2] >> 2));
         if (inBuffer[3] !== END_OF_INPUT) {
-          result +=  this.ntos((((inBuffer[2] << 6) & 0xff) | inBuffer[3]));
+          result += this.ntos((((inBuffer[2] << 6) & 0xff) | inBuffer[3]));
         } else {
           done = true;
         }
@@ -321,9 +319,9 @@ vgl.vtkReader = function () {
 
     //jshint plusplus: false
     for (i = 0; i < numberOfPoints; i += 1) {
-      p[idx++] = points[i * 3/*+0*/];
+      p[idx++] = points[i * 3];
       p[idx++] = points[i * 3 + 1];
-      p[idx++] =  points[i * 3 + 2];
+      p[idx++] = points[i * 3 + 2];
     }
     //jshint plusplus: true
     vglpoints.insert(p);
@@ -375,7 +373,7 @@ vgl.vtkReader = function () {
     var vglpoints = null, vglcolors = null,
         normals = null, matrix = mat4.create(),
         vgltriangles = null, numberOfIndex, numberOfPoints,
-        points, temp, index, size, m, i, tcoord,
+        points, temp, index, size, m, i,
         pn = null, idx = 0;
 
     numberOfPoints = this.readNumber(ss);
@@ -388,10 +386,10 @@ vgl.vtkReader = function () {
     normals = this.readF3Array(numberOfPoints, ss);
     //jshint plusplus: false
     for (i = 0; i < numberOfPoints; i += 1) {
-      pn[idx++] = points[i * 3/*+0*/];
+      pn[idx++] = points[i * 3];
       pn[idx++] = points[i * 3 + 1];
       pn[idx++] = points[i * 3 + 2];
-      pn[idx++] = normals[i * 3/*+0*/];
+      pn[idx++] = normals[i * 3];
       pn[idx++] = normals[i * 3 + 1];
       pn[idx++] = normals[i * 3 + 2];
     }
@@ -430,10 +428,6 @@ vgl.vtkReader = function () {
     m = new Float32Array(temp.buffer);
     mat4.copy(matrix, m);
 
-    //Getting TCoord
-    //TODO: renderer is not doing anything with this yet
-    tcoord = null;
-
     return matrix;
   };
 
@@ -463,7 +457,7 @@ vgl.vtkReader = function () {
     //jshint plusplus: false
     for (i = 0; i < numberOfPoints; i += 1) {
       indices[i] = i;
-      p[idx++] = points[i * 3/*+0*/];
+      p[idx++] = points[i * 3];
       p[idx++] = points[i * 3 + 1];
       p[idx++] = points[i * 3 + 2];
     }

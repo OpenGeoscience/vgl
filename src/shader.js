@@ -159,7 +159,6 @@ vgl.shader = function (type) {
 
 inherit(vgl.shader, vgl.object);
 
-
 /* We can use the same shader multiple times if it is identical.  This caches
  * the last N shaders and will reuse them when possible.  The cache keeps the
  * most recently requested shader at the front.  If you are doing anything more

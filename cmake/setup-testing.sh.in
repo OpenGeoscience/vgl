@@ -1,5 +1,0 @@
-#!/bin/sh
-export PYTHONPATH=@VGL_DEPLOY_DIR@/modules:${PYTHONPATH}
-export VGL_BASELINE_DIR=@VGL_BASELINE_DIR@
-echo 'Setting PYTHONPATH to' ${PYTHONPATH}
-echo 'Setting VGL_BASELINE_DIR to' ${VGL_BASELINE_DIR}

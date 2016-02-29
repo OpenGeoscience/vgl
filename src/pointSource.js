@@ -185,7 +185,6 @@ vgl.pointSource = function () {
                'number of points');
     }
 
-
     m_geom.addPrimitive(pointsPrimitive);
 
     return m_geom;

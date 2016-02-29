@@ -1,241 +1,171 @@
 cmake_minimum_required(VERSION 2.8)
 
-project(vgl)
+project(vgl NONE)
+
+include(CTest)
+enable_testing()
 
 set(VGL_CMAKE_DIR ${${PROJECT_NAME}_SOURCE_DIR}/cmake)
 
-set(MINIFY OFF CACHE BOOL "Minify the JavaScript files prior to concatenating.")
-set(MANGLE OFF CACHE BOOL "When minifying, also mangle non-public symbol names.")
-set(VGL_DATA_DIR "" CACHE PATH  "Path to directory containing data for testing.")
-set(VGL_BASELINE_DIR "" CACHE PATH "Path to directory containing baseline images for testing.")
-set(BUILD_TESTING OFF CACHE BOOL "Enable additional testing")
+# set up targets for node programs
+set(NODE_MODULES_PATH "${CMAKE_CURRENT_SOURCE_DIR}/node_modules")
+set(PHANTOMJS_EXECUTABLE "${NODE_MODULES_PATH}/.bin/phantomjs")
+set(GRUNT_EXECUTABLE "${NODE_MODULES_PATH}/.bin/grunt")
+set(PHANTOMJS_TESTS ON CACHE BOOL "Generate phantomjs unit tests.")
+set(COVERAGE_TESTS ON CACHE BOOL "Generate coverage reports.")
+
+set(ESLINT_TESTS ON CACHE BOOL "Generate eslint style tests for JS source files.")
+
+find_package(PythonInterp REQUIRED)
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+
+site_name(HOSTNAME)
+set(TESTING_HOST "${HOSTNAME}" CACHE STRING "The host to connect to for unit tests")
+set(TESTING_PORT 30101 CACHE STRING "The port number to use for the testing web server")
+mark_as_advanced(TESTING_PORT)
+
+# set the path where grunt builds the sources
+set(VGL_DEPLOY_DIR "${CMAKE_CURRENT_SOURCE_DIR}/dist")
+
+
+function(add_vgl_test test_name)
+  add_test(
+    NAME "${test_name}"
+    WORKING_DIRECTORY "${VGL_DEPLOY_DIR}"
+    COMMAND ${PYTHON_EXECUTABLE}
+            ${CMAKE_CURRENT_BINARY_DIR}/test/vgl_test_runner.py
+            ${ARGN}
+  )
+  if (COVERAGE_TESTS)
+    set_property(TEST "${test_name}" APPEND PROPERTY DEPENDS "coverage-reset")
+    set_property(TEST "coverage-report" APPEND PROPERTY DEPENDS "${test_name}")
+  endif()
+endfunction()
+
+# copy blanket JS files
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/testing/js/blanket.min.js
+  ${VGL_DEPLOY_DIR}/test/lib/blanket.min.js
+  COPYONLY
+)
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/testing/js/jasmine-boot.js
+  ${VGL_DEPLOY_DIR}/test/lib/jasmine-boot.js
+  COPYONLY
+)
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/testing/js/testUtils.js
+  ${VGL_DEPLOY_DIR}/test/lib/testUtils.js
+  COPYONLY
+)
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/testing/test-runners/aggregate-json-reporter.js.in
+  ${VGL_DEPLOY_DIR}/test/lib/aggregate-json-reporter.js
+)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/testing/test-runners/vgl_test_runner.py.in
+               ${CMAKE_CURRENT_BINARY_DIR}/test/vgl_test_runner.py
+)
+
+
+if (COVERAGE_TESTS)
+  set(SOURCES_INCLUDE <script src=/built/vgl.all.dev.js data-cover></script>)
+  set(BLANKET_INCLUDE <script src=/test/lib/blanket.min.js></script>)
+  find_program(CURL_EXECUTABLE curl)
+  add_test(
+    NAME "coverage-reset"
+    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+    COMMAND "${CURL_EXECUTABLE}" -X DELETE "http://${TESTING_HOST}:${TESTING_PORT}/coverage"
+  )
+
+  add_test(
+    NAME "coverage-report"
+    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+    COMMAND "${CURL_EXECUTABLE}" -X POST "http://${TESTING_HOST}:${TESTING_PORT}/coverage"
+      --data "path=${CMAKE_CURRENT_BINARY_DIR}/coverage.xml" -G
+  )
+  set_property(TEST "coverage-report" APPEND PROPERTY DEPENDS "coverage-reset")
+
+  # We need to put sources under the build path for ctest to pick them up
+  file(COPY "${VGL_DEPLOY_DIR}/src" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
+else()
+
+  set(SOURCES_INCLUDE <script src=/built/vgl.all.dev.js></script>)
+  set(BLANKET_INCLUDE "")
+
+endif()
+
+if(PHANTOMJS_TESTS)
+  set(PHANTOMJS_REL_DIR "test/phantomjs")
+  set(PHANTOMJS_ABS_DIR "${VGL_DEPLOY_DIR}/${PHANTOMJS_REL_DIR}")
+
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/testing/js/jasmine-blanket.js
+    ${VGL_DEPLOY_DIR}/test/lib/jasmine-blanket.js
+    COPYONLY
+  )
+
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/node_modules/phantomjs-polyfill/bind-polyfill.js
+    ${VGL_DEPLOY_DIR}/test/lib/bind-polyfill.js
+    COPYONLY
+  )
+
+  file(GLOB JS_UNIT_TEST_CASES
+    ${CMAKE_CURRENT_SOURCE_DIR}/testing/cases/phantomjs/*.js
+  )
+
+  list(APPEND TESTING_DEPENDENCIES ${_min_js_file})
+
+  # add phantomjs unit tests
+  foreach(js ${JS_UNIT_TEST_CASES})
+    get_filename_component(f "${js}" NAME_WE)
+    set(html "${PHANTOMJS_ABS_DIR}/${f}.html")
+
+    add_custom_command(OUTPUT ${html}
+      COMMAND ${CMAKE_COMMAND} -DTEST_HTML="${html}"
+                               -DSOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}"
+                               -DSOURCE_FILE="${js}"
+                               -DSOURCES_INCLUDE="${SOURCES_INCLUDE}"
+                               -DBLANKET_INCLUDE="${BLANKET_INCLUDE}"
+                               -P ${CMAKE_SOURCE_DIR}/cmake/configure-js-unit-test.cmake
+      COMMAND ${CMAKE_COMMAND} -E touch ${html}
+      DEPENDS ${js} ${Girder_DOWNLOAD_FILES} ${CMAKE_SOURCE_DIR}/testing/test-runners/jasmine-runner.html.in
+      COMMENT "Generating phantomjs unit test ${f}"
+    )
+    list(APPEND JS_UNIT_TEST_FILES ${html})
+
+    add_vgl_test(phantomjs:${f}
+      ${PHANTOMJS_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/testing/test-runners/run-jasmine.js
+              http://${TESTING_HOST}:${TESTING_PORT}/${PHANTOMJS_REL_DIR}/${f}.html
+    )
+  endforeach()
+
+  add_custom_target(
+    phantomjs_tests
+    ALL
+    DEPENDS ${PHANTOMJS_EXECUTABLE} ${JS_UNIT_TEST_FILES} ${Girder_DOWNLOAD_FILES}
+  )
+
+endif() # PHANTOMJS_TESTS
+
+if(${ESLINT_TESTS})
+
+  find_program(NPM_EXECUTABLE npm)
+  if(NOT NPM_EXECUTABLE)
+    message(FATAL_ERROR "npm is required for style checks")
+  endif()
+  add_test(
+    NAME "eslint"
+    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+    COMMAND "${NPM_EXECUTABLE}" "run" "lint"
+  )
+
+endif() # ESLINT_TESTS
+
+
 set(REBUILD_JSDOC OFF CACHE BOOL "Enable rebuilding of docs/*.rst")
 set(BUILD_DOCUMENTATION OFF CACHE BOOL "Build documentation")
 
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
-
-
-# set up targets for node programs
-set(NODE_MODULES_PATH "${CMAKE_CURRENT_SOURCE_DIR}/node_modules")
-set(JSHINT_EXECUTABLE "${NODE_MODULES_PATH}/.bin/jshint")
-set(JSCS_EXECUTABLE "${NODE_MODULES_PATH}/.bin/jscs")
-
-set(JS_HINT_TESTS ON CACHE BOOL "Generate jshint style tests for JS source files.")
-set(JSCS_TESTS ON CACHE BOOL "Generate jscs style tests for JS source files.")
-
-set(_source_files
-  init.js
-  GL.js
-  timestamp.js
-  object.js
-  graphicsObject.js
-  event.js
-  boundingObject.js
-  node.js
-  groupNode.js
-  actor.js
-  freezeObject.js
-  defaultValue.js
-  geojsonReader.js
-  data.js
-  geomData.js
-  mapper.js
-  groupMapper.js
-  materialAttribute.js
-  blend.js
-  material.js
-  renderer.js
-  renderWindow.js
-  camera.js
-  interactorStyle.js
-  trackballInteractorStyle.js
-  pvwInteractorStyle.js
-  viewer.js
-  shader.js
-  shaderProgram.js
-  texture.js
-  uniform.js
-  vertexAttribute.js
-  source.js
-  planeSource.js
-  pointSource.js
-  lineSource.js
-  utils.js
-  picker.js
-  shapefileReader.js
-  vtkReader.js
-  dataBuffers.js
-  fbo.js
-  renderPass.js
-  depthPeelRenderer.js
-)
-
-
-set(paths
-  modules
-)
-
-# VGL requires a deployment directory
-if(NOT DEFINED VGL_DEPLOY_DIR)
-  set(VGL_DEPLOY_DIR "${CMAKE_CURRENT_BINARY_DIR}/deploy"
-      CACHE PATH "PATH to deployment directory" FORCE)
-endif()
-
-#/////////////////////////////////////////////////////////////////////////////
-#//
-#//
-#//
-#/////////////////////////////////////////////////////////////////////////////
-
-# Create deploy directory if it does not exist
-if(NOT DEFINED VGL_DEPLOY_LIB_DIR)
-  set(VGL_DEPLOY_LIB_DIR "${VGL_DEPLOY_DIR}/web/lib")
-  add_custom_command(OUTPUT "${VGL_DEPLOY_LIB_DIR}"
-    COMMAND ${CMAKE_COMMAND} -E make_directory "${VGL_DEPLOY_LIB_DIR}"
-  )
-else()
-  add_custom_command(OUTPUT "${VGL_DEPLOY_LIB_DIR}"
-    COMMAND ${CMAKE_COMMAND} -E touch "${VGL_DEPLOY_LIB_DIR}"
-  )
-endif()
-add_custom_target(vgl_pre_deploy ALL
-  DEPENDS
-  ${VGL_DEPLOY_LIB_DIR}
-)
-
-set(_min_js_file ${VGL_DEPLOY_LIB_DIR}/vgl.min.js)
-set(_js_file ${VGL_DEPLOY_LIB_DIR}/vgl.js)
-set(_js_uglify_files)
-
-foreach(d ${_source_files})
-  set(_js_uglify_files ${_js_uglify_files} ${CMAKE_CURRENT_SOURCE_DIR}/src/${d})
-endforeach()
-
-# Use custom command to call CMake script to cat files together
-add_custom_command(
-  OUTPUT ${_js_file}
-  COMMAND ${CMAKE_COMMAND} -DCAT_OUTPUT_FILE=${_js_file}
-          # Note the quotes so we get the ; included
-          "-DCAT_FILES=${_js_uglify_files}"
-          -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/cat.cmake
-  DEPENDS ${VGL_DEPLOY_LIB_DIR} ${_js_uglify_files}
-  VERBATIM
-)
-
-if(MINIFY)
-  # Find UglifyJS.
-  find_package(UglifyJS REQUIRED)
-
-  if(MANGLE)
-      set(MANGLE_FLAG "-m")
-  endif()
-
-  add_custom_command(
-    OUTPUT ${_min_js_file}
-    COMMAND ${UglifyJS_EXECUTABLE} ${_js_file} -c ${MANGLE_FLAG} -o ${_min_js_file}
-    DEPENDS ${VGL_DEPLOY_LIB_DIR} ${_js_file}
-  )
-  add_custom_target(${PROJECT_NAME} ALL DEPENDS ${_min_js_file})
-else()
-  add_custom_target(${PROJECT_NAME} ALL DEPENDS ${_js_file})
-endif()
-
-add_dependencies(${PROJECT_NAME} vgl_pre_deploy)
-
-# Copy directories / files to the deployment directory
-foreach(m ${paths})
-    set(copy_command "copy")
-    if (IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/${m}")
-      set(copy_command "copy_directory")
-    endif()
-    set(outpath ${VGL_DEPLOY_DIR}/${m})
-    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E ${copy_command}
-          ${CMAKE_CURRENT_SOURCE_DIR}/${m} ${outpath}
-        DEPENDS ${m}
-    )
-endforeach()
-
-if (NOT GEOJS_VERSION)
-  include(CTest)
-  enable_testing()
-
-  if(${JS_HINT_TESTS})
-    add_custom_target(
-      jshint-binary
-      ALL
-      DEPENDS "${JSHINT_EXECUTABLE}"
-    )
-    add_test(
-      NAME "jshint"
-      WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-      COMMAND "${JSHINT_EXECUTABLE}" "src"
-    )
-  endif() # JS_HINT_TESTS
-
-  if(${JSCS_TESTS})
-    add_custom_target(
-      jscs-binary
-      ALL
-      DEPENDS "${JSCS_EXECUTABLE}"
-    )
-    add_test(
-      NAME "jscs"
-      WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-      COMMAND "${JSCS_EXECUTABLE}" "src"
-    )
-  endif() # JSCS_TESTS
-
-endif()
-
-# Testing --- disabled when compiling with geojs
-if (BUILD_TESTING AND NOT GEOJS_VERSION)
-
-  if(EXISTS "${VGL_DATA_DIR}" AND IS_DIRECTORY "${VGL_DATA_DIR}")
-    message("[info] VGL data directory is set to ${VGL_DATA_DIR}")
-  else()
-    message(FATAL_ERROR "VGL testing requires valid data directory")
-  endif()
-
-  if(EXISTS "${VGL_BASELINE_DIR}" AND IS_DIRECTORY "${VGL_BASELINE_DIR}")
-    message("[info] VGL baseline directory is set to ${VGL_BASELINE_DIR}")
-  else()
-    message(FATAL_ERROR "VGL testing requires valid baseline directory")
-  endif()
-
-  # Setup testing environment
-  add_custom_target(vgl_configure ALL
-    COMMAND ${CMAKE_COMMAND}
-      -DVGL_CMAKE_DIR=${VGL_CMAKE_DIR}
-      -DVGL_BASELINE_DIR=${VGL_BASELINE_DIR}
-      -DVGL_DATA_DIR=${VGL_DATA_DIR}
-      -DVGL_DEPLOY_DIR=${VGL_DEPLOY_DIR}
-      -P ${VGL_CMAKE_DIR}/configure.cmake
-  )
-  add_dependencies(${PROJECT_NAME} vgl_configure)
-
-  # Non-GUI tests
-  add_custom_command(
-    OUTPUT "${VGL_DEPLOY_DIR}/data"
-    COMMAND ${CMAKE_COMMAND} -E copy_directory "${VGL_DATA_DIR}"
-            "${VGL_DEPLOY_DIR}/data"
-  )
-  add_custom_target(vgl_data ALL DEPENDS "${VGL_DEPLOY_DIR}/data")
-  add_dependencies(${PROJECT_NAME} vgl_data)
-
-  add_custom_command(
-    OUTPUT "${VGL_DEPLOY_DIR}/testing"
-    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/testing
-            "${VGL_DEPLOY_DIR}/testing"
-  )
-  add_custom_target(vgl_testing ALL DEPENDS "${VGL_DEPLOY_DIR}/testing")
-  add_dependencies(${PROJECT_NAME} vgl_testing)
-
-  # GUI testing (requires python)
-  find_package(PythonInterp REQUIRED)
-  add_subdirectory(src)
-
-endif()
 
 # Documentation
 

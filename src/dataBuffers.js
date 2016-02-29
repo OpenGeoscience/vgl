@@ -17,7 +17,7 @@ vgl.DataBuffers = function (initialSize) {
 
   var copyArray = function (dst, src, start, count) {
     if (!dst) {
-      console.log ('ack');
+      throw 'No destination';
     }
     if (!start) {
       start = 0;
@@ -44,20 +44,28 @@ vgl.DataBuffers = function (initialSize) {
     size = new_size;
     for (var name in data) {
       if (data.hasOwnProperty(name)) {
-        var newArray = new Float32Array (new_size * data[name].len);
+        var newArray = new Float32Array(new_size * data[name].len);
         var oldArray = data[name].array;
-        copyArray (newArray, oldArray);
+        copyArray(newArray, oldArray);
         data[name].array = newArray;
         data[name].dirty = true;
       }
     }
   };
 
+  /**
+   * Allocate a buffer with a name and a specific number of components per
+   * entry.  If a buffer with the specified name already exists, it will be
+   * overwritten.
+   *
+   * @param name: the name of the buffer to create or replace.
+   * @param len: number of components per entry.  Most be a positive integer.
+   */
   this.create = function (name, len) {
-    if (!len) {
+    if (!len || len < 0) {
       throw 'Length of buffer must be a positive integer';
     }
-    var array = new Float32Array (size * len);
+    var array = new Float32Array(size * len);
     data[name] = {
       array: array,
       len: len,
@@ -68,7 +76,7 @@ vgl.DataBuffers = function (initialSize) {
 
   this.alloc = function (num) {
     if ((current + num) >= size) {
-      resize (current + num);
+      resize(current + num);
     }
     var start = current;
     current += num;
@@ -80,13 +88,19 @@ vgl.DataBuffers = function (initialSize) {
   };
 
   this.write = function (name, array, start, count) {
-    copyArray (data[name].array, array, start * data[name].len, count * data[name].len);
+    if (start + count > size) {
+      throw 'Write would exceed buffer size';
+    }
+    copyArray(data[name].array, array, start * data[name].len, count * data[name].len);
     data[name].dirty = true;
   };
 
   this.repeat = function (name, elem, start, count) {
+    if (start + count > size) {
+      throw 'Repeat would exceed buffer size';
+    }
     for (var i = 0; i < count; i += 1) {
-      copyArray (data[name].array, elem,
+      copyArray(data[name].array, elem,
                  (start + i) * data[name].len, data[name].len);
     }
     data[name].dirty = true;

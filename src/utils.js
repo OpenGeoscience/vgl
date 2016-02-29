@@ -61,17 +61,17 @@ vgl.utils.computePowerOfTwo = function (value, pow) {
 vgl.utils.createTextureVertexShader = function (context) {
   'use strict';
   var vertexShaderSource = [
-        'attribute vec3 vertexPosition;',
-        'attribute vec3 textureCoord;',
-        'uniform mediump float pointSize;',
-        'uniform mat4 modelViewMatrix;',
-        'uniform mat4 projectionMatrix;',
-        'varying highp vec3 iTextureCoord;',
-        'void main(void)',
-        '{',
-        'gl_PointSize = pointSize;',
-        'gl_Position = projectionMatrix * modelViewMatrix * vec4(vertexPosition, 1.0);',
-        ' iTextureCoord = textureCoord;', '}'].join('\n');
+    'attribute vec3 vertexPosition;',
+    'attribute vec3 textureCoord;',
+    'uniform mediump float pointSize;',
+    'uniform mat4 modelViewMatrix;',
+    'uniform mat4 projectionMatrix;',
+    'varying highp vec3 iTextureCoord;',
+    'void main(void)',
+    '{',
+    'gl_PointSize = pointSize;',
+    'gl_Position = projectionMatrix * modelViewMatrix * vec4(vertexPosition, 1.0);',
+    ' iTextureCoord = textureCoord;', '}'].join('\n');
   return vgl.getCachedShader(vgl.GL.VERTEX_SHADER, context,
                              vertexShaderSource);
 };
@@ -89,13 +89,13 @@ vgl.utils.createTextureVertexShader = function (context) {
 vgl.utils.createTextureFragmentShader = function (context) {
   'use strict';
   var fragmentShaderSource = [
-        'varying highp vec3 iTextureCoord;',
-        'uniform sampler2D sampler2d;',
-        'uniform mediump float opacity;',
-        'void main(void) {',
-        'gl_FragColor = vec4(texture2D(sampler2d, vec2(iTextureCoord.s, ' +
+    'varying highp vec3 iTextureCoord;',
+    'uniform sampler2D sampler2d;',
+    'uniform mediump float opacity;',
+    'void main(void) {',
+    'gl_FragColor = vec4(texture2D(sampler2d, vec2(iTextureCoord.s, ' +
                         'iTextureCoord.t)).xyz, opacity);',
-        '}'].join('\n');
+    '}'].join('\n');
   return vgl.getCachedShader(vgl.GL.FRAGMENT_SHADER, context,
                              fragmentShaderSource);
 };
@@ -113,16 +113,16 @@ vgl.utils.createTextureFragmentShader = function (context) {
 vgl.utils.createRgbaTextureFragmentShader = function (context) {
   'use strict';
   var fragmentShaderSource = [
-        'varying highp vec3 iTextureCoord;',
-        'uniform sampler2D sampler2d;',
-        'uniform mediump float opacity;',
-        'void main(void) {',
-        '  mediump vec4 color = vec4(texture2D(sampler2d, vec2(' +
+    'varying highp vec3 iTextureCoord;',
+    'uniform sampler2D sampler2d;',
+    'uniform mediump float opacity;',
+    'void main(void) {',
+    '  mediump vec4 color = vec4(texture2D(sampler2d, vec2(' +
                                 'iTextureCoord.s, iTextureCoord.t)).xyzw);',
-        '  color.w *= opacity;',
-        '  gl_FragColor = color;',
-        '}'
-      ].join('\n');
+    '  color.w *= opacity;',
+    '  gl_FragColor = color;',
+    '}'
+  ].join('\n');
   return vgl.getCachedShader(vgl.GL.FRAGMENT_SHADER, context,
                              fragmentShaderSource);
 };
@@ -140,18 +140,18 @@ vgl.utils.createRgbaTextureFragmentShader = function (context) {
 vgl.utils.createVertexShader = function (context) {
   'use strict';
   var vertexShaderSource = [
-        'attribute vec3 vertexPosition;',
-        'attribute vec3 vertexColor;',
-        'uniform mediump float pointSize;',
-        'uniform mat4 modelViewMatrix;',
-        'uniform mat4 projectionMatrix;',
-        'varying mediump vec3 iVertexColor;',
-        'varying highp vec3 iTextureCoord;',
-        'void main(void)',
-        '{',
-        'gl_PointSize = pointSize;',
-        'gl_Position = projectionMatrix * modelViewMatrix * vec4(vertexPosition, 1.0);',
-        ' iVertexColor = vertexColor;', '}'].join('\n');
+    'attribute vec3 vertexPosition;',
+    'attribute vec3 vertexColor;',
+    'uniform mediump float pointSize;',
+    'uniform mat4 modelViewMatrix;',
+    'uniform mat4 projectionMatrix;',
+    'varying mediump vec3 iVertexColor;',
+    'varying highp vec3 iTextureCoord;',
+    'void main(void)',
+    '{',
+    'gl_PointSize = pointSize;',
+    'gl_Position = projectionMatrix * modelViewMatrix * vec4(vertexPosition, 1.0);',
+    ' iVertexColor = vertexColor;', '}'].join('\n');
   return vgl.getCachedShader(vgl.GL.VERTEX_SHADER, context,
                              vertexShaderSource);
 };
@@ -169,18 +169,18 @@ vgl.utils.createVertexShader = function (context) {
 vgl.utils.createPointVertexShader = function (context) {
   'use strict';
   var vertexShaderSource = [
-        'attribute vec3 vertexPosition;',
-        'attribute vec3 vertexColor;',
-        'attribute float vertexSize;',
-        'uniform mat4 modelViewMatrix;',
-        'uniform mat4 projectionMatrix;',
-        'varying mediump vec3 iVertexColor;',
-        'varying highp vec3 iTextureCoord;',
-        'void main(void)',
-        '{',
-        'gl_PointSize =  vertexSize;',
-        'gl_Position = projectionMatrix * modelViewMatrix * vec4(vertexPosition, 1.0);',
-        ' iVertexColor = vertexColor;', '}'].join('\n');
+    'attribute vec3 vertexPosition;',
+    'attribute vec3 vertexColor;',
+    'attribute float vertexSize;',
+    'uniform mat4 modelViewMatrix;',
+    'uniform mat4 projectionMatrix;',
+    'varying mediump vec3 iVertexColor;',
+    'varying highp vec3 iTextureCoord;',
+    'void main(void)',
+    '{',
+    'gl_PointSize =  vertexSize;',
+    'gl_Position = projectionMatrix * modelViewMatrix * vec4(vertexPosition, 1.0);',
+    ' iVertexColor = vertexColor;', '}'].join('\n');
   return vgl.getCachedShader(vgl.GL.VERTEX_SHADER, context,
                              vertexShaderSource);
 };
@@ -198,15 +198,15 @@ vgl.utils.createPointVertexShader = function (context) {
 vgl.utils.createVertexShaderSolidColor = function (context) {
   'use strict';
   var vertexShaderSource = [
-        'attribute vec3 vertexPosition;',
-        'uniform mediump float pointSize;',
-        'uniform mat4 modelViewMatrix;',
-        'uniform mat4 projectionMatrix;',
-        'void main(void)',
-        '{',
-        'gl_PointSize = pointSize;',
-        'gl_Position = projectionMatrix * modelViewMatrix * vec4(vertexPosition, 1.0);',
-        '}'].join('\n');
+    'attribute vec3 vertexPosition;',
+    'uniform mediump float pointSize;',
+    'uniform mat4 modelViewMatrix;',
+    'uniform mat4 projectionMatrix;',
+    'void main(void)',
+    '{',
+    'gl_PointSize = pointSize;',
+    'gl_Position = projectionMatrix * modelViewMatrix * vec4(vertexPosition, 1.0);',
+    '}'].join('\n');
   return vgl.getCachedShader(vgl.GL.VERTEX_SHADER, context,
                              vertexShaderSource);
 };
@@ -227,20 +227,20 @@ vgl.utils.createVertexShaderColorMap = function (context, min, max) {
   min = min; /* unused parameter */
   max = max; /* unused parameter */
   var vertexShaderSource = [
-        'attribute vec3 vertexPosition;',
-        'attribute float vertexScalar;',
-        'uniform mediump float pointSize;',
-        'uniform mat4 modelViewMatrix;',
-        'uniform mat4 projectionMatrix;',
-        'uniform float lutMin;',
-        'uniform float lutMax;',
-        'varying mediump float iVertexScalar;',
-        'void main(void)',
-        '{',
-        'gl_PointSize = pointSize;',
-        'gl_Position = projectionMatrix * modelViewMatrix * vec4(vertexPosition, 1.0);',
-        'iVertexScalar = (vertexScalar-lutMin)/(lutMax-lutMin);',
-        '}'].join('\n');
+    'attribute vec3 vertexPosition;',
+    'attribute float vertexScalar;',
+    'uniform mediump float pointSize;',
+    'uniform mat4 modelViewMatrix;',
+    'uniform mat4 projectionMatrix;',
+    'uniform float lutMin;',
+    'uniform float lutMax;',
+    'varying mediump float iVertexScalar;',
+    'void main(void)',
+    '{',
+    'gl_PointSize = pointSize;',
+    'gl_Position = projectionMatrix * modelViewMatrix * vec4(vertexPosition, 1.0);',
+    'iVertexScalar = (vertexScalar-lutMin)/(lutMax-lutMin);',
+    '}'].join('\n');
   return vgl.getCachedShader(vgl.GL.VERTEX_SHADER, context,
                              vertexShaderSource);
 };
@@ -279,25 +279,25 @@ vgl.utils.createFragmentShader = function (context) {
 vgl.utils.createPhongVertexShader = function (context) {
   'use strict';
   var vertexShaderSource = [
-      'attribute highp vec3 vertexPosition;',
-      'attribute mediump vec3 vertexNormal;',
-      'attribute mediump vec3 vertexColor;',
+    'attribute highp vec3 vertexPosition;',
+    'attribute mediump vec3 vertexNormal;',
+    'attribute mediump vec3 vertexColor;',
 
-      'uniform highp mat4 projectionMatrix;',
-      'uniform mat4 modelViewMatrix;',
-      'uniform mat4 normalMatrix;',
+    'uniform highp mat4 projectionMatrix;',
+    'uniform mat4 modelViewMatrix;',
+    'uniform mat4 normalMatrix;',
 
-      'varying highp vec4 varPosition;',
-      'varying mediump vec3 varNormal;',
-      'varying mediump vec3 varVertexColor;',
+    'varying highp vec4 varPosition;',
+    'varying mediump vec3 varNormal;',
+    'varying mediump vec3 varVertexColor;',
 
-      'void main(void)',
-      '{',
-      'varPosition = modelViewMatrix * vec4(vertexPosition, 1.0);',
-      'gl_Position = projectionMatrix * varPosition;',
-      'varNormal = vec3(normalMatrix * vec4(vertexNormal, 0.0));',
-      'varVertexColor = vertexColor;',
-      '}'].join('\n');
+    'void main(void)',
+    '{',
+    'varPosition = modelViewMatrix * vec4(vertexPosition, 1.0);',
+    'gl_Position = projectionMatrix * varPosition;',
+    'varNormal = vec3(normalMatrix * vec4(vertexNormal, 0.0));',
+    'varVertexColor = vertexColor;',
+    '}'].join('\n');
   return vgl.getCachedShader(vgl.GL.VERTEX_SHADER, context,
                              vertexShaderSource);
 };
@@ -343,7 +343,6 @@ vgl.utils.createPhongFragmentShader = function (context) {
                              fragmentShaderSource);
 };
 
-
 //////////////////////////////////////////////////////////////////////////////
 /**
  * Create a new instance of fragment shader with an assigned constant color.
@@ -357,10 +356,10 @@ vgl.utils.createPhongFragmentShader = function (context) {
 vgl.utils.createFragmentShaderSolidColor = function (context, color) {
   'use strict';
   var fragmentShaderSource = [
-      'uniform mediump float opacity;',
-      'void main(void) {',
-      'gl_FragColor = vec4(' + color[0] + ',' + color[1] + ',' + color[2] + ', opacity);',
-      '}'].join('\n');
+    'uniform mediump float opacity;',
+    'void main(void) {',
+    'gl_FragColor = vec4(' + color[0] + ',' + color[1] + ',' + color[2] + ', opacity);',
+    '}'].join('\n');
   return vgl.getCachedShader(vgl.GL.FRAGMENT_SHADER, context,
                              fragmentShaderSource);
 };
@@ -378,13 +377,13 @@ vgl.utils.createFragmentShaderSolidColor = function (context, color) {
 vgl.utils.createFragmentShaderColorMap = function (context) {
   'use strict';
   var fragmentShaderSource = [
-        'varying mediump float iVertexScalar;',
-        'uniform sampler2D sampler2d;',
-        'uniform mediump float opacity;',
-        'void main(void) {',
-        'gl_FragColor = vec4(texture2D(sampler2d, vec2(iVertexScalar, ' +
+    'varying mediump float iVertexScalar;',
+    'uniform sampler2D sampler2d;',
+    'uniform mediump float opacity;',
+    'void main(void) {',
+    'gl_FragColor = vec4(texture2D(sampler2d, vec2(iVertexScalar, ' +
             '0.0)).xyz, opacity);',
-        '}'].join('\n');
+    '}'].join('\n');
   return vgl.getCachedShader(vgl.GL.FRAGMENT_SHADER, context,
                              fragmentShaderSource);
 };
@@ -402,24 +401,24 @@ vgl.utils.createFragmentShaderColorMap = function (context) {
 vgl.utils.createPointSpritesVertexShader = function (context) {
   'use strict';
   var vertexShaderSource = [
-        'attribute vec3 vertexPosition;',
-        'attribute vec3 vertexColor;',
-        'uniform mediump vec2 pointSize;',
-        'uniform mat4 modelViewMatrix;',
-        'uniform mat4 projectionMatrix;',
-        'uniform float height;',
-        'varying mediump vec3 iVertexColor;',
-        'varying highp float iVertexScalar;',
-        'void main(void)',
-        '{',
-        'mediump float realPointSize = pointSize.y;',
-        'if (pointSize.x > pointSize.y) {',
-        '  realPointSize = pointSize.x;}',
-        'gl_PointSize = realPointSize ;',
-        'iVertexScalar = vertexPosition.z;',
-        'gl_Position = projectionMatrix * modelViewMatrix * ' +
+    'attribute vec3 vertexPosition;',
+    'attribute vec3 vertexColor;',
+    'uniform mediump vec2 pointSize;',
+    'uniform mat4 modelViewMatrix;',
+    'uniform mat4 projectionMatrix;',
+    'uniform float height;',
+    'varying mediump vec3 iVertexColor;',
+    'varying highp float iVertexScalar;',
+    'void main(void)',
+    '{',
+    'mediump float realPointSize = pointSize.y;',
+    'if (pointSize.x > pointSize.y) {',
+    '  realPointSize = pointSize.x;}',
+    'gl_PointSize = realPointSize ;',
+    'iVertexScalar = vertexPosition.z;',
+    'gl_Position = projectionMatrix * modelViewMatrix * ' +
             'vec4(vertexPosition.xy, height, 1.0);',
-        ' iVertexColor = vertexColor;', '}'].join('\n');
+    ' iVertexColor = vertexColor;', '}'].join('\n');
   return vgl.getCachedShader(vgl.GL.VERTEX_SHADER, context,
                              vertexShaderSource);
 };
@@ -437,34 +436,34 @@ vgl.utils.createPointSpritesVertexShader = function (context) {
 vgl.utils.createPointSpritesFragmentShader = function (context) {
   'use strict';
   var fragmentShaderSource = [
-        'varying mediump vec3 iVertexColor;',
-        'varying highp float iVertexScalar;',
-        'uniform sampler2D opacityLookup;',
-        'uniform highp float lutMin;',
-        'uniform highp float lutMax;',
-        'uniform sampler2D scalarsToColors;',
-        'uniform int useScalarsToColors;',
-        'uniform int useVertexColors;',
-        'uniform mediump vec2 pointSize;',
-        'uniform mediump float vertexColorWeight;',
-        'void main(void) {',
-        'mediump vec2 realTexCoord;',
-        'if (pointSize.x > pointSize.y) {',
-        '  realTexCoord = vec2(1.0, pointSize.y/pointSize.x) * gl_PointCoord;',
-        '} else {',
-        '  realTexCoord = vec2(pointSize.x/pointSize.y, 1.0) * gl_PointCoord;',
-        '}',
-        'highp float texOpacity = texture2D(opacityLookup, realTexCoord).w;',
-        'if (useScalarsToColors == 1) {',
-        '  gl_FragColor = vec4(texture2D(scalarsToColors, vec2((' +
+    'varying mediump vec3 iVertexColor;',
+    'varying highp float iVertexScalar;',
+    'uniform sampler2D opacityLookup;',
+    'uniform highp float lutMin;',
+    'uniform highp float lutMax;',
+    'uniform sampler2D scalarsToColors;',
+    'uniform int useScalarsToColors;',
+    'uniform int useVertexColors;',
+    'uniform mediump vec2 pointSize;',
+    'uniform mediump float vertexColorWeight;',
+    'void main(void) {',
+    'mediump vec2 realTexCoord;',
+    'if (pointSize.x > pointSize.y) {',
+    '  realTexCoord = vec2(1.0, pointSize.y/pointSize.x) * gl_PointCoord;',
+    '} else {',
+    '  realTexCoord = vec2(pointSize.x/pointSize.y, 1.0) * gl_PointCoord;',
+    '}',
+    'highp float texOpacity = texture2D(opacityLookup, realTexCoord).w;',
+    'if (useScalarsToColors == 1) {',
+    '  gl_FragColor = vec4(texture2D(scalarsToColors, vec2((' +
             'iVertexScalar - lutMin)/(lutMax - lutMin), 0.0)).xyz, ' +
             'texOpacity);',
-        '} else if (useVertexColors == 1) {',
-        '  gl_FragColor = vec4(iVertexColor, texOpacity);',
-        '} else {',
-        '  gl_FragColor = vec4(texture2D(opacityLookup, realTexCoord).xyz, texOpacity);',
-        '}}'
-    ].join('\n');
+    '} else if (useVertexColors == 1) {',
+    '  gl_FragColor = vec4(iVertexColor, texOpacity);',
+    '} else {',
+    '  gl_FragColor = vec4(texture2D(opacityLookup, realTexCoord).xyz, texOpacity);',
+    '}}'
+  ].join('\n');
   return vgl.getCachedShader(vgl.GL.FRAGMENT_SHADER, context,
                              fragmentShaderSource);
 };
@@ -481,17 +480,17 @@ vgl.utils.createPointSpritesFragmentShader = function (context) {
 vgl.utils.createTextureMaterial = function (isRgba, origin) {
   'use strict';
   var mat = new vgl.material(),
-    blend = new vgl.blend(),
-    prog = new vgl.shaderProgram(),
-    vertexShader = vgl.utils.createTextureVertexShader(vgl.GL),
-    fragmentShader = null,
-    posVertAttr = new vgl.vertexAttribute('vertexPosition'),
-    texCoordVertAttr = new vgl.vertexAttribute('textureCoord'),
-    pointsizeUniform = new vgl.floatUniform('pointSize', 5.0),
-    modelViewUniform,
-    projectionUniform = new vgl.projectionUniform('projectionMatrix'),
-    samplerUniform = new vgl.uniform(vgl.GL.INT, 'sampler2d'),
-    opacityUniform = null;
+      blend = new vgl.blend(),
+      prog = new vgl.shaderProgram(),
+      vertexShader = vgl.utils.createTextureVertexShader(vgl.GL),
+      fragmentShader = null,
+      posVertAttr = new vgl.vertexAttribute('vertexPosition'),
+      texCoordVertAttr = new vgl.vertexAttribute('textureCoord'),
+      pointsizeUniform = new vgl.floatUniform('pointSize', 5.0),
+      modelViewUniform,
+      projectionUniform = new vgl.projectionUniform('projectionMatrix'),
+      samplerUniform = new vgl.uniform(vgl.GL.INT, 'sampler2d'),
+      opacityUniform = null;
   if (origin !== undefined) {
     modelViewUniform = new vgl.modelViewOriginUniform('modelViewMatrix',
                                                       origin);
@@ -598,7 +597,6 @@ vgl.utils.createPointGeometryMaterial = function (opacity) {
 
   return mat;
 };
-
 
 //////////////////////////////////////////////////////////////////////////////
 /**
@@ -750,7 +748,6 @@ vgl.utils.updateColorMappedMaterial = function (mat, lut) {
     console.log('[warning] Invalid lookup table. Nothing to update.');
     return;
   }
-
 
   var lutMin = mat.shaderProgram().uniform('lutMin'),
       lutMax = mat.shaderProgram().uniform('lutMax');
@@ -1144,7 +1141,7 @@ vgl.utils.createColorLegend = function (varname, lookupTable, origin,
     }
 
     // Create axis label
-    origin[0] = (positions[0] + positions[positions.length - 3]  - size) * 0.5;
+    origin[0] = (positions[0] + positions[positions.length - 3] - size) * 0.5;
     origin[1] = positions[1] + axisLabelOffset;
     origin[2] = positions[2];
 

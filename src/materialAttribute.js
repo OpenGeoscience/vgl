@@ -27,7 +27,7 @@ vgl.materialAttribute = function (type) {
   'use strict';
 
   if (!(this instanceof vgl.materialAttribute)) {
-    return new vgl.materialAttribute();
+    return new vgl.materialAttribute(type);
   }
   vgl.graphicsObject.call(this);
 
@@ -69,7 +69,7 @@ vgl.materialAttribute = function (type) {
   ////////////////////////////////////////////////////////////////////////////
   this.bindVertexData = function (renderState, key) {
     renderState = renderState; /* unused parameter */
-    key = key /* unused parameter */;
+    key = key; /* unused parameter */
     return false;
   };
 
@@ -84,7 +84,7 @@ vgl.materialAttribute = function (type) {
   ////////////////////////////////////////////////////////////////////////////
   this.undoBindVertexData = function (renderState, key) {
     renderState = renderState; /* unused parameter */
-    key = key /* unused parameter */;
+    key = key; /* unused parameter */
     return false;
   };
 

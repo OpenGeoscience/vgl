@@ -7,20 +7,43 @@
     "type": "git",
     "url": "git://github.com/OpenGeoscience/vgl.git"
   },
+  "bugs": {
+    "url": "https://github.com/OpenGeoscience/vgl/issues"
+  },
   "dependencies": {},
   "devDependencies": {
+    "blanket": "~1.2",
+    "body-parser": "^1.14.1",
+    "eslint": "^1.10.3",
+    "eslint-config-semistandard": "^5.0.0",
+    "eslint-config-standard": "^4.4.0",
+    "eslint-plugin-standard": "^1.3.1",
+    "express": "^4.13.3",
+    "gl-matrix": "^2.3",
     "grunt": "~0.4",
     "grunt-cli": "^0.1.13",
+    "grunt-contrib-clean": "~0.7",
     "grunt-contrib-concat": "^0.5.1",
-    "grunt-contrib-jshint": "^0.11.3",
+    "grunt-contrib-copy": "~0.8",
+    "grunt-contrib-watch": "~0.6",
     "grunt-contrib-uglify": "^0.10.0",
-    "grunt-jscs": "^2.2.0",
+    "grunt-express": "~1.4",
+    "grunt-parallel": "~0.4",
+    "grunt-template": "~0.2",
     "grunt-umd": "^2.3.5",
-    "jscs": "^2.4.0",
-    "jshint": "^2.8.0"
+    "jquery": "^2.2",
+    "phantomjs": "~1.9",
+    "phantomjs-polyfill": "0.0.1",
+    "xmlbuilder": "^4.1.0"
   },
   "scripts": {
     "mypublish": "grunt default test && cp dist/vgl* . && npm publish",
-    "test": "grunt test"
-  }
+    "test": "grunt test",
+    "build": "grunt default",
+    "lint": "eslint --cache src Gruntfile.js"
+  },
+  "keyword": [
+    "webgl"
+  ],
+  "main": "vgl.js"
 }

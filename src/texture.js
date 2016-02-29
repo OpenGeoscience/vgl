@@ -91,7 +91,7 @@ vgl.texture = function () {
         renderState.m_context.activeTexture(vgl.GL.TEXTURE15);
         break;
       default:
-        throw '[error] Texture unit '  + m_that.m_textureUnit +
+        throw '[error] Texture unit ' + m_that.m_textureUnit +
               ' is not supported';
     }
   }
@@ -551,7 +551,7 @@ vgl.lookupTable = function () {
      1, 0.380759558, 0.320428137, 1,
      0.961891484, 0.313155629, 0.265499262, 1,
      0.916482116, 0.236630659, 0.209939162, 1].map(
-             function (x) {return x * 255;});
+             function (x) { return x * 255; });
 
   /////////////////////////////////////////////////////////////////////////////
   /**

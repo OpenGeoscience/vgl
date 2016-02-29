@@ -25,8 +25,7 @@ vgl.mapper = function (arg) {
   /** @private */
   arg = arg || {};
 
-  var m_dirty = true,
-      m_color = [0.0, 1.0, 1.0],
+  var m_color = [0.0, 1.0, 1.0],
       m_geomData = null,
       m_buffers = [],
       m_bufferVertexAttributeMap = {},
@@ -133,8 +132,6 @@ vgl.mapper = function (arg) {
 
     // Now construct the new ones.
     createVertexBufferObjects(renderState);
-
-    m_dirty = false;
   }
 
   ////////////////////////////////////////////////////////////////////////////
@@ -156,7 +153,7 @@ vgl.mapper = function (arg) {
       geomBounds = m_geomData.bounds();
 
       this.setBounds(geomBounds[0], geomBounds[1], geomBounds[2],
-        geomBounds[3], geomBounds[4], geomBounds[5]) ;
+        geomBounds[3], geomBounds[4], geomBounds[5]);
 
       computeBoundsTimestamp.modified();
     }
@@ -322,7 +319,7 @@ vgl.mapper = function (arg) {
           m_context.drawArrays(vgl.GL.TRIANGLE_STRIP, 0, primitive.numberOfIndices());
           break;
       }
-      m_context.bindBuffer (vgl.GL.ARRAY_BUFFER, null);
+      m_context.bindBuffer(vgl.GL.ARRAY_BUFFER, null);
     }
   };
 

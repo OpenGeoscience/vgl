@@ -30,51 +30,51 @@ vgl.shapefileReader = function () {
   var SHP_POLYLINE = 3;
 
   this.int8 = function (data, offset) {
-    return data.charCodeAt (offset);
+    return data.charCodeAt(offset);
   };
 
   /*jshint bitwise: false */
   this.bint32 = function (data, offset) {
     return (
-      ((data.charCodeAt (offset) & 0xff) << 24) +
-        ((data.charCodeAt (offset + 1) & 0xff) << 16) +
-        ((data.charCodeAt (offset + 2) & 0xff) << 8) +
-        (data.charCodeAt (offset + 3) & 0xff)
+      ((data.charCodeAt(offset) & 0xff) << 24) +
+        ((data.charCodeAt(offset + 1) & 0xff) << 16) +
+        ((data.charCodeAt(offset + 2) & 0xff) << 8) +
+        (data.charCodeAt(offset + 3) & 0xff)
     );
   };
 
   this.lint32 = function (data, offset) {
     return (
-      ((data.charCodeAt (offset + 3) & 0xff) << 24) +
-        ((data.charCodeAt (offset + 2) & 0xff) << 16) +
-        ((data.charCodeAt (offset + 1) & 0xff) << 8) +
-        (data.charCodeAt (offset) & 0xff)
+      ((data.charCodeAt(offset + 3) & 0xff) << 24) +
+        ((data.charCodeAt(offset + 2) & 0xff) << 16) +
+        ((data.charCodeAt(offset + 1) & 0xff) << 8) +
+        (data.charCodeAt(offset) & 0xff)
     );
   };
 
   this.bint16 = function (data, offset) {
     return (
-      ((data.charCodeAt (offset) & 0xff) << 8) +
-        (data.charCodeAt (offset + 1) & 0xff)
+      ((data.charCodeAt(offset) & 0xff) << 8) +
+        (data.charCodeAt(offset + 1) & 0xff)
     );
   };
 
   this.lint16 = function (data, offset) {
     return (
-      ((data.charCodeAt (offset + 1) & 0xff) << 8) +
-        (data.charCodeAt (offset) & 0xff)
+      ((data.charCodeAt(offset + 1) & 0xff) << 8) +
+        (data.charCodeAt(offset) & 0xff)
     );
   };
 
   this.ldbl64 = function (data, offset) {
-    var b0 = data.charCodeAt (offset) & 0xff;
-    var b1 = data.charCodeAt (offset + 1) & 0xff;
-    var b2 = data.charCodeAt (offset + 2) & 0xff;
-    var b3 = data.charCodeAt (offset + 3) & 0xff;
-    var b4 = data.charCodeAt (offset + 4) & 0xff;
-    var b5 = data.charCodeAt (offset + 5) & 0xff;
-    var b6 = data.charCodeAt (offset + 6) & 0xff;
-    var b7 = data.charCodeAt (offset + 7) & 0xff;
+    var b0 = data.charCodeAt(offset) & 0xff;
+    var b1 = data.charCodeAt(offset + 1) & 0xff;
+    var b2 = data.charCodeAt(offset + 2) & 0xff;
+    var b3 = data.charCodeAt(offset + 3) & 0xff;
+    var b4 = data.charCodeAt(offset + 4) & 0xff;
+    var b5 = data.charCodeAt(offset + 5) & 0xff;
+    var b6 = data.charCodeAt(offset + 6) & 0xff;
+    var b7 = data.charCodeAt(offset + 7) & 0xff;
 
     var sign = 1 - 2 * (b7 >> 7);
     var exp = (((b7 & 0x7f) << 4) + ((b6 & 0xf0) >> 4)) - 1023;
@@ -83,24 +83,24 @@ vgl.shapefileReader = function () {
     // Math.pow (2, -44) + b0 * Math.pow (2, -52);
 
     //return sign * (1 + frac) * Math.pow (2, exp);
-    var frac = (b6 & 0x0f) * Math.pow (2, 48) + b5 * Math.pow (2, 40) + b4 *
-                 Math.pow (2, 32) + b3 * Math.pow (2, 24) + b2 *
-                 Math.pow (2, 16) + b1 * Math.pow (2, 8) + b0;
+    var frac = (b6 & 0x0f) * Math.pow(2, 48) + b5 * Math.pow(2, 40) + b4 *
+                 Math.pow(2, 32) + b3 * Math.pow(2, 24) + b2 *
+                 Math.pow(2, 16) + b1 * Math.pow(2, 8) + b0;
 
-    return sign * (1 + frac * Math.pow (2, -52)) * Math.pow (2, exp);
+    return sign * (1 + frac * Math.pow(2, -52)) * Math.pow(2, exp);
   };
 
   this.lfloat32 = function (data, offset) {
-    var b0 = data.charCodeAt (offset) & 0xff;
-    var b1 = data.charCodeAt (offset + 1) & 0xff;
-    var b2 = data.charCodeAt (offset + 2) & 0xff;
-    var b3 = data.charCodeAt (offset + 3) & 0xff;
+    var b0 = data.charCodeAt(offset) & 0xff;
+    var b1 = data.charCodeAt(offset + 1) & 0xff;
+    var b2 = data.charCodeAt(offset + 2) & 0xff;
+    var b3 = data.charCodeAt(offset + 3) & 0xff;
 
     var sign = 1 - 2 * (b3 >> 7);
     var exp = (((b3 & 0x7f) << 1) + ((b2 & 0xfe) >> 7)) - 127;
-    var frac = (b2 & 0x7f) * Math.pow (2, 16) + b1 * Math.pow (2, 8) + b0;
+    var frac = (b2 & 0x7f) * Math.pow(2, 16) + b1 * Math.pow(2, 8) + b0;
 
-    return sign * (1 + frac * Math.pow (2, -23)) * Math.pow (2, exp);
+    return sign * (1 + frac * Math.pow(2, -23)) * Math.pow(2, exp);
   };
   /*jshint bitwise: true */
 
@@ -109,14 +109,14 @@ vgl.shapefileReader = function () {
     var index = offset;
     while (index < offset + length) {
       var c = data[index];
-      if (c.charCodeAt (0) !== 0) {
-        chars.push (c);
+      if (c.charCodeAt(0) !== 0) {
+        chars.push(c);
       } else {
         break;
       }
       index += 1;
     }
-    return chars.join ('');
+    return chars.join('');
   };
 
   this.readHeader = function (data) {
@@ -143,33 +143,33 @@ vgl.shapefileReader = function () {
   this.loadShx = function (data) {
     var indices = [];
     var appendIndex = function (offset) {
-      indices.push (2 * m_that.bint32(data, offset));
+      indices.push(2 * m_that.bint32(data, offset));
       return offset + 8;
     };
     var offset = 100;
     while (offset < data.length) {
-      offset = appendIndex (offset);
+      offset = appendIndex(offset);
     }
     return indices;
   };
 
   this.Shapefile = function (options) {
     var path = options.path;
-    $.ajax ({
+    $.ajax({
       url: path + '.shx',
       mimeType: 'text/plain; charset=x-user-defined',
       success: function (data) {
         var indices = this.loadShx(data);
-        $.ajax ({
+        $.ajax({
           url: path + '.shp',
           mimeType: 'text/plain; charset=x-user-defined',
           success: function (data) {
-            $.ajax ({
+            $.ajax({
               url: path + '.dbf',
               mimeType: 'text/plain; charset=x-user-defined',
               success: function (dbf_data) {
-                var layer = this.loadShp (data, dbf_data, indices, options);
-                options.success (layer);
+                var layer = this.loadShp(data, dbf_data, indices, options);
+                options.success(layer);
               }
             });
           }
@@ -238,7 +238,7 @@ vgl.shapefileReader = function () {
     var header_offset = FIELDS_START;
     var headers = [];
     while (header_offset < header_size - 1) {
-      headers.push (readHeader(header_offset));
+      headers.push(readHeader(header_offset));
       header_offset += HEADER_LENGTH;
     }
 
@@ -253,13 +253,13 @@ vgl.shapefileReader = function () {
         // Move offset to the start of the actual data
         record_offset += 1;
         var record = {};
-        for (var i = 0; i < headers.length; i  += 1) {
+        for (var i = 0; i < headers.length; i += 1) {
           var header = headers[i];
           var value;
           if (header.type === 'C') {
-            value = m_that.str(data, record_offset, header.length).trim ();
+            value = m_that.str(data, record_offset, header.length).trim();
           } else if (header.type === 'N') {
-            value = parseFloat (m_that.str (data, record_offset, header.length));
+            value = parseFloat(m_that.str(data, record_offset, header.length));
           }
           record_offset += header.length;
           record[header.name] = value;
@@ -278,7 +278,7 @@ vgl.shapefileReader = function () {
       for (var i = end - 1; i >= start; i -= 1) {
         var x = m_that.ldbl64(data, offset + 16 * i);
         var y = m_that.ldbl64(data, offset + 16 * i + 8);
-        ring.push ([x, y]);
+        ring.push([x, y]);
       }
       //if (ring.length <= 3)
       // return [];
@@ -294,13 +294,13 @@ vgl.shapefileReader = function () {
           start, end, ring, rings;
 
       if (geom_type === SHP_NULL) {
-        console.log ('NULL Shape');
+        console.log('NULL Shape');
         //return offset + 12;
       } else if (geom_type === SHP_POINT) {
         var x = m_that.ldbl64(data, record_offset + 4);
         var y = m_that.ldbl64(data, record_offset + 12);
 
-        features.push ({
+        features.push({
           type: 'Point',
           attr: {},
           geom: [[x, y]]
@@ -313,17 +313,17 @@ vgl.shapefileReader = function () {
         points_start = offset + 52 + 4 * num_parts;
 
         rings = [];
-        for (i = 0; i < num_parts; i  += 1) {
+        for (i = 0; i < num_parts; i += 1) {
           start = m_that.lint32(data, parts_start + i * 4);
           if (i + 1 < num_parts) {
             end = m_that.lint32(data, parts_start + (i + 1) * 4);
           } else {
             end = num_points;
           }
-          ring = readRing (points_start, start, end);
-          rings.push (ring);
+          ring = readRing(points_start, start, end);
+          rings.push(ring);
         }
-        features.push ({
+        features.push({
           type: 'Polygon',
           attr: {},
           geom: [rings]
@@ -336,17 +336,17 @@ vgl.shapefileReader = function () {
         points_start = offset + 52 + 4 * num_parts;
 
         rings = [];
-        for (i = 0; i < num_parts; i  += 1) {
+        for (i = 0; i < num_parts; i += 1) {
           start = m_that.lint32(data, parts_start + i * 4);
           if (i + 1 < num_parts) {
             end = m_that.lint32(data, parts_start + (i + 1) * 4);
           } else {
             end = num_points;
           }
-          ring = readRing (points_start, start, end);
-          rings.push (ring);
+          ring = readRing(points_start, start, end);
+          rings.push(ring);
         }
-        features.push ({
+        features.push({
           type: 'Polyline',
           attr: {},
           geom: [rings]
@@ -363,17 +363,17 @@ vgl.shapefileReader = function () {
     //while (offset < length * 2) {
     // offset = readRecord (offset);
     //}
-    for (i = 0; i < indices.length; i  += 1) {
+    for (i = 0; i < indices.length; i += 1) {
       var offset = indices[i];
-      readRecord (offset);
+      readRecord(offset);
     }
 
     var layer = []; //new Layer ();
 
-    for (i = 0; i < features.length; i  += 1) {
+    for (i = 0; i < features.length; i += 1) {
       var feature = features[i];
       feature.attr = attr[i];
-      layer.push (feature);
+      layer.push(feature);
     }
     return layer;
   };

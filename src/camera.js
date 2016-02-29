@@ -74,8 +74,7 @@ vgl.camera = function (arg) {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.setViewAngleDegrees = function (a) {
-    m_viewAngle = (Math.PI * a) / 180.0;
-    this.modified();
+    this.setViewAngle(Math.PI * a / 180.0);
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -578,9 +577,9 @@ vgl.camera = function (arg) {
       m_position[1] = m_focalPoint[1] - d * dir[1];
       m_position[2] = m_focalPoint[2] - d * dir[2];
     } else {
-      m_position[0] = m_position[0]  + d * dir[0];
-      m_position[1] = m_position[1]  + d * dir[1];
-      m_position[2] = m_position[2]  + d * dir[2];
+      m_position[0] = m_position[0] + d * dir[0];
+      m_position[1] = m_position[1] + d * dir[1];
+      m_position[2] = m_position[2] + d * dir[2];
     }
 
     this.modified();

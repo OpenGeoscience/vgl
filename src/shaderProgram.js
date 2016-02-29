@@ -30,7 +30,6 @@ var getBaseUrl = (function () {
   return function () { return baseUrl; };
 })();
 
-
 vgl.shaderProgram = function () {
   'use strict';
 

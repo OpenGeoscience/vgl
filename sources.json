@@ -3,6 +3,7 @@
     "prefix": "src",
     "files": [
       "init.js",
+      "version.js",
       "GL.js",
       "timestamp.js",
       "object.js",
@@ -42,7 +43,8 @@
       "picker.js",
       "shapefileReader.js",
       "vtkReader.js",
-      "dataBuffers.js"
+      "dataBuffers.js",
+      "depthPeelRenderer.js"
     ]
   }
 }
