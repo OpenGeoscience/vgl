@@ -45,7 +45,7 @@ vgl.primitive = function () {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.createIndices = function (type) {
-    type = type; /* unused parameters */
+    void type;
     // TODO Check for the type
     m_indices = new Uint16Array();
   };
@@ -335,11 +335,11 @@ vgl.sourceData = function (arg) {
       m_data = [],
       m_name = arg.name || 'Source ' + new Date().toISOString(),
 
-      ////////////////////////////////////////////////////////////////////////////
+      ////////////////////////////////////////////////////////////////////////
       /**
        * Attribute data for the source
        */
-      ////////////////////////////////////////////////////////////////////////////
+      ////////////////////////////////////////////////////////////////////////
       vglAttributeData = function () {
         // Number of components per group
         // Type of data type (GL_FLOAT etc)
@@ -477,8 +477,8 @@ vgl.sourceData = function (arg) {
     var sizeInBytes = 0,
         keys = this.keys(), i;
 
-    for (i = 0; i < keys.length(); i += 1) {
-      sizeInBytes += this.numberOfComponents(keys[i]) *
+    for (i = 0; i < keys.length; i += 1) {
+      sizeInBytes += this.attributeNumberOfComponents(keys[i]) *
                      this.sizeOfAttributeDataType(keys[i]);
     }
 
@@ -598,7 +598,7 @@ vgl.sourceData = function (arg) {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.pushBack = function (vertexData) {
-    vertexData = vertexData; /* unused parameter */
+    void vertexData;
     // Should be implemented by the base class
   };
 
