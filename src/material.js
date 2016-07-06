@@ -295,7 +295,7 @@ vgl.material = function () {
 
     for (i in m_attributes) {
       if (m_attributes.hasOwnProperty(i)) {
-        m_attributes.undoBindVertexData(renderState, key);
+        m_attributes[i].undoBindVertexData(renderState, key);
       }
     }
   };
