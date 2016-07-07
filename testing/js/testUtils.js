@@ -140,12 +140,14 @@ function mockVGLRenderer() {
     deleteShader: noop('deleteShader'),
     deleteTexture: noop('deleteTexture'),
     depthFunc: noop('depthFunc'),
+    detachShader: noop('detachShader'),
     disable: noop('disable'),
     disableVertexAttribArray: noop('disableVertexAttribArray'),
     drawArrays: noop('drawArrays'),
     enable: noop('enable'),
     enableVertexAttribArray: noop('enableVertexAttribArray'),
     finish: noop('finish'),
+    getAttribLocation: incID('getAttribLocation'),
     getExtension: incID('getExtension'),
     getParameter: function (key) {
       count('getParameter');
