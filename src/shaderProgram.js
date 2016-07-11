@@ -56,18 +56,21 @@ vgl.shaderProgram = function () {
    */
   /////////////////////////////////////////////////////////////////////////////
   this.loadFromFile = function (type, sourceUrl) {
-    var shader;
+    var shader, success = false;
     $.ajax({
       url: sourceUrl,
       type: 'GET',
+      dataType: 'text',
       async: false,
       success: function (result) {
         //console.log(result);
         shader = vgl.shader(type);
         shader.setShaderSource(result);
         m_this.addShader(shader);
+        success = true;
       }
     });
+    return success;
   };
 
   /////////////////////////////////////////////////////////////////////////////
@@ -77,7 +80,7 @@ vgl.shaderProgram = function () {
    */
   /////////////////////////////////////////////////////////////////////////////
   this.loadShader = function (type, file) {
-    this.loadFromFile(type, getBaseUrl() + '/shaders/' + file);
+    return this.loadFromFile(type, getBaseUrl() + '/shaders/' + file);
   };
 
   /////////////////////////////////////////////////////////////////////////////
@@ -118,9 +121,9 @@ vgl.shaderProgram = function () {
     }
 
     var i;
-    for (i = 0; i < m_shaders.length; i += 1) {
+    for (i = m_shaders.length - 2; i >= 0; i -= 1) {
       if (m_shaders[i].shaderType() === shader.shaderType()) {
-        m_shaders.splice(m_shaders.indexOf(shader), 1);
+        m_shaders.splice(i, 1);
       }
     }
 
@@ -144,6 +147,7 @@ vgl.shaderProgram = function () {
 
     m_uniforms.push(uniform);
     m_this.modified();
+    return true;
   };
 
   /////////////////////////////////////////////////////////////////////////////
@@ -281,6 +285,7 @@ vgl.shaderProgram = function () {
   /////////////////////////////////////////////////////////////////////////////
   this.deleteProgram = function (renderState) {
     renderState.m_context.deleteProgram(m_programHandle);
+    m_programHandle = 0;
   };
 
   /////////////////////////////////////////////////////////////////////////////

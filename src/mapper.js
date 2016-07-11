@@ -111,7 +111,7 @@ vgl.mapper = function (arg) {
    */
   ////////////////////////////////////////////////////////////////////////////
   function cleanUpDrawObjects(renderState) {
-    renderState = renderState; /* avoid unused warning */
+    void renderState;
     m_bufferVertexAttributeMap = {};
     m_buffers = [];
   }
@@ -269,9 +269,13 @@ vgl.mapper = function (arg) {
   ////////////////////////////////////////////////////////////////////////////
   /**
    * Render the mapper
+   *
+   * @param {object} renderState: the current renderering state object.
+   * @param {boolean} noUndoBindVertexData: if true, do not unbind vertex data.
+   *    This may be desirable if the render function is subclassed.
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.render = function (renderState) {
+  this.render = function (renderState, noUndoBindVertexData) {
     if (this.getMTime() > m_glCompileTimestamp.getMTime() ||
         renderState.m_contextChanged) {
       setupDrawObjects(renderState);
@@ -288,7 +292,7 @@ vgl.mapper = function (arg) {
     for (i in m_bufferVertexAttributeMap) {
       if (m_bufferVertexAttributeMap.hasOwnProperty(i)) {
         m_context.bindBuffer(vgl.GL.ARRAY_BUFFER,
-                                         m_buffers[bufferIndex]);
+                             m_buffers[bufferIndex]);
         for (j = 0; j < m_bufferVertexAttributeMap[i].length; j += 1) {
           renderState.m_material
               .bindVertexData(renderState, m_bufferVertexAttributeMap[i][j]);
@@ -320,6 +324,30 @@ vgl.mapper = function (arg) {
           break;
       }
       m_context.bindBuffer(vgl.GL.ARRAY_BUFFER, null);
+    }
+
+    /* If we are rendering multiple features in the same context, we must
+     * unbind the vertex data to make sure the next feature has a known state.
+     * This is optional.
+     */
+    if (!noUndoBindVertexData) {
+      this.undoBindVertexData(renderState);
+    }
+  };
+
+  /**
+   * Unbind the vertex data,
+   */
+  this.undoBindVertexData = function (renderState) {
+    var i, j;
+
+    for (i in m_bufferVertexAttributeMap) {
+      if (m_bufferVertexAttributeMap.hasOwnProperty(i)) {
+        for (j = 0; j < m_bufferVertexAttributeMap[i].length; j += 1) {
+          renderState.m_material
+              .undoBindVertexData(renderState, m_bufferVertexAttributeMap[i][j]);
+        }
+      }
     }
   };
 

@@ -62,11 +62,10 @@ vgl.material = function () {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.exists = function (attr) {
-    if (attr.type() === vgl.materialAttribute.Texture) {
-      return m_textureAttributes.hasOwnProperty(attr);
+    if (attr.type() === vgl.materialAttributeType.Texture) {
+      return m_textureAttributes.hasOwnProperty(attr.textureUnit());
     }
-
-    return m_attributes.hasOwnProperty(attr);
+    return m_attributes.hasOwnProperty(attr.type());
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -78,28 +77,25 @@ vgl.material = function () {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.uniform = function (name) {
-    if (m_shaderProgram) {
-      return m_shaderProgram.uniform(name);
-    }
-
-    return null;
+    return m_shaderProgram ? m_shaderProgram.uniform(name) : null;
   };
 
   ////////////////////////////////////////////////////////////////////////////
   /**
    * Get material attribute
 
-   * @param attr Attribute name
+   * @param {number} type attribute type
+   * @param {number} textureUnit attribute texture unit if type is Texture.
    * @returns {vgl.materialAttribute}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.attribute = function (name) {
-    if (m_attributes.hasOwnProperty(name)) {
-      return m_attributes[name];
+  this.attribute = function (type, textureUnit) {
+    if (m_attributes.hasOwnProperty(type)) {
+      return m_attributes[type];
     }
 
-    if (m_textureAttributes.hasOwnProperty(name)) {
-      return m_textureAttributes[name];
+    if (type === vgl.materialAttributeType.Texture && m_textureAttributes.hasOwnProperty(textureUnit)) {
+      return m_textureAttributes[textureUnit];
     }
 
     return null;
@@ -117,8 +113,10 @@ vgl.material = function () {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.setAttribute = function (attr) {
-    if (attr.type() === vgl.materialAttributeType.Texture &&
-        m_textureAttributes[attr.textureUnit()] !== attr) {
+    if (attr.type() === vgl.materialAttributeType.Texture) {
+      if (m_textureAttributes[attr.textureUnit()] === attr) {
+        return false;
+      }
       m_textureAttributes[attr.textureUnit()] = attr;
       m_this.modified();
       return true;
@@ -189,7 +187,7 @@ vgl.material = function () {
    */
   ////////////////////////////////////////////////////////////////////////////
   this._setup = function (renderState) {
-    renderState = renderState; /* unused parameter */
+    void renderState; /* unused parameter */
     return false;
   };
 
@@ -295,7 +293,7 @@ vgl.material = function () {
 
     for (i in m_attributes) {
       if (m_attributes.hasOwnProperty(i)) {
-        m_attributes.undoBindVertexData(renderState, key);
+        m_attributes[i].undoBindVertexData(renderState, key);
       }
     }
   };
