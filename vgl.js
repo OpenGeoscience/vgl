@@ -19,8 +19,7 @@
  * @module vgl
  */
 
-/*global vgl: true, ogs: true, inherit*/
-/*exported vgl, inherit*/
+/* exported vgl, inherit */
 //////////////////////////////////////////////////////////////////////////////
 
 if (typeof ogs === 'undefined') {
@@ -56,25 +55,27 @@ ogs.namespace = function (ns_string) {
 
 /** vgl namespace */
 var vgl = ogs.namespace('gl');
+window.vgl = vgl;
 
 //////////////////////////////////////////////////////////////////////////////
 /**
  * Convenient function to define JS inheritance
- *
- * @param C
- * @param P
  */
 //////////////////////////////////////////////////////////////////////////////
-function inherit(C, P) {
+vgl.inherit = function (C, P) {
   'use strict';
 
-  var F = function () {
-  };
+  var F = inherit.func();
   F.prototype = P.prototype;
   C.prototype = new F();
-  C.uber = P.prototype;
   C.prototype.constructor = C;
-}
+};
+vgl.inherit.func = function () {
+  'use strict';
+  return function () {};
+};
+
+window.inherit = vgl.inherit;
 
 //////////////////////////////////////////////////////////////////////////////
 /**
@@ -87,7 +88,7 @@ function inherit(C, P) {
 Object.size = function (obj) {
   'use strict';
 
-  var size = 0, key = null;
+  var size = 0, key;
   for (key in obj) {
     if (obj.hasOwnProperty(key)) {
       size += 1;
@@ -95,6 +96,15 @@ Object.size = function (obj) {
   }
   return size;
 };
+
+/* Polyfill for Math.log2 */
+if (!Math.log2) {
+  Math.log2 = function (val) {
+    return Math.log(val) / Math.log(2);
+  };
+}
+
+vgl.version = '0.3.7';
 
 //////////////////////////////////////////////////////////////////////////////
 /**
@@ -993,9 +1003,12 @@ vgl.groupNode = function () {
   this.removeChild = function (childNode) {
     if (childNode.parent() === this) {
       var index = m_children.indexOf(childNode);
-      m_children.splice(index, 1);
-      this.boundsDirtyTimestamp().modified();
-      return true;
+      if (index >= 0) {
+        m_children.splice(index, 1);
+        childNode.setParent(null);
+        this.boundsDirtyTimestamp().modified();
+        return true;
+      }
     }
   };
 
@@ -1005,9 +1018,8 @@ vgl.groupNode = function () {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.removeChildren = function () {
-    var i;
-    for (i = 0; i < m_children.length; i += 1) {
-      this.removeChild(m_children[i]);
+    while (m_children.length) {
+      this.removeChild(m_children[0]);
     }
 
     this.modified();
@@ -1086,16 +1098,16 @@ vgl.groupNode = function () {
   this.traverseChildrenAndUpdateBounds = function (visitor) {
     var i;
 
-    if (this.m_parent && this.boundsDirtyTimestamp().getMTime() >
+    if (this.parent() && this.boundsDirtyTimestamp().getMTime() >
       this.computeBoundsTimestamp().getMTime()) {
       // Flag parents bounds dirty.
-      this.m_parent.boundsDirtyTimestamp.modified();
+      this.parent().boundsDirtyTimestamp().modified();
     }
 
     this.computeBounds();
 
     if (visitor.mode() === visitor.TraverseAllChildren) {
-      for (i = 0; i < m_children.length(); i += 1) {
+      for (i = 0; i < m_children.length; i += 1) {
         m_children[i].accept(visitor);
         this.updateBounds(m_children[i]);
       }
@@ -1114,8 +1126,8 @@ vgl.groupNode = function () {
   this.traverseChildren = function (visitor) {
     var i;
 
-    if (visitor.mode() === vgl.vesVisitor.TraverseAllChildren) {
-      for (i = 0; i < m_children.length(); i += 1) {
+    if (visitor.mode() === visitor.TraverseAllChildren) {
+      for (i = 0; i < m_children.length; i += 1) {
         m_children[i].accept(visitor);
       }
     }
@@ -1155,7 +1167,7 @@ vgl.groupNode = function () {
       return;
     }
 
-    // Make sure that child bounds are upto date
+    // Make sure that child bounds are up to date
     child.computeBounds();
 
     var bounds = this.bounds(),
@@ -1405,11 +1417,9 @@ vgl.freezeObject = function (obj) {
    *
    * @exports freezeObject
    */
-  var freezedObject = Object.freeze(obj);
+  var freezedObject = Object.freeze ? Object.freeze(obj) : undefined;
   if (typeof freezedObject === 'undefined') {
-    freezedObject = function (o) {
-      return o;
-    };
+    return obj;
   }
 
   return freezedObject;
@@ -1580,7 +1590,7 @@ vgl.geojsonReader = function () {
   this.readScalars = function (coordinates, geom, size_estimate, idx) {
     var array = null,
         s = null,
-        r  = null,
+        r = null,
         g = null,
         b = null;
 
@@ -1832,13 +1842,12 @@ vgl.geojsonReader = function () {
         vglcoords = new vgl.sourceDataP3fv(),
         x = null,
         y = null,
-        z  = null,
+        z = null,
         thisPolyLength = coordinates[0].length,
         vl = 1,
         i = null,
         indices = null,
         vgltriangle = null;
-
 
     for (i = 0; i < thisPolyLength; i += 1) {
       x = coordinates[0][i][0];
@@ -1890,14 +1899,13 @@ vgl.geojsonReader = function () {
         j = null,
         x = null,
         y = null,
-        z  = null,
+        z = null,
         thisPolyLength = null,
         vf = null,
         vl = null,
         flip = null,
         flipped = false,
         tcount = 0;
-
 
     //var time1 = new Date().getTime()
     //var a = 0;
@@ -2143,8 +2151,8 @@ vgl.geojsonReader = function () {
     }
 
     var obj = JSON.parse(buffer),
-      geom = this.readGJObject(obj),
-      geoms = [];
+        geom = this.readGJObject(obj),
+        geoms = [];
 
     this.m_scalarFormat = 'none';
     this.m_scalarRange = null;
@@ -2236,7 +2244,7 @@ vgl.primitive = function () {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.createIndices = function (type) {
-    type = type; /* unused parameters */
+    void type;
     // TODO Check for the type
     m_indices = new Uint16Array();
   };
@@ -2526,11 +2534,11 @@ vgl.sourceData = function (arg) {
       m_data = [],
       m_name = arg.name || 'Source ' + new Date().toISOString(),
 
-      ////////////////////////////////////////////////////////////////////////////
+      ////////////////////////////////////////////////////////////////////////
       /**
        * Attribute data for the source
        */
-      ////////////////////////////////////////////////////////////////////////////
+      ////////////////////////////////////////////////////////////////////////
       vglAttributeData = function () {
         // Number of components per group
         // Type of data type (GL_FLOAT etc)
@@ -2668,8 +2676,8 @@ vgl.sourceData = function (arg) {
     var sizeInBytes = 0,
         keys = this.keys(), i;
 
-    for (i = 0; i < keys.length(); i += 1) {
-      sizeInBytes += this.numberOfComponents(keys[i]) *
+    for (i = 0; i < keys.length; i += 1) {
+      sizeInBytes += this.attributeNumberOfComponents(keys[i]) *
                      this.sizeOfAttributeDataType(keys[i]);
     }
 
@@ -2789,7 +2797,7 @@ vgl.sourceData = function (arg) {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.pushBack = function (vertexData) {
-    vertexData = vertexData; /* unused parameter */
+    void vertexData;
     // Should be implemented by the base class
   };
 
@@ -2859,10 +2867,8 @@ vgl.sourceData = function (arg) {
     m_name = name;
   };
 
-
   return this;
 };
-
 
 vgl.sourceDataAnyfv = function (size, key, arg) {
   'use strict';
@@ -3387,13 +3393,12 @@ vgl.geometryData = function () {
             minv = value;
           }
         }
-        m_bounds[ib] = minv;  m_bounds[jb] = maxv;
+        m_bounds[ib] = minv; m_bounds[jb] = maxv;
       }
 
       m_computeBoundsTimestamp.modified();
     }
   };
-
 
   ////////////////////////////////////////////////////////////////////////////
   /**
@@ -3471,23 +3476,16 @@ vgl.geometryData = function () {
   this.getScalar = function (index) {
     var attr = vgl.vertexAttributeKeys.Scalar,
         sourceData = this.sourceData(attr),
-        numberOfComponents, sizeOfDataType, data, stride, offset;
+        sizeOfDataType, data, stride, offset;
 
     if (!sourceData) {
       return null;
     }
 
-    numberOfComponents = sourceData.attributeNumberOfComponents(attr);
     sizeOfDataType = sourceData.sizeOfAttributeDataType(attr);
     data = sourceData.data();
     stride = sourceData.attributeStride(attr) / sizeOfDataType;
     offset = sourceData.attributeOffset(attr) / sizeOfDataType;
-
-    //console.log('index for scalar is ' + index);
-    //console.log('offset for scalar is ' + offset);
-    //console.log('stride for scalar is ' + stride);
-
-    //console.log('have ' + data.length + ' scalars');
 
     if (index * stride + offset >= data.length) {
       console.log('access out of bounds in getScalar');
@@ -3528,8 +3526,7 @@ vgl.mapper = function (arg) {
   /** @private */
   arg = arg || {};
 
-  var m_dirty = true,
-      m_color = [0.0, 1.0, 1.0],
+  var m_color = [0.0, 1.0, 1.0],
       m_geomData = null,
       m_buffers = [],
       m_bufferVertexAttributeMap = {},
@@ -3615,7 +3612,7 @@ vgl.mapper = function (arg) {
    */
   ////////////////////////////////////////////////////////////////////////////
   function cleanUpDrawObjects(renderState) {
-    renderState = renderState; /* avoid unused warning */
+    void renderState;
     m_bufferVertexAttributeMap = {};
     m_buffers = [];
   }
@@ -3636,8 +3633,6 @@ vgl.mapper = function (arg) {
 
     // Now construct the new ones.
     createVertexBufferObjects(renderState);
-
-    m_dirty = false;
   }
 
   ////////////////////////////////////////////////////////////////////////////
@@ -3659,7 +3654,7 @@ vgl.mapper = function (arg) {
       geomBounds = m_geomData.bounds();
 
       this.setBounds(geomBounds[0], geomBounds[1], geomBounds[2],
-        geomBounds[3], geomBounds[4], geomBounds[5]) ;
+        geomBounds[3], geomBounds[4], geomBounds[5]);
 
       computeBoundsTimestamp.modified();
     }
@@ -3775,9 +3770,13 @@ vgl.mapper = function (arg) {
   ////////////////////////////////////////////////////////////////////////////
   /**
    * Render the mapper
+   *
+   * @param {object} renderState: the current renderering state object.
+   * @param {boolean} noUndoBindVertexData: if true, do not unbind vertex data.
+   *    This may be desirable if the render function is subclassed.
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.render = function (renderState) {
+  this.render = function (renderState, noUndoBindVertexData) {
     if (this.getMTime() > m_glCompileTimestamp.getMTime() ||
         renderState.m_contextChanged) {
       setupDrawObjects(renderState);
@@ -3794,7 +3793,7 @@ vgl.mapper = function (arg) {
     for (i in m_bufferVertexAttributeMap) {
       if (m_bufferVertexAttributeMap.hasOwnProperty(i)) {
         m_context.bindBuffer(vgl.GL.ARRAY_BUFFER,
-                                         m_buffers[bufferIndex]);
+                             m_buffers[bufferIndex]);
         for (j = 0; j < m_bufferVertexAttributeMap[i].length; j += 1) {
           renderState.m_material
               .bindVertexData(renderState, m_bufferVertexAttributeMap[i][j]);
@@ -3825,7 +3824,31 @@ vgl.mapper = function (arg) {
           m_context.drawArrays(vgl.GL.TRIANGLE_STRIP, 0, primitive.numberOfIndices());
           break;
       }
-      m_context.bindBuffer (vgl.GL.ARRAY_BUFFER, null);
+      m_context.bindBuffer(vgl.GL.ARRAY_BUFFER, null);
+    }
+
+    /* If we are rendering multiple features in the same context, we must
+     * unbind the vertex data to make sure the next feature has a known state.
+     * This is optional.
+     */
+    if (!noUndoBindVertexData) {
+      this.undoBindVertexData(renderState);
+    }
+  };
+
+  /**
+   * Unbind the vertex data,
+   */
+  this.undoBindVertexData = function (renderState) {
+    var i, j;
+
+    for (i in m_bufferVertexAttributeMap) {
+      if (m_bufferVertexAttributeMap.hasOwnProperty(i)) {
+        for (j = 0; j < m_bufferVertexAttributeMap[i].length; j += 1) {
+          renderState.m_material
+              .undoBindVertexData(renderState, m_bufferVertexAttributeMap[i][j]);
+        }
+      }
     }
   };
 
@@ -4028,7 +4051,7 @@ vgl.materialAttribute = function (type) {
   'use strict';
 
   if (!(this instanceof vgl.materialAttribute)) {
-    return new vgl.materialAttribute();
+    return new vgl.materialAttribute(type);
   }
   vgl.graphicsObject.call(this);
 
@@ -4070,7 +4093,7 @@ vgl.materialAttribute = function (type) {
   ////////////////////////////////////////////////////////////////////////////
   this.bindVertexData = function (renderState, key) {
     renderState = renderState; /* unused parameter */
-    key = key /* unused parameter */;
+    key = key; /* unused parameter */
     return false;
   };
 
@@ -4085,7 +4108,7 @@ vgl.materialAttribute = function (type) {
   ////////////////////////////////////////////////////////////////////////////
   this.undoBindVertexData = function (renderState, key) {
     renderState = renderState; /* unused parameter */
-    key = key /* unused parameter */;
+    key = key; /* unused parameter */
     return false;
   };
 
@@ -4265,11 +4288,10 @@ vgl.material = function () {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.exists = function (attr) {
-    if (attr.type() === vgl.materialAttribute.Texture) {
-      return m_textureAttributes.hasOwnProperty(attr);
+    if (attr.type() === vgl.materialAttributeType.Texture) {
+      return m_textureAttributes.hasOwnProperty(attr.textureUnit());
     }
-
-    return m_attributes.hasOwnProperty(attr);
+    return m_attributes.hasOwnProperty(attr.type());
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -4281,28 +4303,25 @@ vgl.material = function () {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.uniform = function (name) {
-    if (m_shaderProgram) {
-      return m_shaderProgram.uniform(name);
-    }
-
-    return null;
+    return m_shaderProgram ? m_shaderProgram.uniform(name) : null;
   };
 
   ////////////////////////////////////////////////////////////////////////////
   /**
    * Get material attribute
 
-   * @param attr Attribute name
+   * @param {number} type attribute type
+   * @param {number} textureUnit attribute texture unit if type is Texture.
    * @returns {vgl.materialAttribute}
    */
   ////////////////////////////////////////////////////////////////////////////
-  this.attribute = function (name) {
-    if (m_attributes.hasOwnProperty(name)) {
-      return m_attributes[name];
+  this.attribute = function (type, textureUnit) {
+    if (m_attributes.hasOwnProperty(type)) {
+      return m_attributes[type];
     }
 
-    if (m_textureAttributes.hasOwnProperty(name)) {
-      return m_textureAttributes[name];
+    if (type === vgl.materialAttributeType.Texture && m_textureAttributes.hasOwnProperty(textureUnit)) {
+      return m_textureAttributes[textureUnit];
     }
 
     return null;
@@ -4320,8 +4339,10 @@ vgl.material = function () {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.setAttribute = function (attr) {
-    if (attr.type() === vgl.materialAttributeType.Texture &&
-        m_textureAttributes[attr.textureUnit()] !== attr) {
+    if (attr.type() === vgl.materialAttributeType.Texture) {
+      if (m_textureAttributes[attr.textureUnit()] === attr) {
+        return false;
+      }
       m_textureAttributes[attr.textureUnit()] = attr;
       m_this.modified();
       return true;
@@ -4392,7 +4413,7 @@ vgl.material = function () {
    */
   ////////////////////////////////////////////////////////////////////////////
   this._setup = function (renderState) {
-    renderState = renderState; /* unused parameter */
+    void renderState; /* unused parameter */
     return false;
   };
 
@@ -4498,7 +4519,7 @@ vgl.material = function () {
 
     for (i in m_attributes) {
       if (m_attributes.hasOwnProperty(i)) {
-        m_attributes.undoBindVertexData(renderState, key);
+        m_attributes[i].undoBindVertexData(renderState, key);
       }
     }
   };
@@ -4636,7 +4657,6 @@ vgl.renderer = function (arg) {
   this.setResizable = function (r) {
     m_this.m_resizable = r;
   };
-
 
   ////////////////////////////////////////////////////////////////////////////
   /**
@@ -4780,7 +4800,7 @@ vgl.renderer = function (arg) {
     }
 
     // Now perform sorting
-    sortedActors.sort(function (a, b) {return a[0] - b[0];});
+    sortedActors.sort(function (a, b) { return a[0] - b[0]; });
 
     for (i = 0; i < sortedActors.length; i += 1) {
       actor = sortedActors[i][1];
@@ -5138,7 +5158,6 @@ vgl.renderer = function (arg) {
         winW = null,
         clipPt = null;
 
-
     mat4.multiply(viewProjectionMatrix, projectionMatrix, viewMatrix);
 
     // Transform world to clipping coordinates
@@ -5204,7 +5223,7 @@ vgl.renderer = function (arg) {
   ////////////////////////////////////////////////////////////////////////////
   this.focusDisplayPoint = function () {
     var focalPoint = m_this.m_camera.focalPoint(),
-      focusWorldPt = vec4.fromValues(
+        focusWorldPt = vec4.fromValues(
         focalPoint[0], focalPoint[1], focalPoint[2], 1);
 
     return m_this.worldToDisplay(
@@ -5577,8 +5596,7 @@ vgl.renderWindow = function (canvas) {
       }
 
       return true;
-    }
-    catch (e) {
+    } catch (e) {
     }
 
     // If we don't have a GL context, give up now
@@ -5618,7 +5636,7 @@ vgl.renderWindow = function (canvas) {
   ////////////////////////////////////////////////////////////////////////////
   this.render = function () {
     var i;
-    m_renderers.sort(function (a, b) {return a.layer() - b.layer();});
+    m_renderers.sort(function (a, b) { return a.layer() - b.layer(); });
     for (i = 0; i < m_renderers.length; i += 1) {
       m_renderers[i].render();
     }
@@ -5754,8 +5772,7 @@ vgl.camera = function (arg) {
    */
   ////////////////////////////////////////////////////////////////////////////
   this.setViewAngleDegrees = function (a) {
-    m_viewAngle = (Math.PI * a) / 180.0;
-    this.modified();
+    this.setViewAngle(Math.PI * a / 180.0);
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -6258,9 +6275,9 @@ vgl.camera = function (arg) {
       m_position[1] = m_focalPoint[1] - d * dir[1];
       m_position[2] = m_focalPoint[2] - d * dir[2];
     } else {
-      m_position[0] = m_position[0]  + d * dir[0];
-      m_position[1] = m_position[1]  + d * dir[1];
-      m_position[2] = m_position[2]  + d * dir[2];
+      m_position[0] = m_position[0] + d * dir[0];
+      m_position[1] = m_position[1] + d * dir[1];
+      m_position[2] = m_position[2] + d * dir[2];
     }
 
     this.modified();
@@ -6702,7 +6719,6 @@ vgl.trackballInteractorStyle = function () {
       m_outsideCanvas,
       m_currPos = {x: 0, y: 0},
       m_lastPos = {x: 0, y: 0};
-
 
   /////////////////////////////////////////////////////////////////////////////
   /**
@@ -7613,7 +7629,6 @@ vgl.shader = function (type) {
 
 inherit(vgl.shader, vgl.object);
 
-
 /* We can use the same shader multiple times if it is identical.  This caches
  * the last N shaders and will reuse them when possible.  The cache keeps the
  * most recently requested shader at the front.  If you are doing anything more
@@ -7710,7 +7725,6 @@ var getBaseUrl = (function () {
   return function () { return baseUrl; };
 })();
 
-
 vgl.shaderProgram = function () {
   'use strict';
 
@@ -7737,18 +7751,21 @@ vgl.shaderProgram = function () {
    */
   /////////////////////////////////////////////////////////////////////////////
   this.loadFromFile = function (type, sourceUrl) {
-    var shader;
+    var shader, success = false;
     $.ajax({
       url: sourceUrl,
       type: 'GET',
+      dataType: 'text',
       async: false,
       success: function (result) {
         //console.log(result);
         shader = vgl.shader(type);
         shader.setShaderSource(result);
         m_this.addShader(shader);
+        success = true;
       }
     });
+    return success;
   };
 
   /////////////////////////////////////////////////////////////////////////////
@@ -7758,7 +7775,7 @@ vgl.shaderProgram = function () {
    */
   /////////////////////////////////////////////////////////////////////////////
   this.loadShader = function (type, file) {
-    this.loadFromFile(type, getBaseUrl() + '/shaders/' + file);
+    return this.loadFromFile(type, getBaseUrl() + '/shaders/' + file);
   };
 
   /////////////////////////////////////////////////////////////////////////////
@@ -7799,9 +7816,9 @@ vgl.shaderProgram = function () {
     }
 
     var i;
-    for (i = 0; i < m_shaders.length; i += 1) {
+    for (i = m_shaders.length - 2; i >= 0; i -= 1) {
       if (m_shaders[i].shaderType() === shader.shaderType()) {
-        m_shaders.splice(m_shaders.indexOf(shader), 1);
+        m_shaders.splice(i, 1);
       }
     }
 
@@ -7825,6 +7842,7 @@ vgl.shaderProgram = function () {
 
     m_uniforms.push(uniform);
     m_this.modified();
+    return true;
   };
 
   /////////////////////////////////////////////////////////////////////////////
@@ -7962,6 +7980,7 @@ vgl.shaderProgram = function () {
   /////////////////////////////////////////////////////////////////////////////
   this.deleteProgram = function (renderState) {
     renderState.m_context.deleteProgram(m_programHandle);
+    m_programHandle = 0;
   };
 
   /////////////////////////////////////////////////////////////////////////////
@@ -8211,7 +8230,7 @@ vgl.texture = function () {
         renderState.m_context.activeTexture(vgl.GL.TEXTURE15);
         break;
       default:
-        throw '[error] Texture unit '  + m_that.m_textureUnit +
+        throw '[error] Texture unit ' + m_that.m_textureUnit +
               ' is not supported';
     }
   }
@@ -8671,7 +8690,7 @@ vgl.lookupTable = function () {
      1, 0.380759558, 0.320428137, 1,
      0.961891484, 0.313155629, 0.265499262, 1,
      0.916482116, 0.236630659, 0.209939162, 1].map(
-             function (x) {return x * 255;});
+             function (x) { return x * 255; });
 
   /////////////////////////////////////////////////////////////////////////////
   /**
@@ -9439,7 +9458,7 @@ vgl.planeSource = function () {
     m_geom = new vgl.geometryData();
 
     var x = [], tc = [], v1 = [], v2 = [],
-        pts = [], i, j, k, ii, numPts, numPolys,
+        pts = [], i, j, ii, numPts,
         posIndex = 0, normIndex = 0, colorIndex = 0, texCoordIndex = 0,
         positions = [], normals = [], colors = [],
         texCoords = [], indices = [], tristrip = null,
@@ -9460,13 +9479,12 @@ vgl.planeSource = function () {
     // TODO Compute center and normal
     // Set things up; allocate memory
     numPts = (m_xresolution + 1) * (m_yresolution + 1);
-    numPolys = m_xresolution * m_yresolution * 2;
     positions.length = 3 * numPts;
     normals.length = 3 * numPts;
     texCoords.length = 2 * numPts;
     indices.length = numPts;
 
-    for (k = 0, i = 0; i < (m_yresolution + 1); i += 1) {
+    for (i = 0; i < (m_yresolution + 1); i += 1) {
       tc[1] = i / m_yresolution;
 
       for (j = 0; j < (m_xresolution + 1); j += 1) {
@@ -9719,7 +9737,6 @@ vgl.pointSource = function () {
                'number of points');
     }
 
-
     m_geom.addPrimitive(pointsPrimitive);
 
     return m_geom;
@@ -9916,17 +9933,17 @@ vgl.utils.computePowerOfTwo = function (value, pow) {
 vgl.utils.createTextureVertexShader = function (context) {
   'use strict';
   var vertexShaderSource = [
-        'attribute vec3 vertexPosition;',
-        'attribute vec3 textureCoord;',
-        'uniform mediump float pointSize;',
-        'uniform mat4 modelViewMatrix;',
-        'uniform mat4 projectionMatrix;',
-        'varying highp vec3 iTextureCoord;',
-        'void main(void)',
-        '{',
-        'gl_PointSize = pointSize;',
-        'gl_Position = projectionMatrix * modelViewMatrix * vec4(vertexPosition, 1.0);',
-        ' iTextureCoord = textureCoord;', '}'].join('\n');
+    'attribute vec3 vertexPosition;',
+    'attribute vec3 textureCoord;',
+    'uniform mediump float pointSize;',
+    'uniform mat4 modelViewMatrix;',
+    'uniform mat4 projectionMatrix;',
+    'varying highp vec3 iTextureCoord;',
+    'void main(void)',
+    '{',
+    'gl_PointSize = pointSize;',
+    'gl_Position = projectionMatrix * modelViewMatrix * vec4(vertexPosition, 1.0);',
+    ' iTextureCoord = textureCoord;', '}'].join('\n');
   return vgl.getCachedShader(vgl.GL.VERTEX_SHADER, context,
                              vertexShaderSource);
 };
@@ -9944,13 +9961,13 @@ vgl.utils.createTextureVertexShader = function (context) {
 vgl.utils.createTextureFragmentShader = function (context) {
   'use strict';
   var fragmentShaderSource = [
-        'varying highp vec3 iTextureCoord;',
-        'uniform sampler2D sampler2d;',
-        'uniform mediump float opacity;',
-        'void main(void) {',
-        'gl_FragColor = vec4(texture2D(sampler2d, vec2(iTextureCoord.s, ' +
+    'varying highp vec3 iTextureCoord;',
+    'uniform sampler2D sampler2d;',
+    'uniform mediump float opacity;',
+    'void main(void) {',
+    'gl_FragColor = vec4(texture2D(sampler2d, vec2(iTextureCoord.s, ' +
                         'iTextureCoord.t)).xyz, opacity);',
-        '}'].join('\n');
+    '}'].join('\n');
   return vgl.getCachedShader(vgl.GL.FRAGMENT_SHADER, context,
                              fragmentShaderSource);
 };
@@ -9968,16 +9985,16 @@ vgl.utils.createTextureFragmentShader = function (context) {
 vgl.utils.createRgbaTextureFragmentShader = function (context) {
   'use strict';
   var fragmentShaderSource = [
-        'varying highp vec3 iTextureCoord;',
-        'uniform sampler2D sampler2d;',
-        'uniform mediump float opacity;',
-        'void main(void) {',
-        '  mediump vec4 color = vec4(texture2D(sampler2d, vec2(' +
+    'varying highp vec3 iTextureCoord;',
+    'uniform sampler2D sampler2d;',
+    'uniform mediump float opacity;',
+    'void main(void) {',
+    '  mediump vec4 color = vec4(texture2D(sampler2d, vec2(' +
                                 'iTextureCoord.s, iTextureCoord.t)).xyzw);',
-        '  color.w *= opacity;',
-        '  gl_FragColor = color;',
-        '}'
-      ].join('\n');
+    '  color.w *= opacity;',
+    '  gl_FragColor = color;',
+    '}'
+  ].join('\n');
   return vgl.getCachedShader(vgl.GL.FRAGMENT_SHADER, context,
                              fragmentShaderSource);
 };
@@ -9995,18 +10012,18 @@ vgl.utils.createRgbaTextureFragmentShader = function (context) {
 vgl.utils.createVertexShader = function (context) {
   'use strict';
   var vertexShaderSource = [
-        'attribute vec3 vertexPosition;',
-        'attribute vec3 vertexColor;',
-        'uniform mediump float pointSize;',
-        'uniform mat4 modelViewMatrix;',
-        'uniform mat4 projectionMatrix;',
-        'varying mediump vec3 iVertexColor;',
-        'varying highp vec3 iTextureCoord;',
-        'void main(void)',
-        '{',
-        'gl_PointSize = pointSize;',
-        'gl_Position = projectionMatrix * modelViewMatrix * vec4(vertexPosition, 1.0);',
-        ' iVertexColor = vertexColor;', '}'].join('\n');
+    'attribute vec3 vertexPosition;',
+    'attribute vec3 vertexColor;',
+    'uniform mediump float pointSize;',
+    'uniform mat4 modelViewMatrix;',
+    'uniform mat4 projectionMatrix;',
+    'varying mediump vec3 iVertexColor;',
+    'varying highp vec3 iTextureCoord;',
+    'void main(void)',
+    '{',
+    'gl_PointSize = pointSize;',
+    'gl_Position = projectionMatrix * modelViewMatrix * vec4(vertexPosition, 1.0);',
+    ' iVertexColor = vertexColor;', '}'].join('\n');
   return vgl.getCachedShader(vgl.GL.VERTEX_SHADER, context,
                              vertexShaderSource);
 };
@@ -10024,18 +10041,18 @@ vgl.utils.createVertexShader = function (context) {
 vgl.utils.createPointVertexShader = function (context) {
   'use strict';
   var vertexShaderSource = [
-        'attribute vec3 vertexPosition;',
-        'attribute vec3 vertexColor;',
-        'attribute float vertexSize;',
-        'uniform mat4 modelViewMatrix;',
-        'uniform mat4 projectionMatrix;',
-        'varying mediump vec3 iVertexColor;',
-        'varying highp vec3 iTextureCoord;',
-        'void main(void)',
-        '{',
-        'gl_PointSize =  vertexSize;',
-        'gl_Position = projectionMatrix * modelViewMatrix * vec4(vertexPosition, 1.0);',
-        ' iVertexColor = vertexColor;', '}'].join('\n');
+    'attribute vec3 vertexPosition;',
+    'attribute vec3 vertexColor;',
+    'attribute float vertexSize;',
+    'uniform mat4 modelViewMatrix;',
+    'uniform mat4 projectionMatrix;',
+    'varying mediump vec3 iVertexColor;',
+    'varying highp vec3 iTextureCoord;',
+    'void main(void)',
+    '{',
+    'gl_PointSize =  vertexSize;',
+    'gl_Position = projectionMatrix * modelViewMatrix * vec4(vertexPosition, 1.0);',
+    ' iVertexColor = vertexColor;', '}'].join('\n');
   return vgl.getCachedShader(vgl.GL.VERTEX_SHADER, context,
                              vertexShaderSource);
 };
@@ -10053,15 +10070,15 @@ vgl.utils.createPointVertexShader = function (context) {
 vgl.utils.createVertexShaderSolidColor = function (context) {
   'use strict';
   var vertexShaderSource = [
-        'attribute vec3 vertexPosition;',
-        'uniform mediump float pointSize;',
-        'uniform mat4 modelViewMatrix;',
-        'uniform mat4 projectionMatrix;',
-        'void main(void)',
-        '{',
-        'gl_PointSize = pointSize;',
-        'gl_Position = projectionMatrix * modelViewMatrix * vec4(vertexPosition, 1.0);',
-        '}'].join('\n');
+    'attribute vec3 vertexPosition;',
+    'uniform mediump float pointSize;',
+    'uniform mat4 modelViewMatrix;',
+    'uniform mat4 projectionMatrix;',
+    'void main(void)',
+    '{',
+    'gl_PointSize = pointSize;',
+    'gl_Position = projectionMatrix * modelViewMatrix * vec4(vertexPosition, 1.0);',
+    '}'].join('\n');
   return vgl.getCachedShader(vgl.GL.VERTEX_SHADER, context,
                              vertexShaderSource);
 };
@@ -10082,20 +10099,20 @@ vgl.utils.createVertexShaderColorMap = function (context, min, max) {
   min = min; /* unused parameter */
   max = max; /* unused parameter */
   var vertexShaderSource = [
-        'attribute vec3 vertexPosition;',
-        'attribute float vertexScalar;',
-        'uniform mediump float pointSize;',
-        'uniform mat4 modelViewMatrix;',
-        'uniform mat4 projectionMatrix;',
-        'uniform float lutMin;',
-        'uniform float lutMax;',
-        'varying mediump float iVertexScalar;',
-        'void main(void)',
-        '{',
-        'gl_PointSize = pointSize;',
-        'gl_Position = projectionMatrix * modelViewMatrix * vec4(vertexPosition, 1.0);',
-        'iVertexScalar = (vertexScalar-lutMin)/(lutMax-lutMin);',
-        '}'].join('\n');
+    'attribute vec3 vertexPosition;',
+    'attribute float vertexScalar;',
+    'uniform mediump float pointSize;',
+    'uniform mat4 modelViewMatrix;',
+    'uniform mat4 projectionMatrix;',
+    'uniform float lutMin;',
+    'uniform float lutMax;',
+    'varying mediump float iVertexScalar;',
+    'void main(void)',
+    '{',
+    'gl_PointSize = pointSize;',
+    'gl_Position = projectionMatrix * modelViewMatrix * vec4(vertexPosition, 1.0);',
+    'iVertexScalar = (vertexScalar-lutMin)/(lutMax-lutMin);',
+    '}'].join('\n');
   return vgl.getCachedShader(vgl.GL.VERTEX_SHADER, context,
                              vertexShaderSource);
 };
@@ -10134,25 +10151,25 @@ vgl.utils.createFragmentShader = function (context) {
 vgl.utils.createPhongVertexShader = function (context) {
   'use strict';
   var vertexShaderSource = [
-      'attribute highp vec3 vertexPosition;',
-      'attribute mediump vec3 vertexNormal;',
-      'attribute mediump vec3 vertexColor;',
+    'attribute highp vec3 vertexPosition;',
+    'attribute mediump vec3 vertexNormal;',
+    'attribute mediump vec3 vertexColor;',
 
-      'uniform highp mat4 projectionMatrix;',
-      'uniform mat4 modelViewMatrix;',
-      'uniform mat4 normalMatrix;',
+    'uniform highp mat4 projectionMatrix;',
+    'uniform mat4 modelViewMatrix;',
+    'uniform mat4 normalMatrix;',
 
-      'varying highp vec4 varPosition;',
-      'varying mediump vec3 varNormal;',
-      'varying mediump vec3 varVertexColor;',
+    'varying highp vec4 varPosition;',
+    'varying mediump vec3 varNormal;',
+    'varying mediump vec3 varVertexColor;',
 
-      'void main(void)',
-      '{',
-      'varPosition = modelViewMatrix * vec4(vertexPosition, 1.0);',
-      'gl_Position = projectionMatrix * varPosition;',
-      'varNormal = vec3(normalMatrix * vec4(vertexNormal, 0.0));',
-      'varVertexColor = vertexColor;',
-      '}'].join('\n');
+    'void main(void)',
+    '{',
+    'varPosition = modelViewMatrix * vec4(vertexPosition, 1.0);',
+    'gl_Position = projectionMatrix * varPosition;',
+    'varNormal = vec3(normalMatrix * vec4(vertexNormal, 0.0));',
+    'varVertexColor = vertexColor;',
+    '}'].join('\n');
   return vgl.getCachedShader(vgl.GL.VERTEX_SHADER, context,
                              vertexShaderSource);
 };
@@ -10198,7 +10215,6 @@ vgl.utils.createPhongFragmentShader = function (context) {
                              fragmentShaderSource);
 };
 
-
 //////////////////////////////////////////////////////////////////////////////
 /**
  * Create a new instance of fragment shader with an assigned constant color.
@@ -10212,10 +10228,10 @@ vgl.utils.createPhongFragmentShader = function (context) {
 vgl.utils.createFragmentShaderSolidColor = function (context, color) {
   'use strict';
   var fragmentShaderSource = [
-      'uniform mediump float opacity;',
-      'void main(void) {',
-      'gl_FragColor = vec4(' + color[0] + ',' + color[1] + ',' + color[2] + ', opacity);',
-      '}'].join('\n');
+    'uniform mediump float opacity;',
+    'void main(void) {',
+    'gl_FragColor = vec4(' + color[0] + ',' + color[1] + ',' + color[2] + ', opacity);',
+    '}'].join('\n');
   return vgl.getCachedShader(vgl.GL.FRAGMENT_SHADER, context,
                              fragmentShaderSource);
 };
@@ -10233,13 +10249,13 @@ vgl.utils.createFragmentShaderSolidColor = function (context, color) {
 vgl.utils.createFragmentShaderColorMap = function (context) {
   'use strict';
   var fragmentShaderSource = [
-        'varying mediump float iVertexScalar;',
-        'uniform sampler2D sampler2d;',
-        'uniform mediump float opacity;',
-        'void main(void) {',
-        'gl_FragColor = vec4(texture2D(sampler2d, vec2(iVertexScalar, ' +
+    'varying mediump float iVertexScalar;',
+    'uniform sampler2D sampler2d;',
+    'uniform mediump float opacity;',
+    'void main(void) {',
+    'gl_FragColor = vec4(texture2D(sampler2d, vec2(iVertexScalar, ' +
             '0.0)).xyz, opacity);',
-        '}'].join('\n');
+    '}'].join('\n');
   return vgl.getCachedShader(vgl.GL.FRAGMENT_SHADER, context,
                              fragmentShaderSource);
 };
@@ -10257,24 +10273,24 @@ vgl.utils.createFragmentShaderColorMap = function (context) {
 vgl.utils.createPointSpritesVertexShader = function (context) {
   'use strict';
   var vertexShaderSource = [
-        'attribute vec3 vertexPosition;',
-        'attribute vec3 vertexColor;',
-        'uniform mediump vec2 pointSize;',
-        'uniform mat4 modelViewMatrix;',
-        'uniform mat4 projectionMatrix;',
-        'uniform float height;',
-        'varying mediump vec3 iVertexColor;',
-        'varying highp float iVertexScalar;',
-        'void main(void)',
-        '{',
-        'mediump float realPointSize = pointSize.y;',
-        'if (pointSize.x > pointSize.y) {',
-        '  realPointSize = pointSize.x;}',
-        'gl_PointSize = realPointSize ;',
-        'iVertexScalar = vertexPosition.z;',
-        'gl_Position = projectionMatrix * modelViewMatrix * ' +
+    'attribute vec3 vertexPosition;',
+    'attribute vec3 vertexColor;',
+    'uniform mediump vec2 pointSize;',
+    'uniform mat4 modelViewMatrix;',
+    'uniform mat4 projectionMatrix;',
+    'uniform float height;',
+    'varying mediump vec3 iVertexColor;',
+    'varying highp float iVertexScalar;',
+    'void main(void)',
+    '{',
+    'mediump float realPointSize = pointSize.y;',
+    'if (pointSize.x > pointSize.y) {',
+    '  realPointSize = pointSize.x;}',
+    'gl_PointSize = realPointSize ;',
+    'iVertexScalar = vertexPosition.z;',
+    'gl_Position = projectionMatrix * modelViewMatrix * ' +
             'vec4(vertexPosition.xy, height, 1.0);',
-        ' iVertexColor = vertexColor;', '}'].join('\n');
+    ' iVertexColor = vertexColor;', '}'].join('\n');
   return vgl.getCachedShader(vgl.GL.VERTEX_SHADER, context,
                              vertexShaderSource);
 };
@@ -10292,34 +10308,34 @@ vgl.utils.createPointSpritesVertexShader = function (context) {
 vgl.utils.createPointSpritesFragmentShader = function (context) {
   'use strict';
   var fragmentShaderSource = [
-        'varying mediump vec3 iVertexColor;',
-        'varying highp float iVertexScalar;',
-        'uniform sampler2D opacityLookup;',
-        'uniform highp float lutMin;',
-        'uniform highp float lutMax;',
-        'uniform sampler2D scalarsToColors;',
-        'uniform int useScalarsToColors;',
-        'uniform int useVertexColors;',
-        'uniform mediump vec2 pointSize;',
-        'uniform mediump float vertexColorWeight;',
-        'void main(void) {',
-        'mediump vec2 realTexCoord;',
-        'if (pointSize.x > pointSize.y) {',
-        '  realTexCoord = vec2(1.0, pointSize.y/pointSize.x) * gl_PointCoord;',
-        '} else {',
-        '  realTexCoord = vec2(pointSize.x/pointSize.y, 1.0) * gl_PointCoord;',
-        '}',
-        'highp float texOpacity = texture2D(opacityLookup, realTexCoord).w;',
-        'if (useScalarsToColors == 1) {',
-        '  gl_FragColor = vec4(texture2D(scalarsToColors, vec2((' +
+    'varying mediump vec3 iVertexColor;',
+    'varying highp float iVertexScalar;',
+    'uniform sampler2D opacityLookup;',
+    'uniform highp float lutMin;',
+    'uniform highp float lutMax;',
+    'uniform sampler2D scalarsToColors;',
+    'uniform int useScalarsToColors;',
+    'uniform int useVertexColors;',
+    'uniform mediump vec2 pointSize;',
+    'uniform mediump float vertexColorWeight;',
+    'void main(void) {',
+    'mediump vec2 realTexCoord;',
+    'if (pointSize.x > pointSize.y) {',
+    '  realTexCoord = vec2(1.0, pointSize.y/pointSize.x) * gl_PointCoord;',
+    '} else {',
+    '  realTexCoord = vec2(pointSize.x/pointSize.y, 1.0) * gl_PointCoord;',
+    '}',
+    'highp float texOpacity = texture2D(opacityLookup, realTexCoord).w;',
+    'if (useScalarsToColors == 1) {',
+    '  gl_FragColor = vec4(texture2D(scalarsToColors, vec2((' +
             'iVertexScalar - lutMin)/(lutMax - lutMin), 0.0)).xyz, ' +
             'texOpacity);',
-        '} else if (useVertexColors == 1) {',
-        '  gl_FragColor = vec4(iVertexColor, texOpacity);',
-        '} else {',
-        '  gl_FragColor = vec4(texture2D(opacityLookup, realTexCoord).xyz, texOpacity);',
-        '}}'
-    ].join('\n');
+    '} else if (useVertexColors == 1) {',
+    '  gl_FragColor = vec4(iVertexColor, texOpacity);',
+    '} else {',
+    '  gl_FragColor = vec4(texture2D(opacityLookup, realTexCoord).xyz, texOpacity);',
+    '}}'
+  ].join('\n');
   return vgl.getCachedShader(vgl.GL.FRAGMENT_SHADER, context,
                              fragmentShaderSource);
 };
@@ -10336,17 +10352,17 @@ vgl.utils.createPointSpritesFragmentShader = function (context) {
 vgl.utils.createTextureMaterial = function (isRgba, origin) {
   'use strict';
   var mat = new vgl.material(),
-    blend = new vgl.blend(),
-    prog = new vgl.shaderProgram(),
-    vertexShader = vgl.utils.createTextureVertexShader(vgl.GL),
-    fragmentShader = null,
-    posVertAttr = new vgl.vertexAttribute('vertexPosition'),
-    texCoordVertAttr = new vgl.vertexAttribute('textureCoord'),
-    pointsizeUniform = new vgl.floatUniform('pointSize', 5.0),
-    modelViewUniform,
-    projectionUniform = new vgl.projectionUniform('projectionMatrix'),
-    samplerUniform = new vgl.uniform(vgl.GL.INT, 'sampler2d'),
-    opacityUniform = null;
+      blend = new vgl.blend(),
+      prog = new vgl.shaderProgram(),
+      vertexShader = vgl.utils.createTextureVertexShader(vgl.GL),
+      fragmentShader = null,
+      posVertAttr = new vgl.vertexAttribute('vertexPosition'),
+      texCoordVertAttr = new vgl.vertexAttribute('textureCoord'),
+      pointsizeUniform = new vgl.floatUniform('pointSize', 5.0),
+      modelViewUniform,
+      projectionUniform = new vgl.projectionUniform('projectionMatrix'),
+      samplerUniform = new vgl.uniform(vgl.GL.INT, 'sampler2d'),
+      opacityUniform = null;
   if (origin !== undefined) {
     modelViewUniform = new vgl.modelViewOriginUniform('modelViewMatrix',
                                                       origin);
@@ -10453,7 +10469,6 @@ vgl.utils.createPointGeometryMaterial = function (opacity) {
 
   return mat;
 };
-
 
 //////////////////////////////////////////////////////////////////////////////
 /**
@@ -10605,7 +10620,6 @@ vgl.utils.updateColorMappedMaterial = function (mat, lut) {
     console.log('[warning] Invalid lookup table. Nothing to update.');
     return;
   }
-
 
   var lutMin = mat.shaderProgram().uniform('lutMin'),
       lutMax = mat.shaderProgram().uniform('lutMax');
@@ -10999,7 +11013,7 @@ vgl.utils.createColorLegend = function (varname, lookupTable, origin,
     }
 
     // Create axis label
-    origin[0] = (positions[0] + positions[positions.length - 3]  - size) * 0.5;
+    origin[0] = (positions[0] + positions[positions.length - 3] - size) * 0.5;
     origin[1] = positions[1] + axisLabelOffset;
     origin[2] = positions[2];
 
@@ -11288,7 +11302,6 @@ vgl.picker = function () {
           //jscs:enable disallowKeywords
         }
 
-
         if (tymin > tmin) {
           tmin = tymin;
         }
@@ -11358,51 +11371,51 @@ vgl.shapefileReader = function () {
   var SHP_POLYLINE = 3;
 
   this.int8 = function (data, offset) {
-    return data.charCodeAt (offset);
+    return data.charCodeAt(offset);
   };
 
   /*jshint bitwise: false */
   this.bint32 = function (data, offset) {
     return (
-      ((data.charCodeAt (offset) & 0xff) << 24) +
-        ((data.charCodeAt (offset + 1) & 0xff) << 16) +
-        ((data.charCodeAt (offset + 2) & 0xff) << 8) +
-        (data.charCodeAt (offset + 3) & 0xff)
+      ((data.charCodeAt(offset) & 0xff) << 24) +
+        ((data.charCodeAt(offset + 1) & 0xff) << 16) +
+        ((data.charCodeAt(offset + 2) & 0xff) << 8) +
+        (data.charCodeAt(offset + 3) & 0xff)
     );
   };
 
   this.lint32 = function (data, offset) {
     return (
-      ((data.charCodeAt (offset + 3) & 0xff) << 24) +
-        ((data.charCodeAt (offset + 2) & 0xff) << 16) +
-        ((data.charCodeAt (offset + 1) & 0xff) << 8) +
-        (data.charCodeAt (offset) & 0xff)
+      ((data.charCodeAt(offset + 3) & 0xff) << 24) +
+        ((data.charCodeAt(offset + 2) & 0xff) << 16) +
+        ((data.charCodeAt(offset + 1) & 0xff) << 8) +
+        (data.charCodeAt(offset) & 0xff)
     );
   };
 
   this.bint16 = function (data, offset) {
     return (
-      ((data.charCodeAt (offset) & 0xff) << 8) +
-        (data.charCodeAt (offset + 1) & 0xff)
+      ((data.charCodeAt(offset) & 0xff) << 8) +
+        (data.charCodeAt(offset + 1) & 0xff)
     );
   };
 
   this.lint16 = function (data, offset) {
     return (
-      ((data.charCodeAt (offset + 1) & 0xff) << 8) +
-        (data.charCodeAt (offset) & 0xff)
+      ((data.charCodeAt(offset + 1) & 0xff) << 8) +
+        (data.charCodeAt(offset) & 0xff)
     );
   };
 
   this.ldbl64 = function (data, offset) {
-    var b0 = data.charCodeAt (offset) & 0xff;
-    var b1 = data.charCodeAt (offset + 1) & 0xff;
-    var b2 = data.charCodeAt (offset + 2) & 0xff;
-    var b3 = data.charCodeAt (offset + 3) & 0xff;
-    var b4 = data.charCodeAt (offset + 4) & 0xff;
-    var b5 = data.charCodeAt (offset + 5) & 0xff;
-    var b6 = data.charCodeAt (offset + 6) & 0xff;
-    var b7 = data.charCodeAt (offset + 7) & 0xff;
+    var b0 = data.charCodeAt(offset) & 0xff;
+    var b1 = data.charCodeAt(offset + 1) & 0xff;
+    var b2 = data.charCodeAt(offset + 2) & 0xff;
+    var b3 = data.charCodeAt(offset + 3) & 0xff;
+    var b4 = data.charCodeAt(offset + 4) & 0xff;
+    var b5 = data.charCodeAt(offset + 5) & 0xff;
+    var b6 = data.charCodeAt(offset + 6) & 0xff;
+    var b7 = data.charCodeAt(offset + 7) & 0xff;
 
     var sign = 1 - 2 * (b7 >> 7);
     var exp = (((b7 & 0x7f) << 4) + ((b6 & 0xf0) >> 4)) - 1023;
@@ -11411,24 +11424,24 @@ vgl.shapefileReader = function () {
     // Math.pow (2, -44) + b0 * Math.pow (2, -52);
 
     //return sign * (1 + frac) * Math.pow (2, exp);
-    var frac = (b6 & 0x0f) * Math.pow (2, 48) + b5 * Math.pow (2, 40) + b4 *
-                 Math.pow (2, 32) + b3 * Math.pow (2, 24) + b2 *
-                 Math.pow (2, 16) + b1 * Math.pow (2, 8) + b0;
+    var frac = (b6 & 0x0f) * Math.pow(2, 48) + b5 * Math.pow(2, 40) + b4 *
+                 Math.pow(2, 32) + b3 * Math.pow(2, 24) + b2 *
+                 Math.pow(2, 16) + b1 * Math.pow(2, 8) + b0;
 
-    return sign * (1 + frac * Math.pow (2, -52)) * Math.pow (2, exp);
+    return sign * (1 + frac * Math.pow(2, -52)) * Math.pow(2, exp);
   };
 
   this.lfloat32 = function (data, offset) {
-    var b0 = data.charCodeAt (offset) & 0xff;
-    var b1 = data.charCodeAt (offset + 1) & 0xff;
-    var b2 = data.charCodeAt (offset + 2) & 0xff;
-    var b3 = data.charCodeAt (offset + 3) & 0xff;
+    var b0 = data.charCodeAt(offset) & 0xff;
+    var b1 = data.charCodeAt(offset + 1) & 0xff;
+    var b2 = data.charCodeAt(offset + 2) & 0xff;
+    var b3 = data.charCodeAt(offset + 3) & 0xff;
 
     var sign = 1 - 2 * (b3 >> 7);
     var exp = (((b3 & 0x7f) << 1) + ((b2 & 0xfe) >> 7)) - 127;
-    var frac = (b2 & 0x7f) * Math.pow (2, 16) + b1 * Math.pow (2, 8) + b0;
+    var frac = (b2 & 0x7f) * Math.pow(2, 16) + b1 * Math.pow(2, 8) + b0;
 
-    return sign * (1 + frac * Math.pow (2, -23)) * Math.pow (2, exp);
+    return sign * (1 + frac * Math.pow(2, -23)) * Math.pow(2, exp);
   };
   /*jshint bitwise: true */
 
@@ -11437,14 +11450,14 @@ vgl.shapefileReader = function () {
     var index = offset;
     while (index < offset + length) {
       var c = data[index];
-      if (c.charCodeAt (0) !== 0) {
-        chars.push (c);
+      if (c.charCodeAt(0) !== 0) {
+        chars.push(c);
       } else {
         break;
       }
       index += 1;
     }
-    return chars.join ('');
+    return chars.join('');
   };
 
   this.readHeader = function (data) {
@@ -11471,33 +11484,33 @@ vgl.shapefileReader = function () {
   this.loadShx = function (data) {
     var indices = [];
     var appendIndex = function (offset) {
-      indices.push (2 * m_that.bint32(data, offset));
+      indices.push(2 * m_that.bint32(data, offset));
       return offset + 8;
     };
     var offset = 100;
     while (offset < data.length) {
-      offset = appendIndex (offset);
+      offset = appendIndex(offset);
     }
     return indices;
   };
 
   this.Shapefile = function (options) {
     var path = options.path;
-    $.ajax ({
+    $.ajax({
       url: path + '.shx',
       mimeType: 'text/plain; charset=x-user-defined',
       success: function (data) {
         var indices = this.loadShx(data);
-        $.ajax ({
+        $.ajax({
           url: path + '.shp',
           mimeType: 'text/plain; charset=x-user-defined',
           success: function (data) {
-            $.ajax ({
+            $.ajax({
               url: path + '.dbf',
               mimeType: 'text/plain; charset=x-user-defined',
               success: function (dbf_data) {
-                var layer = this.loadShp (data, dbf_data, indices, options);
-                options.success (layer);
+                var layer = this.loadShp(data, dbf_data, indices, options);
+                options.success(layer);
               }
             });
           }
@@ -11566,7 +11579,7 @@ vgl.shapefileReader = function () {
     var header_offset = FIELDS_START;
     var headers = [];
     while (header_offset < header_size - 1) {
-      headers.push (readHeader(header_offset));
+      headers.push(readHeader(header_offset));
       header_offset += HEADER_LENGTH;
     }
 
@@ -11581,13 +11594,13 @@ vgl.shapefileReader = function () {
         // Move offset to the start of the actual data
         record_offset += 1;
         var record = {};
-        for (var i = 0; i < headers.length; i  += 1) {
+        for (var i = 0; i < headers.length; i += 1) {
           var header = headers[i];
           var value;
           if (header.type === 'C') {
-            value = m_that.str(data, record_offset, header.length).trim ();
+            value = m_that.str(data, record_offset, header.length).trim();
           } else if (header.type === 'N') {
-            value = parseFloat (m_that.str (data, record_offset, header.length));
+            value = parseFloat(m_that.str(data, record_offset, header.length));
           }
           record_offset += header.length;
           record[header.name] = value;
@@ -11606,7 +11619,7 @@ vgl.shapefileReader = function () {
       for (var i = end - 1; i >= start; i -= 1) {
         var x = m_that.ldbl64(data, offset + 16 * i);
         var y = m_that.ldbl64(data, offset + 16 * i + 8);
-        ring.push ([x, y]);
+        ring.push([x, y]);
       }
       //if (ring.length <= 3)
       // return [];
@@ -11622,13 +11635,13 @@ vgl.shapefileReader = function () {
           start, end, ring, rings;
 
       if (geom_type === SHP_NULL) {
-        console.log ('NULL Shape');
+        console.log('NULL Shape');
         //return offset + 12;
       } else if (geom_type === SHP_POINT) {
         var x = m_that.ldbl64(data, record_offset + 4);
         var y = m_that.ldbl64(data, record_offset + 12);
 
-        features.push ({
+        features.push({
           type: 'Point',
           attr: {},
           geom: [[x, y]]
@@ -11641,17 +11654,17 @@ vgl.shapefileReader = function () {
         points_start = offset + 52 + 4 * num_parts;
 
         rings = [];
-        for (i = 0; i < num_parts; i  += 1) {
+        for (i = 0; i < num_parts; i += 1) {
           start = m_that.lint32(data, parts_start + i * 4);
           if (i + 1 < num_parts) {
             end = m_that.lint32(data, parts_start + (i + 1) * 4);
           } else {
             end = num_points;
           }
-          ring = readRing (points_start, start, end);
-          rings.push (ring);
+          ring = readRing(points_start, start, end);
+          rings.push(ring);
         }
-        features.push ({
+        features.push({
           type: 'Polygon',
           attr: {},
           geom: [rings]
@@ -11664,17 +11677,17 @@ vgl.shapefileReader = function () {
         points_start = offset + 52 + 4 * num_parts;
 
         rings = [];
-        for (i = 0; i < num_parts; i  += 1) {
+        for (i = 0; i < num_parts; i += 1) {
           start = m_that.lint32(data, parts_start + i * 4);
           if (i + 1 < num_parts) {
             end = m_that.lint32(data, parts_start + (i + 1) * 4);
           } else {
             end = num_points;
           }
-          ring = readRing (points_start, start, end);
-          rings.push (ring);
+          ring = readRing(points_start, start, end);
+          rings.push(ring);
         }
-        features.push ({
+        features.push({
           type: 'Polyline',
           attr: {},
           geom: [rings]
@@ -11691,17 +11704,17 @@ vgl.shapefileReader = function () {
     //while (offset < length * 2) {
     // offset = readRecord (offset);
     //}
-    for (i = 0; i < indices.length; i  += 1) {
+    for (i = 0; i < indices.length; i += 1) {
       var offset = indices[i];
-      readRecord (offset);
+      readRecord(offset);
     }
 
     var layer = []; //new Layer ();
 
-    for (i = 0; i < features.length; i  += 1) {
+    for (i = 0; i < features.length; i += 1) {
       var feature = features[i];
       feature.attr = attr[i];
-      layer.push (feature);
+      layer.push(feature);
     }
     return layer;
   };
@@ -11739,17 +11752,17 @@ vgl.vtkReader = function () {
      'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
      'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
      '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '+', '/'],
-  m_reverseBase64Chars = [],
-  m_vtkRenderedList = {},
-  m_vtkObjectCount = 0,
-  m_vtkScene = null,
-  m_node = null,
-  END_OF_INPUT = -1,
-  m_base64Str = '',
-  m_base64Count = 0,
-  m_pos = 0,
-  m_viewer = null,
-  i = 0;
+      m_reverseBase64Chars = [],
+      m_vtkRenderedList = {},
+      m_vtkObjectCount = 0,
+      m_vtkScene = null,
+      m_node = null,
+      END_OF_INPUT = -1,
+      m_base64Str = '',
+      m_base64Count = 0,
+      m_pos = 0,
+      m_viewer = null,
+      i = 0;
 
   //initialize the array here if not already done.
   if (m_reverseBase64Chars.length === 0) {
@@ -11757,8 +11770,6 @@ vgl.vtkReader = function () {
       m_reverseBase64Chars[m_base64Chars[i]] = i;
     }
   }
-
-
 
   ////////////////////////////////////////////////////////////////////////////
   /**
@@ -11836,9 +11847,9 @@ vgl.vtkReader = function () {
       /*jshint bitwise: false */
       result += this.ntos((((inBuffer[0] << 2) & 0xff) | inBuffer[1] >> 4));
       if (inBuffer[2] !== END_OF_INPUT) {
-        result +=  this.ntos((((inBuffer[1] << 4) & 0xff) | inBuffer[2] >> 2));
+        result += this.ntos((((inBuffer[1] << 4) & 0xff) | inBuffer[2] >> 2));
         if (inBuffer[3] !== END_OF_INPUT) {
-          result +=  this.ntos((((inBuffer[2] << 6) & 0xff) | inBuffer[3]));
+          result += this.ntos((((inBuffer[2] << 6) & 0xff) | inBuffer[3]));
         } else {
           done = true;
         }
@@ -12032,9 +12043,9 @@ vgl.vtkReader = function () {
 
     //jshint plusplus: false
     for (i = 0; i < numberOfPoints; i += 1) {
-      p[idx++] = points[i * 3/*+0*/];
+      p[idx++] = points[i * 3];
       p[idx++] = points[i * 3 + 1];
-      p[idx++] =  points[i * 3 + 2];
+      p[idx++] = points[i * 3 + 2];
     }
     //jshint plusplus: true
     vglpoints.insert(p);
@@ -12086,7 +12097,7 @@ vgl.vtkReader = function () {
     var vglpoints = null, vglcolors = null,
         normals = null, matrix = mat4.create(),
         vgltriangles = null, numberOfIndex, numberOfPoints,
-        points, temp, index, size, m, i, tcoord,
+        points, temp, index, size, m, i,
         pn = null, idx = 0;
 
     numberOfPoints = this.readNumber(ss);
@@ -12099,10 +12110,10 @@ vgl.vtkReader = function () {
     normals = this.readF3Array(numberOfPoints, ss);
     //jshint plusplus: false
     for (i = 0; i < numberOfPoints; i += 1) {
-      pn[idx++] = points[i * 3/*+0*/];
+      pn[idx++] = points[i * 3];
       pn[idx++] = points[i * 3 + 1];
       pn[idx++] = points[i * 3 + 2];
-      pn[idx++] = normals[i * 3/*+0*/];
+      pn[idx++] = normals[i * 3];
       pn[idx++] = normals[i * 3 + 1];
       pn[idx++] = normals[i * 3 + 2];
     }
@@ -12141,10 +12152,6 @@ vgl.vtkReader = function () {
     m = new Float32Array(temp.buffer);
     mat4.copy(matrix, m);
 
-    //Getting TCoord
-    //TODO: renderer is not doing anything with this yet
-    tcoord = null;
-
     return matrix;
   };
 
@@ -12174,7 +12181,7 @@ vgl.vtkReader = function () {
     //jshint plusplus: false
     for (i = 0; i < numberOfPoints; i += 1) {
       indices[i] = i;
-      p[idx++] = points[i * 3/*+0*/];
+      p[idx++] = points[i * 3];
       p[idx++] = points[i * 3 + 1];
       p[idx++] = points[i * 3 + 2];
     }
@@ -12463,7 +12470,7 @@ vgl.DataBuffers = function (initialSize) {
 
   var copyArray = function (dst, src, start, count) {
     if (!dst) {
-      console.log ('ack');
+      throw 'No destination';
     }
     if (!start) {
       start = 0;
@@ -12490,20 +12497,28 @@ vgl.DataBuffers = function (initialSize) {
     size = new_size;
     for (var name in data) {
       if (data.hasOwnProperty(name)) {
-        var newArray = new Float32Array (new_size * data[name].len);
+        var newArray = new Float32Array(new_size * data[name].len);
         var oldArray = data[name].array;
-        copyArray (newArray, oldArray);
+        copyArray(newArray, oldArray);
         data[name].array = newArray;
         data[name].dirty = true;
       }
     }
   };
 
+  /**
+   * Allocate a buffer with a name and a specific number of components per
+   * entry.  If a buffer with the specified name already exists, it will be
+   * overwritten.
+   *
+   * @param name: the name of the buffer to create or replace.
+   * @param len: number of components per entry.  Most be a positive integer.
+   */
   this.create = function (name, len) {
-    if (!len) {
+    if (!len || len < 0) {
       throw 'Length of buffer must be a positive integer';
     }
-    var array = new Float32Array (size * len);
+    var array = new Float32Array(size * len);
     data[name] = {
       array: array,
       len: len,
@@ -12514,7 +12529,7 @@ vgl.DataBuffers = function (initialSize) {
 
   this.alloc = function (num) {
     if ((current + num) >= size) {
-      resize (current + num);
+      resize(current + num);
     }
     var start = current;
     current += num;
@@ -12526,13 +12541,19 @@ vgl.DataBuffers = function (initialSize) {
   };
 
   this.write = function (name, array, start, count) {
-    copyArray (data[name].array, array, start * data[name].len, count * data[name].len);
+    if (start + count > size) {
+      throw 'Write would exceed buffer size';
+    }
+    copyArray(data[name].array, array, start * data[name].len, count * data[name].len);
     data[name].dirty = true;
   };
 
   this.repeat = function (name, elem, start, count) {
+    if (start + count > size) {
+      throw 'Repeat would exceed buffer size';
+    }
     for (var i = 0; i < count; i += 1) {
-      copyArray (data[name].array, elem,
+      copyArray(data[name].array, elem,
                  (start + i) * data[name].len, data[name].len);
     }
     data[name].dirty = true;
@@ -12546,6 +12567,497 @@ vgl.DataBuffers = function (initialSize) {
     return data[name].array;
   };
 };
+
+////////////////////////////////////////////////////////////////////////////
+/**
+ * Create a new instance of class renderer *
+ *
+ * @returns {vgl.renderer}
+ */
+////////////////////////////////////////////////////////////////////////////
+
+vgl.depthPeelRenderer = function () {
+  'use strict';
+
+  if (!(this instanceof vgl.depthPeelRenderer)) {
+    return new vgl.depthPeelRenderer();
+  }
+  vgl.renderer.call(this);
+
+  var m_this = this, fbo = [], texID = [], depthTexID = [],
+      colorBlenderTexID, colorBlenderFBOID, setupTime = vgl.timestamp(),
+      fpMaterial = vgl.material(), blMaterial = vgl.material(),
+      fiMaterial = vgl.material(), frontPeelShader = null, blendShader = null,
+      finalShader, NUM_PASSES = 6, m_quad = null, fpwidth, fpheight, blwidth, blheight,
+      fiwidth, fiheight, fpopacity, fibackgroundColor;
+
+  function drawFullScreenQuad(renderState, material) {
+    m_quad.setMaterial(material);
+
+    renderState.m_mapper = m_quad.mapper();
+    renderState.m_material = material;
+
+    renderState.m_material.bind(renderState);
+    renderState.m_mapper.render(renderState);
+    renderState.m_material.undoBind(renderState);
+
+    m_quad.setMaterial(null);
+  }
+
+  function initScreenQuad(renderState, width, height) {
+    console.log(width);
+    console.log(height);
+    m_quad = vgl.utils.createPlane(0.0, 0.0, 0.0,
+                                   1.0, 0.0, 0.0,
+                                   0.0, 1.0, 0.0);
+  }
+
+  function initShaders(renderState) {
+    var fpmv, fpproj, fpvertex, fpcolor, fpdepthTex, fpnormal, fpnr,
+        blvertex, blColorSamp, blPrevDepthSamp, blCurrDepthSamp,
+        fivertex, fitempTex;
+
+    // Load the front to back peeling shader
+    fpvertex = new vgl.vertexAttribute('vertexPosition');
+    fpnormal = new vgl.vertexAttribute('vertexNormal');
+    fpcolor = new vgl.vertexAttribute('vertexColor');
+    fpmv = new vgl.modelViewUniform('modelViewMatrix');
+    fpnr = new vgl.modelViewUniform('normalMatrix');
+    fpproj = new vgl.projectionUniform('projectionMatrix');
+    fpwidth = new vgl.floatUniform('width');
+    fpheight = new vgl.floatUniform('height');
+    fpopacity = new vgl.floatUniform('opacity', 1.0);
+    fpdepthTex = new vgl.uniform(vgl.GL.INT, 'depthTexture');
+    fpdepthTex.set(0);
+
+    frontPeelShader = new vgl.shaderProgram();
+    frontPeelShader.loadShader(vgl.GL.VERTEX_SHADER, 'front_peel.vert');
+    frontPeelShader.loadShader(vgl.GL.FRAGMENT_SHADER, 'front_peel.frag');
+
+    frontPeelShader.addUniform(fpmv);
+    frontPeelShader.addUniform(fpnr);
+    frontPeelShader.addUniform(fpproj);
+    frontPeelShader.addUniform(fpdepthTex);
+    frontPeelShader.addUniform(fpwidth);
+    frontPeelShader.addUniform(fpheight);
+    frontPeelShader.addUniform(fpopacity);
+    frontPeelShader.addVertexAttribute(fpvertex, vgl.vertexAttributeKeys.Position);
+    frontPeelShader.addVertexAttribute(fpnormal, vgl.vertexAttributeKeys.Normal);
+    frontPeelShader.addVertexAttribute(fpcolor, vgl.vertexAttributeKeys.Color);
+
+    // Compile and link the shader
+    frontPeelShader.compileAndLink(renderState);
+
+    fpMaterial.addAttribute(frontPeelShader);
+
+    //     //add attributes and uniforms
+    //     frontPeelShader.AddAttribute('vVertex');
+    //     frontPeelShader.AddUniform('MVP');
+    //     frontPeelShader.AddUniform('vColor');
+    //     frontPeelShader.AddUniform('depthTexture');
+    //     //pass constant uniforms at initialization
+    //     glUniform1i(frontPeelShader('depthTexture'), 0);
+    // frontPeelShader.UnUse();
+
+    // Load the blending shader
+    blendShader = new vgl.shaderProgram();
+    blendShader.loadShader(vgl.GL.VERTEX_SHADER, 'blend.vert');
+    blendShader.loadShader(vgl.GL.FRAGMENT_SHADER, 'blend.frag');
+    blColorSamp = new vgl.uniform(vgl.GL.INT, 'currColorTexture');
+    blPrevDepthSamp = new vgl.uniform(vgl.GL.INT, 'prevDepthTexture');
+    blCurrDepthSamp = new vgl.uniform(vgl.GL.INT, 'currDepthTexture');
+
+    blwidth = new vgl.floatUniform('width');
+    blheight = new vgl.floatUniform('height');
+    blColorSamp.set(0);
+    blPrevDepthSamp.set(1);
+    blCurrDepthSamp.set(2);
+
+    blvertex = new vgl.vertexAttribute('vertexPosition');
+
+    blendShader.addUniform(blColorSamp);
+    blendShader.addUniform(blPrevDepthSamp);
+    blendShader.addUniform(blPrevDepthSamp);
+    blendShader.addUniform(blwidth);
+    blendShader.addUniform(blheight);
+    blendShader.addVertexAttribute(blvertex,
+      vgl.vertexAttributeKeys.Position);
+
+    // Compile and link the shader
+    blendShader.compileAndLink(renderState);
+    blMaterial.addAttribute(blendShader);
+
+    //     //add attributes and uniforms
+    //     blendShader.AddAttribute('vVertex');
+    //     blendShader.AddUniform('currColorTexture');
+    //     //pass constant uniforms at initialization
+    //     glUniform1i(blendShader('currColorTexture'), 0);
+    // blendShader.UnUse();
+
+    //Load the final shader
+    finalShader = new vgl.shaderProgram();
+    finalShader.loadShader(vgl.GL.VERTEX_SHADER, 'blend.vert');
+    finalShader.loadShader(vgl.GL.FRAGMENT_SHADER, 'final.frag');
+
+    //fimv = new vgl.modelViewUniform('modelViewMatrix');
+    //fiproj = new vgl.projectionUniform('projectionMatrix');
+    fitempTex = new vgl.uniform(vgl.GL.INT, 'colorTexture');
+    fiwidth = new vgl.floatUniform('width');
+    fiheight = new vgl.floatUniform('height');
+    fibackgroundColor = new vgl.uniform(vgl.GL.FLOAT_VEC3, 'backgroundColor');
+    fitempTex.set(0);
+    fivertex = new vgl.vertexAttribute('vertexPosition');
+
+    //finalShader.addUniform(fimv);
+    //finalShader.addUniform(fiproj);
+    finalShader.addUniform(fitempTex);
+    finalShader.addUniform(fiwidth);
+    finalShader.addUniform(fiheight);
+    finalShader.addUniform(fibackgroundColor);
+    finalShader.addVertexAttribute(fivertex, vgl.vertexAttributeKeys.Position);
+    finalShader.compileAndLink(renderState);
+    fiMaterial.addAttribute(finalShader);
+  }
+
+  function initFBO(renderState, WIDTH, HEIGHT) {
+    var i, textureFloatExt, textureFloatLinearExt, depthTextureExt, filtering;
+
+    // Or browser-appropriate prefix
+    depthTextureExt = renderState.m_context.getExtension('WEBKIT_WEBGL_depth_texture');
+    if (!depthTextureExt) {
+      depthTextureExt = renderState.m_context.getExtension('WEBGL_depth_texture');
+
+      if (!depthTextureExt) {
+        console.log('Depth textures are not supported');
+      }
+    }
+
+    var floatTextureExt = renderState.m_context.getExtension('OES_texture_float');
+    if (!floatTextureExt) {
+      console.log('float textures are not supported');
+    }
+
+    textureFloatExt = renderState.m_context.getExtension('OES_texture_float');
+    if (!textureFloatExt) {
+      console.log('Extension Texture Float is not working');
+      window.alert(':( Sorry, Your browser doesn\'t support texture float extension.');
+      return;
+    }
+    textureFloatLinearExt = renderState.m_context.getExtension(
+        'OES_texture_float_linear');
+    depthTextureExt = renderState.m_context.getExtension('WEBGL_depth_texture');
+
+    if (!depthTextureExt) {
+      console.log('Extension Depth texture is not working');
+      window.alert(':( Sorry, Your browser doesn\'t support depth texture extension.');
+      return;
+    }
+
+    filtering = textureFloatLinearExt ? vgl.GL.LINEAR : vgl.GL.NEAREST;
+
+    //FBO initialization function
+    // Generate 2 FBO
+    fbo.push(renderState.m_context.createFramebuffer());
+    fbo.push(renderState.m_context.createFramebuffer());
+
+    // Create two textures
+    texID.push(renderState.m_context.createTexture());
+    texID.push(renderState.m_context.createTexture());
+
+    //The FBO has two depth attachments
+    depthTexID.push(renderState.m_context.createTexture());
+    depthTexID.push(renderState.m_context.createTexture());
+
+    // For each attachment
+    for (i = 0; i < 2; i += 1) {
+      // First initialize the depth texture
+      renderState.m_context.bindTexture(vgl.GL.TEXTURE_2D, depthTexID[i]);
+      renderState.m_context.texParameteri(vgl.GL.TEXTURE_2D,
+        vgl.GL.TEXTURE_MAG_FILTER, vgl.GL.NEAREST);
+      renderState.m_context.texParameteri(vgl.GL.TEXTURE_2D,
+        vgl.GL.TEXTURE_MIN_FILTER, vgl.GL.NEAREST);
+      renderState.m_context.texParameteri(vgl.GL.TEXTURE_2D,
+        vgl.GL.TEXTURE_WRAP_S, vgl.GL.CLAMP_TO_EDGE);
+      renderState.m_context.texParameteri(vgl.GL.TEXTURE_2D,
+        vgl.GL.TEXTURE_WRAP_T, vgl.GL.CLAMP_TO_EDGE);
+      renderState.m_context.texImage2D(vgl.GL.TEXTURE_2D, 0,
+        vgl.GL.DEPTH_COMPONENT, WIDTH, HEIGHT, 0, vgl.GL.DEPTH_COMPONENT,
+        vgl.GL.UNSIGNED_SHORT, null);
+
+      // Second initialize the color attachment
+      renderState.m_context.bindTexture(vgl.GL.TEXTURE_2D, texID[i]);
+      renderState.m_context.texParameteri(vgl.GL.TEXTURE_2D,
+        vgl.GL.TEXTURE_MAG_FILTER, filtering);
+      renderState.m_context.texParameteri(vgl.GL.TEXTURE_2D,
+        vgl.GL.TEXTURE_MIN_FILTER, filtering);
+      renderState.m_context.texParameteri(vgl.GL.TEXTURE_2D,
+        vgl.GL.TEXTURE_WRAP_S, vgl.GL.CLAMP_TO_EDGE);
+      renderState.m_context.texParameteri(vgl.GL.TEXTURE_2D,
+        vgl.GL.TEXTURE_WRAP_T, vgl.GL.CLAMP_TO_EDGE);
+      renderState.m_context.texImage2D(vgl.GL.TEXTURE_2D, 0, vgl.GL.RGBA,
+        WIDTH, HEIGHT, 0, vgl.GL.RGBA, vgl.GL.FLOAT, null);
+
+      // Bind FBO and attach the depth and color attachments
+      renderState.m_context.bindFramebuffer(vgl.GL.FRAMEBUFFER, fbo[i]);
+      renderState.m_context.framebufferTexture2D(vgl.GL.FRAMEBUFFER,
+        vgl.GL.DEPTH_ATTACHMENT, vgl.GL.TEXTURE_2D, depthTexID[i], 0);
+      renderState.m_context.framebufferTexture2D(vgl.GL.FRAMEBUFFER,
+        vgl.GL.COLOR_ATTACHMENT0, vgl.GL.TEXTURE_2D, texID[i], 0);
+    }
+
+    // Now setup the color attachment for color blend FBO
+    colorBlenderTexID = renderState.m_context.createTexture();
+    renderState.m_context.bindTexture(vgl.GL.TEXTURE_2D, colorBlenderTexID);
+    renderState.m_context.texParameteri(vgl.GL.TEXTURE_2D,
+        vgl.GL.TEXTURE_WRAP_S, vgl.GL.CLAMP_TO_EDGE);
+    renderState.m_context.texParameteri(vgl.GL.TEXTURE_2D,
+        vgl.GL.TEXTURE_WRAP_T, vgl.GL.CLAMP_TO_EDGE);
+    renderState.m_context.texParameteri(vgl.GL.TEXTURE_2D,
+        vgl.GL.TEXTURE_MIN_FILTER, vgl.GL.NEAREST);
+    renderState.m_context.texParameteri(vgl.GL.TEXTURE_2D,
+        vgl.GL.TEXTURE_MAG_FILTER, vgl.GL.NEAREST);
+    renderState.m_context.texImage2D(vgl.GL.TEXTURE_2D, 0, vgl.GL.RGBA,
+        WIDTH, HEIGHT, 0, vgl.GL.RGBA, vgl.GL.FLOAT, null);
+
+    // Generate the color blend FBO ID
+    colorBlenderFBOID = renderState.m_context.createFramebuffer();
+    renderState.m_context.bindFramebuffer(vgl.GL.FRAMEBUFFER, colorBlenderFBOID);
+
+    // Set the depth attachment of previous FBO as depth attachment for this FBO
+    renderState.m_context.framebufferTexture2D(vgl.GL.FRAMEBUFFER,
+        vgl.GL.DEPTH_ATTACHMENT, vgl.GL.TEXTURE_2D, depthTexID[0], 0);
+
+    // Set the color blender texture as the FBO color attachment
+    renderState.m_context.framebufferTexture2D(vgl.GL.FRAMEBUFFER,
+        vgl.GL.COLOR_ATTACHMENT0, vgl.GL.TEXTURE_2D, colorBlenderTexID, 0);
+
+    // Check the FBO completeness status
+    var status = renderState.m_context.checkFramebufferStatus(
+        vgl.GL.FRAMEBUFFER);
+    if (status === vgl.GL.FRAMEBUFFER_COMPLETE) {
+      console.log('FBO setup successful !!! \n');
+    } else {
+      console.log('Problem with FBO setup');
+    }
+    // Unbind FBO
+    renderState.m_context.bindFramebuffer(vgl.GL.FRAMEBUFFER, null);
+  }
+
+  function setup(renderState) {
+    if (setupTime.getMTime() < m_this.getMTime()) {
+      initScreenQuad(renderState, m_this.width(), m_this.height());
+      initShaders(renderState, m_this.width(), m_this.height());
+      initFBO(renderState, m_this.width(), m_this.height());
+      setupTime.modified();
+    }
+  }
+
+  function drawScene(renderState, sortedActors, material) {
+
+    var i, actor, mvMatrixInv = mat4.create();
+
+    // // Enable alpha blending with over compositing
+    // gl.enable(vgl.GL.BLEND);
+    // gl.blendFunc(vgl.GL.SRC_ALPHA, vgl.GL.ONE_MINUS_SRC_ALPHA);
+
+    for (i = 0; i < sortedActors.length; i += 1) {
+      actor = sortedActors[i][2];
+
+      if (actor.referenceFrame() ===
+          vgl.boundingObject.ReferenceFrame.Relative) {
+        mat4.multiply(renderState.m_modelViewMatrix, m_this.m_camera.viewMatrix(),
+          actor.matrix());
+        renderState.m_projectionMatrix = m_this.m_camera.projectionMatrix();
+      } else {
+        renderState.m_modelViewMatrix = actor.matrix();
+        renderState.m_projectionMatrix = mat4.create();
+        mat4.ortho(renderState.m_projectionMatrix, 0,
+                   m_this.m_width, 0, m_this.m_height, -1, 1);
+      }
+
+      mat4.invert(mvMatrixInv, renderState.m_modelViewMatrix);
+      mat4.transpose(renderState.m_normalMatrix, mvMatrixInv);
+      renderState.m_mapper = actor.mapper();
+
+      // TODO Fix this shortcut
+      if (!material) {
+        renderState.m_material = actor.material();
+        renderState.m_material.bind(renderState);
+        renderState.m_mapper.render(renderState);
+        renderState.m_material.undoBind(renderState);
+      } else {
+
+        var ou = actor.material().shaderProgram().uniform('opacity');
+        if (ou) {
+          fpopacity.set(ou.get()[0]);
+        } else {
+          fpopacity.set(1.0);
+        }
+        renderState.m_material = material;
+        renderState.m_material.bind(renderState);
+        renderState.m_mapper.render(renderState);
+        renderState.m_material.undoBind(renderState);
+      }
+    }
+  }
+
+  function depthPeelRender(renderState, actors) {
+    var layer;
+
+    fpwidth.set(m_this.width());
+    fpheight.set(m_this.height());
+    blwidth.set(m_this.width());
+    blheight.set(m_this.height());
+    fiwidth.set(m_this.width());
+    fiheight.set(m_this.height());
+
+    // Clear color and depth buffer
+    renderState.m_context.clearColor(0.0, 0.0, 0.0, 0.0);
+    /*jshint bitwise: false */
+    renderState.m_context.clear(vgl.GL.OLOR_BUFFER_BIT | vgl.GL.DEPTH_BUFFER_BIT);
+    /*jshint bitwise: true */
+
+    // Bind the color blending FBO
+    renderState.m_context.bindFramebuffer(vgl.GL.FRAMEBUFFER, colorBlenderFBOID);
+
+    // 1. In the first pass, we render normally with depth test enabled to
+    // get the nearest surface
+    renderState.m_context.enable(vgl.GL.DEPTH_TEST);
+    renderState.m_context.disable(vgl.GL.BLEND);
+
+    var clearColor = m_this.m_camera.clearColor();
+    renderState.m_context.clearColor(clearColor[0], clearColor[1], clearColor[2], 0.0);
+    /*jshint bitwise: false */
+    renderState.m_context.clear(vgl.GL.COLOR_BUFFER_BIT | vgl.GL.DEPTH_BUFFER_BIT);
+    /*jshint bitwise: true */
+
+    drawScene(renderState, actors);
+
+    // 2. Depth peeling + blending pass
+    var numLayers = (NUM_PASSES - 1) * 2;
+
+    // For each pass
+    for (layer = 1; layer < numLayers; layer += 1) {
+      var currId = layer % 2;
+      var prevId = 1 - currId;
+
+      // Bind the current FBO
+      renderState.m_context.bindFramebuffer(vgl.GL.FRAMEBUFFER, fbo[currId]);
+
+      // Disbale blending and enable depth testing
+      renderState.m_context.disable(vgl.GL.BLEND);
+      renderState.m_context.enable(vgl.GL.DEPTH_TEST);
+
+      // Bind the depth texture from the previous step
+      renderState.m_context.bindTexture(vgl.GL.TEXTURE_2D, depthTexID[prevId]);
+
+      // Set clear color to black
+      renderState.m_context.clearColor(0.0, 0.0, 0.0, 0.0);
+
+      // Clear the color and depth buffers
+      /*jshint bitwise: false */
+      renderState.m_context.clear(vgl.GL.COLOR_BUFFER_BIT | vgl.GL.DEPTH_BUFFER_BIT);
+      /*jshint bitwise: true */
+
+      // Render scene with the front to back peeling shader
+      drawScene(renderState, actors, fpMaterial);
+
+      // Bind the color blender FBO
+      renderState.m_context.bindFramebuffer(vgl.GL.FRAMEBUFFER, colorBlenderFBOID);
+
+      // Enable blending but disable depth testing
+      renderState.m_context.disable(vgl.GL.DEPTH_TEST);
+      renderState.m_context.enable(vgl.GL.BLEND);
+
+      // Change the blending equation to add
+      renderState.m_context.blendEquation(vgl.GL.FUNC_ADD);
+
+      // Use separate blending function
+      renderState.m_context.blendFuncSeparate(vgl.GL.DST_ALPHA, vgl.GL.ONE,
+          vgl.GL.ZERO, vgl.GL.ONE_MINUS_SRC_ALPHA);
+
+      // Bind the result from the previous iteration as texture
+      renderState.m_context.activeTexture(vgl.GL.TEXTURE0);
+      renderState.m_context.bindTexture(vgl.GL.TEXTURE_2D, texID[currId]);
+
+      renderState.m_context.activeTexture(vgl.GL.TEXTURE1);
+      renderState.m_context.bindTexture(vgl.GL.TEXTURE_2D, depthTexID[prevId]);
+
+      renderState.m_context.activeTexture(vgl.GL.TEXTURE2);
+      renderState.m_context.bindTexture(vgl.GL.TEXTURE_2D, depthTexID[currId]);
+
+      drawFullScreenQuad(renderState, blMaterial);
+
+      renderState.m_context.activeTexture(vgl.GL.TEXTURE0);
+
+      // Disable blending
+      renderState.m_context.disable(vgl.GL.BLEND);
+    }
+
+    // 3. Final render pass
+    //remove the FBO
+    renderState.m_context.bindFramebuffer(vgl.GL.FRAMEBUFFER, null);
+
+    // Disable depth testing and blending
+    renderState.m_context.disable(vgl.GL.DEPTH_TEST);
+    renderState.m_context.disable(vgl.GL.BLEND);
+
+    // Bind the color blender texture
+    renderState.m_context.bindTexture(vgl.GL.TEXTURE_2D, colorBlenderTexID);
+
+    fibackgroundColor.set(m_this.m_camera.clearColor());
+
+    // Draw full screen quad
+    drawFullScreenQuad(renderState, fiMaterial);
+
+    renderState.m_context.bindTexture(vgl.GL.TEXTURE_2D, null);
+  }
+
+  ////////////////////////////////////////////////////////////////////////////
+  /**
+   * Render the scene
+   */
+  ////////////////////////////////////////////////////////////////////////////
+  this.render = function () {
+    var i, renSt, children, actor = null, sortedActors = [];
+
+    renSt = new vgl.renderState();
+    renSt.m_renderer = m_this;
+    renSt.m_context = m_this.renderWindow().context();
+    renSt.m_contextChanged = m_this.m_contextChanged;
+
+    // Set the viewport for this renderer
+    renSt.m_context.viewport(m_this.m_x, m_this.m_y, m_this.m_width, m_this.m_height);
+
+    // Check if we have initialized
+    setup(renSt);
+
+    children = m_this.m_sceneRoot.children();
+
+    if (children.length > 0 && m_this.m_resetScene) {
+      this.resetCamera();
+      m_this.m_resetScene = false;
+    }
+
+    for (i = 0; i < children.length; i += 1) {
+      actor = children[i];
+      actor.computeBounds();
+      if (actor.visible()) {
+        sortedActors.push([actor.material().binNumber(),
+          actor.material().shaderProgram().uniform('opacity').get()[0],
+          actor]);
+      }
+    }
+
+    // Now perform sorting
+    sortedActors.sort(function (a, b) { return a[0] - b[0]; });
+    sortedActors.sort(function (a, b) { return b[1] - a[1]; });
+
+    depthPeelRender(renSt, sortedActors);
+  };
+};
+
+inherit(vgl.depthPeelRenderer, vgl.renderer);
 
 return vgl;
 
