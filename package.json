@@ -1,7 +1,7 @@
 {
   "name": "vgl",
   "description": "VTK for the Web.",
-  "version": "0.3.7",
+  "version": "0.3.8",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -37,7 +37,7 @@
     "xmlbuilder": "^4.1.0"
   },
   "scripts": {
-    "mypublish": "grunt default test && cp dist/vgl* . && npm publish",
+    "mypublish": "grunt default && cp dist/vgl{.min,}.js . && npm publish",
     "test": "grunt test",
     "build": "grunt default",
     "lint": "eslint --cache src Gruntfile.js"
