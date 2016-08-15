@@ -277,11 +277,13 @@ vgl.modelViewOriginUniform = function (name, origin) {
    */
   /////////////////////////////////////////////////////////////////////////////
   this.update = function (renderState, program) {
-    program = program; /* unused parameter */
-    var view = mat4.create();
-    mat4.translate(view, renderState.m_modelViewMatrix, m_origin);
+    void program; /* unused parameter */
+    var view = renderState.m_modelViewMatrix;
     if (renderState.m_modelViewAlignment) {
+      /* adjust alignment before origin.  Otherwise, a changing origin can
+       * affect the rounding choice and result in a 1 pixe jitter. */
       var align = renderState.m_modelViewAlignment;
+      view = view.slice(0);  // don't modify the orignal matrix.
       /* view[12] and view[13] are the x and y offsets.  align.round is the
        * units-per-pixel, and align.dx and .dy are either 0 or half the size of
        * a unit-per-pixel.  The alignment guarantees that the texels are
@@ -289,6 +291,7 @@ vgl.modelViewOriginUniform = function (name, origin) {
       view[12] = Math.round(view[12] / align.roundx) * align.roundx + align.dx;
       view[13] = Math.round(view[13] / align.roundy) * align.roundy + align.dy;
     }
+    view = mat4.translate(mat4.create(), view, m_origin);
     this.set(view);
   };
 
