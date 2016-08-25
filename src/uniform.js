@@ -19,7 +19,7 @@ vgl.uniform = function (type, name) {
   'use strict';
 
   if (!(this instanceof vgl.uniform)) {
-    return new vgl.uniform();
+    return new vgl.uniform(type, name);
   }
 
   this.getTypeNumberOfComponents = function (type) {
@@ -102,25 +102,9 @@ vgl.uniform = function (type, name) {
    */
   /////////////////////////////////////////////////////////////////////////////
   this.set = function (value) {
-    var i = 0;
-    if (m_dataArray.length === 16) {
-      for (i = 0; i < 16; i += 1) {
-        m_dataArray[i] = value[i];
-      }
-    } else if (m_dataArray.length === 9) {
-      for (i = 0; i < 9; i += 1) {
-        m_dataArray[i] = value[i];
-      }
-    } else if (m_dataArray.length === 4) {
-      for (i = 0; i < 4; i += 1) {
-        m_dataArray[i] = value[i];
-      }
-    } else if (m_dataArray.length === 3) {
-      for (i = 0; i < 3; i += 1) {
-        m_dataArray[i] = value[i];
-      }
-    } else if (m_dataArray.length === 2) {
-      for (i = 0; i < 2; i += 1) {
+    var i = 0, lendata = m_dataArray.length;
+    if (lendata !== 1) {
+      for (i = 0; i < lendata; i += 1) {
         m_dataArray[i] = value[i];
       }
     } else {
@@ -136,10 +120,6 @@ vgl.uniform = function (type, name) {
    */
   /////////////////////////////////////////////////////////////////////////////
   this.callGL = function (renderState, location) {
-    if (this.m_numberElements < 1) {
-      return;
-    }
-
     switch (m_type) {
       case vgl.GL.BOOL:
       case vgl.GL.INT:
@@ -148,11 +128,23 @@ vgl.uniform = function (type, name) {
       case vgl.GL.FLOAT:
         renderState.m_context.uniform1fv(location, m_dataArray);
         break;
+      case vgl.GL.BOOL_VEC2:
+      case vgl.GL.INT_VEC2:
+        renderState.m_context.uniform2iv(location, m_dataArray);
+        break;
       case vgl.GL.FLOAT_VEC2:
         renderState.m_context.uniform2fv(location, m_dataArray);
         break;
+      case vgl.GL.BOOL_VEC3:
+      case vgl.GL.INT_VEC3:
+        renderState.m_context.uniform3iv(location, m_dataArray);
+        break;
       case vgl.GL.FLOAT_VEC3:
         renderState.m_context.uniform3fv(location, m_dataArray);
+        break;
+      case vgl.GL.BOOL_VEC4:
+      case vgl.GL.INT_VEC4:
+        renderState.m_context.uniform4iv(location, m_dataArray);
         break;
       case vgl.GL.FLOAT_VEC4:
         renderState.m_context.uniform4fv(location, m_dataArray);
@@ -179,8 +171,8 @@ vgl.uniform = function (type, name) {
    */
   /////////////////////////////////////////////////////////////////////////////
   this.update = function (renderState, program) {
-    renderState = renderState; /* unused parameter */
-    program = program; /* unused parameter */
+    void renderState; /* unused parameter */
+    void program; /* unused parameter */
     // Should be implemented by the derived class
   };
 
@@ -202,7 +194,7 @@ vgl.modelViewUniform = function (name) {
     return new vgl.modelViewUniform(name);
   }
 
-  if (name.length === 0) {
+  if (!name) {
     name = 'modelViewMatrix';
   }
 
@@ -219,7 +211,7 @@ vgl.modelViewUniform = function (name) {
    */
   /////////////////////////////////////////////////////////////////////////////
   this.update = function (renderState, program) {
-    program = program; /* unused parameter */
+    void program; /* unused parameter */
     this.set(renderState.m_modelViewMatrix);
   };
 
@@ -244,7 +236,7 @@ vgl.modelViewOriginUniform = function (name, origin) {
     return new vgl.modelViewOriginUniform(name, origin);
   }
 
-  if (name.length === 0) {
+  if (!name) {
     name = 'modelViewMatrix';
   }
   origin = origin || [0, 0, 0];
@@ -277,11 +269,15 @@ vgl.modelViewOriginUniform = function (name, origin) {
    */
   /////////////////////////////////////////////////////////////////////////////
   this.update = function (renderState, program) {
-    program = program; /* unused parameter */
-    var view = mat4.create();
-    mat4.translate(view, renderState.m_modelViewMatrix, m_origin);
+    void program; /* unused parameter */
+    var view = renderState.m_modelViewMatrix;
     if (renderState.m_modelViewAlignment) {
+      /* adjust alignment before origin.  Otherwise, a changing origin can
+       * affect the rounding choice and result in a 1 pixe jitter. */
       var align = renderState.m_modelViewAlignment;
+      /* Don't modify the orignal matrix.  If we are in an environment where
+       * you can't slice an Float32Array, switch to a regular array */
+      view = view.slice ? view.slice() : Array.prototype.slice.call(view);
       /* view[12] and view[13] are the x and y offsets.  align.round is the
        * units-per-pixel, and align.dx and .dy are either 0 or half the size of
        * a unit-per-pixel.  The alignment guarantees that the texels are
@@ -289,6 +285,7 @@ vgl.modelViewOriginUniform = function (name, origin) {
       view[12] = Math.round(view[12] / align.roundx) * align.roundx + align.dx;
       view[13] = Math.round(view[13] / align.roundy) * align.roundy + align.dy;
     }
+    view = mat4.translate(mat4.create(), view, m_origin);
     this.set(view);
   };
 
@@ -312,7 +309,7 @@ vgl.projectionUniform = function (name) {
     return new vgl.projectionUniform(name);
   }
 
-  if (name.length === 0) {
+  if (!name) {
     name = 'projectionMatrix';
   }
 
@@ -329,7 +326,7 @@ vgl.projectionUniform = function (name) {
    */
   /////////////////////////////////////////////////////////////////////////////
   this.update = function (renderState, program) {
-    program = program; /* unused parameter */
+    void program; /* unused parameter */
     this.set(renderState.m_projectionMatrix);
   };
 
@@ -354,7 +351,7 @@ vgl.floatUniform = function (name, value) {
     return new vgl.floatUniform(name, value);
   }
 
-  if (name.length === 0) {
+  if (!name) {
     name = 'floatUniform';
   }
 
@@ -382,7 +379,7 @@ vgl.normalMatrixUniform = function (name) {
     return new vgl.normalMatrixUniform(name);
   }
 
-  if (name.length === 0) {
+  if (!name) {
     name = 'normalMatrix';
   }
 
@@ -399,7 +396,7 @@ vgl.normalMatrixUniform = function (name) {
    */
   /////////////////////////////////////////////////////////////////////////////
   this.update = function (renderState, program) {
-    program = program; /* unused parameter */
+    void program; /* unused parameter */
     this.set(renderState.m_normalMatrix);
   };
 
