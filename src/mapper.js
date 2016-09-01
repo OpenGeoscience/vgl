@@ -302,10 +302,12 @@ vgl.mapper = function (arg) {
     }
 
     noOfPrimitives = m_geomData.numberOfPrimitives();
-    for (j = 0; j < noOfPrimitives; j += 1) {
-      m_context.bindBuffer(vgl.GL.ARRAY_BUFFER, m_buffers[bufferIndex]);
-      bufferIndex += 1;
+    for (j = 0; j < noOfPrimitives; j += 1, bufferIndex += 1) {
       primitive = m_geomData.primitive(j);
+      if (!primitive.numberOfIndices()) {
+        continue;
+      }
+      m_context.bindBuffer(vgl.GL.ARRAY_BUFFER, m_buffers[bufferIndex]);
       switch (primitive.primitiveType()) {
         case vgl.GL.POINTS:
           m_context.drawArrays(vgl.GL.POINTS, 0, primitive.numberOfIndices());

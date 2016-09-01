@@ -128,6 +128,14 @@ describe('vgl.mapper', function () {
       mapper.geometryData().addSource(src2);
       mapper.modified();
       mapper.render(renderState);
+
+      /* Zero length indices shouldn't generate drawArray calls */
+      line.setIndices([]);
+      point.setIndices([]);
+      glCounts = $.extend({}, vgl.mockCounts());
+      mapper.modified();
+      mapper.render(renderState);
+      expect(vgl.mockCounts().drawArrays).toBe((glCounts.drawArrays || 0) + 3);
     });
     it('deleteVertexBufferObjects', function () {
       mapper.render(renderState);
