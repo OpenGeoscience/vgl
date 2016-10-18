@@ -28,7 +28,6 @@
       "camera.js",
       "interactorStyle.js",
       "trackballInteractorStyle.js",
-      "pvwInteractorStyle.js",
       "viewer.js",
       "shader.js",
       "shaderProgram.js",
@@ -43,8 +42,7 @@
       "picker.js",
       "shapefileReader.js",
       "vtkReader.js",
-      "dataBuffers.js",
-      "depthPeelRenderer.js"
+      "dataBuffers.js"
     ]
   }
 }
