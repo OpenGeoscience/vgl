@@ -17,7 +17,7 @@
  * @class
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.GL = {
+GL = {
   ACTIVE_ATTRIBUTES : 0x8B89,
   ACTIVE_TEXTURE : 0x84E0,
   ACTIVE_UNIFORMS : 0x8B86,
@@ -314,3 +314,5 @@ vgl.GL = {
   VIEWPORT : 0x0BA2,
   ZERO : 0
 };
+
+module.exports = GL;

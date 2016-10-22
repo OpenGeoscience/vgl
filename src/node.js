@@ -11,16 +11,20 @@
  * Create a new instance of class node
  *
  * @class
- * @returns {vgl.node}
+ * @returns {node}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.node = function () {
+var inherit = require('./inherit')
+var boundingObject = require('./boundingObject');
+var visitor = require('./visitor')
+
+var node = function () {
   'use strict';
 
-  if (!(this instanceof vgl.node)) {
-    return new vgl.node();
+  if (!(this instanceof node)) {
+    return new node();
   }
-  vgl.boundingObject.call(this);
+  boundingObject.call(this);
 
   /** @private */
   var m_parent = null,
@@ -190,4 +194,4 @@ vgl.node = function () {
   return this;
 };
 
-inherit(vgl.node, vgl.boundingObject);
+inherit(node, boundingObject);

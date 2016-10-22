@@ -11,16 +11,19 @@
  * Create a new instance of class boundingObject
  *
  * @class
- * @return {vgl.boundingObject}
+ * @return {boundingObject}
  */
 //////////////////////////////////////////////////////////////////////////////
-vgl.boundingObject = function () {
+var object = require('./object');
+var inherit = require('./inherit')
+
+var boundingObject = function () {
   'use strict';
 
-  if (!(this instanceof vgl.boundingObject)) {
-    return new vgl.boundingObject();
+  if (!(this instanceof boundingObject)) {
+    return new boundingObject();
   }
-  vgl.object.call(this);
+  object.call(this);
 
   /** @private */
   var m_bounds = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
@@ -133,9 +136,9 @@ vgl.boundingObject = function () {
   return this;
 };
 
-vgl.boundingObject.ReferenceFrame = {
+boundingObject.ReferenceFrame = {
   'Relative' : 0,
   'Absolute' : 1
 };
 
-inherit(vgl.boundingObject, vgl.object);
+inherit(boundingObject, object);

@@ -14,18 +14,22 @@
  * @returns {vgl.actor}
  */
 ////////////////////////////////////////////////////////////////////////////
-vgl.actor = function () {
+var inherit = require('./inherit')
+var node = require('./node');
+var boundingObject = require('./boundingObject');
+
+var actor = function () {
   'use strict';
 
-  if (!(this instanceof vgl.actor)) {
-    return new vgl.actor();
+  if (!(this instanceof actor)) {
+    return new actor();
   }
-  vgl.node.call(this);
+  node.call(this);
 
   /** @private */
   var m_this = this,
       m_transformMatrix = mat4.create(),
-      m_referenceFrame = vgl.boundingObject.ReferenceFrame.Relative,
+      m_referenceFrame = boundingObject.ReferenceFrame.Relative,
       m_mapper = null;
 
   ////////////////////////////////////////////////////////////////////////////
@@ -68,7 +72,7 @@ vgl.actor = function () {
   /**
    * Set reference frame for the transformations
    *
-   * @param {vgl.boundingObject.ReferenceFrame}
+   * @param {boundingObject.ReferenceFrame}
    * referenceFrame Possible values are (Absolute | Relative)
    */
   ////////////////////////////////////////////////////////////////////////////
@@ -192,4 +196,6 @@ vgl.actor = function () {
   return m_this;
 };
 
-inherit(vgl.actor, vgl.node);
+inherit(actor, node);
+
+module.exports = actor;

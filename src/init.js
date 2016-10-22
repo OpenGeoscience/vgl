@@ -43,26 +43,6 @@ window.vgl = vgl;
 
 //////////////////////////////////////////////////////////////////////////////
 /**
- * Convenient function to define JS inheritance
- */
-//////////////////////////////////////////////////////////////////////////////
-vgl.inherit = function (C, P) {
-  'use strict';
-
-  var F = inherit.func();
-  F.prototype = P.prototype;
-  C.prototype = new F();
-  C.prototype.constructor = C;
-};
-vgl.inherit.func = function () {
-  'use strict';
-  return function () {};
-};
-
-window.inherit = vgl.inherit;
-
-//////////////////////////////////////////////////////////////////////////////
-/**
  * Convenient function to get size of an object
  *
  * @param obj
@@ -86,4 +66,17 @@ if (!Math.log2) {
   Math.log2 = function (val) {
     return Math.log(val) / Math.log(2);
   };
+}
+
+
+module.exports = $.extend({
+  GL: require('./GL')
+})
+
+
+if (window && !window.$) {
+  window.$ = $;
+}
+if (window && !window.jQuery) {
+  window.jQuery = $;
 }
