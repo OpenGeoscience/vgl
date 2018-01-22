@@ -31,7 +31,7 @@
     "grunt-parallel": "~0.4",
     "grunt-template": "~0.2",
     "grunt-umd": "^2.3.5",
-    "jquery": "^2.2",
+    "jquery": "^3.3",
     "phantomjs": "~1.9",
     "phantomjs-polyfill": "0.0.1",
     "xmlbuilder": "^4.1.0"

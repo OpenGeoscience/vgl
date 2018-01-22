@@ -194,7 +194,7 @@ if (BUILD_DOCUMENTATION)
   add_custom_target(vgl_build_docs_sphinx ALL DEPENDS
                     "${vgl_BINARY_DIR}/docs/sphinx")
   add_dependencies(vgl_build_docs_sphinx vgl_copy_sphinx_config)
-  add_dependencies(${PROJECT_NAME} vgl_build_docs_sphinx)
+  # add_dependencies(${PROJECT_NAME} vgl_build_docs_sphinx)
 endif()
 
 if (REBUILD_JSDOC)
