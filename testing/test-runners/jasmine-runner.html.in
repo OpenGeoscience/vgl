@@ -19,12 +19,12 @@
         pointer-events: none;
   }
 </style>
-<link href=http://jasmine.github.io/css/docco.css rel=stylesheet>
-<link href=http://jasmine.github.io/css/jasmine_docco.css rel=stylesheet>
-<link href=http://jasmine.github.io/2.0/lib/jasmine.css rel=stylesheet>
+<link href=/test/lib/jasmine/docco.css rel=stylesheet>
+<link href=/test/lib/jasmine/jasmine_docco.css rel=stylesheet>
+<link href=/test/lib/jasmine/jasmine.css rel=stylesheet>
 <script src=/test/lib/bind-polyfill.js></script>
-<script src=http://jasmine.github.io/2.0/lib/jasmine.js></script>
-<script src=http://jasmine.github.io/2.0/lib/jasmine-html.js></script>
+<script src=/test/lib/jasmine/jasmine.js></script>
+<script src=/test/lib/jasmine/jasmine-html.js></script>
 <script src=/test/lib/jasmine-boot.js></script>
 @BLANKET_INCLUDE@
 <script src=/test/lib/jasmine-blanket.js></script>
