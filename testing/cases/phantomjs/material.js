@@ -139,6 +139,8 @@ describe('vgl.material', function () {
       mat.addAttribute(blend);
       mat.addAttribute(tex);
       mat.setAttribute(prog);
+      mat.bind(renderState);
+      mat.undoBind(renderState);
       glCounts = $.extend({}, vgl.mockCounts());
       mat._cleanup(renderState);
       expect(vgl.mockCounts().deleteProgram).toBe((glCounts.deleteProgram || 0) + 1);

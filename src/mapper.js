@@ -52,6 +52,12 @@ vgl.mapper = function (arg) {
     }
   };
 
+  this._cleanup = function (renderState) {
+    m_this.deleteVertexBufferObjects(renderState);
+    cleanUpDrawObjects(renderState);
+    m_this.modified();
+  };
+
   ////////////////////////////////////////////////////////////////////////////
   /**
    * Create new VBO for all its geometryData sources and primitives
