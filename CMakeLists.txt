@@ -65,7 +65,27 @@ configure_file(
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/testing/test-runners/vgl_test_runner.py.in
                ${CMAKE_CURRENT_BINARY_DIR}/test/vgl_test_runner.py
 )
-
+# Fetch Jasmine files
+file(
+  DOWNLOAD https://jasmine.github.io/css/docco.css
+  ${VGL_DEPLOY_DIR}/test/lib/jasmine/docco.css
+)
+file(
+  DOWNLOAD https://jasmine.github.io/css/jasmine_docco.css
+  ${VGL_DEPLOY_DIR}/test/lib/jasmine/jasmine_docco.css
+)
+file(
+  DOWNLOAD https://jasmine.github.io/2.0/lib/jasmine.css
+  ${VGL_DEPLOY_DIR}/test/lib/jasmine/jasmine.css
+)
+file(
+  DOWNLOAD https://jasmine.github.io/2.0/lib/jasmine.js
+  ${VGL_DEPLOY_DIR}/test/lib/jasmine/jasmine.js
+)
+file(
+  DOWNLOAD https://jasmine.github.io/2.0/lib/jasmine-html.js
+  ${VGL_DEPLOY_DIR}/test/lib/jasmine/jasmine-html.js
+)
 
 if (COVERAGE_TESTS)
   set(SOURCES_INCLUDE <script src=/built/vgl.all.dev.js data-cover></script>)
