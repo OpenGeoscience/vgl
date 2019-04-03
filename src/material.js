@@ -211,6 +211,8 @@ vgl.material = function () {
         m_textureAttributes[key]._cleanup(renderState);
       }
     }
+    m_shaderProgram._cleanup(renderState);
+    m_this.modified();
   };
 
   ////////////////////////////////////////////////////////////////////////////

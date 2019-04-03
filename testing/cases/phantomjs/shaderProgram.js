@@ -127,6 +127,7 @@ describe('vgl.shaderProgram', function () {
       expect(vgl.mockCounts().useProgram).toBe((glCounts.useProgram || 0) + 1);
     });
     it('deleteProgram', function () {
+      sp._setup(renderState);
       glCounts = $.extend({}, vgl.mockCounts());
       sp.deleteProgram(renderState);
       expect(vgl.mockCounts().deleteProgram).toBe((glCounts.deleteProgram || 0) + 1);

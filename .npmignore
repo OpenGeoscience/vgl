@@ -2,4 +2,5 @@
 !/vgl.js
 !/vgl.min.js
 !/vgl.min.js.map
+!src/**/*
 .eslintcache

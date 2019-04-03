@@ -298,6 +298,7 @@ vgl.renderer = function (arg) {
 
     renSt.m_context.finish();
     m_this.m_contextChanged = false;
+    m_this.m_lastRenderState = renSt;
   };
 
   ////////////////////////////////////////////////////////////////////////////
@@ -561,10 +562,15 @@ vgl.renderer = function (arg) {
     if (m_this.m_sceneRoot.children().indexOf(actor) !== -1) {
       /* When we remove an actor, free the VBOs of the mapper and mark the
        * mapper as modified; it will reallocate VBOs as necessary. */
-      if (actor.mapper()) {
-        actor.mapper().deleteVertexBufferObjects();
-        actor.mapper().modified();
+      if (m_this.m_lastRenderState) {
+        if (actor.mapper()) {
+          actor.mapper()._cleanup(m_this.m_lastRenderState);
+        }
+        if (actor.material()) {
+          actor.material()._cleanup(m_this.m_lastRenderState);
+        }
       }
+      actor.modified();
       m_this.m_sceneRoot.removeChild(actor);
       m_this.modified();
       return true;
@@ -785,6 +791,7 @@ vgl.renderer = function (arg) {
     }
 
     m_this.m_sceneRoot.removeChildren();
+    m_this.modified();
   };
 
   return m_this;

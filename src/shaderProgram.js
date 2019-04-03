@@ -276,6 +276,7 @@ vgl.shaderProgram = function () {
   this._cleanup = function (renderState) {
     m_this.deleteVertexAndFragment(renderState);
     m_this.deleteProgram(renderState);
+    m_this.modified();
   };
 
   /////////////////////////////////////////////////////////////////////////////
@@ -284,7 +285,9 @@ vgl.shaderProgram = function () {
    */
   /////////////////////////////////////////////////////////////////////////////
   this.deleteProgram = function (renderState) {
-    renderState.m_context.deleteProgram(m_programHandle);
+    if (m_programHandle) {
+      renderState.m_context.deleteProgram(m_programHandle);
+    }
     m_programHandle = 0;
   };
 
@@ -296,7 +299,9 @@ vgl.shaderProgram = function () {
   this.deleteVertexAndFragment = function (renderState) {
     var i;
     for (i = 0; i < m_shaders.length; i += 1) {
-      renderState.m_context.detachShader(m_shaders[i].shaderHandle(renderState));
+      if (m_shaders[i].shaderHandle(renderState)) {
+        renderState.m_context.detachShader(m_programHandle, m_shaders[i].shaderHandle(renderState));
+      }
       renderState.m_context.deleteShader(m_shaders[i].shaderHandle(renderState));
       m_shaders[i].removeContext(renderState);
     }
